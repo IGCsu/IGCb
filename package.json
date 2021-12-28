@@ -1,0 +1,17 @@
+{
+  "name": "igcbv2",
+  "version": "2.0.0",
+  "description": "",
+  "main": "bot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "BVN4",
+  "license": "ISC",
+  "dependencies": {
+    "@discordjs/rest": "^0.1.0-canary.0",
+    "discord-api-types": "^0.25.2",
+    "discord.js": "^13.4.0",
+    "sync-mysql": "^3.0.1"
+  }
+}
