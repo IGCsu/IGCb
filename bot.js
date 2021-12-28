@@ -39,7 +39,7 @@ client.on('interactionCreate', async interaction => {
 	if(interaction.isUserContextMenu()) type = 'contextUser';
 	if(interaction.isMessageContextMenu()) type = 'contextMesage';
 
-	if(!command[type]) return;
+	if(!type || !command[type]) return;
 
 	await command[type](interaction);
 });
