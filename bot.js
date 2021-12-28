@@ -14,8 +14,10 @@ client.on('messageCreate', async msg => {
 	if(msg.channel.type == 'DM') return msg.reply('Лс для пидоров');
 	if(msg.channel.guild.id != config.home) return;
 
-	if(msg.content.substr(0, config.prefix.length) != config.prefix && commands.list.nocommand)
-		return commands.list.nocommand.call(msg);
+	if(msg.content.substr(0, config.prefix.length) != config.prefix){
+		if(commands.list.nocommand) commands.list.nocommand.call(msg);
+		return;
+	}
 	if(msg.author.bot) return;
 
 	const content = msg.content.substr(config.prefix.length).split(/\s+/);
