@@ -21,7 +21,7 @@ module.exports = {
         }
         let member;
         try{
-            member = await guild.members.fetch(id[2]);
+            member = await guild.members.fetch(id);
         } catch(e) {}
 
         const now = Date.now();
