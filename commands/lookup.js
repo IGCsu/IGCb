@@ -17,7 +17,6 @@ module.exports = {
         try{
             user = await client.users.fetch(id);
         } catch(e) {
-            int.reply({content: reaction.emoji.error + ' Пользователь не найден', ephemeral: true});
             return 0;
         }
         let member;
