@@ -14,6 +14,7 @@ module.exports = {
     * @param {Array}   params Параметры команды
     */
     call : async function(id){
+        let user;
         try{
             user = await client.users.fetch(id);
         } catch(e) {
