@@ -18,7 +18,7 @@ const getCommands = async () => {
 
 		let command = require(path);
 
-		if(command.active) command = await command.init();
+		if(command.active) command = await command.init(path);
 
 		list[command.name] = command;
 		if(command.short) list[command.short] = command.name;

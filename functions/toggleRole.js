@@ -1,22 +1,21 @@
 /**
  * Переключение роли участнику.
  *
- * 
- * @param {Role}    role    Роль
- * @param {Number}  user    ID пользователя
- * @param {Author}  author  Объект автора вызова функции
+ * @param {Role}                role   Роль
+ * @param {GuildMember|Number}  member Объект или ID пользователя
+ * @param {Author}              author Объект автора вызова функции
  */
- module.exports = (role, user, author) => {
-	const member = guild.member(user);
+module.exports = (role, member, author) => {
+	if(!member instanceof Discord.GuildMember)
+		member = guild.member(user);
 
-	if(!member)
-		return null, 'Пользователь с ID:' + user + ' не найден';
+	if(!member) return [false, 'Пользователь с ID:' + user + ' не найден'];
 
-	let action = { val : 'add', text : 'выдана' };
-	if(member._roles.includes(role.id))
-		action = { val : 'remove', text : 'убрана у' };
+	const action = member._roles.includes(role.id)
+		? { val : 'remove', text : 'убрана у' }
+		: { val : 'add', text : 'выдана' };
 
 	member.roles[action.val](role, 'По требованию ' + member2name(author, 1));
-	const text = 'Роль <@&' + role.id + '> ' + action.text + ' <@' + member.id + '>';
-	return text;
+
+	return [true, 'Роль <@&' + role.id + '> ' + action.text + ' <@' + member.id + '>'];
 };

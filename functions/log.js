@@ -35,6 +35,9 @@ const getCurrentTimeString = () => new Date().toTimeString().replace(/ .*/, '');
 module.exports = {
 
 	start : text => console.log(color.fg.Cyan + text + color.Reset),
+	warn : text => console.log(color.fg.Yellow + text + color.Reset),
+	error : text => console.log(color.fg.Red + text + color.Reset),
+
 	info : (user, action, target) => {
 		const actionColor = action == 'create' ? color.fg.Green
 			: action == 'delete' ? color.fg.Red : color.fg.Cyan;

@@ -1,11 +1,11 @@
 module.exports = {
 
 	active : true,
-	category : 'Утилиты',
+	category : 'Голосовые каналы',
 
 	name : 'voice',
-	title : 'Управление каналами',
-	text : 'Модуль для управления каналами.\n\nПри заходе пользователя в #Создать канал - создаётся голосовой канал, в котором у автора будут все права. Он может редактировать канал как угодно. После выхода всех пользователей, канал удаляется, настройки не сохраняются.\n\nДля передачи прав владения другому пользователю, достаточно нажать на нужного пользователя правой кнопкой мыши и в меню "Приложения" выбрать команду "voice". Выбранный пользователь получит права владения над всеми голосовыми каналами, в которых у вас есть право редактирования ролей',
+	title : 'Управление голосовыми каналами',
+	text : 'Модуль для управления голосовыми каналами.\n\nПри заходе пользователя в #Создать канал - создаётся голосовой канал, в котором у автора будут все права. Он может редактировать канал как угодно. После выхода всех пользователей, канал удаляется, настройки не сохраняются.\n\nДля передачи прав владения другому пользователю, достаточно нажать на нужного пользователя правой кнопкой мыши и в меню "Приложения" выбрать команду "voice". Выбранный пользователь получит права владения над всеми голосовыми каналами, в которых у вас есть право редактирования ролей.\n\nБот не удаляет каналы, у которых в названии в конце есть звёздочка `*`.',
 	descriptionShort : 'Модуль для управления каналами',
 
 	permission : {
@@ -26,24 +26,28 @@ module.exports = {
 	*
 	* @return {Object}
 	*/
-	init : async function(){
-		client.channels.cache.forEach(c => {
+	init : async function(path){
+		guild.channels.cache.forEach(c => {
 			if(c.type != 'GUILD_VOICE' && c.type != 'GUILD_CATEGORY') return;
 			if(c.name == 'Создать канал') return this.channelCreate = c;
 			if(c.name == 'Голосовые') return this.channelCategory = c;
-			if(!c.members.filter(m => !m.user.bot).size && c.type == 'GUILD_VOICE') return c.delete();
+			if(!c.members.filter(m => !m.user.bot).size && c.type == 'GUILD_VOICE') return this.delete(c);
 		});
 
 		if(!this.channelCategory){
-			console.error('Отсутствует категория голосовых каналов');
+			log.error(path + ': Отсутствует категория голосовых каналов');
+			this.active = false;
 			return this;
 		}
 
-		if(!this.channelCreate)
+		if(!this.channelCreate){
+			log.warn(path + ': Отсутствует "Создать канал"');
 			this.channelCreate = await guild.channels.create('Создать канал', {
 				parent : this.channelCategory.id,
 				type : 'GUILD_VOICE'
 			});
+			log.warn(path + ': Создан "Создать канал"');
+		}
 
 		this.channelCreate.permissionOverwrites.cache.forEach(p => {
 			if(p.type == 'member') p.delete();
@@ -85,10 +89,7 @@ module.exports = {
 
 		if(!before.channel || channel.before.id == this.channelCreate.id || before.channel.members.filter(m => !m.user.bot).size) return;
 
-		try{
-			await before.channel.delete();
-			log.info(user, 'delete', '#' + before.channel.name);
-		}catch(e){}
+		this.delete(before.channel, user);
 	},
 
 
@@ -148,6 +149,22 @@ module.exports = {
 			: 'У вас нет каналов во владении'
 
 		ctx.reply({ content : content, ephemeral: true });
+	},
+
+
+
+
+	/**
+	 * Удаление канала
+	 * Не удаляет канал, если в его названии в конце есть звёздочка
+	 * @param {VoiceChannel} channel
+	 */
+	delete : async function(channel, user){
+		if(channel.name.slice(-1) == '*') return;
+
+		const func = () => log.info(user, 'delete', '#' + channel.name);
+
+		channel.delete().then(func, func);
 	}
 
 };
