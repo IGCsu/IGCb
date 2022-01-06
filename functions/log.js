@@ -34,6 +34,8 @@ const getCurrentTimeString = () => new Date().toTimeString().replace(/ .*/, '');
 
 module.exports = {
 
+	load : (path, perf, result) => console.log(path + ': ' + perf + 'ms ' + (result ? color.fg.Green + 'active' : color.fg.Red + 'inactive') + color.Reset),
+
 	start : text => console.log(color.fg.Cyan + text + color.Reset),
 	warn : text => console.log(color.fg.Yellow + text + color.Reset),
 	error : text => console.log(color.fg.Red + text + color.Reset),

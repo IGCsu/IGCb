@@ -31,7 +31,7 @@ module.exports = {
 			if(c.type != 'GUILD_VOICE' && c.type != 'GUILD_CATEGORY') return;
 			if(c.name == 'Создать канал') return this.channelCreate = c;
 			if(c.name == 'Голосовые') return this.channelCategory = c;
-			if(!c.members.filter(m => !m.user.bot).size && c.type == 'GUILD_VOICE') return this.delete(c);
+			if(!c.members.filter(m => !m.user.bot).size && c.type == 'GUILD_VOICE') return this.delete(c, false, path);
 		});
 
 		if(!this.channelCategory){
@@ -41,12 +41,12 @@ module.exports = {
 		}
 
 		if(!this.channelCreate){
-			log.warn(path + ': Отсутствует "Создать канал"');
+			log.warn(path + ': Отсутствует #Создать канал');
 			this.channelCreate = await guild.channels.create('Создать канал', {
 				parent : this.channelCategory.id,
 				type : 'GUILD_VOICE'
 			});
-			log.warn(path + ': Создан "Создать канал"');
+			log.warn(path + ': Создан #Создать канал');
 		}
 
 		this.channelCreate.permissionOverwrites.cache.forEach(p => {
@@ -159,12 +159,16 @@ module.exports = {
 	/**
 	 * Удаление канала
 	 * Не удаляет канал, если в его названии в конце есть звёздочка
-	 * @param {VoiceChannel} channel
+	 * @param {VoiceChannel} channel Голосовой канал
+	 * @param {String}       user    Никнейм пользователя
+	 * @param {String}       path    Путь к модулю
 	 */
-	delete : async function(channel, user){
+	delete : async function(channel, user, path){
 		if(channel.name.slice(-1) == '*') return;
 
-		const func = () => log.info(user, 'delete', '#' + channel.name);
+		const func = path
+			? () => log.warn(path + ': Удалён #' + channel.name)
+			: () => log.info(user, 'delete', '#' + channel.name);
 
 		channel.delete().then(func, func);
 	}

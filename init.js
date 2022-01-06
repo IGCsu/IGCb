@@ -14,7 +14,7 @@ const getCommands = async () => {
 	const files = await fs.readdirSync('./commands/');
 	for(const file of files){
 		const path = './commands/' + file;
-		console.time(path);
+		const timeStart = process.hrtime();
 
 		let command = require(path);
 
@@ -33,7 +33,10 @@ const getCommands = async () => {
 		if(command.active && command.contextUser)
 			commands.push({ name : command.name, type : 2 });
 
-		console.timeEnd(path);
+		const timeEnd = process.hrtime(timeStart);
+		const timePerf = (timeEnd[0]*1000) + (timeEnd[1] / 1000000);
+
+		log.load(path, timePerf, command.active);
 	}
 
 	new REST({ version: '9' }).setToken(config.token).put( Routes.applicationGuildCommands(client.user.id, config.home), { body : commands });
@@ -93,6 +96,45 @@ module.exports = async () => {
 	global.commands = await getCommands();
 
 	await client.user.setActivity('i!help', { type: 'LISTENING' });
+
+	console.time('Event messageCreate');
+	client.on('messageCreate', async msg => {
+		if(msg.author.id == client.user.id) return;
+		if(msg.channel.type == 'DM') return msg.reply('Лс для пидоров');
+		if(msg.channel.guild.id != config.home) return;
+
+		if(msg.content.substr(0, config.prefix.length) != config.prefix){
+			if(commands.list.nocommand) commands.list.nocommand.call(msg);
+			return;
+		}
+		if(msg.author.bot) return;
+
+		const content = msg.content.substr(config.prefix.length).split(/\s+/);
+		const command = commands.get(content.shift().toLowerCase());
+
+		if(!command || !command.active || !command.message) return;
+
+		await command.message(msg, content);
+	});
+	console.timeEnd('Event messageCreate');
+
+	console.time('Event interactionCreate');
+	client.on('interactionCreate', async interaction => {
+		const command = commands.get(interaction.commandName);
+
+		if(!command || !command.active) return;
+
+		let type = undefined;
+		if(interaction.isCommand()) type = 'slash';
+		if(interaction.isUserContextMenu()) type = 'contextUser';
+		if(interaction.isMessageContextMenu()) type = 'contextMesage';
+
+		if(!type || !command[type]) return;
+
+		await command[type](interaction);
+	});
+	console.timeEnd('Event interactionCreate');
+
 	log.start('== Bot ready ==');
 
 };
