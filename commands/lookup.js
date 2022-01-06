@@ -1,6 +1,6 @@
 module.exports = {
 
-	active : true,
+	active : false,
 	category : 'Утилиты',
 
 	name : 'lookup',
@@ -8,6 +8,12 @@ module.exports = {
 	description : 'Выдаёт информацию о пользователе или приглашении по id',
 	descriptionShort : 'Выдаёт информацию о пользователе или приглашении по id',
 
+	// slashOptions : [{
+	// 	name : 'ID',
+	// 	description : 'ID юзера или приглашения',
+	// 	type : 3,
+	// 	required : true
+	// }],
 
 	init : function(){ return this; },
 

@@ -1,6 +1,6 @@
 module.exports = {
 
-	active : true,
+	active : false,
 	category : 'Роли',
 
 	name : 'orator',
@@ -8,6 +8,12 @@ module.exports = {
 	description : 'Переключает у указанных пользователей роль Младший оратор',
 	descriptionShort : 'Переключает у указанных пользователей роль Младший оратор',
 
+	// slashOptions : [{
+	// 	name : 'user',
+	// 	description : 'Участник Сообщества',
+	// 	type : 6,
+	// 	required : true
+	// }],
 
 	init : function(path){
 		this.role = guild.roles.cache.get('809040260582998016');

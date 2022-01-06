@@ -24,7 +24,11 @@ const getCommands = async () => {
 		if(command.short) list[command.short] = command.name;
 
 		if(command.active && command.slash)
-			commands.push({ name : command.name, description : command.descriptionShort });
+			commands.push({
+				name : command.name,
+				description : command.descriptionShort,
+				options : command.slashOptions
+			});
 
 		if(command.active && command.contextUser)
 			commands.push({ name : command.name, type : 2 });
