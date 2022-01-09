@@ -71,32 +71,6 @@ module.exports = {
 
 
 	/**
-	 *
-	 *
-	 * @param {MessageComponent} button
-	 * @param {Array}            params Параметры команды
-	 */
-	button : async (button, param) => {
-		msg = getMsg(button)
-		if(msg.member.user.id == param[1]){
-			await msg.message.delete();
-			try{
-				const old = member2name(msg.member);
-				await msg.member.setNickname(param[2], 'По требованию ' + member2name(button.clicker.member, 1));
-				if(param[2].length > 20)
-					send.warning(msg.message, 'Никнейм превышает рекомендуемую длину. Рекомендуемая длинна - до 20 символов. Длина никнейма `' + param[2] + '` - ' + param[2].length);
-				return send.success(msg.message, 'Никнейм изменён `' + old + '` => `' + param[2] + '`');
-			}catch(e){
-				return send.error(msg.message, 'Упс... Ошибка');
-			}
-		}
-
-		await interactionRespond.send(msg.int, {content: reaction.emoji['error'] + ' Выбор предложен другому участника', flags: 64});
-
-	},
-
-
-	/**
 	 * Тихое обновление
 	 * Обновление никнейма пользователя без его участия
 	 *
@@ -112,8 +86,11 @@ module.exports = {
 		if(fixed == name) return { status : false };
 
 		await member.setNickname(fixed, 'По требованию Устава Сообщества').then(() => {}, () => {});
-		await member.send("Ваш никнейм в сообществе IGC был изменён т.к. в нём присутствовали запрещённые символы")
-
+		try{
+			await member.send({content: "Ваш никнейм в сообществе IGC был изменён т.к. в нём присутствовали запрещённые символы"});
+		} catch(e) {
+			console.warn(e);
+		};
 		return { status : true, fixed : fixed, name : name };
 	},
 
