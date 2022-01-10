@@ -46,13 +46,43 @@ module.exports = {
 
 		const time = this.getTimeMute(after.communicationDisabledUntilTimestamp);
 		const date = formatDate();
-		const name = member2name(after);
-
+		const author, reason = this.getAdvancedMuteData(after.user);
 		const text = date + ' ' + time + ' ' + member2name(after) + ' ' + after.user.id;
 
-		const msg = await this.channel.send({ content : text });
+		let embed = new Discord.MessageEmbed()
+			.setTitle(reaction.emoji.success + ' Мут выдан на ' + time)
+			.setColor(2075752)
+			.setTimestamp()
+			.setThumbnail(after.user.avatarURL({ dynamic: true }))
+			.setFooter({ iconURL: author.user.avatarURL({ dynamic: true }), text: author.username + '#' + author.discriminator })
+			.setDescription('Пользователь: **`' + after.user.username + '#' + after.user.discriminator + 
+				'`**\nПричина: **`' + reason + 
+				'`**\n Осталось: <t:' + after.communicationDisabledUntilTimestamp + ':R>'
+			);
 
+		const msg = await this.channel.send({ embeds : [embed] });
 		const thread = await msg.startThread({ name : text });
+	},
+
+	/**
+	* Функция получения данных из Аудит лога.
+	* 
+	* @param {User} target Цель поиска
+	*
+	* @returns {User} author автор мута
+	* @returns {string} reason причина мута
+	*/
+	getAdvancedMuteData : async function(target){
+		const auditLogs = await guild.fetchAuditLogs({limit: 10, type: 24});
+		let author, reason;
+
+		for(const entrie of auditLogs.entries){
+			if(entrie.changes[0].key == 'communication_disabled_until' && entrie.target == target){
+				author = entrie.executor;
+				reason = entrie.reason;
+			};
+		};
+		return author, reason;
 	},
 
 
