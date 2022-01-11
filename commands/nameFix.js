@@ -19,49 +19,37 @@ module.exports = {
 
 	init : function(){ return this; },
 
-
 	/**
-	 *
-	 *
-	 * @param {Message} msg
-	 * @param {Array}   params Параметры команды
+	 * @param {GuildMember} member Объект пользователя
 	 */
-	slash : async function(int){
-		const id = int.options.get('user');
-		await this.fix(id, (text, status) => {
-			int.reply({ content : (status ? reaction.emoji.success : reaction.emoji.error) + " " + text, ephemeral : !status });
-		});
-	},
-
-	/**
-	 * @param {Object} int interactions
-	 */
-	context : async function(int){
-		await this.fix(int.targetId, (text, status) => {
-			int.reply({ content : (status ? reaction.emoji.success : reaction.emoji.error) + " " + text, ephemeral : !status });
-		});
-	},
-
-	/**
-	 * @param {Number}   id           ID участника
-	 * @param {Function} callbackSend Функция отправки сообщения
-	 */
-	fix : async (id) => {
-		let member;
-		try{
-			member = await guild.members.fetch(id);
-		}catch(e){
-			return 'Участник не найден', false;
-		}
-
+	call : async member => {
 		if(!commands.list.name) return 'Модуль "name" не активен', false;
 
 		const result = await commands.list.name.silent(member);
-		const name = member2name(member, 1);
 
-		if(result.status) return 'Никнейм исправлен `' + result.name + '` => `' + result.fixed + '`', true;
-		return 'Никнейм пользователя ' + name + ' корректен', false;
-	}
+		return result.status
+			? { ephemeral : false, content : 'Никнейм исправлен `' + result.name + '` => `' + result.fixed + '`' }
+			: { ephemeral : true, content : `Никнейм пользователя ${member.user} корректен` }
+	},
+
+
+	/**
+	 * Обработка слеш-команды
+	 * @param {CommandInteraction} int Команда пользователя
+	 */
+	slash : async function(int){
+		const options = await this.call(int.options.getMember('member'));
+		await int.reply(options);
+	},
+
+	/**
+	 * Обработка контекстной команды
+	 * @param {UserContextMenuInteraction} ctx
+	 */
+	context : async function(int){
+		const options = await this.call(member);
+		await int.reply(options);
+	},
 
 
 };

@@ -53,12 +53,14 @@ module.exports = {
 		const fixed = this.fix(nickname, true);
 
 		if(fixed.status == 'error')
-			return reaction.emoji.error + ' ' + fixed.text;
+			return { error : reaction.emoji.error + ' ' + fixed.text };
 
 		try{
 			const old = member2name(member);
 			await member.setNickname(fixed.name, 'По требованию ' + member2name(member, 1));
-			return { text: reaction.emoji.success + ' Никнейм изменён `' + old + '` => `' + fixed.name + '`', warning: fixed.text};
+			let response = { success : reaction.emoji.success + ' Никнейм изменён `' + old + '` => `' + fixed.name + '`' };
+			if(fixed.text.length) response.warning = reaction.emoji[fixed.status] + ' ' + fixed.text;
+			return response;
 		}catch(e){
 			return reaction.emoji.error + ' Упс... Ошибка';
 		}
@@ -71,8 +73,17 @@ module.exports = {
 	 */
 	slash : async function(int){
 		response = await this.call(int.options.get('nick').value, int.member);
-		await int.reply(response.text);
-		if(response.warning) await int.followUp(reaction.emoji.error + ' ' + response.warning);
+
+		if(response.error)
+			return int.reply({ content : response.error, ephemeral : true });
+
+		await int.reply({ content : response.success });
+
+		if(response.warning)
+			await int.followUp({
+				content : response.warning,
+				ephemeral : true
+			});
 	},
 
 
