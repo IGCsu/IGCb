@@ -9,6 +9,14 @@ module.exports = {
 	category : 'Никнейм',
 
 
+	slashOptions : [{
+		name : 'member',
+		description : 'Пользователь у которого будет исправлен ник',
+		type : 6,
+		required : true
+	}],
+
+
 	init : function(){ return this; },
 
 
