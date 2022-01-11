@@ -5,8 +5,7 @@ module.exports = {
 
 	name : 'mute',
 	title : 'Модуль поддержки таймаутов',
-	text : 'Используется для логгирования мутов',
-	descriptionShort : 'Используется для логгирования мутов',
+	description : 'Используется для логгирования мутов',
 
 	/**
 	* Инициализирует прослушку необходимых ивентов.
@@ -46,7 +45,7 @@ module.exports = {
 
 		const time = this.getTimeMute(after.communicationDisabledUntilTimestamp);
 		const date = formatDate();
-		const author, reason = this.getAdvancedMuteData(after.user);
+		const { author, reason } = this.getAdvancedMuteData(after.user);
 		const text = date + ' ' + time + ' ' + member2name(after) + ' ' + after.user.id;
 
 		let embed = new Discord.MessageEmbed()
@@ -55,8 +54,8 @@ module.exports = {
 			.setTimestamp()
 			.setThumbnail(after.user.avatarURL({ dynamic: true }))
 			.setFooter({ iconURL: author.user.avatarURL({ dynamic: true }), text: author.username + '#' + author.discriminator })
-			.setDescription('Пользователь: **`' + after.user.username + '#' + after.user.discriminator + 
-				'`**\nПричина: **`' + reason + 
+			.setDescription('Пользователь: **`' + after.user.username + '#' + after.user.discriminator +
+				'`**\nПричина: **`' + reason +
 				'`**\n Осталось: <t:' + after.communicationDisabledUntilTimestamp + ':R>'
 			);
 
@@ -66,7 +65,7 @@ module.exports = {
 
 	/**
 	* Функция получения данных из Аудит лога.
-	* 
+	*
 	* @param {User} target Цель поиска
 	*
 	* @returns {User} author автор мута

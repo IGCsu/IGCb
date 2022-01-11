@@ -26,7 +26,7 @@ const getCommands = async () => {
 		if(command.active && command.slash)
 			commands.push({
 				name : command.name,
-				description : command.descriptionShort,
+				description : command.descriptionShort ?? command.description,
 				options : command.slashOptions
 			});
 

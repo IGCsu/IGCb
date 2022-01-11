@@ -1,19 +1,18 @@
 module.exports = {
 
-	active : false,
+	active : true,
 	category : 'Роли',
 
 	name : 'alive',
 	title : 'Доступ к сообществу',
 	description : 'Переключает у указанных пользователей роль alive',
-	descriptionShort : 'Переключает у указанных пользователей роль alive',
 
-	// slashOptions : [{
-	// 	name : 'user',
-	// 	description : 'Участник Сообщества',
-	// 	type : 6,
-	// 	required : true
-	// }],
+	slashOptions : [{
+		name : 'user',
+		description : 'Участник Сообщества',
+		type : 6,
+		required : true
+	}],
 
 
 	init : function(path){

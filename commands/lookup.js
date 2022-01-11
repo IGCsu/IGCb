@@ -1,19 +1,18 @@
 module.exports = {
 
-	active : false,
+	active : true,
 	category : 'Утилиты',
 
 	name : 'lookup',
 	title : 'Информация по id',
 	description : 'Выдаёт информацию о пользователе или приглашении по id',
-	descriptionShort : 'Выдаёт информацию о пользователе или приглашении по id',
 
-	// slashOptions : [{
-	// 	name : 'ID',
-	// 	description : 'ID юзера или приглашения',
-	// 	type : 3,
-	// 	required : true
-	// }],
+	slashOptions : [{
+		name : 'id',
+		description : 'ID юзера или приглашения',
+		type : 3,
+		required : true
+	}],
 
 	init : function(){ return this; },
 

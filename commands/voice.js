@@ -1,6 +1,6 @@
 module.exports = {
 
-	active : false,
+	active : true,
 	category : 'Голосовые каналы',
 
 	name : 'voice',
