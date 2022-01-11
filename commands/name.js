@@ -55,12 +55,10 @@ module.exports = {
 		if(fixed.status == 'error')
 			return reaction.emoji.error + ' ' + fixed.text;
 
-		if(fixed.text.length) fixed.text += '\n';
-
 		try{
 			const old = member2name(member);
 			await member.setNickname(fixed.name, 'По требованию ' + member2name(member, 1));
-			return reaction.emoji[fixed.status] + ' ' + fixed.text + 'Никнейм изменён `' + old + '` => `' + fixed.name + '`';
+			return { text: reaction.emoji.success + ' Никнейм изменён `' + old + '` => `' + fixed.name + '`', warning: fixed.text};
 		}catch(e){
 			return reaction.emoji.error + ' Упс... Ошибка';
 		}
@@ -73,7 +71,8 @@ module.exports = {
 	 */
 	slash : async function(int){
 		response = await this.call(int.options.get('nick').value, int.member);
-		await int.reply(response);
+		await int.reply(response.text);
+		if(response.warning) await int.followUp(reaction.emoji.error + ' ' + response.warning);
 	},
 
 
