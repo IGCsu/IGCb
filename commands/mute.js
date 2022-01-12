@@ -76,21 +76,20 @@ module.exports = {
 	* @returns {string} reason причина мута
 	*/
 	getAdvancedMuteData : async function(target){
-		const auditLogs = await guild.fetchAuditLogs({limit: 10, type: 24});
+		const auditLogs = await guild.fetchAuditLogs({limit: 1, type: 24});
 		let author, reason;
 
-		for(const entrie of auditLogs.entries){
-			console.log(entrie);
-			
-			if(!entrie?.changes) continue;
+		const entrie = auditLogs.entries.first();
+		
+		if(!entrie) return {author: author, reason: reason};
 
-			console.log(entrie.changes);
-
-			if(entrie?.changes[0].key == 'communication_disabled_until' && entrie.target == target){
-				author = entrie.executor;
-				reason = entrie.reason;
-			};
+		console.log(entrie);
+		console.log(entrie.changes);
+		if(entrie.changes[0].key == 'communication_disabled_until' && entrie.target == target){
+			author = entrie.executor;
+			reason = entrie.reason;
 		};
+		
 		return {author: author, reason: reason};
 	},
 
