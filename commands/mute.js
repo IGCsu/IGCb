@@ -55,7 +55,7 @@ module.exports = {
 			.setThumbnail(after.user.avatarURL({ dynamic: true }))
 			.setDescription('Пользователь: **`' + after.user.username + '#' + after.user.discriminator +
 				'`**\nПричина: **`' + (advancedMuteData?.reason ? advancedMuteData.reason : 'не указана') +
-				'`**\nОсталось: <t:' + after.communicationDisabledUntilTimestamp + ':R>'
+				'`**\nОсталось: <t:' + after.communicationDisabledUntilTimestamp/1000 + ':R>'
 			);
 		
 		if(advancedMuteData?.author) embed.setFooter({
@@ -82,6 +82,7 @@ module.exports = {
 		for(const entrie of auditLogs.entries){
 			if(!entrie?.changes){
 				console.log(entrie);
+				console.log(entrie.changes);
 				continue;
 			};
 			if(entrie?.changes[0].key == 'communication_disabled_until' && entrie.target == target){
