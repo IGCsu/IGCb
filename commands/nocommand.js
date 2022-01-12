@@ -55,8 +55,7 @@ module.exports = {
 		await msg.channel.send({
 			content : `<@${msg.author.id}>: ` + msg.content.replace('media.discordapp.net', 'cdn.discordapp.com'),
 			allowedMentions : { parse : [] },
-			reply : msg.reference,
-			components : []
+			reply : msg.reference ?? undefined
 		});
 	},
 
@@ -70,7 +69,8 @@ module.exports = {
 		await msg.delete();
 		await msg.channel.send({
 			content : `<@!${msg.author.id}>: https://nhentai.net/g/${msg.content}/`,
-			allowedMentions : { parse : [] }
+			allowedMentions : { parse : [] },
+			reply : msg.reference ?? undefined
 		});
 	},
 
