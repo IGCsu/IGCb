@@ -45,7 +45,7 @@ module.exports = {
 
 		const time = this.getTimeMute(after.communicationDisabledUntilTimestamp);
 		const date = formatDate();
-		const { author, reason } = this.getAdvancedMuteData(after.user);
+		const advancedMuteData = await this.getAdvancedMuteData(after.user);
 		const text = date + ' ' + time + ' ' + member2name(after) + ' ' + after.user.id;
 
 		let embed = new Discord.MessageEmbed()
@@ -53,11 +53,15 @@ module.exports = {
 			.setColor(2075752)
 			.setTimestamp()
 			.setThumbnail(after.user.avatarURL({ dynamic: true }))
-			.setFooter({ iconURL: author.user.avatarURL({ dynamic: true }), text: author.username + '#' + author.discriminator })
 			.setDescription('Пользователь: **`' + after.user.username + '#' + after.user.discriminator +
-				'`**\nПричина: **`' + reason +
-				'`**\n Осталось: <t:' + after.communicationDisabledUntilTimestamp + ':R>'
+				'`**\nПричина: **`' + (advancedMuteData?.reason ? advancedMuteData.reason : 'не указана') +
+				'`**\nОсталось: <t:' + after.communicationDisabledUntilTimestamp + ':R>'
 			);
+		
+		if(advancedMuteData?.author) embed.setFooter({
+			iconURL: advancedMuteData.author.user.avatarURL({ dynamic: true }),
+			text: advancedMuteData.author.username + '#' + advancedMuteData.author.discriminator
+		});
 
 		const msg = await this.channel.send({ embeds : [embed] });
 		const thread = await msg.startThread({ name : text });
@@ -81,7 +85,7 @@ module.exports = {
 				reason = entrie.reason;
 			};
 		};
-		return author, reason;
+		return {author: author, reason: reason};
 	},
 
 
