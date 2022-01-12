@@ -80,7 +80,10 @@ module.exports = {
 		let author, reason;
 
 		for(const entrie of auditLogs.entries){
-			if(!entrie?.changes) continue;
+			if(!entrie?.changes){
+				console.log(entrie);
+				continue;
+			};
 			if(entrie?.changes[0].key == 'communication_disabled_until' && entrie.target == target){
 				author = entrie.executor;
 				reason = entrie.reason;
