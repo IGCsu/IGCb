@@ -43,7 +43,7 @@ module.exports = {
 		if(this.rules[msg.content])
 			await msg.channel.send({
 				content : 'https://igc.su/rules?f=' + msg.content,
-				reply : {messageReference: msg.reference ?? undefined, failIfNotExists: false}
+				reply : {messageReference: msg.reference?.messageId ?? undefined, failIfNotExists: false}
 			});
 	},
 
@@ -58,7 +58,7 @@ module.exports = {
 		await msg.channel.send({
 			content : `<@${msg.author.id}>: ` + msg.content.replace('media.discordapp.net', 'cdn.discordapp.com'),
 			allowedMentions : { parse : [] },
-			reply : {messageReference: msg.reference ?? undefined, failIfNotExists: false}
+			reply : {messageReference: msg.reference?.messageId ?? undefined, failIfNotExists: false}
 		});
 	},
 
@@ -73,7 +73,7 @@ module.exports = {
 		await msg.channel.send({
 			content : `<@!${msg.author.id}>: https://nhentai.net/g/${msg.content}/`,
 			allowedMentions : { parse : [] },
-			reply : {messageReference: msg.reference ?? undefined, failIfNotExists: false}
+			reply : {messageReference: msg.reference?.messageId ?? undefined, failIfNotExists: false}
 		});
 	},
 
