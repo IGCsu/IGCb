@@ -31,6 +31,7 @@ module.exports = {
 	 * @param {Number} id ID пользователя
 	 */
 	call : async function(id){
+		console.log(id);
 		const user = await client.users.fetch(id);
 		const member = await guild.members.fetch(id);
 		const embed = new Discord.MessageEmbed();
@@ -60,7 +61,7 @@ module.exports = {
 	 */
 	slash : async function(int){
 		try{
-			const id = int.options.get('user');
+			const id = int.options.get('id').value;
 			const embed = await this.call(id);
 			int.reply({ embeds : [embed] });
 		}catch(e){

@@ -52,7 +52,7 @@ module.exports = {
 	 * @param {CommandInteraction} int Команда пользователя
 	 */
 	slash : async function(int){
-		this.call(int, int.options.get('user'));
+		this.call(int, int.options.get('user').value);
 	},
 
 	/**
