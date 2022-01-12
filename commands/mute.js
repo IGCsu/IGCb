@@ -59,7 +59,7 @@ module.exports = {
 			);
 		
 		if(advancedMuteData?.author) embed.setFooter({
-			iconURL: advancedMuteData.author.user.avatarURL({ dynamic: true }),
+			iconURL: advancedMuteData.author.displayAvatarURL({ dynamic: true }),
 			text: advancedMuteData.author.username + '#' + advancedMuteData.author.discriminator
 		});
 
