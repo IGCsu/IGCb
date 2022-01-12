@@ -41,10 +41,7 @@ module.exports = {
 	 */
 	rule : async function(msg){
 		if(this.rules[msg.content])
-			await msg.channel.send({
-				content : 'https://igc.su/rules?f=' + msg.content,
-				reply : {messageReference: msg.reference?.messageId ?? undefined, failIfNotExists: false}
-			});
+			await msg.channel.send({ content : 'https://igc.su/rules?f=' + msg.content });
 	},
 
 	/**
