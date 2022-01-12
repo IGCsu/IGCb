@@ -70,7 +70,7 @@ module.exports = {
 	 * @param {GuildMember} member
 	 */
 	permission : member =>
-		member._roles.includes('613412133715312641') ||
-		member._roles.includes('916999822693789718')
+		member.roles.cache.has('613412133715312641') ||
+		member.roles.cache.has('916999822693789718')
 
 };

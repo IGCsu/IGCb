@@ -11,7 +11,7 @@ module.exports = (role, member, author) => {
 
 	if(!member) return [false, 'Пользователь с ID:' + user + ' не найден'];
 
-	const action = member._roles.includes(role.id)
+	const action = member.roles.cache.has(role.id)
 		? { val : 'remove', text : 'убрана у' }
 		: { val : 'add', text : 'выдана' };
 
