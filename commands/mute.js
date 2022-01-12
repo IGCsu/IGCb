@@ -55,7 +55,7 @@ module.exports = {
 			.setThumbnail(after.user.avatarURL({ dynamic: true }))
 			.setDescription('Пользователь: **`' + after.user.username + '#' + after.user.discriminator +
 				'`**\nПричина: **`' + (advancedMuteData?.reason ? advancedMuteData.reason : 'не указана') +
-				'`**\nОсталось: <t:' + Math.floor(after.communicationDisabledUntilTimestamp/1000) + ':R>'
+				'`**\nРазмут <t:' + Math.floor(after.communicationDisabledUntilTimestamp/1000) + ':R>'
 			);
 		
 		if(advancedMuteData?.author) embed.setFooter({
