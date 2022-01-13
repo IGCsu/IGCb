@@ -31,7 +31,6 @@ module.exports = {
 	 * @param {Number} id ID пользователя
 	 */
 	call : async function(id){
-		console.log(id);
 		const user = await client.users.fetch(id);
 		const member = await guild.members.fetch(id);
 		const embed = new Discord.MessageEmbed();
