@@ -128,6 +128,7 @@ module.exports = async () => {
 		if(interaction.isCommand()) type = 'slash';
 		if(interaction.isUserContextMenu()) type = 'contextUser';
 		if(interaction.isMessageContextMenu()) type = 'contextMesage';
+		if(interaction.isAutocomplete()) type = 'autocomplete';
 
 		if(!type || !command[type]) return;
 
