@@ -7,9 +7,9 @@
  */
 module.exports = (role, member, author) => {
 	if(!member instanceof Discord.GuildMember)
-		member = guild.member(user);
+		member = guild.member(member);
 
-	if(!member) return [false, 'Пользователь с ID:' + user + ' не найден'];
+	if(!member) return [false, 'Пользователь не найден'];
 
 	const action = member.roles.cache.has(role.id)
 		? { val : 'remove', text : 'убрана у' }
