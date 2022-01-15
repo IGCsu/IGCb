@@ -5,6 +5,7 @@ global.DB = new (require('sync-mysql'))(config.mysql);
 
 global.Discord = require('discord.js');
 global.client = new Discord.Client({ intents : new Discord.Intents(6143) });
+global.predict_name = ''; //Shit code
 
 client.on('ready', require('./init'));
 
