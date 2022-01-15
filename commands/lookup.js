@@ -60,7 +60,7 @@ module.exports = {
 	 */
 	slash : async function(int){
 		try{
-			const id = int.options.get('user');
+			const id = int.options.get('id').value;
 			const embed = await this.call(id);
 			int.reply({ embeds : [embed] });
 		}catch(e){
