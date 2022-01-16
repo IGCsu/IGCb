@@ -71,6 +71,7 @@ module.exports = {
 	 */
 	permission : member =>
 		member.roles.cache.has('613412133715312641') ||
-		member.roles.cache.has('916999822693789718')
+		member.roles.cache.has('916999822693789718') ||
+		member.id == '500020124515041283'
 
 };
