@@ -59,7 +59,7 @@ module.exports = {
 		
 		if(role)
 			predict.sort(this.comporator);
-		for(let i = choices.length; i < predict.length && i < 25; i++) choices[i] = {name : predict[i].name, value : predict[i].id};
+		for(let i = 0; i < predict.length && i < 25; i++) choices[i + 1 * create] = {name : predict[i].name, value : predict[i].id};
 
 		try{
 			await int.respond(choices);
