@@ -86,7 +86,7 @@ module.exports = async () => {
 	console.timeEnd('Сlient login');
 	console.log('Start init.js');
 
-	global.guild = await client.guilds.cache.get(config.home);
+	global.guild = await client.guilds.fetch(config.home);
 	console.log('Selected guild "' + guild.name + '"');
 
 	console.log('Loading functions:');
