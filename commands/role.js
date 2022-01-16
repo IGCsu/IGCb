@@ -61,7 +61,7 @@ module.exports = {
   
 	slash : async function(int){
 		const member = guild.members.cache.get(data.member.user.id);
-		const permission = this.permission({member: member})
+		const permission = this.permission(member)
 	
 		let role = int.options.getRole('role');
 		const create = int.options.getBoolean('create');
@@ -86,7 +86,7 @@ module.exports = {
 			member.roles[action.val](role.id, 'По требованию ' + member2name(member, 1));
 			text = reaction.emoji.success + ' Роль <@&' + role.id + '> ' + action.text + ' <@' + member.id + '>';
 		} else {text = 'Запускаю выдачу ролей'};
-		
+
 		int.reply({content: text, allowedMentions: { "parse": [] }});
 	
 		if (members && permission) members.forEach(user => int.followUp({content: reaction.emoji.error + ' ' + toggleRole(role, user, member), allowedMentions: { parse: [] }}));
@@ -205,13 +205,13 @@ module.exports = {
 	/**
 	 * Проверка наличия прав на редактирование прав или наличие роли Оратор
 	 *
-	 * @param {Message} msg
+	 * @param {Message} member
 	 */
-	permission : msg =>
-		msg.member.permissions.has('MANAGE_ROLES') ||
-		msg.member.roles.cache.has('620194786678407181') ||
-		msg.member.roles.cache.has('809040260582998016') ||
-		msg.member.roles.cache.has('916999822693789718') ||
-		msg.member.id == '500020124515041283'
+	permission : member =>
+		member.permissions.has('MANAGE_ROLES') ||
+		member.roles.cache.has('620194786678407181') ||
+		member.roles.cache.has('809040260582998016') ||
+		member.roles.cache.has('916999822693789718') ||
+		member.id == '500020124515041283'
   
   };
