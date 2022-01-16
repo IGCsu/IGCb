@@ -14,7 +14,7 @@ module.exports = {
 	* @return {Object}
 	*/
 	init : async function(path){
-		this.channel = guild.channels.cache.get('500010381490782238');
+		this.channel = guild.channels.cache.get('634466120119877653');
 
 		if(!this.channel){
 			log.error(path + ': Отсутствует #некролог');
