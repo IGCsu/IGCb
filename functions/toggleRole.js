@@ -6,11 +6,11 @@
  * @param {Author}              author Объект автора вызова функции
  */
 module.exports = (role, member, author) => {
-	if(!member instanceof Discord.GuildMember)
-		member = guild.member(member);
+	if(!(member instanceof Discord.GuildMember))
+		member = guild.members.cache.get(member);
 
 	if(!member) return [false, 'Пользователь не найден'];
-
+	
 	const action = member.roles.cache.has(role.id)
 		? { val : 'remove', text : 'убрана у' }
 		: { val : 'add', text : 'выдана' };

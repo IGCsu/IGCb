@@ -74,18 +74,18 @@ module.exports = {
 		const member = int.member;
 		const permission = this.permission(member)
 	
-		let role = int.options.getRole('role');
+		let role = int.guild.roles.cache.get(int.options.get('role').value);
 		const create = int.options.getBoolean('create');
-		let members = int.options.get('members');
+		let members = int.options.get('members').value;
 		if(members)
 			members = members.replace(/[^-_\w]/g, ' ').match(/[0-9]+/g);
 		
 		if(!role) {
 			if (permission && create){
-			role = await this.create({member: member}, data.data.options[0].value, 45)
-			return int.reply({content: reaction.emoji.success + 'Роль <@&' + role.role.id + '> созданна', allowed_mentions: { "parse": [] }})
+			role = await this.create({member: member}, int.options.get('role').name, 45)
+			return await int.reply({content: reaction.emoji.success + 'Роль <@&' + role.role.id + '> созданна', allowed_mentions: { "parse": [] }})
 			} else {
-			return int.reply(data, {content: reaction.emoji.error + ' Роль не найдена', allowed_mentions: { "parse": [] }})
+			return await int.reply({content: reaction.emoji.error + ' Роль не найдена', allowedMentions: { "parse": [] }, ephemeral: true})
 			};
 		};
 
@@ -98,9 +98,16 @@ module.exports = {
 			text = reaction.emoji.success + ' Роль <@&' + role.id + '> ' + action.text + ' <@' + member.id + '>';
 		} else {text = 'Запускаю выдачу ролей'};
 
-		int.reply({content: text, allowedMentions: { "parse": [] }});
+		await int.reply({content: text, allowedMentions: { "parse": [] }});
 	
-		if (members && permission) members.forEach(user => int.followUp({content: reaction.emoji.error + ' ' + toggleRole(role, user, member), allowedMentions: { parse: [] }}));
+		if (members && permission) members.forEach(user => {
+			let data = toggleRole(role, user, member);
+			const emj = data[0] ? reaction.emoji.success : reaction.emoji.error;
+			let payload = { content: emj + ' ' + data[1], allowedMentions: { parse: [] },
+				ephemeral: !data[0]
+			};
+			int.followUp(payload);
+			});
 	},
   
 	/**
@@ -182,7 +189,7 @@ module.exports = {
 		let entry = false;
   
 		const curr_roles = Array.from(roles.cache.filter(r => {
-			if(!(r.color == 5095913 || r.color == 3447003 || r.color == 13084411)) return false;
+			if(!(r.color == 5095913 || r.color == 3447003)) return false;
 			if(entry) return false;
 			position = r.rawPosition;
 			let role = r.name.toLowerCase();
