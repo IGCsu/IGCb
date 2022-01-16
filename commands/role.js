@@ -44,24 +44,34 @@ module.exports = {
 	 */
   
 	autocomplete : async function(int){
+		const timeStart = process.hrtime();
 		let choices = [];
-
 		if (!int.options.getFocused()) return;
 
-		const role = int.options.getFocused()
+		const role = int.options.getFocused();
+		const create = int.options.getBoolean('create');
+
+		if(create) choices[0] = {name : role, value : role};
 		let finded = await this.has(guild.roles, role);
 		let predict = finded.roles;
 
 		predict_name = role;
 		
-		predict.sort(this.comporator);
-		for(let i = 0; i < predict.length && i < 25; i++) choices[i] = {name : predict[i].name, value : predict[i].id};
+		if(role)
+			predict.sort(this.comporator);
+		for(let i = choices.length; i < predict.length && i < 25; i++) choices[i] = {name : predict[i].name, value : predict[i].id};
 
-		int.respond(choices);
+		try{
+			await int.respond(choices);
+		} catch(e){
+			const timeEnd = process.hrtime(timeStart);
+			const timePerf = (timeEnd[0]*1000) + (timeEnd[1] / 1000000);
+			console.warn('Autocomplete Interaction Failed: ' + timePerf + 'ms' + '\n' + e)
+		};
 	},
   
 	slash : async function(int){
-		const member = guild.members.cache.get(data.member.user.id);
+		const member = int.member;
 		const permission = this.permission(member)
 	
 		let role = int.options.getRole('role');
@@ -166,12 +176,12 @@ module.exports = {
 	 * @param {Message} msg
 	 * @param {String}  name Название роли
 	 */
-	has : (msg, name) => {
+	has : (roles, name) => {
 		name = name.toLowerCase();
 		let position = 0;
 		let entry = false;
   
-		const roles = Array.from(roles.cache.filter(r => {
+		const curr_roles = Array.from(roles.cache.filter(r => {
 			if(!(r.color == 5095913 || r.color == 3447003 || r.color == 13084411)) return false;
 			if(entry) return false;
 			position = r.rawPosition;
@@ -180,7 +190,7 @@ module.exports = {
 			return role.includes(name);
 		}).values());
   
-		return { position : position, roles : roles };
+		return { position : position, roles : curr_roles };
 	},
   
   
