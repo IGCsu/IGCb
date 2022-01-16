@@ -43,7 +43,7 @@ module.exports = {
 
 		if(!result[0]) return int.reply({ content : reaction.emoji.error + ' ' + result[1], ephemeral : true});
 
-		return int.reply({ content : reaction.emoji.success + ' ' + result[1] });
+		return int.reply({ content : reaction.emoji.success + ' ' + result[1], allowedMentions: {parse: []}});
 	},
 
 
