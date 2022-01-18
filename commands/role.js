@@ -76,7 +76,7 @@ module.exports = {
 	
 		let role = int.guild.roles.cache.get(int.options.get('role').value);
 		const create = int.options.getBoolean('create');
-		let members = int.options.get('members').value;
+		let members = int.options.get('members')?.value;
 		if(members)
 			members = members.replace(/[^-_\w]/g, ' ').match(/[0-9]+/g);
 		
