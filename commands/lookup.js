@@ -61,7 +61,7 @@ module.exports = {
 	slash : async function(int){
 		try{
 			const id = int.options.get('id').value;
-			const embed = await this.call(id);
+			const embed = await this.call(id.replace(/[^-_\w]/g, ' ').match(/[0-9]+/g)[0]);
 			int.reply({ embeds : [embed] });
 		}catch(e){
 			int.reply({ content : reaction.emoji.error + ' Пользователь не найден', ephemeral : true });
