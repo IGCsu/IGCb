@@ -40,6 +40,7 @@ module.exports = {
 	 * @param {Message} msg Сообщение пользователя
 	 */
 	rule : async function(msg){
+		msg.content = msg.content.replace('а', 'a');
 		if(this.rules[msg.content])
 			await msg.channel.send({ content : 'https://igc.su/rules?f=' + msg.content });
 	},
