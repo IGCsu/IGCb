@@ -54,7 +54,7 @@ module.exports = {
 		await msg.delete();
 		await msg.channel.send({
 			content : `<@${msg.author.id}>: ` + msg.content.replace('media.discordapp.net', 'cdn.discordapp.com'),
-			allowedMentions : { parse : [] },
+			//allowedMentions : { parse : [] },
 			reply : {messageReference: msg.reference?.messageId ?? undefined, failIfNotExists: false}
 		});
 	},
