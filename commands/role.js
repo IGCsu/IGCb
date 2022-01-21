@@ -82,8 +82,8 @@ module.exports = {
 		
 		if(!role) {
 			if (permission && create){
-			role = await this.create({member: member}, int.options.get('role').name, 45)
-			return await int.reply({content: reaction.emoji.success + 'Роль <@&' + role.role.id + '> созданна', allowed_mentions: { "parse": [] }})
+			role = await this.create(member, int.options.get('role').value, 45)
+			return await int.reply({content: reaction.emoji.success + ' Роль <@&' + role.role.id + '> созданна', allowed_mentions: { "parse": [] }})
 			} else {
 			return await int.reply({content: reaction.emoji.error + ' Роль не найдена', allowedMentions: { "parse": [] }, ephemeral: true})
 			};
@@ -141,17 +141,15 @@ module.exports = {
 	 * @param {String}  name Название роли
 	 * @param {Number}  pos  Позиция роли
 	 */
-	create : async function(msg, name, pos){
+	create : async function(member, name, pos){
 		name = name[0].toUpperCase() + name.slice(1);
 
 		const role = await guild.roles.create({
-			data : {
 			name : name,
 			mentionable : true,
 			color : 5095913,
-			position : pos
-			},
-			reason : 'По требованию ' + member2name(msg.member, 1)
+			position : pos,
+			reason : 'По требованию ' + member2name(member, 1)
 		});
 		return { role : role , chk: true};
 	},
