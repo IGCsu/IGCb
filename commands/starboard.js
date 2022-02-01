@@ -30,6 +30,7 @@ module.exports = {
 
 	call : async function(reaction, message, user){
 		if(reaction.emoji.name != this.starboardEmoji) return;
+		if(message.channel.nsfw) return;
 		if(reaction.count < this.defaultEmojiCount) return;
 
 		const embed = new Discord.MessageEmbed()
