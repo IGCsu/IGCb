@@ -8,7 +8,7 @@ module.exports = {
 	text : 'Модуль для управления голосовыми каналами.\n\nПри заходе пользователя в #Создать канал - создаётся голосовой канал, в котором у автора будут все права. Он может редактировать канал как угодно. После выхода всех пользователей, канал удаляется, настройки не сохраняются.\n\nДля передачи прав владения другому пользователю, достаточно нажать на нужного пользователя правой кнопкой мыши и в меню "Приложения" выбрать команду "voice". Выбранный пользователь получит права владения над всеми голосовыми каналами, в которых у вас есть право редактирования ролей.\n\nБот не удаляет каналы, у которых в названии в конце есть звёздочка `*`.',
 	descriptionShort : 'Модуль для управления каналами',
 
-	starboardChannel : guild.channels.cache.get('937488465585668156'),
+	starboardChannel : guild.channels.cache.get('938171284553101456'),
 	starboardEmoji : '⭐',
 	defaultEmojiCount : 5,
 
@@ -33,7 +33,6 @@ module.exports = {
 		if(message.channel.nsfw) return;
 		if(reaction.count != this.defaultEmojiCount) return;
 		const users = await message.reactions.cache.get(this.starboardEmoji).users.fetch();
-		console.log(users)
 		if(users.get(client.id)) return;
 
 		const embed = new Discord.MessageEmbed()
