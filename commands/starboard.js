@@ -47,6 +47,7 @@ module.exports = {
 		if(message.attachments.size) embed.setImage(message.attachments.first().url);
 
 		await this.starboardChannel.send({embeds: [embed]})
+		await message.react(this.starboardEmoji)
 
 	},
 };
