@@ -32,7 +32,9 @@ module.exports = {
 		if(reaction.emoji.name != this.starboardEmoji) return;
 		if(message.channel.nsfw) return;
 		if(reaction.count != this.defaultEmojiCount) return;
-		if(!(await (message.reactions.cache.get(this.starboardEmoji)).users.fetch().get(client.id))) return;
+		const users = await message.reactions.cache.get(this.starboardEmoji).users.fetch();
+		console.log(users)
+		if(users.get(client.id)) return;
 
 		const embed = new Discord.MessageEmbed()
 			.setAuthor({
