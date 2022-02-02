@@ -31,6 +31,7 @@ module.exports = {
 	call : async function(reaction, message, user){
 		if(reaction.emoji.name != this.starboardEmoji) return;
 		if(message.channel.nsfw) return;
+		if(message.channel.nsfw == this.starboardChannel) return;
 		if(reaction.count != this.defaultEmojiCount) return;
 		const users = await message.reactions.cache.get(this.starboardEmoji).users.fetch();
 		if(users.get(client.id)) return;
