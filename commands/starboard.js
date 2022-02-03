@@ -47,7 +47,11 @@ module.exports = {
 			.addField('Оригинал', `[#${message.channel.name}](${message.url})`)
 			.setTimestamp();
 		
-		if(message.attachments.size) embed.setImage(message.attachments.first().url);
+		if(message.attachments.size){
+			embed.setImage(message.attachments.first().url)
+		} else {
+			embed.setImage(message.content.match(/https?:\/\/((media)|(cdn))\.discordapp\.((net)|(com))\/\S+/i)?.[0])
+		};
 
 		await this.starboardChannel.send({embeds: [embed]})
 		await message.react(this.starboardEmoji)
