@@ -50,7 +50,12 @@ module.exports = {
 		if(message.attachments.size){
 			embed.setImage(message.attachments.first().url)
 		} else {
-			embed.setImage(message.content.match(/https?:\/\/((media)|(cdn))\.discordapp\.((net)|(com))\/\S+/i)?.[0])
+			const img = message.content.match(/https?:\/\/((media)|(cdn))\.discordapp\.((net)|(com))\/\S+/i)?.[0]
+			if(img){
+				embed.setImage(img);
+				if(!(img.endsWith('mp4') || img.endsWith('mov') || img.endsWith('webp')))
+					embed.setDescription(message.content.replace(img, ''));
+			}
 		};
 
 		await this.starboardChannel.send({embeds: [embed]})
