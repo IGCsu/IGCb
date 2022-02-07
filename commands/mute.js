@@ -7,6 +7,8 @@ module.exports = {
 	title : 'Модуль поддержки таймаутов',
 	description : 'Используется для логгирования мутов',
 
+	cache : {},
+
 	/**
 	* Инициализирует прослушку необходимых ивентов.
 	* Находит канал #некролог.
@@ -15,6 +17,7 @@ module.exports = {
 	*/
 	init : async function(path){
 		this.channel = guild.channels.cache.get('634466120119877653');
+		this.priveteLogs = guild.channels.cache.get('574997373219110922');
 
 		if(!this.channel){
 			log.error(path + ': Отсутствует #некролог');
@@ -41,7 +44,18 @@ module.exports = {
 	update : async function(before, after){
 		if(before.communicationDisabledUntilTimestamp == after.communicationDisabledUntilTimestamp) return;
 
-		if(!after.communicationDisabledUntilTimestamp) return;
+		if(!after.communicationDisabledUntilTimestamp) {
+			const message = this.channel.messages.cache.get(this.cache[after.id]?.messageId);
+			let embed = message.embeds[0];
+			const description = embed.description.split('\n');
+			embed.setTitle(embed.title + '(Отменён)')
+			embed.setDescription(description[0] + '\n' + description[1] +
+				'\nРазмут <t:' + Math.floor(Date.now()/1000) + ':R>'
+			);
+			await message.edit({embeds: [embed]})
+			delete this.cache[after.id]
+			return
+		};
 
 		const time = this.getTimeMute(after.communicationDisabledUntilTimestamp);
 		const date = formatDate();
@@ -65,6 +79,8 @@ module.exports = {
 
 		const msg = await this.channel.send({ embeds : [embed] });
 		const thread = await msg.startThread({ name : text });
+		
+		this.cache[after.id] = {until: after.communicationDisabledUntilTimestamp, messageId: msg.id};
 	},
 
 	/**
