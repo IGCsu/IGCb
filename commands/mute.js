@@ -68,10 +68,11 @@ module.exports = {
 			.setTimestamp()
 			.setThumbnail(after.user.avatarURL({ dynamic: true }))
 			.setDescription('Пользователь: **`' + after.user.username + '#' + after.user.discriminator +
+				'`**\nID пользователя: **`' + after.user.id +
 				'`**\nПричина: **`' + (advancedMuteData?.reason ? advancedMuteData.reason : 'не указана') +
 				'`**\nРазмут <t:' + Math.floor(after.communicationDisabledUntilTimestamp/1000) + ':R>'
 			);
-		
+
 		if(advancedMuteData?.author) embed.setFooter({
 			iconURL: advancedMuteData.author.displayAvatarURL({ dynamic: true }),
 			text: advancedMuteData.author.username + '#' + advancedMuteData.author.discriminator
@@ -79,7 +80,7 @@ module.exports = {
 
 		const msg = await this.channel.send({ embeds : [embed] });
 		const thread = await msg.startThread({ name : text });
-		
+
 		this.cache[after.id] = {until: after.communicationDisabledUntilTimestamp, messageId: msg.id};
 	},
 
@@ -101,7 +102,7 @@ module.exports = {
 			author = entrie.executor;
 			reason = entrie.reason;
 		};
-		
+
 		return {author: author, reason: reason};
 	},
 
