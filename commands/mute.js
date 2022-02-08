@@ -16,7 +16,7 @@ module.exports = {
 	* @return {Object}
 	*/
 	init : async function(path){
-		this.channel = guild.channels.cache.get('500010381490782238');
+		this.channel = guild.channels.cache.get('634466120119877653'); //500010381490782238
 		this.priveteLogs = guild.channels.cache.get('574997373219110922');
 
 		if(!this.channel){
@@ -26,10 +26,47 @@ module.exports = {
 		}
 
 		client.on('guildMemberUpdate', (before, after) => this.update(before, after));
+		client.on('guildBanAdd', ban => this.ban(ban));
 
 		return this;
 	},
 
+
+
+
+	/**
+	 * Функция прослушки ивента бана.
+	 * Отправляет инфу о бане в #некролог
+	 *
+	 * @param {GuildBan} ban Объект бана
+	 */
+	ban : async function(ban){
+		const text = 'BAN ' + ban.user.username + '#' + ban.user.discriminator + ' ' + ban.user.id;
+
+		let embed = new Discord.MessageEmbed()
+			.setTitle(reaction.emoji.banhammer + ' Бан')
+			.setColor(0x808080)
+			.setTimestamp()
+			.setThumbnail(ban.user.avatarURL({ dynamic: true }))
+			.setDescription('Пользователь: **`' + ban.user.username + '#' + ban.user.discriminator +
+				'`**\nID пользователя: **`' + ban.user.id +
+				'`**\nПричина: **`' + (ban?.reason ? ban.reason : 'не указана') + '`**'
+			);
+
+		try {
+			const auditLogs = await guild.fetchAuditLogs({ limit : 1, type : 22 });
+			const entrie = auditLogs.entries.first();
+
+			if(entrie)
+				embed.setFooter({
+					iconURL : entrie.executor.displayAvatarURL({ dynamic: true }),
+					text : entrie.executor.username + '#' + entrie.executor.discriminator
+				});
+		}catch(e){}
+
+		const msg = await this.channel.send({ embeds : [embed] });
+		const thread = await msg.startThread({ name : text });
+	},
 
 
 
@@ -94,16 +131,16 @@ module.exports = {
 	*/
 	getAdvancedMuteData : async function(target){
 		const auditLogs = await guild.fetchAuditLogs({limit: 1, type: 24});
-		let author, reason;
+		let result = { author : undefined, reason : undefined};
 
 		const entrie = auditLogs.entries.first();
-		if(!entrie) return {author: author, reason: reason};
+		if(!entrie) return result;
 		if(entrie.changes[0].key == 'communication_disabled_until' && entrie.target == target){
-			author = entrie.executor;
-			reason = entrie.reason;
+			result.author = entrie.executor;
+			result.reason = entrie.reason;
 		};
 
-		return {author: author, reason: reason};
+		return result;
 	},
 
 

@@ -6,6 +6,8 @@ module.exports = {
 		warning : '<:warning:872900968705065070>',
 		loading : '<a:loading:905609086257754152>',
 
+		banhammer : '<:banhammer:509629411029680149>',
+
 		// Yes, I know this is bad code. But I retard. Then I'll think about it someday
 		Sg3 : guild.emojis.cache.get('499315437251723274'),
 		Sg0 : guild.emojis.cache.get('499316230172442625'),
