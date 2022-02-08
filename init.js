@@ -2,6 +2,14 @@ const fs = require('fs');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 
+/**
+ * Массив модулей разрешённых к подключению.
+ * Если пустой - подключаются в естественном порядке. В ином случае, подключаются лишь указанные модули.
+ *
+ * Пример: "help.js"
+ * @type {Array}
+ */
+const debugAllowModules = [];
 
 /**
  * Возвращает команды бота
@@ -14,6 +22,11 @@ const getCommands = async () => {
 	const files = await fs.readdirSync('./commands/');
 	for(const file of files){
 		const path = './commands/' + file;
+		if(debugAllowModules.length && debugAllowModules.indexOf(file) === -1){
+			log.warn(path + ': debug');
+			continue;
+		}
+
 		const timeStart = process.hrtime();
 
 		let command = require(path);
