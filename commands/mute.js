@@ -16,7 +16,7 @@ module.exports = {
 	* @return {Object}
 	*/
 	init : async function(path){
-		this.channel = guild.channels.cache.get('634466120119877653');
+		this.channel = guild.channels.cache.get('500010381490782238');
 		this.priveteLogs = guild.channels.cache.get('574997373219110922');
 
 		if(!this.channel){
