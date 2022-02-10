@@ -72,7 +72,7 @@ module.exports = {
 
 
 	getCommand : c => {
-		return '`' + c.name + '.js` - ' + c.title + ', *' + c.descriptionShort + '*';
+		return '`' + c.name + '` - ' + c.title + (c.descriptionShort ? (', *' + c.descriptionShort + '*') : '');
 	}
 
 };

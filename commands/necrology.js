@@ -1,7 +1,7 @@
 module.exports = {
 
 	active : true,
-	category : 'Логгинг некролога',
+	category : 'Логирование',
 
 	name : 'necrology',
 	title : 'Модуль логгирования таймаутов и банов',
