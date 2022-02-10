@@ -133,7 +133,7 @@ module.exports = async () => {
 
 	console.time('Event interactionCreate');
 	client.on('interactionCreate', async interaction => {
-		const command = commands.get(interaction.commandName);
+		const command = commands.get(interaction.commandName ?? interaction.customId.split('|')[0]);
 
 		if(!command || !command.active) return;
 
@@ -142,6 +142,7 @@ module.exports = async () => {
 		if(interaction.isUserContextMenu()) type = 'contextUser';
 		if(interaction.isMessageContextMenu()) type = 'contextMesage';
 		if(interaction.isAutocomplete()) type = 'autocomplete';
+		if(interaction.isButton()) type = 'button';
 
 		if(!type || !command[type]) return;
 
