@@ -150,6 +150,18 @@ module.exports = async () => {
 	});
 	console.timeEnd('Event interactionCreate');
 
+	console.time('Event raw');
+	client.on('raw', async data => {
+		if(data.t != 'INTERACTION_CREATE') return
+		if(data.d.type != 5) return;
+		const command = commands.get('poll');
+		if(!command || !command.active) return;
+		const type = 'modal'
+
+		await command[type](data.d);
+	});
+	console.timeEnd('Event raw');
+
 	log.start('== Bot ready ==');
 
 };

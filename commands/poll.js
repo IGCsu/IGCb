@@ -58,18 +58,21 @@ module.exports = {
         if(type == 'common' || type == 'senate'){
             const question = int.options.data[0].options[0].value;
             const txt = (type == 'common' ? 'Общий' : 'Закрытый' )
-            int.reply({content: `${txt} опрос: ${question}`, components:[{type : 1, components: [{type : 2, style: 3, customId:'poll|yes', label:'За'}, {type : 2, style: 4, customId:'poll|no', label:'Против'}]}], allowed_mentions:{parse:[]}})
+            await int.reply({content: `${txt} опрос: ${question}`, components:[{type : 1, components: [{type : 2, style: 3, customId:'poll|yes', label:'За'}, {type : 2, style: 4, customId:'poll|no', label:'Против'}]}], allowed_mentions:{parse:[]}})
         };
     },
     button : async function(int){
         //int.reply({content: 'В разработке', ephemeral: true});
 		const type = int.customId.split('|')[1]
-		client.api.interactions(int.id, int.token).callback.post({
+		if(type == 'senate' && (int.member.roles.cache.get('916999822693789718') || int.member.roles.cache.get('613412133715312641'))){
+			await int.reply({content: 'Отказано в достпуе', ephemeral: true})
+		}
+		await client.api.interactions(int.id, int.token).callback.post({
 			data:{
 				type: 9,
 				data: {
 					title: 'Подтверждение голоса',
-					custom_id: 'poll|' + type,
+					custom_id: 'poll|' + type + '|' + int.message.content.split(': ')[1],
 					components:[{
 						type: 1,
 						components:[{
@@ -87,4 +90,16 @@ module.exports = {
 			}
 		})
     },
+	modal : async function(int){
+		console.log(int.data.custom_id.split('|')[2] + ' ' + int.member.user.username + ' ' + (int.data.custom_id.split('|')[1] == 'yes') ? 'за' : 'против' + ' : ' + int.data.components[0].components[0].value)
+		await client.api.interactions(int.id, int.token).callback.post({
+			data:{
+				type: 4,
+				data: {
+					content: 'Голос подтверждён',
+					flags: 64
+				}
+			}
+		})
+	}
 };
