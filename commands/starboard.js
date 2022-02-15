@@ -10,7 +10,7 @@ module.exports = {
 
 	starboardChannel : guild.channels.cache.get('938171284553101456'),
 	starboardEmoji : '⭐',
-	defaultEmojiCount : 5,
+	defaultEmojiCount : 7,
 
 	/**
 	* Инициализирует прослушку необходимых ивентов.
