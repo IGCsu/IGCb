@@ -20,7 +20,7 @@ module.exports = {
 				},
 				{
 					name : 'min',
-					description : 'Минимально необходтмое количество символов в ответе. (0 - ответ не обязателен)',
+					description : 'Минимально необходимое количество символов в ответе. (0 - ответ не обязателен)',
 					type : 4,
 					required : false,
 				}
@@ -111,7 +111,7 @@ module.exports = {
 		const resp = int.customId.split('|')[1]
 		const type = int.customId.split('|')[3]
 		if(type == 'senate' && (int.member.roles.cache.get('916999822693789718') || int.member.roles.cache.get('613412133715312641'))){
-			await int.reply({content: 'Отказано в достпуе', ephemeral: true})
+			return await int.reply({content: 'Отказано в достпуе', ephemeral: true})
 		}
 
 		const min = int.customId.split('|')[2];
@@ -123,7 +123,7 @@ module.exports = {
 				type: 9,
 				data: {
 					title: 'Подтверждение голоса',
-					custom_id: 'poll|' + type + '|' + int.message.content.split(': ')[1],
+					custom_id: 'poll|' + type + '|' + int.message.content.split(': ')[1] + '|' + resp,
 					components:[{
 						type: 1,
 						components:[{
@@ -142,7 +142,7 @@ module.exports = {
 		})
     },
 	modal : async function(int){
-		console.log(`\x1b[33m${int.data.custom_id.split('|')[2]} ${int.member.user.username} ${(int.data.custom_id.split('|')[1] == 'yes') ? 'за' : 'против'}:\x1b[0m ${int.data.components[0].components[0].value}`)
+		console.log(`\x1b[33m${int.data.custom_id.split('|')[2]} ${int.member.user.username} ${(int.data.custom_id.split('|')[3] == 'yes') ? 'за' : 'против'}:\x1b[0m ${int.data.components[0].components[0].value}`)
 		await client.api.interactions(int.id, int.token).callback.post({
 			data:{
 				type: 4,
