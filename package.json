@@ -12,6 +12,7 @@
     "@discordjs/rest": "^0.1.0-canary.0",
     "discord-api-types": "^0.25.2",
     "discord.js": "^13.5.0",
+    "sqlite": "^4.0.23",
     "sync-mysql": "^3.0.1",
     "transliteration": "^2.2.0"
   }
