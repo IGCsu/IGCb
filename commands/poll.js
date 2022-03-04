@@ -133,7 +133,7 @@ module.exports = {
 		})
     },
 	modal : async function(int){
-		console.log(`${int.data.custom_id.split('|')[2]} ${int.member.user.username} ${(int.data.custom_id.split('|')[1] == 'yes') ? 'за' : 'против'}: ${int.data.components[0].components[0].value}`)
+		console.log(`\x1b[33m${int.data.custom_id.split('|')[2]} ${int.member.user.username} ${(int.data.custom_id.split('|')[1] == 'yes') ? 'за' : 'против'}:\x1b[0m ${int.data.components[0].components[0].value}`)
 		await client.api.interactions(int.id, int.token).callback.post({
 			data:{
 				type: 4,
