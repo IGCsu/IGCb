@@ -117,7 +117,7 @@ module.exports = async () => {
 		if(msg.channel.guild.id != config.home) return;
 
 		if(msg.content.substr(0, config.prefix.length) != config.prefix){
-			if(commands.list.nocommand) commands.list.nocommand.call(msg);
+			if(commands.list.nocommand?.active) commands.list.nocommand.call(msg);
 			return;
 		}
 		if(msg.author.bot) return;
