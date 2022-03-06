@@ -10,9 +10,13 @@ module.exports = {
 	description : 'Уведомления игры Diplomacy',
 	descriptionShort : 'Уведомления игры Diplomacy',
 
-	gameID : '51872',
-	interval : 600,
+	gameID : '51872', // ID игры на сайте
+	interval : 600, // Интервал в секундах между запросами
 
+	/**
+	 * Список игроков. ID игроков на сайте => ID игроков в дискорде
+	 * @type {Object}
+	 */
 	players : {
 		'19271' : '378478050460827648',
 		'19287' : '294713715599736834',
@@ -36,6 +40,10 @@ module.exports = {
 		'19655' : '256114365894230018'
 	},
 
+	/**
+	 * Список эмодзи флагов стран
+	 * @type {Object}
+	 */
 	flags : {
 		'France' : '🇫🇷',
 		'Italy' : '🇮🇹',
@@ -59,11 +67,37 @@ module.exports = {
 		'Russia' : '🇷🇺',
 	},
 
+	/**
+	 * Список эмодзи под статус игрока
+	 * @type {Object}
+	 */
 	statuses : {
 		'Ready' : 'success',
 		'Completed' : 'warning',
-		'Not received' : 'error'
+		'Not received' : 'error',
+		'Skip' : 'black_circle'
 	},
+
+	/**
+	 * Список сезонов на русском языке
+	 * @type {Object}
+	 */
+	seasons : {
+		'Spring' : 'Весна',
+		'Summer' : 'Лето',
+		'Autumn' : 'Осень',
+		'Winter' : 'Зима',
+	},
+
+	/**
+	 * Список фаз на русском языке
+	 * @type {Object}
+	 */
+	phases : {
+		'Diplomacy' : 'Дипломатия',
+		'Retreats' : 'Отступления'
+	},
+
 
 	init : async function(path){
 
@@ -83,12 +117,12 @@ module.exports = {
 				const result = await this.update(false);
 				if(result.status) await this.channel.send(result.data);
 			}catch(e){
-				log.error(path + ': ' + e.message);
+				log.error('./commands/' + this.name + '.js: ' + e.message);
 				clearInterval(this.timerId);
 			}
 		}, this.interval * 1000);
 
-		const pattern = '<tr class="member memberAlternate\\d"><td class="memberLeftSide">\\s+<span class="memberCountryName"> <span class="member\\d+StatusIcon"><img src=".+" alt="(.+)" title=".+" \\/> <\\/span><span class="country\\d+  memberStatusPlaying">(.+)<\\/span><\\/span>\\s+<\\/td>\\s+<td class="memberRightSide ">\\s+<div>\\s+<div class="memberUserDetail">\\s+<span class="memberName"><a href=profile\\.php\\?userID=(\\d+)">.+<\\/a>\\s+<span class="points">\\(1000 <img src="images\\/icons\\/vpoints\\.png" alt="D" title="vDiplomacy points" \\/><\\/b>\\)<\\/span><\\/span>  - Delays left: <span class="excusedNMRs">(\\d+)<\\/span> of <span class="excusedNMRs">(\\d+)<\\/span><\\/span>\\s+<\\/div>\\s+<div class="memberGameDetail">\\s+<span class="memberPointsCount"><\\/span><br \\/><span class="memberUnitCount"><span class="memberSCCount"><em>(\\d+)<\\/em> supply-centers, <em class=".+">(\\d+)<\\/em> units<\\/span><\\/span>';
+		const pattern = '<tr class="member memberAlternate\\d"><td class="memberLeftSide">\\s+<span class="memberCountryName"> <span class="member\\d+StatusIcon">(-|<img src=".+" alt=".+" title=".+" \\/>) <\\/span><span class="country\\d+  memberStatusPlaying">(.+)<\\/span><\\/span>\\s+<\\/td>\\s+<td class="memberRightSide ">\\s+<div>\\s+<div class="memberUserDetail">\\s+<span class="memberName"><a href=profile\\.php\\?userID=(\\d+)">.+<\\/a>\\s+<span class="points">\\(1000 <img src="images\\/icons\\/vpoints\\.png" alt="D" title="vDiplomacy points" \\/><\\/b>\\)<\\/span><\\/span>  - Delays left: <span class="excusedNMRs">(\\d+)<\\/span> of <span class="excusedNMRs">(\\d+)<\\/span><\\/span>\\s+<\\/div>\\s+<div class="memberGameDetail">\\s+<span class="memberPointsCount"><\\/span><br \\/><span class="memberUnitCount"><span class="memberSCCount"><em>(\\d+)<\\/em> supply-centers, <em class=".+">(\\d+)<\\/em> units<\\/span><\\/span>';
 
 		this.globalRegExp = new RegExp(pattern, 'g');
 		this.localRegExp = new RegExp(pattern);
@@ -109,13 +143,19 @@ module.exports = {
 				: int.reply({ content : reaction.emoji.error + ' ' + result.data, ephemeral : true });
 		}catch(e){
 			int.reply({ content : reaction.emoji.error + ' [500] Ошибка!', ephemeral : true });
-			log.error(path + ': ' + e.message);
+			log.error('./commands/' + this.name + '.js: ' + e.message);
 			clearInterval(this.timerId);
 		}
 	},
 
 
-
+	/**
+	 * Запрос к сайту.
+	 * Определяет, не случилось ли обновление хода в интервал между проверками
+	 * Перебирает список игроков для выяснения их статуса. Пингует только тех, у кого ходов не сделано вообще и только в том случае, если в течении двух часов он не пинговал до этого
+	 * @param  {Boolean} status Статус. true - вернёт сообщение всегда. false - вернёт сообщение, только если случился новый ход.
+	 * @return {Object}
+	 */
 	update : async function(status){
 		const response = await fetch('https://www.vdiplomacy.com/board.php?gameID=' + this.gameID);
 		const body = await response.text();
@@ -140,22 +180,24 @@ module.exports = {
 		let ping = '';
 		for(user of users){
 			const data = user.match(this.localRegExp);
-			text += '\n' + reaction.emoji[this.statuses[data[1]]] + '  ' + this.flags[data[2]] + '<@' + this.players[data[3]] + '> ' + data[6] + ' supply, ' + data[7] + ' units';
-			if(data[1] == 'Not received') ping += '<@' + this.players[data[3]] + '>';
+			let userStatus = data[1].match(/<img src=".+" alt="(.+)" title=".+" \/>/);
+			userStatus = userStatus ? userStatus[1] : 'Skip';
+			text += '\n' + reaction.emoji[this.statuses[userStatus]] + '  ' + this.flags[data[2]] + '<@' + this.players[data[3]] + '> ' + data[6] + ' supply, ' + data[7] + ' units';
+			if(userStatus == 'Not received') ping += '<@' + this.players[data[3]] + '>';
 		}
 
 		const turn = body.match(/src="map\.php\?gameID=\d+&turn=(\d+)&mapType=large"/)[1];
-		const info = body.match(/<div class="titleBarLeftSide"><div><i><a class="light" href=".+">.+<\/a><\/i> - <span class="gameDate">(.+)<\/span>, <span class="gamePhase">(.+)<\/span>/);
+		const info = body.match(/<div class="titleBarLeftSide"><div><i><a class="light" href=".+">.+<\/a><\/i> - <span class="gameDate">(\w+),\s+(\d+)<\/span>, <span class="gamePhase">(.+)<\/span>/);
 
 		let embed = new Discord.MessageEmbed()
 			.setTimestamp()
 			.setAuthor({ name : 'www.vdiplomacy.com', url : 'https://www.vdiplomacy.com/board.php?gameID=' + this.gameID })
 			.setDescription('Конец хода <t:' + turnDeadline + ':R>\n' + text)
-			.setFooter({ text : info[1] + ', ' + info[2] })
+			.setFooter({ text : (this.seasons[info[1]] ?? info[1]) + ', ' + info[2] + ', ' + (this.phases[info[3]] ?? info[3]) })
 			.setImage('https://www.vdiplomacy.com/map.php?gameID=' + this.gameID + '&turn=' + turn + '&mapType=large');
 
 		if(status == 'turn')
-			embed.setTitle(reaction.emoji.success + ' Мут выдан на ' + time);
+			embed.setTitle('Новый ход!');
 
 		this.lastUpdate = currentHour;
 
@@ -166,7 +208,11 @@ module.exports = {
 	},
 
 
-
+	/**
+	 * Время строкой в unixtime
+	 * @param  {String} str Время строкой
+	 * @return {Number}     unixtime
+	 */
 	convertTimeToSeconds : str => {
 		switch(str){
 			case '5 minutes': return 300;

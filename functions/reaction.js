@@ -5,6 +5,7 @@ module.exports = {
 		error : '<:error:905609067106553886>',
 		warning : '<:warning:872900968705065070>',
 		loading : '<a:loading:905609086257754152>',
+		black_circle : '⚫',
 
 		banhammer : '<:banhammer:509629411029680149>',
 
