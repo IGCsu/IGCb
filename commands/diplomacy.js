@@ -10,6 +10,15 @@ module.exports = {
 	description : 'Уведомления игры Diplomacy',
 	descriptionShort : 'Уведомления игры Diplomacy',
 
+	slashOptions : [
+		{
+			name : 'ping',
+			description : 'Упомянуть игроков, которые не сохранили действий (раз в 6 часов)',
+			type : 5,
+			required : false
+		},
+	],
+
 	gameID : '51872', // ID игры на сайте
 	interval : 600, // Интервал в секундах между запросами
 
@@ -95,7 +104,8 @@ module.exports = {
 	 */
 	phases : {
 		'Diplomacy' : 'Дипломатия',
-		'Retreats' : 'Отступления'
+		'Retreats' : 'Отступления',
+		'Builds' : 'Рекрутинг'
 	},
 
 
@@ -114,7 +124,7 @@ module.exports = {
 
 		this.timerId = setInterval(async () => {
 			try{
-				const result = await this.update(false);
+				const result = await this.update(false, true);
 				if(result.status) await this.channel.send(result.data);
 			}catch(e){
 				log.error('./commands/' + this.name + '.js: ' + e.message);
@@ -137,7 +147,7 @@ module.exports = {
 	 */
 	slash : async function(int){
 		try{
-			const result = await this.update(true);
+			const result = await this.update(true, int.options.getBoolean('ping'));
 			result.status
 				? int.reply(result.data)
 				: int.reply({ content : reaction.emoji.error + ' ' + result.data, ephemeral : true });
@@ -152,11 +162,12 @@ module.exports = {
 	/**
 	 * Запрос к сайту.
 	 * Определяет, не случилось ли обновление хода в интервал между проверками
-	 * Перебирает список игроков для выяснения их статуса. Пингует только тех, у кого ходов не сделано вообще и только в том случае, если в течении двух часов он не пинговал до этого
-	 * @param  {Boolean} status Статус. true - вернёт сообщение всегда. false - вернёт сообщение, только если случился новый ход.
+	 * Перебирает список игроков для выяснения их статуса. Пингует только тех, у кого ходов не сделано вообще и только в том случае, если в течении шести часов он не пинговал до этого
+	 * @param  {Boolean} status true - вернёт сообщение всегда. false - вернёт сообщение, только если случился новый ход.
+	 * @param  {Boolean} ping   true - упомянет нужных пользователей. false - упоминания не будет.
 	 * @return {Object}
 	 */
-	update : async function(status){
+	update : async function(status, ping){
 		const response = await fetch('https://www.vdiplomacy.com/board.php?gameID=' + this.gameID);
 		const body = await response.text();
 
@@ -170,20 +181,20 @@ module.exports = {
 
 		if(!status) return { status : false, data : 'Нет новостей' };
 
-		if(status !== 'turn' && this.lastUpdate !== undefined && this.lastUpdate + 2 >= currentHour)
-			status = 'nopings';
+		if(status !== 'turn' && this.lastPing !== undefined && this.lastPing + 6 >= currentHour)
+			ping = false;
 
 		const users = body.match(this.globalRegExp);
 		if(!users) return { status : false, data : 'Ошибка!' };
 
 		let text = '';
-		let ping = '';
+		let pingList = '';
 		for(user of users){
 			const data = user.match(this.localRegExp);
 			let userStatus = data[1].match(/<img src=".+" alt="(.+)" title=".+" \/>/);
 			userStatus = userStatus ? userStatus[1] : 'Skip';
 			text += '\n' + reaction.emoji[this.statuses[userStatus]] + '  ' + this.flags[data[2]] + '<@' + this.players[data[3]] + '> ' + data[6] + ' supply, ' + data[7] + ' units';
-			if(userStatus == 'Not received') ping += '<@' + this.players[data[3]] + '>';
+			if(userStatus == 'Not received') pingList += '<@' + this.players[data[3]] + '>';
 		}
 
 		const turn = body.match(/src="map\.php\?gameID=\d+&turn=(\d+)&mapType=large"/)[1];
@@ -199,10 +210,11 @@ module.exports = {
 		if(status == 'turn')
 			embed.setTitle('Новый ход!');
 
-		this.lastUpdate = currentHour;
-
 		let data = { embeds : [embed] };
-		if(status != 'nopings' && ping.length) data.content = '||' + ping + '||';
+		if(ping && pingList.length){
+			data.content = '||' + pingList + '||';
+			this.lastPing = currentHour;
+		}
 
 		return { status : true, data : data };
 	},
