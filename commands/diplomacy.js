@@ -17,6 +17,12 @@ module.exports = {
 			type : 5,
 			required : false
 		},
+		{
+			name : 'ephemeral',
+			description : 'Скрыть ли сообщение для остальных',
+			type : 5,
+			required : false
+		},
 	],
 
 	gameID : '51872', // ID игры на сайте
@@ -148,6 +154,7 @@ module.exports = {
 	slash : async function(int){
 		try{
 			const result = await this.update(true, int.options.getBoolean('ping'));
+			result.data.ephemeral = int.options.getBoolean('ephemeral');
 			result.status
 				? int.reply(result.data)
 				: int.reply({ content : reaction.emoji.error + ' ' + result.data, ephemeral : true });
