@@ -4,7 +4,7 @@ module.exports = {
 
 	active : true,
 	category : 'Утилиты',
-
+	siteOffline : false,
 	name : 'nocommand',
 	title : 'Реакции на сообщения',
 	text : 'Модуль реагирования на сообщения. Отвечает за реакции в #ивенты, #предложения и тп. Отвечает за фишинг и обработку ссылок.',
@@ -14,8 +14,11 @@ module.exports = {
 	 * Получает json объект Устава Сообщества и помещает его в кэш
 	 */
 	init : async function(){
-		this.rules = await (await fetch('https://igc.su/rules?j=true')).json();
-
+		try{	
+			this.rules = await (await fetch('https://igc.su/rules?j=true')).json();
+		} catch(e) {
+			this.siteOffline = true;
+		}
 		return this;
 	},
 
@@ -40,6 +43,7 @@ module.exports = {
 	 * @param {Message} msg Сообщение пользователя
 	 */
 	rule : async function(msg){
+		if(this.siteOffline) return;
 		msg.content = msg.content.replace('а', 'a');
 		if(this.rules[msg.content])
 			await msg.channel.send(
