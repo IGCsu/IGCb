@@ -6,6 +6,18 @@ module.exports = {
 	descriptionShort : 'Позволяет создавать общие и модераторские опросы',
 	category : 'Утилиты',
 
+	FLAGS : {
+		POLLS: {
+			PRIVATE: 1,
+			PUBLIC: 2,
+			CLOSED: 4,
+		},
+		ANSWERS: {
+			DISAGREE: 1,
+			SPAM: 2,
+		}
+	},
+
 	slashOptions : [
 		{
 			name : 'common',
@@ -69,12 +81,14 @@ module.exports = {
         const type = int.options.getSubcommand();
         if(type == 'common' || type == 'senate'){
             const question = int.options.data[0].options[0].value;
-			const min = int.options.data[0].options[1]?.value ?? 'none';
-            const txt = (type == 'common' ? 'Общий' : 'Закрытый' )
+			const min = int.options.data[0].options[1]?.value ?? 25;
+            const txt = (type == 'common' ? 'Общий' : 'Закрытый');
+			let flags = 0;
+			flags += (type == 'common' ? 0 : this.FLAGS.POLLS.PRIVATE);
 			if(min > 1000){
 				await int.reply({content: 'Минимальное количество превышает максимальное'})
 			} else {
-            	await int.reply({content: `${txt} опрос: ${question}`, components:
+            	const message = await int.reply({content: `${txt} опрос: ${question}`, components:
 				[
 					{
 						type : 1, components: 
@@ -82,48 +96,67 @@ module.exports = {
 							{
 								type : 2,
 								style: 3,
-								customId:`poll|yes|${min}|${type}`,
+								customId:'poll|yes',
 								label:'За'
 							},
 							{
 								type : 2,
 								style: 4,
-								customId:`poll|no|${min}|${type}`,
+								customId:'poll|no',
 								label:'Против'
 							},
 							{
 								type : 2,
 								style: 2,
-								customId:`poll|result|${min}|${type}`,
+								customId:'poll|result',
 								label:'Результаты'
 							}
 						]
 					}
 				],
-					allowed_mentions:{parse:[]}
-				}
-			)}
+					allowedMentions:{parse:[]},
+					fetchReply: true
+				})
+				this.createPoll(message.id, question, min, 1000, flags);
+			};
+		} else {
+			int.reply({content: 'В разработке', ephemeral: true});
 		};
     },
 
     button : async function(int){
         //int.reply({content: 'В разработке', ephemeral: true});
+		const answer = this.getPollAnswer(int.member.user.id, int.message.id);
+		const value = answer ? answer.answer : undefined;
+		const poll = this.getPoll(int.message.id);
+		if(!poll) return int.reply({content: 'Этот опрос не найден в базе данных', ephemeral: true});
 		const resp = int.customId.split('|')[1]
-		const type = int.customId.split('|')[3]
-		if(type == 'senate' && (int.member.roles.cache.get('916999822693789718') || int.member.roles.cache.get('613412133715312641'))){
+		const private = poll.flags & this.FLAGS.POLLS.PRIVATE;
+		if(private && (int.member.roles.cache.get('916999822693789718') || int.member.roles.cache.get('613412133715312641'))){
 			return await int.reply({content: 'Отказано в достпуе', ephemeral: true})
 		}
 
-		const min = int.customId.split('|')[2];
+		const min = poll.min;
 
-		if(resp == 'result') return int.reply({content: 'В разработке', ephemeral: true});
+		if(resp == 'result') {
+			const results = this.getPollResults(int.message.id);
+			const content = 
+			'```ansi\n' + 
+			`против ${results.no} [[0;41m${' '.repeat(Math.round((results.no/results.result.length)*20))}[0;45m${' '.repeat(Math.round((results.yes/results.result.length)*20))}[0m] ${results.yes} за\n` + 
+			'```';
+			try{
+				return int.reply({content: content, ephemeral: true});
+			} catch(e){
+				console.log(e);
+			}
+		};
 
 		await client.api.interactions(int.id, int.token).callback.post({
 			data:{
 				type: 9,
 				data: {
 					title: 'Подтверждение голоса',
-					custom_id: 'poll|' + type + '|' + int.message.content.split(': ')[1] + '|' + resp,
+					custom_id: 'poll|' + resp,
 					components:[{
 						type: 1,
 						components:[{
@@ -131,10 +164,11 @@ module.exports = {
 							custom_id: 'opininon',
 							label: 'Почему вы выбрали именно \"' + ((resp == 'yes') ? 'За': 'Против') + '\"',
 							style: 2,
-							min_length: min == 'none' ? 25 : min,
+							value: value,
+							min_length: min,
 							max_length: 1000,
 							placeholder: 'Введите ваше ценное мнение',
-							required: min != '0'
+							required: min != 0
 						}]
 					}],
 				}
@@ -142,15 +176,47 @@ module.exports = {
 		})
     },
 	modal : async function(int){
-		console.log(`\x1b[33m${int.data.custom_id.split('|')[2]} ${int.member.user.username} ${(int.data.custom_id.split('|')[3] == 'yes') ? 'за' : 'против'}:\x1b[0m ${int.data.components[0].components[0].value}`)
+		const type = int.data.custom_id.split('|')[1];
+		let txt = ''
+		console.log(`\x1b[33m${int.message.content} ${int.member.user.username} ${(type == 'yes') ? 'за' : 'против'}:\x1b[0m ${int.data.components[0].components[0].value}`)
+		if(!this.getPollAnswer(int.member.user.id, int.message.id)){
+			this.createPollAnswer(int.member.user.id, int.message.id, int.data.components[0].components[0].value, (type == 'yes') ? 0 : this.FLAGS.ANSWERS.DISAGREE)
+			txt = 'подтверждён';
+		} else {
+			this.updatePollAnswer(int.member.user.id, int.message.id, int.data.components[0].components[0].value, (type == 'yes') ? 0 : this.FLAGS.ANSWERS.DISAGREE)
+			txt = 'изменён';
+		}
 		await client.api.interactions(int.id, int.token).callback.post({
 			data:{
 				type: 4,
 				data: {
-					content: 'Голос подтверждён',
+					content: 'Голос ' + txt,
 					flags: 64
 				}
 			}
 		})
-	}
+	},
+
+
+	getPoll: function (message_id) {
+		return DB.query(`SELECT * FROM polls WHERE id = '${message_id}';`)[0];
+	},
+	createPoll: function (message_id, question, min=0, max=0, flags=0) {
+		return DB.query(`INSERT INTO polls VALUES ('${message_id}', '${question}', ${min}, ${max}, ${flags});`)[0];
+	},
+
+	getPollAnswer: function (user_id, message_id) {
+		return DB.query(`SELECT * FROM poll_answers WHERE poll_id = '${message_id}' AND user_id = '${user_id}';`)[0];
+	},
+	getPollResults: function (message_id) {
+		return {result: DB.query(`SELECT * FROM poll_answers WHERE poll_id = '${message_id}';`),
+		yes: DB.query(`SELECT COUNT(*) FROM poll_answers WHERE poll_id = '${message_id}' AND flags = 0;`)[0]['COUNT(*)'],
+		no: DB.query(`SELECT COUNT(*) FROM poll_answers WHERE poll_id = '${message_id}' AND flags = 1;`)[0]['COUNT(*)']};
+	},
+	createPollAnswer: function (user_id, message_id, answer='', flags=0) {
+		return DB.query(`INSERT INTO poll_answers VALUES ('${user_id}', '${message_id}', '${answer}', ${flags});`)[0];
+	},
+	updatePollAnswer: function (user_id, message_id, answer='', flags=0) {
+		return DB.query(`UPDATE poll_answers SET answer = '${answer}', flags = ${flags} WHERE poll_id = '${message_id}' AND user_id = '${user_id}';`)[0];
+	},
 };
