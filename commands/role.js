@@ -9,6 +9,7 @@ module.exports = {
 	descriptionShort : 'Управление игровыми ролями',
 	category : 'Роли',
 
+	predict_name : '',
 
 	slashOptions : [
 		{
@@ -55,10 +56,10 @@ module.exports = {
 		let finded = await this.has(guild.roles, role);
 		let predict = finded.roles;
 
-		predict_name = role;
+		this.predict_name = role;
 		
 		if(role)
-			predict.sort(this.comporator);
+			predict.sort((a, b) => this.comporator(a, b));
 		for(let i = 0; i < predict.length && i < 25; i++) choices[i + 1 * create] = {name : predict[i].name, value : predict[i].id};
 
 		try{
@@ -159,7 +160,7 @@ module.exports = {
 	comporator : function(a, b) {
 		let aConf = 0.0;
 		let bConf = 0.0;
-		const name = predict_name.toLowerCase();
+		const name = this.predict_name.toLowerCase();
 		const aName = a.name.toLowerCase();
 		const bName = b.name.toLowerCase();
 
