@@ -152,7 +152,7 @@ module.exports = {
 		const days = Math.round(difference/86400);
 		const weeks = +(days/7).toFixed(1);
 
-		if(weeks > 0) return weeks + 'w';
+		if(weeks >= 1) return weeks + 'w';
 		if(days > 0) return days + 'd';
 		if(hours > 0) return hours + 'h';
 		if(minutes > 0) return minutes + 'm';
