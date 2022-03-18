@@ -46,7 +46,8 @@ module.exports = {
 		if(this.siteOffline) return;
 		msg.content = msg.content.replace('а', 'a');
 		if(['1', '2', '3', '4', '5'].includes(msg.content)) return;
-		msg.content = msg.content.replace('r');
+		msg.content = msg.content.replace('r', '');
+		console.log(msg.content)
 		if(this.rules[msg.content])
 			await msg.channel.send(
 				{
