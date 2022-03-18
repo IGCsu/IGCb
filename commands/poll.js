@@ -140,10 +140,13 @@ module.exports = {
 
 		if(resp == 'result') {
 			const results = this.getPollResults(int.message.id);
-			const content = 
-			'```ansi\n' + 
-			`против ${results.no} [[0;41m${' '.repeat(Math.round((results.no/results.result.length)*20))}[0;45m${' '.repeat(Math.round((results.yes/results.result.length)*20))}[0m] ${results.yes} за\n` + 
-			'```';
+			let content = 'Голосов пока нет';
+			if(results.result.length){
+				content = 
+				'```ansi\n' + 
+				`против ${results.no} [[0;41m${' '.repeat(Math.round((results.no/results.result.length)*20))}[0;45m${' '.repeat(Math.round((results.yes/results.result.length)*20))}[0m] ${results.yes} за\n` + 
+				'```';
+			};
 			try{
 				return int.reply({content: content, ephemeral: true});
 			} catch(e){
@@ -155,7 +158,7 @@ module.exports = {
 			data:{
 				type: 9,
 				data: {
-					title: 'Подтверждение голоса',
+					title: `${value ? 'Изменение' : 'Подтверждение'} голоса`,
 					custom_id: 'poll|' + resp,
 					components:[{
 						type: 1,
