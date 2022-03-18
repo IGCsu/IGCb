@@ -45,6 +45,8 @@ module.exports = {
 	rule : async function(msg){
 		if(this.siteOffline) return;
 		msg.content = msg.content.replace('а', 'a');
+		if(['1', '2', '3', '4', '5'].includes(msg.content)) return;
+		msg.content = msg.content.replace('r');
 		if(this.rules[msg.content])
 			await msg.channel.send(
 				{
