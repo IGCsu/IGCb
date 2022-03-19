@@ -138,7 +138,7 @@ module.exports = {
 			}
 		}, this.interval * 1000);
 
-		const pattern = '<tr class="member memberAlternate\\d"><td class="memberLeftSide">\\s+<span class="memberCountryName"> <span class="member\\d+StatusIcon">(-|<img src=".+" alt=".+" title=".+" \\/>) <\\/span><span class="country\\d+  memberStatusPlaying">(.+)<\\/span><\\/span>\\s+<\\/td>\\s+<td class="memberRightSide ">\\s+<div>\\s+<div class="memberUserDetail">\\s+<span class="memberName"><a href=profile\\.php\\?userID=(\\d+)">.+<\\/a>\\s+<span class="points">\\(1000 <img src="images\\/icons\\/vpoints\\.png" alt="D" title="vDiplomacy points" \\/><\\/b>\\)<\\/span><\\/span>  - Delays left: <span class="excusedNMRs">(\\d+)<\\/span> of <span class="excusedNMRs">(\\d+)<\\/span><\\/span>\\s+<\\/div>\\s+<div class="memberGameDetail">\\s+<span class="memberPointsCount"><\\/span><br \\/><span class="memberUnitCount"><span class="memberSCCount"><em>(\\d+)<\\/em> supply-centers, <em class=".+">(\\d+)<\\/em> units<\\/span><\\/span>';
+		const pattern = '<tr class="member memberAlternate\\d"><td class="memberLeftSide">\\s+<span class="memberCountryName"> <span class="member\\d+StatusIcon">(-|<img src=".+" alt=".+" title=".+" \\/>) <\\/span><span class="country\\d+  memberStatusPlaying">(.+)<\\/span><\\/span>\\s+<\\/td>\\s+<td class="memberRightSide ">\\s+<div>\\s+<div class="memberUserDetail">\\s+<span class="memberName"><a href=profile\\.php\\?userID=(\\d+)">.+<\\/a>\\s+<span class="points">\\(1000 <img src="images\\/icons\\/vpoints\\.png" alt="D" title="vDiplomacy points" \\/><\\/b>\\)<\\/span><\\/span>  - Delays left: <span class="excusedNMRs">(\\d+)<\\/span> of <span class="excusedNMRs">(\\d+)<\\/span>(| - <span class="missedPhases">Missed last deadline</span>)?<\\/span>\\s+<\\/div>\\s+<div class="memberGameDetail">\\s+<span class="memberPointsCount"><\\/span><br \\/><span class="memberUnitCount"><span class="memberSCCount"><em>(\\d+)<\\/em> supply-centers, <em class=".+">(\\d+)<\\/em> units<\\/span><\\/span>';
 
 		this.globalRegExp = new RegExp(pattern, 'g');
 		this.localRegExp = new RegExp(pattern);
@@ -200,7 +200,7 @@ module.exports = {
 			const data = user.match(this.localRegExp);
 			let userStatus = data[1].match(/<img src=".+" alt="(.+)" title=".+" \/>/);
 			userStatus = userStatus ? userStatus[1] : 'Skip';
-			text += '\n' + reaction.emoji[this.statuses[userStatus]] + '  ' + this.flags[data[2]] + '<@' + this.players[data[3]] + '> ' + data[6] + ' supply, ' + data[7] + ' units';
+			text += '\n' + reaction.emoji[this.statuses[userStatus]] + '  ' + this.flags[data[2]] + '<@' + this.players[data[3]] + '> ' + data[7] + ' supply, ' + data[8] + ' units';
 			if(userStatus == 'Not received') pingList += '<@' + this.players[data[3]] + '>';
 		}
 
