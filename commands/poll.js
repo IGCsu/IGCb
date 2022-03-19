@@ -124,6 +124,9 @@ module.exports = {
 		};
     },
 
+	/**
+	 * @param {Object} int ButtonInteraction
+	 */
     button : async function(int){
         //int.reply({content: 'В разработке', ephemeral: true});
 		const answer = this.getPollAnswer(int.member.user.id, int.message.id);
@@ -139,6 +142,7 @@ module.exports = {
 		const min = poll.min;
 
 		if(resp == 'result') {
+			int.deferReply({ephemeral: true});
 			const results = this.getPollResults(int.message.id);
 			let content = 'Голосов пока нет';
 			if(results.result.length){
@@ -148,7 +152,7 @@ module.exports = {
 				'```';
 			};
 			try{
-				return int.reply({content: content, ephemeral: true});
+				return int.editReply({content: content, ephemeral: true});
 			} catch(e){
 				console.log(e);
 			}
