@@ -35,7 +35,13 @@ module.exports = {
 					description : 'Минимально необходимое количество символов в ответе. (0 - ответ не обязателен)',
 					type : 4,
 					required : false,
-				}
+				},
+				{
+					name : 'public',
+					description : 'Если false, то опрос будет анонимным',
+					type : 5,
+					required : false
+				},
 			]
 		},
 		{
@@ -86,9 +92,9 @@ module.exports = {
 	slash : async function(int){
         const type = int.options.getSubcommand();
         if(type == 'common' || type == 'senate'){
-            const question = int.options.data[0].options[0].value;
-			const min = int.options.data[0].options[1]?.value ?? 25;
-			const public = int.options.data[0].options[1]?.value ?? false;
+            const question = int.options.getString('question');
+			const min = int.options.getInteger('min') ?? 25;
+			const public = int.options.getBoolean('public') ?? false;
             const txt = (type == 'common' ? 'Общий' : 'Закрытый');
 			let flags = 0;
 			flags += (type == 'common' ? 0 : this.FLAGS.POLLS.PRIVATE);
