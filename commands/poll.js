@@ -54,7 +54,13 @@ module.exports = {
 					description : 'Минимально необходтмое количество символов в ответе. (0 - ответ не обязателен)',
 					type : 4,
 					required : false,
-				}
+				},
+				{
+					name : 'public',
+					description : 'Если false, то опрос будет анонимным',
+					type : 5,
+					required : false
+				},
 			]
 		},
 		{
@@ -82,9 +88,11 @@ module.exports = {
         if(type == 'common' || type == 'senate'){
             const question = int.options.data[0].options[0].value;
 			const min = int.options.data[0].options[1]?.value ?? 25;
+			const public = int.options.data[0].options[1]?.value ?? false;
             const txt = (type == 'common' ? 'Общий' : 'Закрытый');
 			let flags = 0;
 			flags += (type == 'common' ? 0 : this.FLAGS.POLLS.PRIVATE);
+			flags += (public ? this.FLAGS.POLLS.PUBLIC : 0);
 			if(min > 1000){
 				await int.reply({content: 'Минимальное количество превышает максимальное'})
 			} else {
@@ -142,17 +150,26 @@ module.exports = {
 		const min = poll.min;
 
 		if(resp == 'result') {
-			int.deferReply({ephemeral: true});
+			await int.deferReply({ephemeral: true});
 			const results = this.getPollResults(int.message.id);
 			let content = 'Голосов пока нет';
+			let votes = '';
 			if(results.result.length){
+				if(poll.flags & this.FLAGS.POLLS.PUBLIC){
+					results.result.forEach(vote => {
+						vote.answer = vote.answer.replace('\n', ' _ ')
+						votes+= `${guild.members.cache.get(vote.user_id)?.displayName ?? vote.user_id}` + ((vote.flags & this.FLAGS.ANSWERS.DISAGREE) ? ' [0;41mПРОТИВ[0m ' : ' [0;45mЗА[0m ') +
+						((vote.answer.length > 60) ? vote.answer.slice(0, 60) + '...' : vote.answer) + '\n';
+					});
+				};
+				console.log(votes)
 				content = 
 				'```ansi\n' + 
-				`против ${results.no} [[0;41m${' '.repeat(Math.round((results.no/results.result.length)*20))}[0;45m${' '.repeat(Math.round((results.yes/results.result.length)*20))}[0m] ${results.yes} за\n` + 
+				`против ${results.no} [[0;41m${' '.repeat(Math.round((results.no/results.result.length)*20))}[0;45m${' '.repeat(Math.round((results.yes/results.result.length)*20))}[0m] ${results.yes} за\n` + votes +
 				'```';
 			};
 			try{
-				return int.editReply({content: content, ephemeral: true});
+				return await int.editReply({content: content, ephemeral: true});
 			} catch(e){
 				console.log(e);
 			}
