@@ -164,11 +164,10 @@ module.exports = {
 				if(poll.flags & this.FLAGS.POLLS.PUBLIC){
 					results.result.forEach(vote => {
 						vote.answer = vote.answer.replace('\n', ' _ ')
-						votes+= `${guild.members.cache.get(vote.user_id)?.displayName ?? vote.user_id}` + ((vote.flags & this.FLAGS.ANSWERS.DISAGREE) ? ' [0;41mПРОТИВ[0m ' : ' [0;45mЗА[0m ') +
+						votes += ((vote.flags & this.FLAGS.ANSWERS.DISAGREE) ? '[0;41m✖[0m ' : '[0;45m✓[0m ') + `${guild.members.cache.get(vote.user_id)?.displayName ?? vote.user_id} ` +
 						((vote.answer.length > 60) ? vote.answer.slice(0, 60) + '...' : vote.answer) + '\n';
 					});
 				};
-				console.log(votes)
 				content = 
 				'```ansi\n' + 
 				`против ${results.no} [[0;41m${' '.repeat(Math.round((results.no/results.result.length)*20))}[0;45m${' '.repeat(Math.round((results.yes/results.result.length)*20))}[0m] ${results.yes} за\n` + votes +
