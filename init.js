@@ -127,7 +127,11 @@ module.exports = async () => {
 
 	console.time('Event messageCreate');
 	client.on('messageCreate', async msg => {
-		if(msg.channel.type == 'DM') return msg.reply({ content : 'Лс для пидоров' });
+		if(msg.channel.type == 'DM'){
+			try{
+				return msg.reply({ content : 'Лс для пидоров' });
+			}catch(e){}
+		}
 		if(msg.channel.guild.id != config.home) return;
 
 		if(msg.content.substr(0, config.prefix.length) != config.prefix){
