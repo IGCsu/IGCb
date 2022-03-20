@@ -115,13 +115,13 @@ module.exports = {
 	},
 
 
-	init : async function(path){
+	init : async function(path, logText){
 
 		const response = await fetch('https://www.vdiplomacy.com/board.php?gameID=' + this.gameID);
 		const body = await response.text();
 
 		if(body.includes('Game not found')){
-			log.error(path + ': Игра ID:' + this.gameID + ' не найдена');
+			logText += log.error(path + ': Игра ID:' + this.gameID + ' не найдена');
 			this.active = false;
 			return this;
 		}
@@ -133,7 +133,7 @@ module.exports = {
 				const result = await this.update(false, true);
 				if(result.status) await this.channel.send(result.data);
 			}catch(e){
-				log.error('./commands/' + this.name + '.js: ' + e.message);
+				logText += log.error('./commands/' + this.name + '.js: ' + e.message);
 				clearInterval(this.timerId);
 			}
 		}, this.interval * 1000);

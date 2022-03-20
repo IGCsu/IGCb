@@ -4,7 +4,6 @@ module.exports = {
 
 	active : true,
 	category : 'Утилиты',
-	siteOffline : false,
 	name : 'nocommand',
 	title : 'Реакции на сообщения',
 	text : 'Модуль реагирования на сообщения. Отвечает за реакции в #ивенты, #предложения и тп. Отвечает за фишинг и обработку ссылок.',
@@ -14,7 +13,7 @@ module.exports = {
 	 * Получает json объект Устава Сообщества и помещает его в кэш
 	 */
 	init : async function(){
-		try{	
+		try{
 			this.rules = await (await fetch('https://igc.su/rules?j=true')).json();
 		} catch(e) {
 			this.siteOffline = true;
@@ -27,12 +26,13 @@ module.exports = {
 	 * @param {Message} msg Сообщение пользователя
 	 */
 	call : async function(msg){
-		await this.rule(msg); // Проверка на упоминание пункта Устава
+		await this.destroyBot(msg); // Прекращение работы бота при запуске дубликата
+		if(!this.siteOffline) await this.rule(msg); // Проверка на упоминание пункта Устава
 		await this.fixLink(msg); // Исправление нерабочей ссылки
 		await this.nsfw(msg) // Преобразование nsfw-кода в ссылку
 		await this.opinion(msg); // Прикрепление реакций в #предложения
 		await this.event(msg); // Прикрепление реакций в #ивенты
-		await this.elections(msg);	// Прикрепление реакций в #выборы
+		await this.elections(msg); // Прикрепление реакций в #выборы
 
 		if(commands.list.phishing) commands.list.phishing.message(msg);
 	},
@@ -42,11 +42,22 @@ module.exports = {
 	 * Проверка на упоминание пункта Устава
 	 * @param {Message} msg Сообщение пользователя
 	 */
+	destroyBot : async function(msg){
+		if(msg.channelId != 574997373219110922 || msg.author.id != client.user.id) return;
+		if(msg.embeds[0]?.title != 'Бот запущен') return;
+
+		return process.kill(process.pid); 
+	},
+
+
+	/**
+	 * Проверка на упоминание пункта Устава
+	 * @param {Message} msg Сообщение пользователя
+	 */
 	rule : async function(msg){
-		if(this.siteOffline) return;
+		if(msg.content.length < 2) return;
 		msg.content = msg.content.replace('а', 'a');
-		if(['1', '2', '3', '4', '5'].includes(msg.content)) return;
-		msg.content = msg.content.replace('r', '');
+		msg.content = msg.content.replace(/^r\.?/, '');
 		if(this.rules[msg.content])
 			await msg.channel.send(
 				{

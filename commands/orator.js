@@ -14,12 +14,12 @@ module.exports = {
 		required : true
 	}],
 
-	init : function(path){
+	init : function(path, logText){
 		this.role = guild.roles.cache.get('809040260582998016');
 
 		if(!this.role){
 			this.active = false;
-			log.error(path + ': Роль "Младший оратор" не найдена');
+			logText += log.error(path + ': Роль "Младший оратор" не найдена');
 		}
 
 		return this;

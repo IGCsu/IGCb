@@ -15,12 +15,12 @@ module.exports = {
 	*
 	* @return {Object}
 	*/
-	init : async function(path){
+	init : async function(path, logText){
 		this.channel = guild.channels.cache.get('500010381490782238');
 		this.priveteLogs = guild.channels.cache.get('574997373219110922');
 
 		if(!this.channel){
-			log.error(path + ': Отсутствует #некролог');
+			logText += log.error(path + ': Отсутствует #некролог');
 			this.active = false;
 			return this;
 		}

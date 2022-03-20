@@ -15,12 +15,12 @@ module.exports = {
 	}],
 
 
-	init : function(path){
+	init : function(path, logText){
 		this.role = guild.roles.cache.get('648762974277992448');
 
 		if(!this.role){
 			this.active = false;
-			log.error(path + ': Роль "alive" не найдена');
+			logText += log.error(path + ': Роль "alive" не найдена');
 		}
 
 		return this;

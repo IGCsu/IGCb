@@ -3,6 +3,12 @@ const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 
 /**
+ * Текст лога, который отправит бот на старте.
+ * @type {String}
+ */
+let logText = '';
+
+/**
  * Массив модулей разрешённых к подключению.
  * Если пустой - подключаются в естественном порядке. В ином случае, подключаются лишь указанные модули.
  *
@@ -23,7 +29,7 @@ const getCommands = async () => {
 	for(const file of files){
 		const path = './commands/' + file;
 		if(debugAllowModules.length && debugAllowModules.indexOf(file) === -1){
-			log.warn(path + ': debug');
+			logText += log.warn(path + ': debug');
 			continue;
 		}
 
@@ -49,7 +55,7 @@ const getCommands = async () => {
 		const timeEnd = process.hrtime(timeStart);
 		const timePerf = (timeEnd[0]*1000) + (timeEnd[1] / 1000000);
 
-		log.load(path, timePerf, command.active);
+		logText += log.load(path, timePerf, command.active);
 	}
 
 	new REST({ version: '9' }).setToken(config.token).put( Routes.applicationGuildCommands(client.user.id, config.home), { body : commands });
@@ -110,9 +116,16 @@ module.exports = async () => {
 
 	await client.user.setActivity('i!help', { type: 'LISTENING' });
 
+	console.time('Send start bot');
+	let embed = new Discord.MessageEmbed()
+		.setTitle('Бот запущен')
+		.setTimestamp()
+		.setDescription('```ansi' + logText + '```');
+	await guild.channels.cache.get('574997373219110922').send({ embeds : [embed] });
+	console.timeEnd('Send start bot');
+
 	console.time('Event messageCreate');
 	client.on('messageCreate', async msg => {
-		if(msg.author.id == client.user.id) return;
 		if(msg.channel.type == 'DM') return msg.reply('Лс для пидоров');
 		if(msg.channel.guild.id != config.home) return;
 
@@ -152,11 +165,11 @@ module.exports = async () => {
 
 	console.time('Event raw');
 	client.on('raw', async data => {
-		if(data.t != 'INTERACTION_CREATE') return
+		if(data.t != 'INTERACTION_CREATE') return;
 		if(data.d.type != 5) return;
 		const command = commands.get('poll');
 		if(!command || !command.active) return;
-		const type = 'modal'
+		const type = 'modal';
 
 		await command[type](data.d);
 	});

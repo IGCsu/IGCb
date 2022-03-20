@@ -26,7 +26,7 @@ module.exports = {
 	*
 	* @return {Object}
 	*/
-	init : async function(path){
+	init : async function(path, logText){
 		guild.channels.cache.forEach(c => {
 			if(c.type != 'GUILD_VOICE' && c.type != 'GUILD_CATEGORY') return;
 			if(c.name == 'Создать канал') return this.channelCreate = c;
@@ -35,18 +35,18 @@ module.exports = {
 		});
 
 		if(!this.channelCategory){
-			log.error(path + ': Отсутствует категория голосовых каналов');
+			logText += log.error(path + ': Отсутствует категория голосовых каналов');
 			this.active = false;
 			return this;
 		}
 
 		if(!this.channelCreate){
-			log.warn(path + ': Отсутствует #Создать канал');
+			logText += log.warn(path + ': Отсутствует #Создать канал');
 			this.channelCreate = await guild.channels.create('Создать канал', {
 				parent : this.channelCategory.id,
 				type : 'GUILD_VOICE'
 			});
-			log.warn(path + ': Создан #Создать канал');
+			logText += log.warn(path + ': Создан #Создать канал');
 		}
 
 		this.channelCreate.permissionOverwrites.cache.forEach(p => {

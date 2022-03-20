@@ -17,9 +17,9 @@ module.exports = {
 	*
 	* @return {Object}
 	*/
-	init : async function(path){
+	init : async function(path, logText){
 		if(!this.starboardChannel){
-			log.error(path + ': Starboard канал не найден');
+			logText += log.error(path + ': Starboard канал не найден');
 			return this;
 		}
 
@@ -34,7 +34,7 @@ module.exports = {
 		if(message.channel == this.starboardChannel) return;
 		if(reaction.count != this.defaultEmojiCount) return;
 		const users = await message.reactions.cache.get(this.starboardEmoji).users.fetch();
-		if(users.get(client.id)) return;
+		if(users.get(client.user.id)) return;
 
 		const embed = new Discord.MessageEmbed()
 			.setAuthor({
@@ -46,7 +46,7 @@ module.exports = {
 			.setURL(message.url)
 			.addField('Оригинал', `[#${message.channel.name}](${message.url})`)
 			.setTimestamp();
-		
+
 		if(message.attachments.size){
 			embed.setImage(message.attachments.first().url)
 		} else {
