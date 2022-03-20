@@ -12,16 +12,14 @@ module.exports = {
 
 	slashOptions : [
 		{
-			name : 'ping',
-			description : 'Упомянуть игроков, которые не сохранили действий (раз в 6 часов)',
-			type : 5,
-			required : false
-		},
-		{
-			name : 'ephemeral',
-			description : 'Скрыть ли сообщение для остальных',
-			type : 5,
-			required : false
+			name : 'flag',
+			description : 'Дополнительное свойство',
+			type : 3,
+			required : false,
+			choices : [
+				{ name : 'Добавить упомянуть игроков', value : 'ping' },
+				{ name : 'Скрыть сообщение для остальных', value : 'ephemeral' },
+			]
 		},
 	],
 
@@ -153,8 +151,9 @@ module.exports = {
 	 */
 	slash : async function(int){
 		try{
-			const result = await this.update(true, int.options.getBoolean('ping'));
-			result.data.ephemeral = int.options.getBoolean('ephemeral');
+			const flag = int.options.getString('flag');
+			const result = await this.update(true, flag == 'ping');
+			result.data.ephemeral = flag == 'ephemeral';
 			result.status
 				? int.reply(result.data)
 				: int.reply({ content : reaction.emoji.error + ' ' + result.data, ephemeral : true });
