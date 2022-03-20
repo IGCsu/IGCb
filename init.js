@@ -117,16 +117,17 @@ module.exports = async () => {
 	await client.user.setActivity('i!help', { type: 'LISTENING' });
 
 	console.time('Send start bot');
+	const author = process.env.USERNAME ?? 'Host';
 	let embed = new Discord.MessageEmbed()
 		.setTitle('Бот запущен')
 		.setTimestamp()
-		.setDescription('```ansi' + logText + '```');
+		.setDescription('hosted by ' + author + '\n\n```ansi' + logText + '```');
 	await guild.channels.cache.get('574997373219110922').send({ embeds : [embed] });
 	console.timeEnd('Send start bot');
 
 	console.time('Event messageCreate');
 	client.on('messageCreate', async msg => {
-		if(msg.channel.type == 'DM') return msg.reply('Лс для пидоров');
+		if(msg.channel.type == 'DM') return msg.reply({ content : 'Лс для пидоров' });
 		if(msg.channel.guild.id != config.home) return;
 
 		if(msg.content.substr(0, config.prefix.length) != config.prefix){

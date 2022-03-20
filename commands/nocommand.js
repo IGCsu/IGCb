@@ -46,7 +46,11 @@ module.exports = {
 		if(msg.channelId != 574997373219110922 || msg.author.id != client.user.id) return;
 		if(msg.embeds[0]?.title != 'Бот запущен') return;
 
-		return process.kill(process.pid); 
+		await msg.reply({ content : 'Прекращена работа бота-дубликата у ' + (process.env.USERNAME ?? 'Host') })
+
+		log.error('Прекращение работы бота: бот запущен в другом месте');
+
+		return process.kill(process.pid);
 	},
 
 
