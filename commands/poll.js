@@ -93,8 +93,8 @@ module.exports = {
         const type = int.options.getSubcommand();
         if(type == 'common' || type == 'senate'){
             const question = int.options.getString('question');
-			const min = int.options.getInteger('min') ?? 25;
-			const public = int.options.getBoolean('public') ?? false;
+			const min = int.options.getInteger('min') ?? 0;
+			const public = int.options.getBoolean('public') ?? true;
             const txt = (type == 'common' ? 'Общий' : 'Закрытый');
 			let flags = 0;
 			flags += (type == 'common' ? 0 : this.FLAGS.POLLS.PRIVATE);
@@ -149,7 +149,7 @@ module.exports = {
 		if(!poll) return int.reply({content: 'Этот опрос не найден в базе данных', ephemeral: true});
 		const resp = int.customId.split('|')[1]
 		const private = poll.flags & this.FLAGS.POLLS.PRIVATE;
-		if(private && (int.member.roles.cache.get('916999822693789718') || int.member.roles.cache.get('613412133715312641'))){
+		if(private && !(int.member.roles.cache.get('916999822693789718') || int.member.roles.cache.get('613412133715312641'))){
 			return await int.reply({content: 'Отказано в достпуе', ephemeral: true})
 		}
 
