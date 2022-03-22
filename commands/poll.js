@@ -86,7 +86,7 @@ module.exports = {
 	],
 
 	init : function(){
-		const data = this.getAll();
+		const data = this.fetchAll();
 		this.polls = {};
 		data[0].forEach((poll) =>{
 			this.polls[data[0].message_id] = {question: poll.question, min: poll.min, max: poll.max, flags: poll.flags}
@@ -156,9 +156,9 @@ module.exports = {
 	 */
     button : async function(int){
         //int.reply({content: 'В разработке', ephemeral: true});
-		const answer = this.getPollAnswer(int.member.user.id, int.message.id);
+		const answer = this.fetchPollAnswer(int.member.user.id, int.message.id);
 		const value = answer ? answer.answer : undefined;
-		const poll = this.getPoll(int.message.id);
+		const poll = this.fetchPoll(int.message.id);
 		if(!poll) return int.reply({content: 'Этот опрос не найден в базе данных', ephemeral: true});
 		const resp = int.customId.split('|')[1]
 		const private = poll.flags & this.FLAGS.POLLS.PRIVATE;
@@ -170,7 +170,7 @@ module.exports = {
 
 		if(resp == 'result') {
 			await int.deferReply({ephemeral: true});
-			const results = this.getPollResults(int.message.id);
+			const results = this.fetchPollResults(int.message.id);
 			let content = 'Голосов пока нет';
 			let votes = '';
 			if(results.result.length){
@@ -221,7 +221,7 @@ module.exports = {
 		const type = int.data.custom_id.split('|')[1];
 		let txt = ''
 		console.log(`\x1b[33m${int.message.content} ${int.member.user.username} ${(type == 'yes') ? 'за' : 'против'}:\x1b[0m ${int.data.components[0].components[0].value}`)
-		if(!this.getPollAnswer(int.member.user.id, int.message.id)){
+		if(!this.fetchPollAnswer(int.member.user.id, int.message.id)){
 			this.createPollAnswer(int.member.user.id, int.message.id, int.data.components[0].components[0].value, (type == 'yes') ? 0 : this.FLAGS.ANSWERS.DISAGREE)
 			txt = 'подтверждён';
 		} else {
@@ -245,7 +245,7 @@ module.exports = {
 		await int.respond(choices);
 	},
 
-	getPoll: function (message_id) {
+	fetchPoll: function (message_id) {
 		return DB.query(`SELECT * FROM polls WHERE id = '${message_id}';`)[0];
 	},
 	createPoll: function (message_id, question, min=0, max=0, flags=0) {
@@ -271,10 +271,10 @@ module.exports = {
 		return DB.query(`UPDATE polls SET ${data.question}${data.min}${data.max}${data.flags} WHERE poll_id = '${message_id}';`)[0];
 	},
 
-	getPollAnswer: function (user_id, message_id) {
+	fetchPollAnswer: function (user_id, message_id) {
 		return DB.query(`SELECT * FROM poll_answers WHERE poll_id = '${message_id}' AND user_id = '${user_id}';`)[0];
 	},
-	getPollResults: function (message_id) {
+	fetchPollResults: function (message_id) {
 		return {result: DB.query(`SELECT * FROM poll_answers WHERE poll_id = '${message_id}';`),
 		yes: DB.query(`SELECT COUNT(*) FROM poll_answers WHERE poll_id = '${message_id}' AND flags = 0;`)[0]['COUNT(*)'],
 		no: DB.query(`SELECT COUNT(*) FROM poll_answers WHERE poll_id = '${message_id}' AND flags = 1;`)[0]['COUNT(*)']};
@@ -294,7 +294,7 @@ module.exports = {
 		this.pollsAnswers[user_id + '|' + message_id] = {answer: data.answer ?? old.answer, flags: data.flags ?? old.flags};
 		return DB.query(`UPDATE poll_answers SET ${data.answer}${data.flags} WHERE poll_id = '${message_id}' AND user_id = '${user_id}';`)[0];
 	},
-	getAll: function () {
+	fetchAll: function () {
 		return [DB.query(`SELECT * FROM polls;`),
 		DB.query(`SELECT * FROM poll_answers;`)];
 	},
