@@ -241,7 +241,7 @@ module.exports = {
 
 	autocomplete : async function(int){
 		let choices = [];
-			
+
 		await int.respond(choices);
 	},
 
@@ -307,5 +307,10 @@ module.exports = {
 	fetchAll: function () {
 		return [DB.query(`SELECT * FROM polls;`),
 		DB.query(`SELECT * FROM poll_answers;`)];
+	},
+
+	getAll: function () {
+		return [this.polls,
+		this.pollsAnswers];
 	},
 };
