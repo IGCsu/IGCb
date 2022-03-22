@@ -234,6 +234,22 @@ module.exports = {
 		return DB.query(`INSERT INTO polls VALUES ('${message_id}', '${question}', ${min}, ${max}, ${flags});`)[0];
 	},
 
+	updatePoll: function (message_id, data) {
+		if(data.question !== undefined){
+			data.question = `question = '${data.question}'`;
+		}
+		if(data.min !== undefined){
+			data.min = `${(data.question) !== undefined ? ',' : ''} min = ${data.min}`;
+		}
+		if(data.max !== undefined){
+			data.max = `${(data.question + data.min) !== undefined ? ',' : ''} max = ${data.max}`;
+		}
+		if(data.flags !== undefined){
+			data.flags = `${(data.question + data.min + data.min) !== undefined ? ',' : ''} flags = ${data.flags}`;
+		}
+		return DB.query(`UPDATE polls SET ${data.question}${data.min}${data.max}${data.flags} WHERE poll_id = '${message_id}';`)[0];
+	},
+
 	getPollAnswer: function (user_id, message_id) {
 		return DB.query(`SELECT * FROM poll_answers WHERE poll_id = '${message_id}' AND user_id = '${user_id}';`)[0];
 	},
@@ -245,7 +261,15 @@ module.exports = {
 	createPollAnswer: function (user_id, message_id, answer='', flags=0) {
 		return DB.query(`INSERT INTO poll_answers VALUES ('${user_id}', '${message_id}', '${answer}', ${flags});`)[0];
 	},
-	updatePollAnswer: function (user_id, message_id, answer='', flags=0) {
-		return DB.query(`UPDATE poll_answers SET answer = '${answer}', flags = ${flags} WHERE poll_id = '${message_id}' AND user_id = '${user_id}';`)[0];
+	updatePollAnswer: function (user_id, message_id, data) {
+
+		if(data.answer !== undefined){
+			data.answer = `answer = '${data.answer}'`;
+		}
+		if(data.flags !== undefined){
+			data.flags = `${data.answer !== undefined ? ',' : ''} flags = ${data.flags}`;
+		}
+
+		return DB.query(`UPDATE poll_answers SET ${data.answer}${data.flags} WHERE poll_id = '${message_id}' AND user_id = '${user_id}';`)[0];
 	},
 };
