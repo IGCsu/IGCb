@@ -241,13 +241,18 @@ module.exports = {
 
 	autocomplete : async function(int){
 		let choices = [];
-
+			
 		await int.respond(choices);
 	},
 
 	fetchPoll: function (message_id) {
 		return DB.query(`SELECT * FROM polls WHERE id = '${message_id}';`)[0];
 	},
+
+	getPoll: function (message_id) {
+		return this.polls[message_id];
+	},
+
 	createPoll: function (message_id, question, min=0, max=0, flags=0) {
 		this.polls[message_id] = {question: question, min: min, max: max, flags: flags};
 		return DB.query(`INSERT INTO polls VALUES ('${message_id}', '${question}', ${min}, ${max}, ${flags});`)[0];
@@ -274,6 +279,11 @@ module.exports = {
 	fetchPollAnswer: function (user_id, message_id) {
 		return DB.query(`SELECT * FROM poll_answers WHERE poll_id = '${message_id}' AND user_id = '${user_id}';`)[0];
 	},
+
+	getPollAnswer: function (message_id, user_id) {
+		return this.pollsAnswers[user_id + '|' + message_id];
+	},
+
 	fetchPollResults: function (message_id) {
 		return {result: DB.query(`SELECT * FROM poll_answers WHERE poll_id = '${message_id}';`),
 		yes: DB.query(`SELECT COUNT(*) FROM poll_answers WHERE poll_id = '${message_id}' AND flags = 0;`)[0]['COUNT(*)'],
