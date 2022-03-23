@@ -128,11 +128,10 @@ module.exports = async () => {
 	console.time('Event messageCreate');
 	client.on('messageCreate', async msg => {
 		if(msg.channel.type == 'DM'){
-			console.log(msg)
 			try{
 				return msg.reply({ content : 'Лс для пидоров' });
 			}catch(e){
-				console.log(e)
+				return console.log(e)
 			}
 		}
 		if(msg.channel.guild.id != config.home) return;
