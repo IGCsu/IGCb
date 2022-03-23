@@ -130,8 +130,7 @@ module.exports = async () => {
 		if(msg.channel.type == 'DM'){
 			try{
 				return msg.reply({ content : 'Лс для пидоров' });
-			}catch(e){
-			}
+			}catch(e){ }
 		}
 		if(msg.channel.guild.id != config.home) return;
 
