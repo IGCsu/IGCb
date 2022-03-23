@@ -239,10 +239,10 @@ module.exports = {
 			let pollsAnswers;
 			let answers = [];
 			IDs.forEach((ID => {
-				if(this.polls.get(ID)) polls.push({value: 'poll|' + ID, name: this.polls.get(ID)?.question});
+				if(this.polls.get(ID)) polls.push({value: 'poll|' + ID, name: ((this.polls.get(ID)?.question.length > 90) ? (this.polls.get(ID)?.question.slice(0, 90) + '...') : this.polls.get(ID)?.question)});
 				pollsAnswers = this.pollsAnswers.filter(answer => answer.user_id == ID);
 				pollsAnswers.forEach(answer => {
-					answers.push({value: 'answer|' + ID, name: (answer.flags & this.FLAGS.ANSWERS.DISAGREE ? 'ПРОТИВ ' : 'ЗА ') + (answer.answer != '' ? answer.answer : 'Без ответа')})
+					answers.push({value: 'answer|' + ID, name: (answer.flags & this.FLAGS.ANSWERS.DISAGREE ? 'ПРОТИВ ' : 'ЗА ') + ((answer.answer != '') ? (answer.answer.length > 90 ? (answer.answer.slice(0, 90) + '...') : answer.answer) : 'Без ответа')})
 				})
 			}))
 			await int.respond((choices.concat(polls)).concat(answers));
