@@ -1,3 +1,5 @@
+const { Collection } = require('@discordjs/collection');
+
 module.exports = {
 
 	active : true,
@@ -87,15 +89,14 @@ module.exports = {
 
 	init : function(){
 		const data = this.fetchAll();
-		this.polls = {};
+		this.polls = new Collection();
 		data[0].forEach((poll) =>{
-			this.polls[data[0].message_id] = {question: poll.question, min: poll.min, max: poll.max, flags: poll.flags}
+			this.polls.set(poll.id, {id: poll.id, question: poll.question, min: poll.min, max: poll.max, flags: poll.flags})
 		});
-		this.pollsAnswers = {};
+		this.pollsAnswers = new Collection();
 		data[1].forEach((poll) =>{
-			this.pollsAnswers[data[1].message_id + '|' + data[1].message_id] = {answer: poll.answer, flags: poll.flags}
+			this.pollsAnswers.set(poll.user_id + '|' + poll.poll_id, {user_id: poll.user_id, poll_id: poll.poll_id, answer: poll.answer, flags: poll.flags})
 		});
-		this.polls
 		return this;
 	},
 
@@ -147,6 +148,10 @@ module.exports = {
 				this.createPoll(message.id, question, min, 1000, flags);
 			};
 		} else {
+			const search = int.options.getString('search')?.split('|');
+			if(search){
+				if(search[0] == 'poll') return int.reply({content: this.getPollResultsContent(search[1]), ephemeral: true});
+			};
 			int.reply({content: 'В разработке', ephemeral: true});
 		};
     },
@@ -170,22 +175,7 @@ module.exports = {
 
 		if(resp == 'result') {
 			await int.deferReply({ephemeral: true});
-			const results = this.fetchPollResults(int.message.id);
-			let content = 'Голосов пока нет';
-			let votes = '';
-			if(results.result.length){
-				if(poll.flags & this.FLAGS.POLLS.PUBLIC){
-					results.result.forEach(vote => {
-						vote.answer = vote.answer.replace('\n', ' _ ')
-						votes += ((vote.flags & this.FLAGS.ANSWERS.DISAGREE) ? '[0;41m✖[0m ' : '[0;45m✓[0m ') + `${guild.members.cache.get(vote.user_id)?.displayName ?? vote.user_id} ` +
-						((vote.answer.length > 60) ? vote.answer.slice(0, 60) + '...' : vote.answer) + '\n';
-					});
-				};
-				content = 
-				'```ansi\n' + 
-				`против ${results.no} [[0;41m${' '.repeat(Math.round((results.no/results.result.length)*20))}[0;45m${' '.repeat(Math.round((results.yes/results.result.length)*20))}[0m] ${results.yes} за\n` + votes +
-				'```';
-			};
+			const content = this.getPollResultsContent(int.message.id);
 			try{
 				return await int.editReply({content: content, ephemeral: true});
 			} catch(e){
@@ -241,8 +231,22 @@ module.exports = {
 
 	autocomplete : async function(int){
 		let choices = [];
+		const searchRequest = int.options.getFocused();
+		const IDs = searchRequest.replace(/[^-_\w]/g, ' ').match(/[0-9]+/g);
 
-		await int.respond(choices);
+		if(IDs){
+			let polls = [];
+			let pollsAnswers;
+			let answers = [];
+			IDs.forEach((ID => {
+				if(this.polls.get(ID)) polls.push({value: 'poll|' + ID, name: this.polls.get(ID)?.question});
+				pollsAnswers = this.pollsAnswers.filter(answer => answer.user_id == ID);
+				pollsAnswers.forEach(answer => {
+					answers.push({value: 'answer|' + ID, name: (answer.flags & this.FLAGS.ANSWERS.DISAGREE ? 'ПРОТИВ ' : 'ЗА ') + (answer.answer != '' ? answer.answer : 'Без ответа')})
+				})
+			}))
+			await int.respond((choices.concat(polls)).concat(answers));
+		};
 	},
 
 	fetchPoll: function (message_id) {
@@ -273,7 +277,7 @@ module.exports = {
 			data.flags = `${(data.question + data.min + data.min) !== undefined ? ',' : ''} flags = ${data.flags}`;
 		}
 		this.polls[message_id] = {question: data.question ?? old.question, min: data.min ?? old.min, max: data.max ?? old.max, flags: data.flags ?? old.flags};
-		return DB.query(`UPDATE polls SET ${data.question}${data.min}${data.max}${data.flags} WHERE poll_id = '${message_id}';`)[0];
+		return DB.query(`UPDATE polls SET ${data.question}${data.min}${data.max}${data.flags} WHERE id = '${message_id}';`)[0];
 	},
 
 	fetchPollAnswer: function (user_id, message_id) {
@@ -312,5 +316,26 @@ module.exports = {
 	getAll: function () {
 		return [this.polls,
 		this.pollsAnswers];
+	},
+
+	getPollResultsContent: function (message_id) {
+		const poll = this.fetchPoll(message_id);
+		const results = this.fetchPollResults(message_id);
+		let content = 'Голосов пока нет';
+		let votes = '';
+		if(results.result.length){
+			if(poll.flags & this.FLAGS.POLLS.PUBLIC){
+				results.result.forEach(vote => {
+					vote.answer = vote.answer.replace('\n', ' _ ')
+					votes += ((vote.flags & this.FLAGS.ANSWERS.DISAGREE) ? '[0;41m✖[0m ' : '[0;45m✓[0m ') + `${guild.members.cache.get(vote.user_id)?.displayName ?? vote.user_id} ` +
+					((vote.answer.length > 60) ? vote.answer.slice(0, 60) + '...' : vote.answer) + '\n';
+				});
+			};
+			content = 
+			'```ansi\n' + 
+			`против ${results.no} [[0;41m${' '.repeat(Math.round((results.no/results.result.length)*20))}[0;45m${' '.repeat(Math.round((results.yes/results.result.length)*20))}[0m] ${results.yes} за\n` + votes +
+			'```';
+		};
+		return content;
 	},
 };
