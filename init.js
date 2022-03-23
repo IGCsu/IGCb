@@ -131,7 +131,6 @@ module.exports = async () => {
 			try{
 				return msg.reply({ content : 'Лс для пидоров' });
 			}catch(e){
-				return console.log(e)
 			}
 		}
 		if(msg.channel.guild.id != config.home) return;
