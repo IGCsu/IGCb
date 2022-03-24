@@ -4,10 +4,11 @@ module.exports = {
 
 	active : true,
 	name : 'poll',
+	name_localizations : {'ru': 'опрос'},
 	title : 'Опросы',
 	description : 'Позволяет создавать общие и модераторские опросы',
 	descriptionShort : 'Позволяет создавать общие и модераторские опросы',
-	description_localizations : {'ru': 'Allows you to create common and moderator polls', 'uk': ''},
+	description_localizations : {'ru': 'Allows you to create common and moderator polls'},
 
 	category : 'Утилиты',
 
@@ -26,12 +27,14 @@ module.exports = {
 	slashOptions : [
 		{
 			name : 'common',
+			name_localizations : {'ru': 'общий'},
 			description : 'Сommon poll',
 			description_localizations : {'ru': 'Общий опрос'},
 			type : 1,
 			options : [
 				{
 					name : 'question',
+					name_localizations : {'ru': 'вопрос'},
 					description : 'Ask a question',
 					description_localizations : {'ru': 'Задайте вопрос'},
 					type : 3,
@@ -39,6 +42,7 @@ module.exports = {
 				},
 				{
 					name : 'min',
+					name_localizations : {'ru': 'мин'},
 					description : 'The minimum required number of characters in the answer. (0 - the answer is optional)',
 					description_localizations : {'ru': 'Минимально необходимое количество символов в ответе. (0 - ответ не обязателен)'},
 					type : 4,
@@ -46,6 +50,7 @@ module.exports = {
 				},
 				{
 					name : 'public',
+					name_localizations : {'ru': 'публичный'},
 					description : 'Если false, то опрос будет анонимным',
 					description_localizations : {'ru': 'If false, the poll will be anonymous'},
 					type : 5,
@@ -55,12 +60,14 @@ module.exports = {
 		},
 		{
 			name : 'senate',
+			name_localizations : {'ru': 'сенаторский'},
 			description : 'Moderator poll',
 			description_localizations : {'ru': 'Опрос среди модераторов'},
 			type : 1,
 			options : [
 				{
 					name : 'question',
+					name_localizations : {'ru': 'вопрос'},
 					description : 'Ask a question',
 					description_localizations : {'ru': 'Задайте вопрос'},
 					type : 3,
@@ -68,6 +75,7 @@ module.exports = {
 				},
 				{
 					name : 'min',
+					name_localizations : {'ru': 'мин'},
 					description : 'The minimum required number of characters in the answer. (0 - the answer is optional)',
 					description_localizations : {'ru': 'Минимально необходимое количество символов в ответе. (0 - ответ не обязателен)'},
 					type : 4,
@@ -75,6 +83,7 @@ module.exports = {
 				},
 				{
 					name : 'public',
+					name_localizations : {'ru': 'публичный'},
 					description : 'Если false, то опрос будет анонимным',
 					description_localizations : {'ru': 'If false, the poll will be anonymous'},
 					type : 5,
@@ -84,12 +93,14 @@ module.exports = {
 		},
 		{
 			name : 'show',
+			name_localizations : {'ru': 'показать'},
 			description : 'Show information about any poll',
 			description_localizations : {'ru': 'Показать информацию о любом опросе'},
 			type : 1,
 			options : [
 				{
 					name : 'search',
+					name_localizations : {'ru': 'искать'},
 					description : 'Specify any information that may be related to the poll',
 					description_localizations : {'ru': 'Укажите любую информацию которая может быть связана с опросом'},
 					type : 3,

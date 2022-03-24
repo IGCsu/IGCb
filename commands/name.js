@@ -7,14 +7,14 @@ module.exports = {
 	title : 'Обновление никнеймов',
 	description : 'Используется для обновления никнейма',
 	descriptionShort : 'Used to update a nickname',
-	description_localizations : {'ru': 'Используется для обновления никнейма', 'uk': ''},
+	description_localizations : {'ru': 'Используется для обновления никнейма'},
 	category : 'Никнейм',
 
 
 	slashOptions : [{
 		name : 'nick',
 		description : 'Enter any nickname you want',
-		description_localizations : {'ru': 'Введите любой желаемый никнейм', 'uk': ''},
+		description_localizations : {'ru': 'Введите любой желаемый никнейм'},
 		type : 3,
 		required : true
 	}],

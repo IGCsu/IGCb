@@ -4,10 +4,11 @@ module.exports = {
 	category : 'Утилиты',
 
 	name : 'help',
+	name_localizations : {'ru': 'помощь'},
 	title : 'Помощь по командам',
 	description : 'Возвращает список доступных команд или описание указанной команды',
 	descriptionShort : 'Returns a list of available commands or a description of the specified command',
-	description_localizations : {'ru': 'Возвращает список доступных команд или описание указанной команды', 'uk': ''},
+	description_localizations : {'ru': 'Возвращает список доступных команд или описание указанной команды'},
 
 
 	init : function(){ return this; },
