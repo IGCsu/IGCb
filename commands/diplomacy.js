@@ -117,7 +117,10 @@ module.exports = {
 
 	init : async function(path, logText){
 
-		const response = await fetch('https://www.vdiplomacy.com/board.php?gameID=' + this.gameID);
+		const controller = new AbortController();
+		const timeoutId = setTimeout(() => controller.abort(), 5000)
+		const response = await fetch('https://www.vdiplomacy.com/board.php?gameID=' + this.gameID, {signal: controller.signal});
+		if(!response) return this.active = false;
 		const body = await response.text();
 
 		if(body.includes('Game not found')){
