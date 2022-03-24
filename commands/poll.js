@@ -23,24 +23,28 @@ module.exports = {
 	slashOptions : [
 		{
 			name : 'common',
-			description : 'Общий опрос',
+			description : 'Сommon poll',
+			description_localizations : {'ru': 'Общий опрос'},
 			type : 1,
 			options : [
 				{
 					name : 'question',
-					description : 'Задайте вопрос',
+					description : 'Ask a question',
+					description_localizations : {'ru': 'Задайте вопрос'},
 					type : 3,
 					required : true,
 				},
 				{
 					name : 'min',
-					description : 'Минимально необходимое количество символов в ответе. (0 - ответ не обязателен)',
+					description : 'The minimum required number of characters in the answer. (0 - the answer is optional)',
+					description_localizations : {'ru': 'Минимально необходимое количество символов в ответе. (0 - ответ не обязателен)'},
 					type : 4,
 					required : false,
 				},
 				{
 					name : 'public',
 					description : 'Если false, то опрос будет анонимным',
+					description_localizations : {'ru': 'If false, the poll will be anonymous'},
 					type : 5,
 					required : false
 				},
@@ -49,23 +53,27 @@ module.exports = {
 		{
 			name : 'senate',
 			description : 'Опрос среди модераторов',
+			description_localizations : {'ru': 'Moderator poll'},
 			type : 1,
 			options : [
 				{
 					name : 'question',
-					description : 'Задайте вопрос',
+					description : 'Ask a question',
+					description_localizations : {'ru': 'Задайте вопрос'},
 					type : 3,
 					required : true,
 				},
 				{
 					name : 'min',
-					description : 'Минимально необходтмое количество символов в ответе. (0 - ответ не обязателен)',
+					description : 'The minimum required number of characters in the answer. (0 - the answer is optional)',
+					description_localizations : {'ru': 'Минимально необходимое количество символов в ответе. (0 - ответ не обязателен)'},
 					type : 4,
 					required : false,
 				},
 				{
 					name : 'public',
 					description : 'Если false, то опрос будет анонимным',
+					description_localizations : {'ru': 'If false, the poll will be anonymous'},
 					type : 5,
 					required : false
 				},
@@ -73,12 +81,14 @@ module.exports = {
 		},
 		{
 			name : 'show',
-			description : 'Показать информацию о любом опросе',
+			description : 'Show information about any poll',
+			description_localizations : {'ru': 'Показать информацию о любом опросе'},
 			type : 1,
 			options : [
 				{
 					name : 'search',
-					description : 'Укажите любую информацию которая может быть связана с опросом',
+					description : 'Specify any information that may be related to the poll',
+					description_localizations : {'ru': 'Укажите любую информацию которая может быть связана с опросом'},
 					type : 3,
 					autocomplete: true,
 					required : true,
