@@ -128,9 +128,13 @@ module.exports = async () => {
 	console.time('Event messageCreate');
 	client.on('messageCreate', async msg => {
 		if(msg.channel.type == 'DM'){
-			try{
-				return msg.reply({ content : 'Лс для пидоров' });
-			}catch(e){ }
+			if(msg.author.id != client.user.id){
+				try{
+					return await msg.reply({ content : 'Лс для пидоров', failIfNotExists: false});
+				}catch(e){ }
+			} else {
+				return 0;
+			}
 		}
 		if(msg.channel.guild.id != config.home) return;
 
