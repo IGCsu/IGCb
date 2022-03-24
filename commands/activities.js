@@ -6,20 +6,24 @@ module.exports = {
 	name : 'activities',
 	title : 'Activities',
 	description : 'Позволяет создавать в голосовых каналах Discord activities',
-	descriptionShort : 'Доступ к Discord activities',
+	descriptionShort : 'Access to Discord activities',
+	description_localizations : {'ru': 'Доступ к Discord activities', 'uk': ''},
 
 	slashOptions : [
 		{
 			type :7,
-			name : 'канал',
-			description : 'Выберите голосовой канал',
+			name : 'channel',
+			name_localizations : {'ru': 'канал', 'uk': ''},
+			description : 'Choose voice channel',
+			description_localizations : {'ru': 'Выберите голосовой канал', 'uk': ''},
 			required : true,
 			channel_types : [ 2 ]
 		},
 		{
 			type : 3,
 			name : 'activity',
-			description :'Выберите activity',
+			description :'Choose activity',
+			description_localizations : {'ru': 'Выберите activity', 'uk': ''},
 			required : true,
 			choices : [
 				{ value : '880218394199220334', name : "Watch together" },

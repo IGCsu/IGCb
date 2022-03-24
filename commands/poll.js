@@ -5,7 +5,10 @@ module.exports = {
 	active : true,
 	name : 'poll',
 	title : 'Опросы',
+	description : 'Позволяет создавать общие и модераторские опросы',
 	descriptionShort : 'Позволяет создавать общие и модераторские опросы',
+	description_localizations : {'ru': 'Allows you to create common and moderator polls', 'uk': ''},
+
 	category : 'Утилиты',
 
 	FLAGS : {
@@ -52,8 +55,8 @@ module.exports = {
 		},
 		{
 			name : 'senate',
-			description : 'Опрос среди модераторов',
-			description_localizations : {'ru': 'Moderator poll'},
+			description : 'Moderator poll',
+			description_localizations : {'ru': 'Опрос среди модераторов'},
 			type : 1,
 			options : [
 				{

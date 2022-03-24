@@ -6,7 +6,8 @@ module.exports = {
 	short : 'r',
 	title : 'Игровые роли',
 	description : 'Используется для работы с ролями:\nНеобходимо указать название роли. Название роли может содержать только латинский символы, а так же "-" и "_". Если роль не будет найдена - она будет создана, при наличии прав.\nПосле роли можно указать пользователей, кому вы хотите переключить роль. Указывать можно вводом ID или упоминанием, разделять нужно пробелом.\nЕсли не указывать пользователей - роль будет переключена у автора команды.',
-	descriptionShort : 'Управление игровыми ролями',
+	descriptionShort : 'Game Role Management',
+	description_localizations : {'ru': 'Управление игровыми ролями', 'uk': ''},
 	category : 'Роли',
 
 	predict_name : '',
@@ -14,20 +15,25 @@ module.exports = {
 	slashOptions : [
 		{
 			name : 'role',
-			description : 'Имя роли или её ID',
+			name_localizations : {'ru': 'роль', 'uk': ''},
+			description : 'Role name or ID',
+			description_localizations : {'ru': 'Имя роли или её ID', 'uk': ''},
 			type : 3,
 			required : true,
 			autocomplete: true
 		},
 		{
 			name : 'members',
-			description : 'Укажите упоминания пользователя/ей его/их ID',
+			description : 'Specify the mention of the user(s) his/her/their ID',
+			description_localizations : {'ru': 'Укажите упоминания пользователя/ей его/их ID', 'uk': ''},
 			type : 3,
 			required : false
 		},
 		{
 			name : 'create',
-			description : 'Создать роль если не было найдено таковой?',
+			name_localizations : {'ru': 'создать', 'uk': ''},
+			description : 'Create a role if no one was found?',
+			description_localizations : {'ru': 'Создать роль если не было найдено таковой?', 'uk': ''},
 			type : 5,
 			required : false
 		},

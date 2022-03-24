@@ -5,11 +5,15 @@ module.exports = {
 
 	name : 'orator',
 	title : 'Доступ к ивенты',
-	description : 'Переключает у указанных пользователей роль Младший оратор',
+	description : 'Переключает у указанных пользователей роль orator',
+	descriptionShort : 'Switches the specified users to the orator role',
+	description_localizations : {'ru': 'Переключает у указанных пользователей роль orator', 'uk': ''},
 
 	slashOptions : [{
 		name : 'user',
-		description : 'Участник Сообщества',
+		name_localizations : {'ru': 'пользователь', 'uk': ''},
+		description : 'Community member whose orator role will be switched',
+		description_localizations : {'ru': 'Участник Сообщества у которого будет переключена роль orator', 'uk': ''},
 		type : 6,
 		required : true
 	}],

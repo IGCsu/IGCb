@@ -8,17 +8,19 @@ module.exports = {
 	name : 'diplomacy',
 	title : 'Diplomacy',
 	description : 'Уведомления игры Diplomacy',
-	descriptionShort : 'Уведомления игры Diplomacy',
+	descriptionShort : 'Diplomacy game notifications',
+	description_localizations : {'ru': 'Уведомления игры Diplomacy', 'uk': ''},
 
 	slashOptions : [
 		{
 			name : 'flag',
-			description : 'Дополнительное свойство',
+			description : 'Additional feature',
+			description_localizations : {'ru': 'Дополнительное свойство', 'uk': ''},
 			type : 3,
 			required : false,
 			choices : [
-				{ name : 'Добавить упомянуть игроков', value : 'ping' },
-				{ name : 'Скрыть сообщение для остальных', value : 'ephemeral' },
+				{ name : 'Add a mention of players', value : 'ping', name_localizations : {'ru': 'Добавить упоминание игроков', 'uk': ''}},
+				{ name : 'Hide message for others', value : 'ephemeral', name_localizations : {'ru': 'Скрыть сообщение для остальных', 'uk': ''}},
 			]
 		},
 	],

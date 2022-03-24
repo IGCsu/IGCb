@@ -6,10 +6,14 @@ module.exports = {
 	name : 'alive',
 	title : 'Доступ к сообществу',
 	description : 'Переключает у указанных пользователей роль alive',
+	descriptionShort : 'Switches the specified users to the alive role',
+	description_localizations : {'ru': 'Переключает у указанных пользователей роль alive', 'uk': ''},
 
 	slashOptions : [{
 		name : 'user',
-		description : 'Участник Сообщества',
+		name_localizations : {'ru': 'пользователь', 'uk': ''},
+		description : 'Community member whose alive role will be switched',
+		description_localizations : {'ru': 'Участник Сообщества у которого будет переключена роль alive', 'uk': ''},
 		type : 6,
 		required : true
 	}],

@@ -6,12 +6,15 @@ module.exports = {
 	name : 'namefix',
 	title : 'Исправление никнейма',
 	description : 'Используется для исправления никнейма пользователей. Команда доступна всем.',
+	descriptionShort : 'Used to fix the nickname of users. The command is available to everyone.',
+	description_localizations : {'ru': 'Используется для исправления никнейма пользователей. Команда доступна всем.', 'uk': ''},
 	category : 'Никнейм',
 
 
 	slashOptions : [{
 		name : 'member',
-		description : 'Пользователь у которого будет исправлен ник',
+		description : 'The user whose nickname will be corrected',
+		description_localizations : {'ru': 'Пользователь у которого будет исправлен ник', 'uk': ''},
 		type : 6,
 		required : true
 	}],

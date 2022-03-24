@@ -6,10 +6,13 @@ module.exports = {
 	name : 'lookup',
 	title : 'Информация по id',
 	description : 'Выдаёт информацию о пользователе или приглашении по id',
+	descriptionShort : 'Returns information about the user or invite by id',
+	description_localizations : {'ru': 'Выдаёт информацию о пользователе или приглашении по id', 'uk': ''},
 
 	slashOptions : [{
 		name : 'id',
-		description : 'ID юзера или приглашения',
+		description : 'User or invite ID',
+		description_localizations : {'ru': 'ID юзера или приглашения', 'uk': ''},
 		type : 3,
 		required : true
 	}],
