@@ -4,7 +4,6 @@ module.exports = {
 	category : 'Утилиты',
 
 	name : 'ping',
-	name_localizations : {'ru': 'пинг'},
 	title : 'Пинг',
 	description : 'Информация о боте: пинг, uptime. Пинг высчитывается с момента отправки вашего, до момента отправки сообщения бота. Время вычисления не учитывается.',
 	descriptionShort : 'Information about the bot: ping, uptime',
