@@ -4,7 +4,6 @@ module.exports = {
 	category : 'Роли',
 
 	name : 'orator',
-	name_localizations : {'ru': 'оратор'},
 	title : 'Доступ к ивенты',
 	description : 'Переключает у указанных пользователей роль orator',
 	descriptionShort : 'Switches the specified users to the orator role',

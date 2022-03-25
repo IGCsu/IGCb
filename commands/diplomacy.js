@@ -156,15 +156,15 @@ module.exports = {
 	 */
 	slash : async function(int){
 		const flag = int.options.getString('flag');
-		int.deferReply({ephemeral : (flag == 'ephemeral') });
+		await int.deferReply({ephemeral : (flag == 'ephemeral') });
 		try{
 			const result = await this.update(true, flag == 'ping');
 			result.data.ephemeral = flag == 'ephemeral';
 			result.status
-				? int.reply(result.data)
-				: int.reply({ content : reaction.emoji.error + ' ' + result.data, ephemeral : true });
+				? await int.editReply(result.data)
+				: await int.editReply({ content : reaction.emoji.error + ' ' + result.data, ephemeral : true });
 		}catch(e){
-			int.reply({ content : reaction.emoji.error + ' [500] Ошибка!', ephemeral : true });
+			await int.editReply({ content : reaction.emoji.error + ' [500] Ошибка!', ephemeral : true });
 			log.error('./commands/' + this.name + '.js: ' + e.message);
 			clearInterval(this.timerId);
 		}

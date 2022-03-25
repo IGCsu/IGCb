@@ -4,7 +4,6 @@ module.exports = {
 
 	active : true,
 	name : 'poll',
-	name_localizations : {'ru': 'опрос'},
 	title : 'Опросы',
 	description : 'Позволяет создавать общие и модераторские опросы',
 	descriptionShort : 'Позволяет создавать общие и модераторские опросы',
@@ -29,7 +28,6 @@ module.exports = {
 			name : 'common',
 			name_localizations : {'ru': 'общий'},
 			description : 'Сommon poll',
-			description_localizations : {'ru': 'Общий опрос'},
 			type : 1,
 			options : [
 				{
@@ -60,7 +58,6 @@ module.exports = {
 		},
 		{
 			name : 'senate',
-			name_localizations : {'ru': 'сенаторский'},
 			description : 'Moderator poll',
 			description_localizations : {'ru': 'Опрос среди модераторов'},
 			type : 1,
@@ -93,7 +90,6 @@ module.exports = {
 		},
 		{
 			name : 'show',
-			name_localizations : {'ru': 'показать'},
 			description : 'Show information about any poll',
 			description_localizations : {'ru': 'Показать информацию о любом опросе'},
 			type : 1,
