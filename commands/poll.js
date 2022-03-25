@@ -6,8 +6,8 @@ module.exports = {
 	name : 'poll',
 	title : 'Опросы',
 	description : 'Позволяет создавать общие и модераторские опросы',
-	descriptionShort : 'Позволяет создавать общие и модераторские опросы',
-	description_localizations : {'ru': 'Allows you to create common and moderator polls', 'uk': 'Дозволяє створювати загальні та модераторські опитування'},
+	descriptionShort : 'Allows you to create common and moderator polls',
+	description_localizations : {'ru': 'Позволяет создавать общие и модераторские опросы', 'uk': 'Дозволяє створювати загальні та модераторські опитування'},
 
 	category : 'Утилиты',
 
