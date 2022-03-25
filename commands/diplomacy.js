@@ -155,8 +155,9 @@ module.exports = {
 	 * @param {CommandInteraction} int Команда пользователя
 	 */
 	slash : async function(int){
+		const flag = int.options.getString('flag');
+		int.deferReply({ephemeral : (flag == 'ephemeral') });
 		try{
-			const flag = int.options.getString('flag');
 			const result = await this.update(true, flag == 'ping');
 			result.data.ephemeral = flag == 'ephemeral';
 			result.status
