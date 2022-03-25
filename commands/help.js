@@ -7,7 +7,7 @@ module.exports = {
 	title : 'Помощь по командам',
 	description : 'Возвращает список доступных команд или описание указанной команды',
 	descriptionShort : 'Returns a list of available commands or a description of the specified command',
-	description_localizations : {'ru': 'Возвращает список доступных команд или описание указанной команды'},
+	description_localizations : {'ru': 'Возвращает список доступных команд или описание указанной команды', 'uk': 'Повертає список доступних команд або опис зазначеної команди'},
 
 
 	init : function(){ return this; },
