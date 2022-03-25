@@ -7,7 +7,7 @@ module.exports = {
 	title : 'Опросы',
 	description : 'Позволяет создавать общие и модераторские опросы',
 	descriptionShort : 'Позволяет создавать общие и модераторские опросы',
-	description_localizations : {'ru': 'Allows you to create common and moderator polls'},
+	description_localizations : {'ru': 'Allows you to create common and moderator polls', 'uk': 'Дозволяє створювати загальні та модераторські опитування'},
 
 	category : 'Утилиты',
 
@@ -26,31 +26,31 @@ module.exports = {
 	slashOptions : [
 		{
 			name : 'common',
-			name_localizations : {'ru': 'общий'},
+			name_localizations : {'ru': 'общий', 'uk': 'загальний'},
 			description : 'Сommon poll',
 			type : 1,
 			options : [
 				{
 					name : 'question',
-					name_localizations : {'ru': 'вопрос'},
+					name_localizations : {'ru': 'вопрос', 'uk': 'питання'},
 					description : 'Ask a question',
-					description_localizations : {'ru': 'Задайте вопрос'},
+					description_localizations : {'ru': 'Задайте вопрос', 'uk': 'Задайте питання'},
 					type : 3,
 					required : true,
 				},
 				{
 					name : 'min',
-					name_localizations : {'ru': 'мин'},
+					name_localizations : {'ru': 'мин', 'uk': 'мін'},
 					description : 'The minimum required number of characters in the answer. (0 - the answer is optional)',
-					description_localizations : {'ru': 'Минимально необходимое количество символов в ответе. (0 - ответ не обязателен)'},
+					description_localizations : {'ru': 'Минимально необходимое количество символов в ответе. (0 - ответ не обязателен)', 'uk': 'Мінімальна кількість символів у відповіді. (0 - відповідь не обов\'язкова)'},
 					type : 4,
 					required : false,
 				},
 				{
 					name : 'public',
-					name_localizations : {'ru': 'публичный'},
+					name_localizations : {'ru': 'публичный', 'uk': 'публічний'},
 					description : 'Если false, то опрос будет анонимным',
-					description_localizations : {'ru': 'If false, the poll will be anonymous'},
+					description_localizations : {'ru': 'If false, the poll will be anonymous', 'uk': 'Якщо false, опитування - анонімне'},
 					type : 5,
 					required : false
 				},
@@ -59,30 +59,30 @@ module.exports = {
 		{
 			name : 'senate',
 			description : 'Moderator poll',
-			description_localizations : {'ru': 'Опрос среди модераторов'},
+			description_localizations : {'ru': 'Опрос среди модераторов', 'uk': 'Опитування модерації'},
 			type : 1,
 			options : [
 				{
 					name : 'question',
-					name_localizations : {'ru': 'вопрос'},
+					name_localizations : {'ru': 'вопрос', 'uk': 'питання'},
 					description : 'Ask a question',
-					description_localizations : {'ru': 'Задайте вопрос'},
+					description_localizations : {'ru': 'Задайте вопрос', 'uk': 'Задайте питання'},
 					type : 3,
 					required : true,
 				},
 				{
 					name : 'min',
-					name_localizations : {'ru': 'мин'},
+					name_localizations : {'ru': 'мин', 'uk': 'мін'},
 					description : 'The minimum required number of characters in the answer. (0 - the answer is optional)',
-					description_localizations : {'ru': 'Минимально необходимое количество символов в ответе. (0 - ответ не обязателен)'},
+					description_localizations : {'ru': 'Минимально необходимое количество символов в ответе. (0 - ответ не обязателен)', 'uk': 'Мінімальна кількість символів у відповіді. (0 - відповідь не обов\'язкова)'},
 					type : 4,
 					required : false,
 				},
 				{
 					name : 'public',
-					name_localizations : {'ru': 'публичный'},
+					name_localizations : {'ru': 'публичный', 'uk': 'публічний'},
 					description : 'Если false, то опрос будет анонимным',
-					description_localizations : {'ru': 'If false, the poll will be anonymous'},
+					description_localizations : {'ru': 'If false, the poll will be anonymous', 'uk': 'Якщо false, опитування - анонімне'},
 					type : 5,
 					required : false
 				},
@@ -91,14 +91,14 @@ module.exports = {
 		{
 			name : 'show',
 			description : 'Show information about any poll',
-			description_localizations : {'ru': 'Показать информацию о любом опросе'},
+			description_localizations : {'ru': 'Показать информацию о любом опросе', 'uk': 'Відобразити результати опитування'},
 			type : 1,
 			options : [
 				{
 					name : 'search',
-					name_localizations : {'ru': 'искать'},
+					name_localizations : {'ru': 'искать', 'uk': 'шукати'},
 					description : 'Specify any information that may be related to the poll',
-					description_localizations : {'ru': 'Укажите любую информацию которая может быть связана с опросом'},
+					description_localizations : {'ru': 'Укажите любую информацию которая может быть связана с опросом', 'uk': 'Вкажіть опис опитування'},
 					type : 3,
 					autocomplete: true,
 					required : true,

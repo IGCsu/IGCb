@@ -7,12 +7,12 @@ module.exports = {
 	title : 'Информация по id',
 	description : 'Выдаёт информацию о пользователе или приглашении по id',
 	descriptionShort : 'Returns information about the user or invite by id',
-	description_localizations : {'ru': 'Выдаёт информацию о пользователе или приглашении по id'},
+	description_localizations : {'ru': 'Выдаёт информацию о пользователе или приглашении по id', 'uk': 'Відображає інформацію про користувача/запрошення по id'},
 
 	slashOptions : [{
 		name : 'id',
 		description : 'User or invite ID',
-		description_localizations : {'ru': 'ID юзера или приглашения'},
+		description_localizations : {'ru': 'ID юзера или приглашения', 'uk': 'ID користувача/запрошення'},
 		type : 3,
 		required : true
 	}],

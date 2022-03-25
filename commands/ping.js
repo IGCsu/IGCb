@@ -8,7 +8,7 @@ module.exports = {
 	title : 'Пинг',
 	description : 'Информация о боте: пинг, uptime. Пинг высчитывается с момента отправки вашего, до момента отправки сообщения бота. Время вычисления не учитывается.',
 	descriptionShort : 'Information about the bot: ping, uptime',
-	description_localizations : {'ru': 'Информация о боте: пинг, uptime'},
+	description_localizations : {'ru': 'Информация о боте: пинг, uptime', 'uk': 'Інформація про бота: пінг, uptime'},
 
 
 	init : function(){ return this; },
