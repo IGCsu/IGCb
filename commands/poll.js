@@ -278,12 +278,12 @@ module.exports = {
 	},
 
 	createPoll: function (message_id, question, min=0, max=0, flags=0) {
-		this.polls[message_id] = {question: question, min: min, max: max, flags: flags};
+		this.polls.set(message_id, {id: message_id, question: question, min: min, max: max, flags: flags});
 		return DB.query(`INSERT INTO polls VALUES ('${message_id}', '${question}', ${min}, ${max}, ${flags});`)[0];
 	},
 
 	updatePoll: function (message_id, data) {
-		const old = this.polls[message_id];
+		const old = this.polls.get(message_id);
 		if(data.question !== undefined){
 			data.question = `question = '${data.question}'`;
 		}
@@ -296,7 +296,7 @@ module.exports = {
 		if(data.flags !== undefined){
 			data.flags = `${(data.question + data.min + data.min) !== undefined ? ',' : ''} flags = ${data.flags}`;
 		}
-		this.polls[message_id] = {question: data.question ?? old.question, min: data.min ?? old.min, max: data.max ?? old.max, flags: data.flags ?? old.flags};
+		this.polls.set(message_id, {id: message_id, question: data.question ?? old.question, min: data.min ?? old.min, max: data.max ?? old.max, flags: data.flags ?? old.flags});
 		return DB.query(`UPDATE polls SET ${data.question}${data.min}${data.max}${data.flags} WHERE id = '${message_id}';`)[0];
 	},
 
@@ -305,7 +305,7 @@ module.exports = {
 	},
 
 	getPollAnswer: function (message_id, user_id) {
-		return this.pollsAnswers[user_id + '|' + message_id];
+		return this.pollsAnswers.get(user_id + '|' + message_id);
 	},
 
 	fetchPollResults: function (message_id) {
@@ -314,7 +314,7 @@ module.exports = {
 		no: DB.query(`SELECT COUNT(*) FROM poll_answers WHERE poll_id = '${message_id}' AND flags = 1;`)[0]['COUNT(*)']};
 	},
 	createPollAnswer: function (user_id, message_id, answer='', flags=0) {
-		this.pollsAnswers[user_id + '|' + message_id] = {answer: answer, flags: flags};
+		this.pollsAnswers.set(poll.user_id + '|' + poll.poll_id, {user_id: user_id, poll_id: message_id, answer: answer, flags: flags})
 		return DB.query(`INSERT INTO poll_answers VALUES ('${user_id}', '${message_id}', '${answer}', ${flags});`)[0];
 	},
 	updatePollAnswer: function (user_id, message_id, data) {
@@ -325,7 +325,7 @@ module.exports = {
 		if(data.flags !== undefined){
 			data.flags = `${data.answer !== undefined ? ',' : ''} flags = ${data.flags}`;
 		}
-		this.pollsAnswers[user_id + '|' + message_id] = {answer: data.answer ?? old.answer, flags: data.flags ?? old.flags};
+		this.pollsAnswers.set(poll.user_id + '|' + poll.poll_id, {user_id: user_id, poll_id: message_id, answer: data.answer ?? old.answer, flags: data.flags ?? old.flags})
 		return DB.query(`UPDATE poll_answers SET ${data.answer}${data.flags} WHERE poll_id = '${message_id}' AND user_id = '${user_id}';`)[0];
 	},
 	fetchAll: function () {
