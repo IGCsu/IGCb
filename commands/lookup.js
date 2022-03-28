@@ -67,7 +67,7 @@ module.exports = {
 			const embed = await this.call(id.replace(/[^-_\w]/g, ' ').match(/[0-9]+/g)[0]);
 			int.reply({ embeds : [embed] });
 		}catch(e){
-			int.reply({ content : reaction.emoji.error + ' Пользователь не найден', ephemeral : true });
+			int.reply({ content : reaction.emoji.error + ' ' + localize(int.locale, 'User not found'), ephemeral : true });
 		}
 	},
 

@@ -65,7 +65,7 @@ module.exports = {
 			if(fixed.text.length) response.warning = reaction.emoji[fixed.status] + ' ' + fixed.text;
 			return response;
 		}catch(e){
-			return reaction.emoji.error + ' Упс... Ошибка';
+			return { error : reaction.emoji.error + ' Упс... Ошибка'};
 		}
 	},
 

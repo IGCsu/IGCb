@@ -1,0 +1,17 @@
+{
+	"You do not have enough rights to change the roles of other users": "У вас недостаточно прав для изменения ролей других пользователей",
+	"User not found": "Пользователь не найден",
+	"The minimum number of characters exceeds the maximum": "Минимальное количество символов превышает максимальное",
+	"In development": "В разработке",
+	"This poll was not found in the database": "Этот опрос не найден в базе данных",
+	"Access denied": "Отказано в доступе",
+	"Confirm your vote": "Подтвердите свой голос",
+	"Confirm your vote changes": "Подтвердите изменения своего голоса",
+	"yes": "за",
+	"no": "против",
+	"Why you choose": "Почему вы выбрали",
+	"Enter your valuable opinion": "Введите ваше ценное мнение",
+	"Vote submmited": "Голос подтверждён",
+	"Vote changed": "Голос изменён",
+	"There are no votes yet": "Голосов пока нет"
+}	 

@@ -1,4 +1,5 @@
 const { Collection } = require('@discordjs/collection');
+const localize = require('../functions/localize');
 
 module.exports = {
 
@@ -134,7 +135,7 @@ module.exports = {
 			flags += (type == 'common' ? 0 : this.FLAGS.POLLS.PRIVATE);
 			flags += (public ? this.FLAGS.POLLS.PUBLIC : 0);
 			if(min > 1000){
-				await int.reply({content: 'Минимальное количество превышает максимальное'})
+				return await int.reply({content: localize(int.locale, 'The minimum number of characters exceeds the maximum'), ephemeral: true})
 			} else {
             	const message = await int.reply({content: `${txt} опрос: ${question}`, components:
 				[
@@ -172,7 +173,7 @@ module.exports = {
 			if(search){
 				if(search[0] == 'poll') return int.reply({content: this.getPollResultsContent(search[1]), ephemeral: true});
 			};
-			int.reply({content: 'В разработке', ephemeral: true});
+			int.reply({content: localize(int.locale, 'In development'), ephemeral: true});
 		};
     },
 
@@ -180,15 +181,15 @@ module.exports = {
 	 * @param {Object} int ButtonInteraction
 	 */
     button : async function(int){
-        //int.reply({content: 'В разработке', ephemeral: true});
+        //int.reply({content: localize(int.locale, 'In development'), ephemeral: true});
 		const answer = this.fetchPollAnswer(int.member.user.id, int.message.id);
 		const value = answer ? answer.answer : undefined;
 		const poll = this.fetchPoll(int.message.id);
-		if(!poll) return int.reply({content: 'Этот опрос не найден в базе данных', ephemeral: true});
+		if(!poll) return int.reply({content: localize(int.locale, 'This poll was not found in the database'), ephemeral: true});
 		const resp = int.customId.split('|')[1]
 		const private = poll.flags & this.FLAGS.POLLS.PRIVATE;
 		if(private && !(int.member.roles.cache.get('916999822693789718') || int.member.roles.cache.get('613412133715312641'))){
-			return await int.reply({content: 'Отказано в достпуе', ephemeral: true})
+			return await int.reply({content: localize(int.locale, 'Access denied'), ephemeral: true})
 		}
 
 		const min = poll.min;
@@ -207,19 +208,19 @@ module.exports = {
 			data:{
 				type: 9,
 				data: {
-					title: `${value ? 'Изменение' : 'Подтверждение'} голоса`,
+					title: localize(int.locale, value ? 'Confirm your vote changes' : 'Confirm your vote'),
 					custom_id: 'poll|' + resp,
 					components:[{
 						type: 1,
 						components:[{
 							type: 4,
 							custom_id: 'opininon',
-							label: 'Почему вы выбрали именно \"' + ((resp == 'yes') ? 'За': 'Против') + '\"',
+							label: localize(int.locale, 'Why you choose') + ' \"' + localize(int.locale, ((resp == 'yes') ? 'yes': 'no')) + '\"',
 							style: 2,
 							value: value,
 							min_length: min,
 							max_length: 1000,
-							placeholder: 'Введите ваше ценное мнение',
+							placeholder: localize(int.locale, 'Enter your valuable opinion'),
 							required: min != 0
 						}]
 					}],
@@ -233,16 +234,16 @@ module.exports = {
 		console.log(`\x1b[33m${int.message.content} ${int.member.user.username} ${(type == 'yes') ? 'за' : 'против'}:\x1b[0m ${int.data.components[0].components[0].value}`)
 		if(!this.fetchPollAnswer(int.member.user.id, int.message.id)){
 			this.createPollAnswer(int.member.user.id, int.message.id, int.data.components[0].components[0].value, (type == 'yes') ? 0 : this.FLAGS.ANSWERS.DISAGREE)
-			txt = 'подтверждён';
+			txt = localize(int.locale, 'Vote submmited');
 		} else {
 			this.updatePollAnswer(int.member.user.id, int.message.id, int.data.components[0].components[0].value, (type == 'yes') ? 0 : this.FLAGS.ANSWERS.DISAGREE)
-			txt = 'изменён';
+			txt = localize(int.locale, 'Vote changed');
 		}
 		await client.api.interactions(int.id, int.token).callback.post({
 			data:{
 				type: 4,
 				data: {
-					content: 'Голос ' + txt,
+					content: txt,
 					flags: 64
 				}
 			}
@@ -341,7 +342,7 @@ module.exports = {
 	getPollResultsContent: function (message_id) {
 		const poll = this.fetchPoll(message_id);
 		const results = this.fetchPollResults(message_id);
-		let content = 'Голосов пока нет';
+		let content = localize(int.locale, 'Голосов пока нет');
 		let votes = '';
 		if(results.result.length){
 			if(poll.flags & this.FLAGS.POLLS.PUBLIC){
@@ -353,7 +354,7 @@ module.exports = {
 			};
 			content = 
 			'```ansi\n' + 
-			`против ${results.no} [[0;41m${' '.repeat(Math.round((results.no/results.result.length)*20))}[0;45m${' '.repeat(Math.round((results.yes/results.result.length)*20))}[0m] ${results.yes} за\n` + votes +
+			`${localize(int.locale, 'no')} ${results.no} [[0;41m${' '.repeat(Math.round((results.no/results.result.length)*20))}[0;45m${' '.repeat(Math.round((results.yes/results.result.length)*20))}[0m] ${results.yes} ${localize(int.locale, 'yes')}\n` + votes +
 			'```';
 		};
 		return content;

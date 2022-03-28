@@ -100,6 +100,17 @@ const definitionFunctions = () => {
 	});
 }
 
+const definitionLocales = () => {
+		let locales = {};
+	fs.readdirSync('./locales/').forEach(file => {
+		const path = './locales/' + file;
+		console.time(path);
+		locales[file.split('.')[0]] = require(path);
+		console.timeEnd(path);
+		global.locales = locales;
+	});
+}
+
 
 
 module.exports = async () => {
@@ -112,6 +123,9 @@ module.exports = async () => {
 
 	console.log('Loading functions:');
 	await definitionFunctions();
+
+	console.log('Loading locales:');
+	await definitionLocales();
 
 	console.log('Loading commands:');
 	global.commands = await getCommands();
