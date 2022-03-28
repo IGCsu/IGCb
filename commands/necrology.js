@@ -142,21 +142,6 @@ module.exports = {
 		return result;
 	},
 
-	getAdvancedDataFromAuditLogs : async function(target, type){
-		const auditLogs = await guild.fetchAuditLogs({limit: 1, type: type});
-		let result = { author : undefined, reason : undefined};
-
-		const entrie = auditLogs.entries.first();
-		if(!entrie) return result;
-		if(entrie.target == target){
-			result.author = entrie.executor;
-			result.reason = entrie.reason;
-		};
-
-		return result;
-	},
-
-
 	getTimeMute : function(timestamp){
 		const difference = (timestamp - Date.now()) / 1000;
 
