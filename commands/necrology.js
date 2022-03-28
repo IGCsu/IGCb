@@ -47,12 +47,7 @@ module.exports = {
 			.setTitle(reaction.emoji.banhammer + ' Бан')
 			.setColor(0x808080)
 			.setTimestamp()
-			.setThumbnail(ban.user.avatarURL({ dynamic: true }))
-			.setDescription('Пользователь: **`' + ban.user.username + '#' + ban.user.discriminator +
-				'`**\nID пользователя: **`' + ban.user.id +
-				'`**\nПричина: **`' + (ban?.reason ? ban.reason : 'не указана') + '`**'
-			);
-
+			.setThumbnail(ban.user.avatarURL({ dynamic: true }));
 		try {
 			const auditLogs = await guild.fetchAuditLogs({ limit : 1, type : 22 });
 			const entrie = auditLogs.entries.first();
@@ -61,7 +56,11 @@ module.exports = {
 				embed.setFooter({
 					iconURL : entrie.executor.displayAvatarURL({ dynamic: true }),
 					text : entrie.executor.username + '#' + entrie.executor.discriminator
-				});
+				})
+				embed.setDescription('Пользователь: **`' + ban.user.username + '#' + ban.user.discriminator +
+				'`**\nID пользователя: **`' + ban.user.id +
+				'`**\nПричина: **`' + (entrie.reason ? entrie.reason : 'не указана') + '`**'
+			);
 		}catch(e){}
 
 		const msg = await this.channel.send({ embeds : [embed] });
@@ -96,7 +95,7 @@ module.exports = {
 
 		const time = this.getTimeMute(after.communicationDisabledUntilTimestamp);
 		const date = formatDate();
-		const advancedMuteData = await this.getAdvancedMuteData(after.user);
+		const advancedMuteData = await this.getAdvancedTimeoutData(after.user);
 		const text = date + ' ' + time + ' ' + member2name(after) + ' ' + after.user.id;
 
 		let embed = new Discord.MessageEmbed()
@@ -129,13 +128,27 @@ module.exports = {
 	* @returns {User} author автор мута
 	* @returns {string} reason причина мута
 	*/
-	getAdvancedMuteData : async function(target){
+	getAdvancedTimeoutData : async function(target){
 		const auditLogs = await guild.fetchAuditLogs({limit: 1, type: 24});
 		let result = { author : undefined, reason : undefined};
 
 		const entrie = auditLogs.entries.first();
 		if(!entrie) return result;
 		if(entrie.changes[0].key == 'communication_disabled_until' && entrie.target == target){
+			result.author = entrie.executor;
+			result.reason = entrie.reason;
+		};
+
+		return result;
+	},
+
+	getAdvancedDataFromAuditLogs : async function(target, type){
+		const auditLogs = await guild.fetchAuditLogs({limit: 1, type: type});
+		let result = { author : undefined, reason : undefined};
+
+		const entrie = auditLogs.entries.first();
+		if(!entrie) return result;
+		if(entrie.target == target){
 			result.author = entrie.executor;
 			result.reason = entrie.reason;
 		};
