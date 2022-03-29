@@ -1,3 +1,17 @@
 {
-	
-}
+	"You do not have enough rights to change the roles of other users": "У вас недостатньо прав для редагування ролей інших користувачів",
+	"User not found": "Користувача не знайдено",
+	"The minimum number of characters exceeds the maximum": "Мінімальна кількість символів перевищує максимальну",
+	"In development": "У розробці",
+	"This poll was not found in the database": "Це опитування відсутнє у базі даних",
+	"Access denied": "Відказано в доступі",
+	"Confirm your vote": "Підтвердіть свій вибір",
+	"Confirm your vote changes": "Підтвердіть зміну свого вибору",
+	"yes": "за",
+	"no": "проти",
+	"Why you choose": "Чому ви обрали",
+	"Enter your valuable opinion": "Напишіть свою думку",
+	"Vote submmited": "Вибір підтверджено",
+	"Vote changed": "Вибір змінено",
+	"There are no votes yet": "Поки ніхто не голосував"
+}	 
