@@ -89,7 +89,7 @@ module.exports = {
 		
 		if(!role) {
 			if (permission && create){
-			role = await this.create(member, int.options.get('role').value, 45)
+			role = (await this.create(member, int.options.get('role').value, 45)).role
 			await int.reply({content: reaction.emoji.success + ' Роль <@&' + role.role.id + '> создана', allowed_mentions: { "parse": [] }})
 			} else {
 			return await int.reply({content: reaction.emoji.error + ' Роль не найдена', allowedMentions: { "parse": [] }, ephemeral: true})
