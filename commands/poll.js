@@ -171,7 +171,7 @@ module.exports = {
 		} else {
 			const search = int.options.getString('search')?.split('|');
 			if(search){
-				if(search[0] == 'poll') return int.reply({content: this.getPollResultsContent(search[1]), ephemeral: true});
+				if(search[0] == 'poll') return int.reply({content: this.getPollResultsContent(search[1], int), ephemeral: true});
 			};
 			int.reply({content: localize(int.locale, 'In development'), ephemeral: true});
 		};
@@ -196,7 +196,7 @@ module.exports = {
 
 		if(resp == 'result') {
 			await int.deferReply({ephemeral: true});
-			const content = this.getPollResultsContent(int.message.id);
+			const content = this.getPollResultsContent(int.message.id, int);
 			try{
 				return await int.editReply({content: content, ephemeral: true});
 			} catch(e){
@@ -315,18 +315,18 @@ module.exports = {
 		no: DB.query(`SELECT COUNT(*) FROM poll_answers WHERE poll_id = '${message_id}' AND flags = 1;`)[0]['COUNT(*)']};
 	},
 	createPollAnswer: function (user_id, message_id, answer='', flags=0) {
-		this.pollsAnswers.set(poll.user_id + '|' + poll.poll_id, {user_id: user_id, poll_id: message_id, answer: answer, flags: flags})
+		this.pollsAnswers.set(user_id + '|' + message_id, {user_id: user_id, poll_id: message_id, answer: answer, flags: flags})
 		return DB.query(`INSERT INTO poll_answers VALUES ('${user_id}', '${message_id}', '${answer}', ${flags});`)[0];
 	},
 	updatePollAnswer: function (user_id, message_id, data) {
-		const old = this.pollsAnswers[user_id + '|' + message_id];
+		const old = this.pollsAnswers.get(user_id + '|' + message_id);
 		if(data.answer !== undefined){
 			data.answer = `answer = '${data.answer}'`;
 		}
 		if(data.flags !== undefined){
 			data.flags = `${data.answer !== undefined ? ',' : ''} flags = ${data.flags}`;
 		}
-		this.pollsAnswers.set(poll.user_id + '|' + poll.poll_id, {user_id: user_id, poll_id: message_id, answer: data.answer ?? old.answer, flags: data.flags ?? old.flags})
+		this.pollsAnswers.set(user_id + '|' + message_id, {user_id: user_id, poll_id: message_id, answer: data.answer ?? old.answer, flags: data.flags ?? old.flags})
 		return DB.query(`UPDATE poll_answers SET ${data.answer}${data.flags} WHERE poll_id = '${message_id}' AND user_id = '${user_id}';`)[0];
 	},
 	fetchAll: function () {
@@ -339,7 +339,7 @@ module.exports = {
 		this.pollsAnswers];
 	},
 
-	getPollResultsContent: function (message_id) {
+	getPollResultsContent: function (message_id, int=undefined) {
 		const poll = this.fetchPoll(message_id);
 		const results = this.fetchPollResults(message_id);
 		let content = localize(int.locale, 'Голосов пока нет');
