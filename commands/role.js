@@ -105,7 +105,7 @@ module.exports = {
 			text = reaction.emoji.success + ' Роль <@&' + role.id + '> ' + action.text + ' <@' + member.id + '>';
 		} else {text = 'Запускаю выдачу ролей'};
 
-		await int.reply({content: text, allowedMentions: { "parse": [] }});
+		if (!int.replied) await int.reply({content: text, allowedMentions: { "parse": [] }});
 	
 		if (members && permission) members.forEach(user => {
 			let data = toggleRole(role, user, member);
