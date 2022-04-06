@@ -172,6 +172,7 @@ module.exports = {
 			const search = int.options.getString('search')?.split('|');
 			if(search){
 				if(search[0] == 'poll') return int.reply({content: this.getPollResultsContent(search[1], int), ephemeral: true});
+				if(search[0] == 'answer') return int.reply({content: this.getPollAnswerContent(search[1], search[2], int), ephemeral: true});
 			};
 			int.reply({content: localize(int.locale, 'In development'), ephemeral: true});
 		};
@@ -263,7 +264,7 @@ module.exports = {
 				if(this.polls.get(ID)) polls.push({value: 'poll|' + ID, name: ((this.polls.get(ID)?.question.length > 90) ? (this.polls.get(ID)?.question.slice(0, 90) + '...') : this.polls.get(ID)?.question)});
 				pollsAnswers = this.pollsAnswers.filter(answer => answer.user_id == ID);
 				pollsAnswers.forEach(answer => {
-					answers.push({value: 'answer|' + ID, name: (answer.flags & this.FLAGS.ANSWERS.DISAGREE ? 'ПРОТИВ ' : 'ЗА ') + ((answer.answer != '') ? (answer.answer.length > 90 ? (answer.answer.slice(0, 90) + '...') : answer.answer) : 'Без ответа')})
+					answers.push({value: 'answer|' + ID + '|' + answer.poll_id, name: (answer.flags & this.FLAGS.ANSWERS.DISAGREE ? 'ПРОТИВ ' : 'ЗА ') + ((answer.answer != '') ? (answer.answer.length > 90 ? (answer.answer.slice(0, 90) + '...') : answer.answer) : 'Без ответа')})
 				})
 			}))
 			await int.respond((choices.concat(polls)).concat(answers));
@@ -339,10 +340,19 @@ module.exports = {
 		this.pollsAnswers];
 	},
 
+	getPollAnswerContent: function (message_id, user_id, int=undefined) {
+		const poll = this.fetchPoll(message_id);
+		const answer = this.fetchPollAnswer(user_id, message_id);
+		let content = localize(int.locale, 'Vote not found');
+		if(answer){
+			content = `<@${user_id}> \n\`\`\`ansi\n${(answer.flags & this.FLAGS.ANSWERS.DISAGREE) ? '[0;41m✖[0m ' : '[0;45m✓[0m '}   ${answer.answer}`
+		};
+		return content;
+	},
 	getPollResultsContent: function (message_id, int=undefined) {
 		const poll = this.fetchPoll(message_id);
 		const results = this.fetchPollResults(message_id);
-		let content = localize(int.locale, 'Голосов пока нет');
+		let content = localize(int.locale, 'There are no votes yet');
 		let votes = '';
 		if(results.result.length){
 			if(poll.flags & this.FLAGS.POLLS.PUBLIC){
