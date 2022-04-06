@@ -340,12 +340,12 @@ module.exports = {
 		this.pollsAnswers];
 	},
 
-	getPollAnswerContent: function (message_id, user_id, int=undefined) {
+	getPollAnswerContent: function (user_id, message_id, int=undefined) {
 		const poll = this.fetchPoll(message_id);
 		const answer = this.fetchPollAnswer(user_id, message_id);
 		let content = localize(int.locale, 'Vote not found');
 		if(answer){
-			content = `<@${user_id}> \n\`\`\`ansi\n${(answer.flags & this.FLAGS.ANSWERS.DISAGREE) ? '[0;41m✖[0m ' : '[0;45m✓[0m '}   ${answer.answer}`
+			content = `${poll.question}\n<@${user_id}> ${(answer.flags & this.FLAGS.ANSWERS.DISAGREE) ? 'против' : 'за'}\n\`\`\`ansi\n${answer.answer}\`\`\``
 		};
 		return content;
 	},
