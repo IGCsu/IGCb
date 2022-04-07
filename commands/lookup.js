@@ -35,7 +35,10 @@ module.exports = {
 	 */
 	call : async function(id){
 		const user = await client.users.fetch(id);
-		const member = await guild.members.fetch(id);
+		let member = undefined;
+		try {
+			member = await guild.members.fetch(id);
+		} catch(e) { };
 		const embed = new Discord.MessageEmbed();
 
 		const now = Date.now();
@@ -68,6 +71,7 @@ module.exports = {
 			int.reply({ embeds : [embed] });
 		}catch(e){
 			int.reply({ content : reaction.emoji.error + ' ' + localize(int.locale, 'User not found'), ephemeral : true });
+			console.log(e)
 		}
 	},
 
