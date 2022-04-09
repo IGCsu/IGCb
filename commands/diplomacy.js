@@ -193,7 +193,7 @@ module.exports = {
 
 		if(!status) return { status : false, data : 'Нет новостей' };
 
-		if((status !== 'turn' && this.lastPing !== undefined && this.lastPing + 6 >= currentHour) || !ping)
+		if((status !== 'turn' && this.lastPing !== undefined && this.lastPing + 6 >= currentHour) && !ping)
 			ping = false;
 
 		const users = body.match(this.globalRegExp);
