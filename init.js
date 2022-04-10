@@ -60,7 +60,8 @@ const getCommands = async () => {
 		logText += log.load(path, timePerf, command.active);
 	}
 
-	new REST({ version: '9' }).setToken(config.token).put( Routes.applicationGuildCommands(client.user.id, config.home), { body : commands });
+	if(!debugAllowModules.length)
+		new REST({ version: '9' }).setToken(config.token).put( Routes.applicationGuildCommands(client.user.id, config.home), { body : commands });
 
 	// Генерирование и кэширование списка команд
 	if(list.help) list.help.generate(list);
@@ -132,14 +133,16 @@ module.exports = async () => {
 
 	await client.user.setActivity('i!help', { type: 'LISTENING' });
 
-	console.time('Send start bot');
-	const author = process.env.USERNAME ?? 'Host';
-	let embed = new Discord.MessageEmbed()
-		.setTitle('Бот запущен')
-		.setTimestamp()
-		.setDescription('hosted by ' + author + '\n\n```ansi' + logText + '```');
-	await guild.channels.cache.get('574997373219110922').send({ embeds : [embed] });
-	console.timeEnd('Send start bot');
+	if(!debugAllowModules.length){
+		console.time('Send start bot');
+		const author = process.env.USERNAME ?? 'Host';
+		let embed = new Discord.MessageEmbed()
+			.setTitle('Бот запущен')
+			.setTimestamp()
+			.setDescription('hosted by ' + author + '\n\n```ansi' + logText + '```');
+		await guild.channels.cache.get('574997373219110922').send({ embeds : [embed] });
+		console.timeEnd('Send start bot');
+	}
 
 	console.time('Event messageCreate');
 	client.on('messageCreate', async msg => {
