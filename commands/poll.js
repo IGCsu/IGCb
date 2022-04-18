@@ -29,6 +29,7 @@ module.exports = {
 			name : 'common',
 			name_localizations : {'ru': 'общий', 'uk': 'загальний'},
 			description : 'Сommon poll',
+			description_localizations : {'ru': 'Общий опрос', 'uk': 'Загальне опитування'},
 			type : 1,
 			options : [
 				{

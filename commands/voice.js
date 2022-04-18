@@ -6,7 +6,8 @@ module.exports = {
 	name : 'voice',
 	title : 'Управление голосовыми каналами',
 	text : 'Модуль для управления голосовыми каналами.\n\nПри заходе пользователя в #Создать канал - создаётся голосовой канал, в котором у автора будут все права. Он может редактировать канал как угодно. После выхода всех пользователей, канал удаляется, настройки не сохраняются.\n\nДля передачи прав владения другому пользователю, достаточно нажать на нужного пользователя правой кнопкой мыши и в меню "Приложения" выбрать команду "voice". Выбранный пользователь получит права владения над всеми голосовыми каналами, в которых у вас есть право редактирования ролей.\n\nБот не удаляет каналы, у которых в названии в конце есть звёздочка `*`.',
-	descriptionShort : 'Модуль для управления каналами',
+	descriptionShort : 'Module for voice channel management',
+	description_localizations : {'ru': 'Модуль для управления голосовыми каналами', 'uk': 'Модуль для управління голосовими каналами'},
 
 	permission : {
 		MANAGE_CHANNELS : true,
@@ -19,6 +20,58 @@ module.exports = {
 		STREAM : true,
 		SPEAK : true,
 	},
+
+	slashOptions : [
+		{
+			name : 'sync',
+			description : 'Synchronize the channel with the database',
+			description_localizations : {'ru': 'Синхронизовать канал с базой данных', 'uk': 'Синхронізувати канал з базою даних'},
+			type : 1,
+		},
+		{
+			name : 'upload',
+			description : 'Upload the configuration to the database',
+			description_localizations : {'ru': 'Загрузить конфигруацию в базу данных', 'uk': 'Завантажити конфігурацію в базу даних'},
+			type : 1,
+		},
+		{
+			name : 'auto-sync',
+			description : 'Setting up auto-synchronization',
+			description_localizations : {'ru': 'Настройка автосинхронизации', 'uk': 'Настройка автосинхронизации'},
+			type : 1,
+			options : [
+				{
+					name : 'mode',
+					name_localizations : {'ru': 'режим', 'uk': 'режим'},
+					description : 'Select auto sync mode',
+					description_localizations : {'ru': 'Выберите режим автосинхронизации', 'uk': 'Виберіть режим автосинхронізації'},
+					type : 3,
+					choices: [
+						{value: '0', name: 'Disabled', name_localizations: {'ru': 'Отключена', 'uk': 'Відключений'}},
+						{value: '1', name: 'Partial (Settings are loaded from the DB only when creating a VC)', name_localizations: {'ru': 'Частичная (Настройки выгружаются из БД только при создании ГС)', 'uk': 'Часткова (Налаштування вивантажуються з БД тільки при створенні ГС)'}},
+						{value: '2', name: 'Full', name_localizations: {'ru': 'Полная', 'uk': 'Полная'}},
+					],
+					required : true,
+				}
+			]
+		},
+		{
+			name : 'add-owner',
+			description : 'Grant channel management perms',
+			description_localizations : {'ru': 'Дать права на управление каналом', 'uk': 'Дати права на управління каналоми'},
+			type : 1,
+			options : [
+				{
+					name : 'member',
+					name_localizations : {'ru': 'пользователь', 'uk': 'користувач'},
+					description : 'The user to whom the perms will be granted',
+					description_localizations : {'ru': 'Пользователь которому будут выданы права', 'uk': 'Користувач якому будуть видані права'},
+					type : 6,
+					required : true,
+				}
+			]
+		},
+	],
 
 	/**
 	* Инициализирует прослушку необходимых ивентов.
@@ -59,7 +112,9 @@ module.exports = {
 	},
 
 
-
+	slash: async function(int){
+		await int.reply({content: localize(int.locale, 'In development'), ephemeral: true});
+	},
 
 
 	/**
