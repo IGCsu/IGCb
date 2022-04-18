@@ -52,7 +52,7 @@ module.exports = {
 	 * @param {CommandInteraction} int Команда пользователя
 	*/
 	slash : async function(int){
-		const invite = await client.api.channels(int.options.get('канал').value).invites.post({
+		const invite = await client.api.channels(int.options.get('channel').value).invites.post({
 			data : { target_type : 2, target_application_id : int.options.get('activity').value }
 		});
 
