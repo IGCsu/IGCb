@@ -206,7 +206,7 @@ module.exports = {
 			let userStatus = data[1].match(/<img src=".+" alt="(.+)" title=".+" \/>/);
 			userStatus = userStatus ? userStatus[1] : 'Skip';
 			text += '\n' + reaction.emoji[this.statuses[userStatus]] + '  ' + this.flags[data[2]] + '<@' + this.players[data[3]] + '> ' + data[7] + ' supply, ' + data[8] + ' units';
-			if(userStatus == 'Not received') pingList += '<@' + this.players[data[3]] + '>';
+			if(userStatus == 'Not received') pingList += '<@' + this.players[data[3]] + '> ';
 		}
 
 		const turn = body.match(/src="map\.php\?gameID=\d+&turn=(\d+)&mapType=large"/)[1];
@@ -224,7 +224,7 @@ module.exports = {
 
 		let data = { embeds : [embed] };
 		if(ping && pingList.length){
-			data.content = '||' + pingList + '||';
+			data.content = pingList;
 			this.lastPing = currentHour;
 		}
 
