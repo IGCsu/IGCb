@@ -117,7 +117,7 @@ module.exports = {
 			DB.query(`UPDATE users SET mode = "${int.options.getString('mode')}" WHERE id = ${int.user.id};`)[0];
 			await int.reply({content: reaction.emoji.success + ' ' +localize(int.locale, 'Settings changed'), ephemeral: true});
 		} else if (int.options.getSubcommand() == 'upload') {
-			if(!int.member.voice) return await int.reply({content: reaction.emoji.error + ' ' + localize(int.locale, 'You aren\'t connect to voice channel'), ephemeral: true});
+			if(!int.member.voice.channel) return await int.reply({content: reaction.emoji.error + ' ' + localize(int.locale, 'You aren\'t connect to voice channel'), ephemeral: true});
 			let voice_data = JSON.stringify({name: int.member.voice.channel.name, bitrate: int.member.voice.channel.bitrate, userLimit: int.member.voice.channel.userLimit})
 			if(DB.query(`SELECT * FROM users WHERE id = ${int.user.id};`)[0]){
 				DB.query(`UPDATE users SET voice_data = ? WHERE id = ${int.user.id};`, [voice_data])[0];
