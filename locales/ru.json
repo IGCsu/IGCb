@@ -14,5 +14,8 @@
 	"Vote submmited": "Голос подтверждён",
 	"Vote changed": "Голос изменён",
 	"There are no votes yet": "Голосов пока нет",
-	"Vote not found": "Голос не найден"
+	"Vote not found": "Голос не найден",
+	"You aren't connect to voice channel": "Вы не подключены к голосовому каналу",
+	"Settings changed": "Настройки изменены",
+	"Voice channel configuration updated in DB": "Конфигурция канала записана в базу данных"
 }	 

@@ -113,8 +113,23 @@ module.exports = {
 
 
 	slash: async function(int){
-		await int.reply({content: localize(int.locale, 'In development'), ephemeral: true});
+		if(int.options.getSubcommand() == 'auto-sync'){
+			DB.query(`UPDATE users SET mode = "${int.options.getString('mode')}" WHERE id = ${int.user.id};`)[0];
+			await int.reply({content: reaction.emoji.success + ' ' +localize(int.locale, 'Settings changed'), ephemeral: true});
+		} else if (int.options.getSubcommand() == 'upload') {
+			if(!int.member.voice) return await int.reply({content: reaction.emoji.error + ' ' + localize(int.locale, 'You aren\'t connect to voice channel'), ephemeral: true});
+			let voice_data = JSON.stringify({name: int.member.voice.channel.name, bitrate: int.member.voice.channel.bitrate, userLimit: int.member.voice.channel.userLimit})
+			if(DB.query(`SELECT * FROM users WHERE id = ${int.user.id};`)[0]){
+				DB.query(`UPDATE users SET voice_data = ? WHERE id = ${int.user.id};`, [voice_data])[0];
+			} else {
+				DB.query(`INSERT INTO users VALUES (?, ?, ?);`, [int.user.id, voice_data, 0])[0];
+			}
+			await int.reply({content: reaction.emoji.success + ' ' + localize(int.locale, 'Voice channel configuration updated in DB'), ephemeral: true});
+		} else {
+			await int.reply({content: localize(int.locale, 'In development'), ephemeral: true});
+		}
 	},
+
 
 
 	/**
@@ -163,14 +178,23 @@ module.exports = {
 	 * @param {VoiceState} data
 	 */
 	create : async function(data){
-		const name = member2name(data.member);
+		let preset = DB.query(`SELECT * FROM users WHERE id = '${data.member.id}';`)[0];
+		preset.voice_data = JSON.parse(preset.voice_data)
+		const name = (preset?.mode != 0 ? preset?.voice_data?.name : undefined) ?? member2name(data.member);
 
 		log.info(member2name(data.member, 1, 1), 'create', '#' + name);
-		const channel = await data.guild.channels.create(name, {
+		let obj = {
 			reason : 'По требованию ' + member2name(data.member, 1),
 			parent : this.channelCategory.id,
-			type : 'GUILD_VOICE',
-		});
+			type : 'GUILD_VOICE'
+		}
+		let objFromPreset = {
+			//permissionOverwrites: preset?.voice_data?.permissionOverwrites,
+			bitrate: preset?.voice_data?.bitrate > guild.maximumBitrate ? guild.maximumBitrate : preset?.voice_data?.bitrate,
+			userLimit: preset?.voice_data?.userLimit
+		}
+		if(preset?.mode != 0) Object.assign(obj, obj, objFromPreset);
+		const channel = await data.guild.channels.create(name, obj);
 
 		channel.permissionOverwrites.create(data.member, this.permission);
 
