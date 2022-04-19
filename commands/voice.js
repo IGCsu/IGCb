@@ -118,12 +118,7 @@ module.exports = {
 			await int.reply({content: reaction.emoji.success + ' ' +localize(int.locale, 'Settings changed'), ephemeral: true});
 		} else if (int.options.getSubcommand() == 'upload') {
 			if(!int.member.voice.channel) return await int.reply({content: reaction.emoji.error + ' ' + localize(int.locale, 'You aren\'t connect to voice channel'), ephemeral: true});
-			let voice_data = JSON.stringify({name: int.member.voice.channel.name, bitrate: int.member.voice.channel.bitrate, userLimit: int.member.voice.channel.userLimit})
-			if(DB.query(`SELECT * FROM users WHERE id = ${int.user.id};`)[0]){
-				DB.query(`UPDATE users SET voice_data = ? WHERE id = ${int.user.id};`, [voice_data])[0];
-			} else {
-				DB.query(`INSERT INTO users VALUES (?, ?, ?);`, [int.user.id, voice_data, 0])[0];
-			}
+			await this.upload(int.member.voice);
 			await int.reply({content: reaction.emoji.success + ' ' + localize(int.locale, 'Voice channel configuration updated in DB'), ephemeral: true});
 		} else {
 			await int.reply({content: localize(int.locale, 'In development'), ephemeral: true});
@@ -199,7 +194,6 @@ module.exports = {
 		channel.permissionOverwrites.create(data.member, this.permission);
 
 		data.setChannel(channel).catch(reason => channel.delete());
-
 		this.channelCreate.permissionOverwrites.create(data.member, { CONNECT : false });
 		setTimeout(() => this.channelCreate.permissionOverwrites.delete(data.member), 60000);
 	},
@@ -250,6 +244,19 @@ module.exports = {
 			: () => log.info(user, 'delete', '#' + channel.name);
 
 		channel.delete().then(func, func);
-	}
+	},
+
+	/**
+	 * Загрузка канала в БД
+	 * @param {VoiceState} voice
+	 */
+	upload : async function(voice){
+		let voice_data = JSON.stringify({name: voice.channel.name, bitrate: voice.channel.bitrate, userLimit: voice.channel.userLimit})
+		if(DB.query(`SELECT * FROM users WHERE id = ${voice.member.user.id};`)[0]){
+			DB.query(`UPDATE users SET voice_data = ? WHERE last_channel_id = ${voice.channel.id};`, [voice_data])[0];
+		} else {
+			DB.query(`INSERT INTO users VALUES (?, ?, ?, ?);`, [voice.member.user.id, 0, voice.channelId, voice_data])[0];
+		}
+	},
 
 };
