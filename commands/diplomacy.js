@@ -160,9 +160,12 @@ module.exports = {
 		try{
 			const result = await this.update(true, flag == 'ping');
 			result.data.ephemeral = flag == 'ephemeral';
+			const pings = result.data.content;
+			result.data.content = undefined;
 			result.status
 				? await int.editReply(result.data)
 				: await int.editReply({ content : reaction.emoji.error + ' ' + result.data, ephemeral : true });
+			if(pings) await int.followUp({content: pings});
 		}catch(e){
 			await int.editReply({ content : reaction.emoji.error + ' [500] Ошибка!', ephemeral : true });
 			log.error('./commands/' + this.name + '.js: ' + e.message);
