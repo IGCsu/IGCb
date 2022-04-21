@@ -273,7 +273,7 @@ module.exports = {
 	},
 
 	fetchPoll: function (message_id) {
-		return DB.query(`SELECT * FROM polls WHERE id = '${message_id}';`)[0];
+		return DB.query(`SELECT * FROM polls WHERE id = "${message_id}";`)[0];
 	},
 
 	getPoll: function (message_id) {
@@ -312,9 +312,9 @@ module.exports = {
 	},
 
 	fetchPollResults: function (message_id) {
-		return {result: DB.query(`SELECT * FROM poll_answers WHERE poll_id = '${message_id}';`),
-		yes: DB.query(`SELECT COUNT(*) FROM poll_answers WHERE poll_id = '${message_id}' AND flags = 0;`)[0]['COUNT(*)'],
-		no: DB.query(`SELECT COUNT(*) FROM poll_answers WHERE poll_id = '${message_id}' AND flags = 1;`)[0]['COUNT(*)']};
+		return {result: DB.query(`SELECT * FROM poll_answers WHERE poll_id = "${message_id}";`),
+		yes: DB.query(`SELECT COUNT(*) FROM poll_answers WHERE poll_id = "${message_id}" AND flags = 0;`)[0]['COUNT(*)'],
+		no: DB.query(`SELECT COUNT(*) FROM poll_answers WHERE poll_id = "${message_id}" AND flags = 1;`)[0]['COUNT(*)']};
 	},
 	createPollAnswer: function (user_id, message_id, answer='', flags=0) {
 		this.pollsAnswers.set(user_id + '|' + message_id, {user_id: user_id, poll_id: message_id, answer: answer, flags: flags})
@@ -329,7 +329,7 @@ module.exports = {
 			data.flags = `${data.answer !== undefined ? ',' : ''} flags = ${data.flags}`;
 		}
 		this.pollsAnswers.set(user_id + '|' + message_id, {user_id: user_id, poll_id: message_id, answer: data.answer ?? old.answer, flags: data.flags ?? old.flags})
-		return DB.query(`UPDATE poll_answers SET ${data.answer}${data.flags} WHERE poll_id = '${message_id}' AND user_id = '${user_id}';`)[0];
+		return DB.query(`UPDATE poll_answers SET ${data.answer}${data.flags} WHERE poll_id = "${message_id}" AND user_id = "${user_id}";`)[0];
 	},
 	fetchAll: function () {
 		return [DB.query(`SELECT * FROM polls;`),
