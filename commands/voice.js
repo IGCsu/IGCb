@@ -174,7 +174,7 @@ module.exports = {
 	 */
 	create : async function(data){
 		let preset = DB.query(`SELECT * FROM users WHERE id = '${data.member.id}';`)[0];
-		preset.voice_data = JSON.parse(preset.voice_data)
+		if(perset) preset.voice_data = JSON.parse(preset.voice_data);
 		const name = (preset?.mode != 0 ? preset?.voice_data?.name : undefined) ?? member2name(data.member);
 
 		log.info(member2name(data.member, 1, 1), 'create', '#' + name);
