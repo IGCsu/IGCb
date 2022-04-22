@@ -252,8 +252,9 @@ module.exports = {
 	 */
 	upload : async function(voice){
 		let voice_data = JSON.stringify({name: voice.channel.name, bitrate: voice.channel.bitrate, userLimit: voice.channel.userLimit})
+		console.log(voice_data);
 		if(DB.query(`SELECT * FROM users WHERE id = ${voice.member.user.id};`)[0]){
-			DB.query(`UPDATE users SET voice_data = ? WHERE last_channel_id = ${voice.channel.id};`, [voice_data])[0];
+			DB.query(`UPDATE users SET voice_data = ? WHERE id = ${voice.member.user.id};`, [voice_data])[0];
 		} else {
 			DB.query(`INSERT INTO users VALUES (?, ?, ?, ?);`, [voice.member.user.id, 0, voice.channelId, voice_data])[0];
 		}
