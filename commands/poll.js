@@ -141,7 +141,7 @@ module.exports = {
             	const message = await int.reply({content: `${txt} опрос: ${question}`, components:
 				[
 					{
-						type : 1, components: 
+						type : 1, components:
 						[
 							{
 								type : 2,
@@ -255,17 +255,17 @@ module.exports = {
 	autocomplete : async function(int){
 		let choices = [];
 		const searchRequest = int.options.getFocused();
-		const IDs = searchRequest.replace(/[^-_\w]/g, ' ').match(/[0-9]+/g);
+		const ids = searchRequest.replace(/[^-_\w]/g, ' ').match(/[0-9]+/g);
 
-		if(IDs){
+		if(ids){
 			let polls = [];
 			let pollsAnswers;
 			let answers = [];
-			IDs.forEach((ID => {
-				if(this.polls.get(ID)) polls.push({value: 'poll|' + ID, name: ((this.polls.get(ID)?.question.length > 90) ? (this.polls.get(ID)?.question.slice(0, 90) + '...') : this.polls.get(ID)?.question)});
-				pollsAnswers = this.pollsAnswers.filter(answer => answer.user_id == ID);
+			ids.forEach((id => {
+				if(this.polls.get(id)) polls.push({value: 'poll|' + id, name: ((this.polls.get(id)?.question.length > 90) ? (this.polls.get(id)?.question.slice(0, 90) + '...') : this.polls.get(id)?.question)});
+				pollsAnswers = this.pollsAnswers.filter(answer => answer.user_id == id);
 				pollsAnswers.forEach(answer => {
-					answers.push({value: 'answer|' + ID + '|' + answer.poll_id, name: (answer.flags & this.FLAGS.ANSWERS.DISAGREE ? 'ПРОТИВ ' : 'ЗА ') + ((answer.answer != '') ? (answer.answer.length > 90 ? (answer.answer.slice(0, 90) + '...') : answer.answer) : 'Без ответа')})
+					answers.push({value: 'answer|' + id + '|' + answer.poll_id, name: (answer.flags & this.FLAGS.ANSWERS.DISAGREE ? 'ПРОТИВ ' : 'ЗА ') + ((answer.answer != '') ? (answer.answer.length > 90 ? (answer.answer.slice(0, 90) + '...') : answer.answer) : 'Без ответа')})
 				})
 			}))
 			await int.respond((choices.concat(polls)).concat(answers));
@@ -363,8 +363,8 @@ module.exports = {
 					((vote.answer.length > 60) ? vote.answer.slice(0, 60) + '...' : vote.answer) + '\n';
 				});
 			};
-			content = 
-			'```ansi\n' + 
+			content =
+			'```ansi\n' +
 			`${localize(int.locale, 'no')} ${results.no} [[0;41m${' '.repeat(Math.round((results.no/results.result.length)*20))}[0;45m${' '.repeat(Math.round((results.yes/results.result.length)*20))}[0m] ${results.yes} ${localize(int.locale, 'yes')}\n` + votes +
 			'```';
 		};
