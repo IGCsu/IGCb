@@ -132,7 +132,7 @@ module.exports = {
 	 * @param {Message} msg Сообщение пользователя
 	 */
 	elections : async function(msg){
-		if(msg.channel.id != 612280548777525249 && !msg.content.startsWith('<@') & !msg.content.endsWith('>') && msg.content.length >= 26) return;
+		if(!((msg.channel.id == 612280548777525249) && msg.content.startsWith('<@') && msg.content.endsWith('>') && (msg.content.length < 26))) return;
 
 		await msg.react(reaction.emoji.Sg3);
 		await msg.react(reaction.emoji.Sg0);
