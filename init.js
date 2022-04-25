@@ -203,6 +203,12 @@ module.exports = async () => {
 	});
 	console.timeEnd('Event raw');
 
+	console.time('errorHandler');
+	client.on('error', async e => {
+		console.log(e);
+	});
+	console.timeEnd('errorHandler');
+
 	log.start('== Bot ready ==');
 
 };

@@ -357,6 +357,7 @@ module.exports = {
 		let votes = '';
 		if(results.result.length){
 			if(poll.flags & this.FLAGS.POLLS.PUBLIC){
+				results.result.sort((a, b) => {return (a.flags & this.FLAGS.ANSWERS.DISAGREE) - (b.flags & this.FLAGS.ANSWERS.DISAGREE)})
 				results.result.forEach(vote => {
 					vote.answer = vote.answer.replace('\n', ' _ ')
 					votes += ((vote.flags & this.FLAGS.ANSWERS.DISAGREE) ? '[0;41m✖[0m ' : '[0;45m✓[0m ') + `${guild.members.cache.get(vote.user_id)?.displayName ?? vote.user_id} ` +
