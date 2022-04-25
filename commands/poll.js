@@ -323,10 +323,10 @@ module.exports = {
 	updatePollAnswer: function (user_id, message_id, data) {
 		const old = this.pollsAnswers.get(user_id + '|' + message_id);
 		if(data.answer !== undefined){
-			data.answer = `answer = '${data.answer}'`;
+			data.answer = `answer = "${data.answer}"`;
 		}
 		if(data.flags !== undefined){
-			data.flags = `${data.answer !== undefined ? ',' : ''} flags = ${data.flags}`;
+			data.flags = `${data.answer !== undefined ? ', ' : ''}flags = ${data.flags}`;
 		}
 		this.pollsAnswers.set(user_id + '|' + message_id, {user_id: user_id, poll_id: message_id, answer: data.answer ?? old.answer, flags: data.flags ?? old.flags})
 		return DB.query(`UPDATE poll_answers SET ${data.answer}${data.flags} WHERE poll_id = "${message_id}" AND user_id = "${user_id}";`)[0];
