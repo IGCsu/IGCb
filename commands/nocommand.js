@@ -106,7 +106,7 @@ module.exports = {
 	 * @param {Message} msg Сообщение пользователя
 	 */
 	opinion : async function(msg){
-		if(msg.channel.id != 500300930466709515) return;
+		if(msg.channel.id != 500300930466709515 || msg.author.bot || (msg.flags & 64)) return;
 
 		await msg.react(reaction.emoji.Sg3);
 		await msg.react(reaction.emoji.Sg0);
