@@ -23,13 +23,18 @@ module.exports = {
 			return this;
 		}
 
-		client.on('messageReactionAdd', async (reaction, user) => await this.call(reaction, reaction.message, user));
+		client.on('raw', async (data) => {
+			if(data.t != 'MESSAGE_REACTION_ADD') return;
+			const reaction = data.d
+			if(reaction.emoji.name != this.starboardEmoji) return;
+			const message = await ((await (client.channels.fetch(data.d.channel_id))).messages.fetch(data.d.message_id))
+			await this.call(message.reactions.cache.get(reaction.emoji.name), message);
+		});
 
 		return this;
 	},
 
-	call : async function(reaction, message, user){
-		if(reaction.emoji.name != this.starboardEmoji) return;
+	call : async function(reaction, message){
 		if(message.channel.nsfw) return;
 		if(message.channel == this.starboardChannel) return;
 		if(reaction.count != this.defaultEmojiCount) return;
@@ -46,20 +51,30 @@ module.exports = {
 			.setURL(message.url)
 			.addField('Оригинал', `[#${message.channel.name}](${message.url})`)
 			.setTimestamp();
-
+		let embeds = []
 		if(message.attachments.size){
-			embed.setImage(message.attachments.first().url)
+			embed.setImage(message.attachments.at(0).url).setURL('https://google.com/');
+			for(let i = 1; (i < 4) && (i < message.attachments.size); i++) {
+				embeds.push(new Discord.MessageEmbed().setImage(message.attachments.at(i).url).setURL('https://google.com/'))
+			};
 		} else {
-			const img = message.content.match(/https?:\/\/((media)|(cdn))\.discordapp\.((net)|(com))\/\S+/i)?.[0]
+			const img = message.content.match(/https?:\/\/((media)|(cdn))\.discordapp\.((net)|(com))\/\S+/igm)
 			if(img){
-				embed.setImage(img);
-				if(!(img.endsWith('mp4') || img.endsWith('mov') || img.endsWith('webp')))
-					embed.setDescription(message.content.replace(img, ''));
+				embed.setImage(img[0]).setURL('https://google.com/');
+				if(!(img[0].endsWith('mp4') || img[0].endsWith('mov') || img[0].endsWith('webp')))
+					embed.setDescription(message.content.replace(img[0], ''));
+				for(let i = 1; i < 4 && i < img.length; i++) {
+					embeds.push(new Discord.MessageEmbed().setImage(img[i]).setURL('https://google.com/'));
+					if(!(img[i].endsWith('mp4') || img[i].endsWith('mov') || img[i].endsWith('webp'))){
+						embed.setDescription(embed.description.replace(img[i], ''));
+					}
+				};
+				
 			}
 		};
-
-		await this.starboardChannel.send({embeds: [embed]})
-		await message.react(this.starboardEmoji)
+		embeds.unshift(embed);
+		await this.starboardChannel.send({embeds: embeds}); 
+		await message.react(this.starboardEmoji);
 
 	},
 };
