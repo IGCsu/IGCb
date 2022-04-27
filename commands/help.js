@@ -1,3 +1,5 @@
+const localize = require("../functions/localize");
+
 module.exports = {
 
 	active : true,
@@ -12,6 +14,22 @@ module.exports = {
 
 	init : function(){ return this; },
 
+	slashOptions: [
+		{
+			type: 3,
+			required: false,
+			name: 'category',
+			name_localization: {ru: 'категория', uk: 'категорія'},
+			description: 'Additional information',
+			description_localization: {ru: 'Дополнительная информация', uk: 'Додаткова інформація'},
+			choices: [
+				{ name: 'О Activities', value: 'activities' },
+				{ name: 'О Игровых ролях', value: 'roles' },
+				{ name: 'Об Опросах', value: 'polls' },
+				{ name: 'О Голосовых каналах', value: 'voices' },
+			]
+		}
+	],
 
 	/**
 	 * Обработка команды
@@ -30,7 +48,10 @@ module.exports = {
 	 */
 	slash : async function(int){
 		const embed = await this.call(int);
-		await int.reply({ embeds : [embed], fetchReply: true });
+		const category = int.options.getString('category');
+		if(!category)
+			return await int.reply({ embeds : [embed], fetchReply: true });
+		return await int.reply({content: localize(int.locale, 'In development'), ephemeral: true})
 	},
 
 	/**
