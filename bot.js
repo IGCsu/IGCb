@@ -4,7 +4,7 @@ global.config = require('./config.json');
 global.DB = new (require('sync-mysql'))(config.mysql);
 
 global.Discord = require('discord.js');
-global.client = new Discord.Client({ intents : new Discord.Intents(6143) });
+global.client = new Discord.Client({ intents : new Discord.Intents(46847) });
 
 client.on('ready', require('./init'));
 
