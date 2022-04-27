@@ -238,7 +238,7 @@ module.exports = {
 			this.createPollAnswer(int.member.user.id, int.message.id, int.data.components[0].components[0].value, (type == 'yes') ? 0 : this.FLAGS.ANSWERS.DISAGREE)
 			txt = localize(int.locale, 'Vote submmited');
 		} else {
-			this.updatePollAnswer(int.member.user.id, int.message.id, int.data.components[0].components[0].value, (type == 'yes') ? 0 : this.FLAGS.ANSWERS.DISAGREE)
+			this.updatePollAnswer(int.member.user.id, int.message.id, {awnser: int.data.components[0].components[0].value, flags: (type == 'yes') ? 0 : this.FLAGS.ANSWERS.DISAGREE})
 			txt = localize(int.locale, 'Vote changed');
 		}
 		await client.api.interactions(int.id, int.token).callback.post({
@@ -322,14 +322,16 @@ module.exports = {
 	},
 	updatePollAnswer: function (user_id, message_id, data) {
 		const old = this.pollsAnswers.get(user_id + '|' + message_id);
-		if(data.answer !== undefined){
+		if(data.answer != undefined){
 			data.answer = `answer = "${data.answer}"`;
-		}
-		if(data.flags !== undefined){
-			data.flags = `${data.answer !== undefined ? ', ' : ''}flags = ${data.flags}`;
-		}
+		} else {
+			data.answer = '';
+		};
+		if(data.flags != undefined){
+			data.flags = `${data.answer !== '' ? ',' : ''}flags = ${data.flags}`;
+		};
 		this.pollsAnswers.set(user_id + '|' + message_id, {user_id: user_id, poll_id: message_id, answer: data.answer ?? old.answer, flags: data.flags ?? old.flags})
-		return DB.query(`UPDATE poll_answers SET ${data.answer}${data.flags} WHERE poll_id = "${message_id}" AND user_id = "${user_id}";`)[0];
+		return DB.query(`UPDATE poll_answers SET ${data.answer}${data.flags} WHERE poll_id = ? AND user_id = ?;`, [message_id, user_id])[0];
 	},
 	fetchAll: function () {
 		return [DB.query(`SELECT * FROM polls;`),
