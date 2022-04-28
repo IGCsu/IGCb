@@ -183,21 +183,11 @@ module.exports = {
 	 * @param {Object} int ButtonInteraction
 	 */
     button : async function(int){
-        //int.reply({content: localize(int.locale, 'In development'), ephemeral: true});
-		const answer = this.fetchPollAnswer(int.member.user.id, int.message.id);
-		const value = answer ? answer.answer : undefined;
-		const poll = this.fetchPoll(int.message.id);
-		if(!poll) return int.reply({content: localize(int.locale, 'This poll was not found in the database'), ephemeral: true});
 		const resp = int.customId.split('|')[1]
-		const private = poll.flags & this.FLAGS.POLLS.PRIVATE;
-		if(private && !(int.member.roles.cache.get('916999822693789718') || int.member.roles.cache.get('613412133715312641'))){
-			return await int.reply({content: localize(int.locale, 'Access denied'), ephemeral: true})
-		}
-
-		const min = poll.min;
-
+        if(resp == 'result') await int.deferReply({ephemeral: true});
+		const poll = this.fetchPoll(int.message.id);
 		if(resp == 'result') {
-			await int.deferReply({ephemeral: true});
+			if(!poll) if(!poll) return int.editReply({content: localize(int.locale, 'This poll was not found in the database'), ephemeral: true});
 			const content = this.getPollResultsContent(int.message.id, int);
 			try{
 				return await int.editReply({content: content, ephemeral: true});
@@ -205,6 +195,15 @@ module.exports = {
 				console.log(e);
 			}
 		};
+		const answer = this.fetchPollAnswer(int.member.user.id, int.message.id);
+		const value = answer ? answer.answer : undefined;
+		if(!poll) int.reply({content: localize(int.locale, 'This poll was not found in the database'), ephemeral: true});
+		const private = poll.flags & this.FLAGS.POLLS.PRIVATE;
+		if(private && !(int.member.roles.cache.get('916999822693789718') || int.member.roles.cache.get('613412133715312641'))){
+			return await int.reply({content: localize(int.locale, 'Access denied'), ephemeral: true})
+		}
+
+		const min = poll.min;
 
 		await client.api.interactions(int.id, int.token).callback.post({
 			data:{
