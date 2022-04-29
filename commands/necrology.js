@@ -86,8 +86,8 @@ module.exports = {
 			const description = embed.description.split('\n');
 			embed.setTitle(embed.title + ' (Отменён)')
 			embed.setDescription(description[0] + '\n' + description[1] +
-				'\n**Размут** <t:' + Math.floor(Date.now()/1000) + ':R>' + 
-				`\n**Отменил:** <@${advancedMuteData?.author.id}>`
+				'\nРазмут <t:' + Math.floor(Date.now()/1000) + ':R>' + 
+				`\nОтменил: <@${advancedMuteData?.author.id}>`
 			);
 			embed.setColor(5131854)
 			await message.edit({embeds: [embed]})
