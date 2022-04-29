@@ -79,15 +79,17 @@ module.exports = {
 	 */
 	update : async function(before, after){
 		if(before.communicationDisabledUntilTimestamp == after.communicationDisabledUntilTimestamp) return;
-
+		const advancedMuteData = await this.getAdvancedTimeoutData(after.user);
 		if(!after.communicationDisabledUntilTimestamp) {
 			const message = this.channel.messages.cache.get(this.cache[after.id]?.messageId);
 			let embed = message.embeds[0];
 			const description = embed.description.split('\n');
-			embed.setTitle(embed.title + '(Отменён)')
+			embed.setTitle(embed.title + ' (Отменён)')
 			embed.setDescription(description[0] + '\n' + description[1] +
-				'\nРазмут <t:' + Math.floor(Date.now()/1000) + ':R>'
+				'\nРазмут <t:' + Math.floor(Date.now()/1000) + ':R>' + 
+				`\nОтменил:<@${advancedMuteData?.author.id}>`
 			);
+			embed.setColor(5131854)
 			await message.edit({embeds: [embed]})
 			delete this.cache[after.id]
 			return
@@ -95,7 +97,6 @@ module.exports = {
 
 		const time = this.getTimeMute(after.communicationDisabledUntilTimestamp);
 		const date = formatDate();
-		const advancedMuteData = await this.getAdvancedTimeoutData(after.user);
 		const text = date + ' ' + time + ' ' + member2name(after) + ' ' + after.user.id;
 
 		let embed = new Discord.MessageEmbed()
