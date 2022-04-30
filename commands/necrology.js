@@ -105,7 +105,7 @@ module.exports = {
 			.setTimestamp()
 			.setThumbnail(after.user.avatarURL({ dynamic: true }))
 			.setDescription('Пользователь: <@' + after.user.id + '>' +
-				'`**\nID пользователя: **`' + after.user.id +
+				'**\nID пользователя: **`' + after.user.id +
 				'`**\nПричина: **`' + (advancedMuteData?.reason ? advancedMuteData.reason : 'не указана') +
 				'`**\nРазмут <t:' + Math.floor(after.communicationDisabledUntilTimestamp/1000) + ':R>'
 			);
