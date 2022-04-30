@@ -87,8 +87,8 @@ module.exports = {
 			const description = embed.description.split('\n');
 			embed.setTitle(embed.title + ' (Отменён)')
 			embed.setDescription(description[0] + '\n' + description[1] +
-				'\nРазмут <t:' + Math.floor(Date.now()/1000) + ':R>' + 
-				`\nОтменил: <@${advancedMuteData?.author.id}>`
+				'\n**Размут** <t:' + Math.floor(Date.now()/1000) + ':R>' + 
+				`\n**Отменил:** <@${advancedMuteData?.author.id}>`
 			);
 			embed.setColor(5131854)
 			await message.edit({embeds: [embed]})
@@ -105,10 +105,10 @@ module.exports = {
 			.setColor(2075752)
 			.setTimestamp()
 			.setThumbnail(after.user.avatarURL({ dynamic: true }))
-			.setDescription('Пользователь: <@' + after.user.id + '>' +
-				'**\nID пользователя: **`' + after.user.id +
-				'`**\nПричина: **`' + (advancedMuteData?.reason ? advancedMuteData.reason : 'не указана') +
-				'`**\nРазмут <t:' + Math.floor(after.communicationDisabledUntilTimestamp/1000) + ':R>'
+			.setDescription('**Пользователь:** <@' + after.user.id + '>' +
+				'\n**ID пользователя:** `' + after.user.id +
+				'`\n**Причина:** `' + (advancedMuteData?.reason ? advancedMuteData.reason : 'не указана') +
+				'`\n**Размут** <t:' + Math.floor(after.communicationDisabledUntilTimestamp/1000) + ':R>'
 			);
 
 		if(advancedMuteData?.author) embed.setFooter({
