@@ -173,7 +173,12 @@ module.exports = {
 	 * @param {VoiceState} data
 	 */
 	create : async function(data){
-		let preset = DB.query(`SELECT * FROM users WHERE id = '${data.member.id}';`)[0];
+		let preset
+		try{
+			preset = DB.query(`SELECT * FROM users WHERE id = '${data.member.id}';`)[0];
+		} catch(e){
+			console.log("DB error occurred:\n" + e)
+		};
 		if(preset) preset.voice_data = JSON.parse(preset.voice_data);
 		const name = (preset?.mode != 0 ? preset?.voice_data?.name : undefined) ?? member2name(data.member);
 
