@@ -131,7 +131,7 @@ module.exports = async () => {
 	console.log('Loading commands:');
 	global.commands = await getCommands();
 
-	await client.user.setActivity('i!help', { type: 'LISTENING' });
+	await client.user.setActivity('/help', { type: 'LISTENING' });
 
 	if(!debugAllowModules.length){
 		console.time('Send start bot');
