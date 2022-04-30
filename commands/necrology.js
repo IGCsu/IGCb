@@ -86,7 +86,7 @@ module.exports = {
 			let embed = message.embeds[0];
 			const description = embed.description.split('\n');
 			embed.setTitle(embed.title + ' (Отменён)')
-			embed.setDescription(description[0] + '\n' + description[1] +
+			embed.setDescription(description[0] + '\n' + description[1] + description[2] +
 				'\n**Размут** <t:' + Math.floor(Date.now()/1000) + ':R>' + 
 				`\n**Отменил:** <@${advancedMuteData?.author.id}>`
 			);
