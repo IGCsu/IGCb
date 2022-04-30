@@ -82,6 +82,7 @@ module.exports = {
 		const advancedMuteData = await this.getAdvancedTimeoutData(after.user);
 		if(!after.communicationDisabledUntilTimestamp) {
 			const message = this.channel.messages.cache.get(this.cache[after.id]?.messageId);
+			if(!message || !message.embeds) return;
 			let embed = message.embeds[0];
 			const description = embed.description.split('\n');
 			embed.setTitle(embed.title + ' (Отменён)')
