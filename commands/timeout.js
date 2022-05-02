@@ -60,7 +60,7 @@ module.exports = {
 		let duration = 1;
 		try{
 			const time = /^(?:(?<days>[1-9]\d*)d(?:\s(?!$))?)?(?:(?<hours>2[0-3]|1\d|[1-9])h(?:\s(?!$))?)?(?:(?<minutes>[1-5]\d|[1-9])m(?:\s(?!$))?)?(?:(?<seconds>[1-5]\d|[1-9])s)?$/gm.exec(string);
-			duration = ((time.groups.days ?? 0) * 86400000) + ((time.groups.hours ?? 0) * 3600000) + ((time.groups.minutes ?? 0) * 60000) + time.groups.seconds * 1000;
+			duration = ((time.groups.days ?? 0) * 86400000) + ((time.groups.hours ?? 0) * 3600000) + ((time.groups.minutes ?? 0) * 60000) + (time.groups.seconds ?? 0) * 1000;
 		} catch(e) {
 			console.log(e);
 			return int.reply({ content : localize(int.locale, 'Invalid duration provided'), ephemeral : true});
@@ -69,7 +69,7 @@ module.exports = {
 
 		await int.reply({ embeds: [
 			new Discord.MessageEmbed()
-				.setTitle(reaction.emoji.success + ' ' + member.user.tag + ' Был замьучен | ' + reason)
+				.setTitle(reaction.emoji.success + ' ' + member.user.tag + ' Был замьючен | ' + reason)
 				.setColor(2075752)
 		]});
 		await member.timeout(duration, reason);
