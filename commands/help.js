@@ -95,7 +95,7 @@ module.exports = {
 
 
 	getCommand : c => {
-		return '`' + c.name + '` - ' + c.title + (c.descriptionShort ? (', *' + c.descriptionShort + '*') : '');
+		return '`' + c.name + '` - ' + c.title + (c.description_localization?.ru ? (', *' + c.description_localization?.ru + '*') : '');
 	}
 
 };
