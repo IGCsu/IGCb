@@ -17,6 +17,7 @@
 	"Vote not found": "Вибір не знайдено",
 	"You aren't connect to voice channel": "Ви не підключені до голосового каналу",
 	"Settings changed": "Налаштування змінено",
-	"Voice channel configuration updated in DB": "Конфігурація каналу записана в базу даних"
+	"Voice channel configuration updated in DB": "Конфігурація каналу записана в базу даних",
+	"Invalid duration provided": "Введена невірна тривалість"
 	
 }	 
