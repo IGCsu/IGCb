@@ -61,13 +61,10 @@ module.exports = {
 		try{
 			const time = /^(?:(?<days>[1-9]\d*)d(?:\s(?!$))?)?(?:(?<hours>2[0-3]|1\d|[1-9])h(?:\s(?!$))?)?(?:(?<minutes>[1-5]\d|[1-9])m(?:\s(?!$))?)?(?:(?<seconds>[1-5]\d|[1-9])s)?$/gm.exec(string);
 			duration = ((time.groups.days ?? 0) * 86400000) + ((time.groups.hours ?? 0) * 3600000) + ((time.groups.minutes ?? 0) * 60000) + time.groups.seconds * 1000;
-			console.log(duration + '\n' + time)
 		} catch(e) {
 			console.log(e);
 			return int.reply({ content : localize(int.locale, 'Invalid duration provided'), ephemeral : true});
 		}
-		console.log(duration)
-		console.log(duration / 86400000)
 		if(!duration || Math.floor(duration / 86400000) > 28) return int.reply({ content : localize(int.locale, 'Invalid duration provided'), ephemeral : true});
 
 		await int.reply({ embeds: [
