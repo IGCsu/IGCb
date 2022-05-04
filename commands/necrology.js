@@ -17,10 +17,17 @@ module.exports = {
 	*/
 	init : async function(path, logText){
 		this.channel = guild.channels.cache.get('500010381490782238');
+		this.debugChannel = guild.channels.cache.get('634466120119877653');
 		this.priveteLogs = guild.channels.cache.get('574997373219110922');
 
 		if(!this.channel){
 			logText += log.error(path + ': Отсутствует #некролог');
+			this.active = false;
+			return this;
+		}
+
+		if(!this.debugChannel){
+			logText += log.error(path + ': Отсутствует #канал-для-тестов');
 			this.active = false;
 			return this;
 		}
@@ -42,6 +49,7 @@ module.exports = {
 	 */
 	ban : async function(ban){
 		const text = 'BAN ' + ban.user.username + '#' + ban.user.discriminator + ' ' + ban.user.id;
+		let channel = 'channel';
 
 		let embed = new Discord.MessageEmbed()
 			.setTitle(reaction.emoji.banhammer + ' Бан')
@@ -52,18 +60,21 @@ module.exports = {
 			const auditLogs = await guild.fetchAuditLogs({ limit : 1, type : 22 });
 			const entrie = auditLogs.entries.first();
 
-			if(entrie)
+			if(entrie){
 				embed.setFooter({
 					iconURL : entrie.executor.displayAvatarURL({ dynamic: true }),
 					text : entrie.executor.username + '#' + entrie.executor.discriminator
 				})
-				embed.setDescription('Пользователь: **`' + ban.user.username + '#' + ban.user.discriminator +
-				'`**\nID пользователя: **`' + ban.user.id +
-				'`**\nПричина: **`' + (entrie.reason ? entrie.reason : 'не указана') + '`**'
-			);
+				embed.setDescription(
+					'Пользователь: **`' + ban.user.username + '#' + ban.user.discriminator +
+					'`**\nID пользователя: **`' + ban.user.id +
+					'`**\nПричина: **`' + (entrie.reason ? entrie.reason : 'не указана') + '`**'
+				);
+				if(entrie.reason && /\((test|тест)\)/.test(entrie.reason)) channel = 'debugChannel';
+			}
 		}catch(e){}
 
-		const msg = await this.channel.send({ embeds : [embed] });
+		const msg = await this[channel].send({ embeds : [embed] });
 		const thread = await msg.startThread({ name : text });
 	},
 
@@ -87,7 +98,7 @@ module.exports = {
 			const description = embed.description.split('\n');
 			embed.setTitle(embed.title + ' (Отменён)')
 			embed.setDescription(description[0] + '\n' + description[1] + '\n' + description[2] +
-				'\n**Размут** <t:' + Math.floor(Date.now()/1000) + ':R>' + 
+				'\n**Размут** <t:' + Math.floor(Date.now()/1000) + ':R>' +
 				`\n**Отменил:** <@${advancedMuteData?.author.id}>`
 			);
 			embed.setColor(5131854)
@@ -116,7 +127,9 @@ module.exports = {
 			text: advancedMuteData.author.username + '#' + advancedMuteData.author.discriminator
 		});
 
-		const msg = await this.channel.send({ embeds : [embed] });
+		const channel = (advancedMuteData?.reason && /\((test|тест)\)/.test(advancedMuteData.reason)) ? 'debugChannel' : 'channel';
+
+		const msg = await this[channel].send({ embeds : [embed] });
 		const thread = await msg.startThread({ name : text });
 
 		this.cache[after.id] = {until: after.communicationDisabledUntilTimestamp, messageId: msg.id};
