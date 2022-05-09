@@ -25,6 +25,15 @@ module.exports = {
 
 	usersDB : {},
 
+	slashOptions : [{
+		name : 'user',
+		name_localizations : {'ru': 'пользователь' , 'uk': 'користувач'},
+		description : 'Whose statistics to show. Yours by default.',
+		description_localizations : {'ru': 'Чью статистику показать. По усолчанию вашу', 'uk': 'Чию статистику показувати. Ваш за замовчуванням.'},
+		type : 6,
+		required : false
+	}],
+
 	scan : async function(channel){
 
 		log.start('Начало обработки #' + channel.name);
@@ -215,6 +224,31 @@ module.exports = {
 	getRole : function(exp){
 		for(const role of this.roles)
 			if(role.value <= exp) return role;
+	},
+
+	slash: async function(int){
+		const target = int.options.getUser('user') ?? int.user;
+		const content = getContent(int, target);
+		await int.reply({ embeds: content.embeds, components: content.component });
+	},
+
+	contextUser: async function(int){
+		const content = getContent(int, int.targetUser);
+		await int.reply({ embeds: content.embeds, components: content.component, ephemeral: true });
+	},
+
+	getContent: function(int, target){
+		return {
+			embeds: [new Discord.MessageEmbed().setTitle(localize(int.locale, 'In development'))], 
+			components: [{type:1, components: [
+				{
+					type: 2, style:5, url: 'https://igc.su/levels', label: 'Таблица'
+				},
+				{
+					type: 2, style:5, url: 'https://igc.su/levels?id=' + target.id, label: 'Статистика пользователя'
+				}
+			]}],
+		}
 	},
 
 };
