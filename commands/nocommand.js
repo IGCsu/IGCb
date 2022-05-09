@@ -12,11 +12,12 @@ module.exports = {
 	/**
 	 * Получает json объект Устава Сообщества и помещает его в кэш
 	 */
-	init : async function(){
+	init : async function(path, logText){
 		try{
 			this.rules = await (await fetch('https://igc.su/rules?j=true')).json();
 		} catch(e) {
 			this.siteOffline = true;
+			logText += log.error(path + ': Сайт недоступен');
 		}
 		return this;
 	},
@@ -27,6 +28,7 @@ module.exports = {
 	 */
 	call : async function(msg){
 		await this.destroyBot(msg); // Прекращение работы бота при запуске дубликата
+		if(commands.list.levels) commands.list.levels.call(msg); // Опыт за сообщение
 		if(!this.siteOffline) await this.rule(msg); // Проверка на упоминание пункта Устава
 		await this.fixLink(msg); // Исправление нерабочей ссылки
 		await this.nsfw(msg) // Преобразование nsfw-кода в ссылку
