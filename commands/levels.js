@@ -39,9 +39,9 @@ module.exports = {
 		this.rolesIDs = [];
 
 		for(let r = 0; r < this.roles.length; r++){
-			if(this.roles[r].id == '648762974277992448') continue;
 			this.roles[r].pos = r;
 			this.roles[r].cache = guild.roles.cache.get(this.roles[r].id);
+			if(this.roles[r].id == '648762974277992448') continue;
 			this.rolesIDs.push(this.roles[r].id);
 		}
 
@@ -61,32 +61,35 @@ module.exports = {
 		const name = member2name(member, true);
 		const user = this.getUser(member.user.id);
 
-		if(!user) return {error: true, message: 'Unknown User'};
+		if(!user) return { error: 'Unknown User' };
 
-		try{
 		let text = '```';
-		text += '\nВсего сообщений:                             ' + user?.messagesAll.toLocaleString();
-		text += '\nЗасчитано сообщений:                         ' + user?.messagesLegit.toLocaleString();
-		text += '\nВсего символов:                              ' + user?.symbols.toLocaleString();
-		text += '\nПроцент оверпоста:                           ' + (user.overpost = this.getOverpost(user)) + '%';
-		text += '\nСреднее кол-во символов:                     ' + (user.symbolsAvg = this.getSymbolsAvg(user));
-		text += '\nАктивность за последние 30 дней:             ' + (user.activityPer = this.getActivityPer(user)) + '%';
-		text += '\nКол-во опыта:                                ' + (user.exp = this.getExp(user)).toLocaleString();
-		text += '\nКол-во оштрафованного опыта за неактивность: ' + (user.expFine = this.getExpFine(user)).toLocaleString();
 
-		user.nextRole = this.getNextRole(user);
+		try {
+			text += '\nВсего сообщений:                             ' + user.messagesAll.toLocaleString();
+			text += '\nЗасчитано сообщений:                         ' + user.messagesLegit.toLocaleString();
+			text += '\nВсего символов:                              ' + user.symbols.toLocaleString();
+			text += '\nПроцент оверпоста:                           ' + (user.overpost = this.getOverpost(user)) + '%';
+			text += '\nСреднее кол-во символов:                     ' + (user.symbolsAvg = this.getSymbolsAvg(user));
+			text += '\nАктивность за последние 30 дней:             ' + (user.activityPer = this.getActivityPer(user)) + '%';
+			text += '\nКол-во опыта:                                ' + (user.exp = this.getExp(user)).toLocaleString();
+			text += '\nКол-во оштрафованного опыта за неактивность: ' + (user.expFine = this.getExpFine(user)).toLocaleString();
 
-		if(user.nextRole != true){
-			text += '\nСледующая роль:                              ' + user.nextRole.cache.name;
-			text += '\nПрогресс до следующей роли:                  ' + (user.nextRoleProgress = this.getNextRoleProgress(user)) + '%';
-		}else{
-			text += '\nДостигнут максимальный уровень';
-		}
+			user.nextRole = this.getNextRole(user);
 
-		text += '```';
-		} catch(e){
-			return {error: true, message: 'Can\'t resolve the user data'};
+			if(user.nextRole != true){
+				text += '\nСледующая роль:                              ' + user.nextRole.cache.name;
+				text += '\nПрогресс до следующей роли:                  ' + (user.nextRoleProgress = this.getNextRoleProgress(user)) + '%';
+			}else{
+				text += '\nДостигнут максимальный уровень';
+			}
+
+			text += '```';
+		}catch(e){
+			console.error(int, member, user, e.toString());
+			return { error: 'Can\'t resolve the user data' };
 		};
+
 		let embed = new Discord.MessageEmbed()
 			.setTitle('Статистика пользователя')
 			.setColor(user.role.cache.color)
@@ -96,12 +99,8 @@ module.exports = {
 		return {
 			embeds : [embed],
 			components: [{type:1, components: [
-				{
-					type: 2, style:5, url: 'https://igc.su/levels', label: 'Таблица'
-				},
-				{
-					type: 2, style:5, url: 'https://igc.su/levels?id=' + member.id, label: 'Статистика пользователя'
-				}
+				{ type: 2, style:5, url: 'https://igc.su/levels', label: 'Таблица' },
+				{ type: 2, style:5, url: 'https://igc.su/levels?id=' + user.id, label: 'Статистика пользователя' }
 			]}],
 		};
 
@@ -115,10 +114,9 @@ module.exports = {
 	slash : async function(int){
 		const content = await this.call(int, int.options.getMember('user') ?? int.member);
 
-		if(content.error){
-			return await int.reply({content: reaction.emoji.error + ' ' + content.message, ephemeral: true});
-		}
-		
+		if(content.error)
+			return await int.reply({ content: reaction.emoji.error + ' ' + content.error, ephemeral: true });
+
 		await int.reply(content);
 	},
 
@@ -128,12 +126,11 @@ module.exports = {
 	 */
 	contextUser : async function(int){
 		const content = await this.call(int, int.targetMember);
+
+		if(content.error)
+			return await int.reply({ content: reaction.emoji.error + ' ' + content.error, ephemeral: true });
+
 		content.ephemeral = true;
-
-		if(content.error){
-			return await int.reply({content: reaction.emoji.error + ' ' + content.message, ephemeral: true});
-		}
-
 		await int.reply(content);
 	},
 
@@ -148,7 +145,7 @@ module.exports = {
 		if(this.noXPChannels.includes(msg.channel.parentId)) return;
 		if(this.noXPChannels.includes(msg.channelId)) return;
 
-		let user = this.getUser(msg.author.id);
+		let user = this.getUser(msg.author.id, true);
 		user = this.userMessageСounting(user, msg);
 
 		if(msg.author.id == '256114365894230018') return;
@@ -169,14 +166,17 @@ module.exports = {
 
 
 	/**
-	 * Получение пользователя из БД. Если не пользователь не найден - он будет создан
-	 * @param  {String} id ID пользователя
-	 * @return {Object}    Объект пользователя
+	 * Получение пользователя из БД.
+	 * @param  {String}  id     ID пользователя
+	 * @param  {Boolean} create Если true - пользователь будет создан в базе, если не будет найден
+	 * @return {Object}         Объект пользователя
 	 */
-	getUser : id => {
+	getUser : (id, create) => {
 
 		const users = DB.query('SELECT * FROM levels WHERE id = ?', [id]);
-		if(users) return users[0];
+		if(users[0]) return users[0];
+
+		if(!create) return false;
 
 		DB.query('INSERT INTO levels (`id`) VALUES (?)', [id]);
 		return { id : id, last : 0, messagesAll : 0, messagesLegit : 0, symbols : 0, activity : 0 };
@@ -236,7 +236,8 @@ module.exports = {
 	 * @return {Number}      Показатель оверпоста
 	 */
 	getOverpost : function(user){
-		return Math.round( (user.messagesAll - user.messagesLegit) / user.messagesLegit * 1000) / 10;
+		const overpost = Math.round( (user.messagesAll - user.messagesLegit) / user.messagesLegit * 1000) / 10;
+		return isNaN(overpost) ? 0 : overpost;
 	},
 
 	/**
@@ -245,7 +246,8 @@ module.exports = {
 	 * @return {Number}      Среднее количество символов в сообщениях
 	 */
 	getSymbolsAvg : function(user){
-		return Math.round( (user.symbols / user.messagesAll) * 10) / 10;
+		const symbolsAvg = Math.round( (user.symbols / user.messagesAll) * 10) / 10;
+		return isNaN(symbolsAvg) ? 0 : symbolsAvg;
 	},
 
 	/**
@@ -268,7 +270,8 @@ module.exports = {
 		if(!user.symbolsAvg) user.symbolsAvg = this.getSymbolsAvg(user);
 		if(!user.activityPer) user.activityPer = this.getActivityPer(user);
 
-		return Math.round(user.messagesLegit * user.symbolsAvg / 100 * user.activityPer);
+		const exp = Math.round(user.messagesLegit * user.symbolsAvg / 100 * user.activityPer);
+		return isNaN(exp) ? 0 : exp;
 	},
 
 	/**
@@ -282,7 +285,8 @@ module.exports = {
 		if(!user.activityPer) user.activityPer = this.getActivityPer(user);
 		if(!user.exp) user.exp = this.getExp(user);
 
-		return Math.round(100 / user.activityPer * user.exp - user.exp);
+		const expFine = Math.round(100 / user.activityPer * user.exp - user.exp);
+		return isNaN(expFine) ? 0 : expFine;
 	},
 
 	/**
