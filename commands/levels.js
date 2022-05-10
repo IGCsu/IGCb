@@ -74,8 +74,8 @@ module.exports = {
 		user.nextRole = this.getNextRole(user);
 
 		if(user.nextRole != true){
-			text += '\nСледующая роль: ' + user.nextRole.cache.name;
-			text += '\nПрогресс до следующей роли: ' + (user.nextRoleProgress = this.getNextRoleProgress(user)) + '%';
+			text += '\nСледующая роль:                              ' + user.nextRole.cache.name;
+			text += '\nПрогресс до следующей роли:                  ' + (user.nextRoleProgress = this.getNextRoleProgress(user)) + '%';
 		}else{
 			text += '\nДостигнут максимальный уровень';
 		}
