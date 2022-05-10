@@ -99,8 +99,8 @@ module.exports = {
 		return {
 			embeds : [embed],
 			components: [{type:1, components: [
-				{ type: 2, style:5, url: 'https://igc.su/levels', label: 'Таблица' },
-				{ type: 2, style:5, url: 'https://igc.su/levels?id=' + user.id, label: 'Статистика пользователя' }
+				{ type: 2, style: 5, url: 'https://igc.su/levels', label: 'Таблица' },
+				{ type: 2, style: 5, url: 'https://igc.su/levels?id=' + user.id, label: 'Статистика пользователя' }
 			]}],
 		};
 
@@ -115,7 +115,7 @@ module.exports = {
 		const content = await this.call(int, int.options.getMember('user') ?? int.member);
 
 		if(content.error)
-			return await int.reply({ content: reaction.emoji.error + ' ' + content.error, ephemeral: true });
+			return await int.reply({ content: reaction.emoji.error + ' ' + localize(int.locale, content.error), ephemeral: true });
 
 		await int.reply(content);
 	},
@@ -128,7 +128,7 @@ module.exports = {
 		const content = await this.call(int, int.targetMember);
 
 		if(content.error)
-			return await int.reply({ content: reaction.emoji.error + ' ' + content.error, ephemeral: true });
+			return await int.reply({ content: reaction.emoji.error + ' ' + localize(int.locale, content.error), ephemeral: true });
 
 		content.ephemeral = true;
 		await int.reply(content);
