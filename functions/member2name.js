@@ -7,7 +7,7 @@
  * @return {String}
  */
 module.exports = (m, dis, id) => {
-	let text = m.displayName || m.nick || m.nickname || m.user.username;
+	let text = m.displayName ?? m.nick ?? m.nickname ?? m.user.username;
 
 	if(dis) text += '#' + m.user.discriminator;
 

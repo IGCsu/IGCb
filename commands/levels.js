@@ -3,7 +3,7 @@ const fetch = require('node-fetch');
 module.exports = {
 
 	active : true,
-	category : 'Голосовые каналы',
+	category : 'Уровни активности',
 
 	name : 'levels',
 	title : 'Levels',
@@ -23,8 +23,6 @@ module.exports = {
 		'776918362482671616', // Удалённые каналы
 	],
 
-	usersDB : {},
-
 	slashOptions : [{
 		name : 'user',
 		name_localizations : {'ru': 'пользователь' , 'uk': 'користувач'},
@@ -34,221 +32,277 @@ module.exports = {
 		required : false
 	}],
 
-	scan : async function(channel){
-
-		log.start('Начало обработки #' + channel.name);
-
-		let count = 0;
-		let messages = {};
-		let last = undefined;
-		let lastTime = undefined;
-
-		const timeStart = process.hrtime();
-
-		while(true){
-			let m;
-			try{
-				m = await channel.messages.fetch({ limit : 100, before : last });
-			}catch(e){
-				continue;
-			}
-
-			last = m.lastKey();
-			m.forEach((item, i) => {
-				messages[i] = item;
-				lastTime = item.createdTimestamp;
-			});
-
-			count += m.size;
-
-			process.stdout.write('\r' + count);
-
-			if(m.size < 100) break;
-			if(lastTime < 1649462400000) break;
-		}
-
-		process.stdout.write('\n');
-
-		const timeEnd = process.hrtime(timeStart);
-		const timePerf = (timeEnd[0]*1000) + (timeEnd[1] / 1000000);
-
-		log.start('Сообщений собрано: ' + count + ' за ' + timePerf + 'ms');
-
-		let users = {};
-		for(const m in messages){
-			const msg = messages[m];
-
-			if(msg.author.bot) continue;
-			if(this.usersDB[msg.author.id] === undefined) continue;
-			if(!this.usersDB[msg.author.id] > msg.createdTimestamp) continue;
-
-			this.usersDB[msg.author.id] = msg.createdTimestamp;
-			users[msg.author.id] = msg.createdTimestamp;
-		}
-
-		// for(const m in messages){
-		// 	const msg = messages[m];
-		//
-		// 	if(msg.author.bot) continue;
-		// 	if(!users[msg.author.id]) users[msg.author.id] = { messagesOld : 0, messagesAll : 0, symbols : 0 };
-		//
-		// 	users[msg.author.id][msg.createdTimestamp > 1533223080000 ? 'messagesAll' : 'messagesOld'] += 1;
-		// 	users[msg.author.id].symbols += msg.content.length;
-		// }
-
-		let userI = 0;
-		const usersLength = Object.keys(users).length;
-		for(const u in users){
-			++userI;
-			log.warn(userI + '/' + usersLength + ' = ' + (userI/usersLength*100).toFixed(2) + '% ID:' + u + ' last:' + users[u]);
-			const sql = 'UPDATE levels SET last = ' + users[u] + ' WHERE id = ' + u
-			try{
-				DB.query(sql);
-			}catch(e){
-				log.error(sql);
-			}
-		}
-
-		// let userI = 0;
-		// const usersLength = Object.keys(users).length;
-		// for(const u in users){
-		// 	++userI;
-		// 	log.warn(userI + '/' + usersLength + ' = ' + (userI/usersLength*100).toFixed(2) + '% ID:' + u + ' messagesOld:' + users[u].messagesOld + ' messagesAll:' + users[u].messagesAll + ' symbols:' + users[u].symbols);
-		// 	const sql = this.usersDB[u]
-		// 		? 'UPDATE levels SET messagesOld = messagesOld + ' + users[u].messagesOld + ', messagesAll = messagesAll + ' + users[u].messagesAll + ', symbols = symbols + ' + users[u].symbols + ' WHERE id = ' + u
-		// 		: 'INSERT INTO levels (`messagesOld`, `messagesAll`, `symbols`, `id`) VALUES (' + users[u].messagesOld + ', ' + users[u].messagesAll + ', ' + users[u].symbols + ', ' + u + ')'
-		// 	try{
-		// 		DB.query(sql);
-		// 		this.usersDB[u] = true;
-		// 	}catch(e){
-		// 		log.error(sql);
-		// 	}
-		// }
-
-		guild.channels.cache.get('574997373219110922').send({
-			content : 'Завершено сканирование \'' + channel.id + '\', // #' + channel.name + ': Сообщений собрано: ' + count + ' за ' + timePerf + 'ms, пользователей: ' + usersLength
-		});
-		this.noXPChannels.push(channel.id);
-
-	},
-
 	init : async function(path){
 
 		this.roles = DB.query('SELECT * FROM levels_roles');
 		this.roles.sort((a, b) => b.value - a.value);
 		this.rolesIDs = [];
-		for(const role of this.roles)
-			if(role.id != '648762974277992448') this.rolesIDs.push(role.id);
 
-		const users = DB.query('SELECT * FROM levels');
-		for(const user of users) this.usersDB[user.id] = user.last;
-		// for(const user of users) this.usersDB[user.id] = true;
-		//
-		// const response = await fetch('https://mee6.xyz/api/plugins/levels/leaderboard/433242520034738186?limit=1000&page=3');
-		// const json = JSON.parse(await response.text());
-		//
-		// for(const user of json.players){
-		// 	const sql = this.usersDB[user.id]
-		// 		? 'UPDATE levels SET messagesLegit = ' + user.message_count + ', expOld = ' + user.xp + ' WHERE id = ' + user.id
-		// 		: 'INSERT INTO levels (`messagesLegit`, `expOld`, `id`) VALUES (' + user.message_count + ', ' + user.xp + ', ' + user.id + ')'
-		// 	// try{
-		// 		DB.query(sql);
-		// 		log.warn(sql);
-		// 		this.usersDB[user.id] = true;
-		// 	// }catch(e){
-		// 	// 	log.error(sql);
-		// 	// }
-		// }
-
-		const channels = (await guild.channels.fetch()).values();
-		for(const c of channels){
-			if(c.type == 'GUILD_VOICE' || c.type == 'GUILD_CATEGORY') continue;
-			if(this.noXPChannels.includes(c.parentId)) continue;
-			if(this.noXPChannels.includes(c.id)) continue;
-			// console.log(c.name);
-			await this.scan(c);
-		};
+		for(let r = 0; r < this.roles.length; r++){
+			if(this.roles[r].id == '648762974277992448') continue;
+			this.roles[r].pos = r;
+			this.roles[r].cache = guild.roles.cache.get(this.roles[r].id);
+			this.rolesIDs.push(this.roles[r].id);
+		}
 
 		return this;
 
 	},
 
-	call : async function(msg){
-		// return;
-		if(msg.author.id == '256114365894230018') return;
-		// if(msg.author.id != '500020124515041283') return;
+
+	/**
+	 * Обработка команды
+	 * Выдаёт статистику по пользовтаелю и ссылку на страницу
+	 * @param {CommandInteraction|UserContextMenuInteraction} int    Команда пользователя
+	 * @param {GuildMember}                                   member Объект пользователя
+	 */
+	call : async function(int, member){
+
+		const name = member2name(member, true);
+		const user = this.getUser(member.user.id);
+
+		let text = '```';
+		text += '\nВсего сообщений: ' + user.messagesAll.toLocaleString();
+		text += '\nЗасчитано сообщений: ' + user.messagesLegit.toLocaleString();
+		text += '\nВсего символов: ' + user.symbols.toLocaleString();
+		text += '\nПроцент оверпоста: ' + (user.overpost = this.getOverpost(user)) + '%';
+		text += '\nСреднее кол-во символов: ' + (user.symbolsAvg = this.getSymbolsAvg(user));
+		text += '\nАктивность за последние 30 дней: ' + (user.activityPer = this.getActivityPer(user)) + '%';
+		text += '\nКол-во опыта: ' + (user.exp = this.getExp(user)).toLocaleString();
+		text += '\nКол-во оштрафованного опыта за неактивность: ' + (user.expFine = this.getExpFine(user)).toLocaleString();
+
+		user.nextRole = this.getNextRole(user);
+
+		if(user.nextRole != true){
+			text += '\nСледующая роль: ' + user.nextRole.cache.name;
+			text += '\nПрогресс до следующей роли: ' + (user.nextRoleProgress = this.getNextRoleProgress(user)) + '%';
+		}else{
+			text += '\nДостигнут максимальный уровень';
+		}
+
+		text += '```';
+
+		let embed = new Discord.MessageEmbed()
+			.setAuthor({ name : 'Посмотреть на сайте', url : 'https://igc.su/levels' })
+			.setTitle(name + ' - @' + user.role.cache.name)
+			.setColor(user.role.cache.color)
+			.setDescription(text);
+
+		int.reply({
+			embeds : [embed],
+			ephemeral : true
+		});
+
+	},
+
+
+	/**
+	 * Обработка слеш-команды
+	 * @param {CommandInteraction} int Команда пользователя
+	 */
+	slash : async function(int){
+		this.call(int, int.options.getMember('user'));
+	},
+
+	/**
+	 * Обработка контекстной команды
+	 * @param {UserContextMenuInteraction} ctx
+	 */
+	contextUser : async function(ctx){
+		this.call(ctx, ctx.targetMember);
+	},
+
+
+
+	/**
+	 * Мониторинг всех сообщений для начисления опыта пользователям. Игнорируются сообщения бота и в некоторых каналах.
+	 * @param  {Message} msg Сообщение пользователя
+	 */
+	monitoring : async function(msg){
 		if(msg.author.bot) return;
 		if(this.noXPChannels.includes(msg.channel.parentId)) return;
 		if(this.noXPChannels.includes(msg.channelId)) return;
 
-		const currentTime = Math.floor(Date.now() / 1000);
-		const user = this.getFirst('SELECT * FROM levels WHERE id = ?', [msg.author.id]);
-		if(!user){
-			DB.query('INSERT INTO levels (`id`) VALUES (?)', [msg.author.id]);
-			user = { id : msg.author.id, last : 0, messagesAll : 0, messagesLegit : 0, symbols : 0, passivity : 0 };
-		}
+		let user = this.getUser(msg.author.id);
+		user = this.userMessageСounting(user, msg);
 
-		user.messagesAll += 1;
-		user.symbols += msg.content.length;
-		if(user.last + 60 <= currentTime){
-			user.last == currentTime;
-			user.messagesLegit += 1;
-			DB.query('UPDATE levels SET messagesAll = messagesAll + 1, messagesLegit = messagesLegit + 1, symbols = symbols + ?, last = ? WHERE id = ?', [
-				msg.content.length, currentTime, msg.author.id
-			]);
-		}else{
-			DB.query('UPDATE levels SET messagesAll = messagesAll + 1, symbols = symbols + ? WHERE id = ?', [
-				msg.content.length, msg.author.id
-			]);
-		}
+		if(msg.author.id == '256114365894230018') return;
 
-		const symbolsAvg = Math.round((user.symbols/user.messagesAll)*10)/10;
-		const exp = Math.round(user.messagesLegit * symbolsAvg);
-		const role = this.getRole(exp);
-
-		if(role.id == '648762974277992448') return;
+		const role = this.getRole(user);
 		if(msg.member.roles.cache.has(role.id)) return;
 
 		// try{
+			if(role.id != '648762974277992448')
+				msg.member.roles.add(role.cache, 'По причине изменения уровня');
+
 			msg.member.roles.cache.filter(r => this.rolesIDs.includes(r.id)).each(r => {
 				if(r.id != role.id) msg.member.roles.remove(r, 'По причине изменения уровня');
 			});
-			msg.member.roles.add(guild.roles.cache.get(role.id), 'По причине изменения уровня');
-		// }catch(e){
-		//
-		// }
+		// }catch(e){}
+
 	},
 
-	getFirst : (sql, values) => DB.query(sql, values)[0] ?? undefined,
 
-	getRole : function(exp){
-		for(const role of this.roles)
-			if(role.value <= exp) return role;
+	/**
+	 * Получение пользователя из БД. Если не пользователь не найден - он будет создан
+	 * @param  {String} id ID пользователя
+	 * @return {Object}    Объект пользователя
+	 */
+	getUser : id => {
+
+		const users = DB.query('SELECT * FROM levels WHERE id = ?', [id]);
+		if(users) return users[0];
+
+		DB.query('INSERT INTO levels (`id`) VALUES (?)', [id]);
+		return { id : id, last : 0, messagesAll : 0, messagesLegit : 0, symbols : 0, activity : 0 };
+
 	},
 
-	slash: async function(int){
-		const target = int.options.getUser('user') ?? int.user;
-		const content = getContent(int, target);
-		await int.reply({ embeds: content.embeds, components: content.component });
-	},
+	/**
+	 * Регистрирует новое сообщение пользователю. Возвращает новый объект. Если обновление не удалось - возвращает старый объект
+	 * @param  {Object}  user Объект пользователя
+	 * @param  {Message} msg  Сообщение пользователя
+	 * @return {Object}       Объект пользователя. Новый, если обновление удалось
+	 */
+	userMessageСounting : (user, msg) => {
+		const timestamp = Math.floor(msg.createdTimestamp / 1000);
 
-	contextUser: async function(int){
-		const content = getContent(int, int.targetUser);
-		await int.reply({ embeds: content.embeds, components: content.component, ephemeral: true });
-	},
+		let sql = 'UPDATE levels SET messagesAll = messagesAll + 1, symbols = symbols + ? WHERE id = ?';
+		let dataSql = [msg.content.length, user.id];
 
-	getContent: function(int, target){
-		return {
-			embeds: [new Discord.MessageEmbed().setTitle(localize(int.locale, 'In development'))], 
-			components: [{type:1, components: [
-				{
-					type: 2, style:5, url: 'https://igc.su/levels', label: 'Таблица'
-				},
-				{
-					type: 2, style:5, url: 'https://igc.su/levels?id=' + target.id, label: 'Статистика пользователя'
-				}
-			]}],
+		let newUser = {
+			id : user.id,
+			last : user.last,
+			messagesAll : user.messagesAll + 1,
+			messagesLegit : user.messagesLegit,
+			symbols : user.symbols + msg.content.length,
+			activity : user.activity
+		};
+
+		if(user.last + 60 <= timestamp){
+			newUser.last = timestamp;
+			newUser.messagesLegit += 1;
+
+			sql = 'UPDATE levels SET messagesAll = messagesAll + 1, messagesLegit = messagesLegit + 1, symbols = symbols + ?, last = ? WHERE id = ?';
+			dataSql = [msg.content.length, timestamp, user.id];
 		}
+
+		try{
+			DB.query(sql, dataSql);
+			return newUser;
+		}catch(e){
+			console.error('DB error occurred:\n' + e);
+			return user;
+		}
+	},
+
+
+
+
+	/**
+	 * ===========================================================================
+	 * Функции, возвращающие данные пользователя
+	 * ===========================================================================
+	 */
+
+	/**
+	 * Возвращает процент оверпоста
+	 * @param  {Object} user Объект пользователя
+	 * @return {Number}      Показатель оверпоста
+	 */
+	getOverpost : function(user){
+		return Math.round( (user.messagesAll - user.messagesLegit) / user.messagesLegit * 1000) / 10;
+	},
+
+	/**
+	 * Возвращает среднее количество символов в сообщениях
+	 * @param  {Object} user Объект пользователя
+	 * @return {Number}      Среднее количество символов в сообщениях
+	 */
+	getSymbolsAvg : function(user){
+		return Math.round( (user.symbols / user.messagesAll) * 10) / 10;
+	},
+
+	/**
+	 * Возвращает процент активности
+	 * @param  {Object} user Объект пользователя
+	 * @return {Number}      Процент активности
+	 */
+	getActivityPer : function(user){
+		return Math.round(user.activity/30*1000)/10;
+	},
+
+	/**
+	 * Возвращает опыт
+	 * @param  {Object} user             Объект пользователя
+	 * @param  {Number} user.symbolsAvg  Среднее количество символов в сообщениях
+	 * @param  {Number} user.activityPer Процент активности
+	 * @return {Number}                  Опыт
+	 */
+	getExp : function(user){
+		if(!user.symbolsAvg) user.symbolsAvg = this.getSymbolsAvg(user);
+		if(!user.activityPer) user.activityPer = this.getActivityPer(user);
+
+		return Math.round(user.messagesLegit * user.symbolsAvg / 100 * user.activityPer);
+	},
+
+	/**
+	 * Возвращает количество оштрафованного опыта пользователя
+	 * @param  {Object} user             Объект пользователя
+	 * @param  {Number} user.activityPer Процент активности
+	 * @param  {Number} user.exp         Опыт
+	 * @return {Number}                  Оштрафованный опыт
+	 */
+	getExpFine : function(user){
+		if(!user.activityPer) user.activityPer = this.getActivityPer(user);
+		if(!user.exp) user.exp = this.getExp(user);
+
+		return Math.round(100 / user.activityPer * user.exp - user.exp);
+	},
+
+	/**
+	 * Возвращает роль пользователя
+	 * @param  {Object} user     Объект пользователя
+	 * @param  {Number} user.exp Опыт
+	 * @return {Object}          Текущая роль
+	 */
+	getRole : function(user){
+		if(!user.exp) user.exp = this.getExp(user);
+
+		for(const role of this.roles)
+			if(role.value <= user.exp) return role;
+	},
+
+	/**
+	 * Возвращает следующую роль пользователя. Возвращает true - если следующей роли нет
+	 * @param  {Object} user      Объект пользователя
+	 * @param  {Number} user.exp  Опыт
+	 * @param  {Object} user.role Текущая роль
+	 * @return {Object}           Следующая роль
+	 */
+	getNextRole : function(user){
+		if(!user.exp) user.exp = this.getExp(user);
+		if(!user.role) user.role = this.getRole(user);
+
+		return this.roles[user.role.pos - 1] ?? true;
+	},
+
+	/**
+	 * Возвращает прогресс до следующей роли. Возвращает true - если следующей роли нет
+	 * @param  {Object} user          Объект пользователя
+	 * @param  {Number} user.exp      Опыт
+	 * @param  {Object} user.role     Текущая роль
+	 * @param  {Object} user.nextRole Следующая роль
+	 * @return {Number}               Прогресс до следующей роли
+	 */
+	getNextRoleProgress : function(user){
+		if(!user.exp) user.exp = this.getExp(user);
+		if(!user.role) user.role = this.getRole(user);
+		if(!user.nextRole) user.nextRole = this.getNextRole(user);
+
+		if(user.nextRole == true) return true;
+
+		return Math.round(((user.exp - user.role.value)/(user.nextRole.value - user.role.value))*1000)/10;
 	},
 
 };

@@ -28,7 +28,7 @@ module.exports = {
 	 */
 	call : async function(msg){
 		await this.destroyBot(msg); // Прекращение работы бота при запуске дубликата
-		if(commands.list.levels) commands.list.levels.call(msg); // Опыт за сообщение
+		if(commands.list.levels) commands.list.levels.monitoring(msg); // Опыт за сообщение
 		if(!this.siteOffline) await this.rule(msg); // Проверка на упоминание пункта Устава
 		await this.fixLink(msg); // Исправление нерабочей ссылки
 		await this.nsfw(msg) // Преобразование nsfw-кода в ссылку

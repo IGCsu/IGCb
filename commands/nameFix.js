@@ -49,9 +49,9 @@ module.exports = {
 	 * Обработка контекстной команды
 	 * @param {UserContextMenuInteraction} ctx
 	 */
-	context : async function(int){
-		const options = await this.call(member);
-		await int.reply(options);
+	context : async function(ctx){
+		const options = await this.call(ctx.targetMember);
+		await ctx.reply(options);
 	},
 
 
