@@ -61,10 +61,13 @@ module.exports = {
 		const name = member2name(member, true);
 		const user = this.getUser(member.user.id);
 
+		if(!user) return {error: true, message: 'Unknown User'};
+
+		try{
 		let text = '```';
-		text += '\nВсего сообщений:                             ' + user.messagesAll.toLocaleString();
-		text += '\nЗасчитано сообщений:                         ' + user.messagesLegit.toLocaleString();
-		text += '\nВсего символов:                              ' + user.symbols.toLocaleString();
+		text += '\nВсего сообщений:                             ' + user?.messagesAll.toLocaleString();
+		text += '\nЗасчитано сообщений:                         ' + user?.messagesLegit.toLocaleString();
+		text += '\nВсего символов:                              ' + user?.symbols.toLocaleString();
 		text += '\nПроцент оверпоста:                           ' + (user.overpost = this.getOverpost(user)) + '%';
 		text += '\nСреднее кол-во символов:                     ' + (user.symbolsAvg = this.getSymbolsAvg(user));
 		text += '\nАктивность за последние 30 дней:             ' + (user.activityPer = this.getActivityPer(user)) + '%';
@@ -81,7 +84,9 @@ module.exports = {
 		}
 
 		text += '```';
-
+		} catch(e){
+			return {error: true, message: 'Can\'t resolve the user data'};
+		};
 		let embed = new Discord.MessageEmbed()
 			.setTitle('Статистика пользователя')
 			.setColor(user.role.cache.color)
@@ -109,6 +114,11 @@ module.exports = {
 	 */
 	slash : async function(int){
 		const content = await this.call(int, int.options.getMember('user') ?? int.member);
+
+		if(content.error){
+			return await int.reply({content: reaction.emoji.error + ' ' + content.message, ephemeral: true});
+		}
+		
 		await int.reply(content);
 	},
 
@@ -119,6 +129,11 @@ module.exports = {
 	contextUser : async function(int){
 		const content = await this.call(int, int.targetMember);
 		content.ephemeral = true;
+
+		if(content.error){
+			return await int.reply({content: reaction.emoji.error + ' ' + content.message, ephemeral: true});
+		}
+
 		await int.reply(content);
 	},
 
