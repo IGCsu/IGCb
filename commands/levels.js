@@ -62,13 +62,13 @@ module.exports = {
 		const user = this.getUser(member.user.id);
 
 		let text = '```';
-		text += '\nВсего сообщений: ' + user.messagesAll.toLocaleString();
-		text += '\nЗасчитано сообщений: ' + user.messagesLegit.toLocaleString();
-		text += '\nВсего символов: ' + user.symbols.toLocaleString();
-		text += '\nПроцент оверпоста: ' + (user.overpost = this.getOverpost(user)) + '%';
-		text += '\nСреднее кол-во символов: ' + (user.symbolsAvg = this.getSymbolsAvg(user));
-		text += '\nАктивность за последние 30 дней: ' + (user.activityPer = this.getActivityPer(user)) + '%';
-		text += '\nКол-во опыта: ' + (user.exp = this.getExp(user)).toLocaleString();
+		text += '\nВсего сообщений:                             ' + user.messagesAll.toLocaleString();
+		text += '\nЗасчитано сообщений:                         ' + user.messagesLegit.toLocaleString();
+		text += '\nВсего символов:                              ' + user.symbols.toLocaleString();
+		text += '\nПроцент оверпоста:                           ' + (user.overpost = this.getOverpost(user)) + '%';
+		text += '\nСреднее кол-во символов:                     ' + (user.symbolsAvg = this.getSymbolsAvg(user));
+		text += '\nАктивность за последние 30 дней:             ' + (user.activityPer = this.getActivityPer(user)) + '%';
+		text += '\nКол-во опыта:                                ' + (user.exp = this.getExp(user)).toLocaleString();
 		text += '\nКол-во оштрафованного опыта за неактивность: ' + (user.expFine = this.getExpFine(user)).toLocaleString();
 
 		user.nextRole = this.getNextRole(user);
@@ -83,15 +83,22 @@ module.exports = {
 		text += '```';
 
 		let embed = new Discord.MessageEmbed()
-			.setAuthor({ name : 'Посмотреть на сайте', url : 'https://igc.su/levels' })
-			.setTitle(name + ' - @' + user.role.cache.name)
+			.setTitle('Статистика пользователя')
 			.setColor(user.role.cache.color)
-			.setDescription(text);
+			.setAuthor({name: name, iconURL: member.user.avatarURL({ dynamic: true })})
+			.setDescription('<@' + user.id + '> - <@&' + user.role.cache.id + '>\n' + text);
 
-		int.reply({
+		return {
 			embeds : [embed],
-			ephemeral : true
-		});
+			components: [{type:1, components: [
+				{
+					type: 2, style:5, url: 'https://igc.su/levels', label: 'Таблица'
+				},
+				{
+					type: 2, style:5, url: 'https://igc.su/levels?id=' + member.id, label: 'Статистика пользователя'
+				}
+			]}],
+		};
 
 	},
 
@@ -101,15 +108,18 @@ module.exports = {
 	 * @param {CommandInteraction} int Команда пользователя
 	 */
 	slash : async function(int){
-		this.call(int, int.options.getMember('user'));
+		const content = await this.call(int, int.options.getMember('user') ?? int.member);
+		await int.reply(content);
 	},
 
 	/**
 	 * Обработка контекстной команды
-	 * @param {UserContextMenuInteraction} ctx
+	 * @param {UserContextMenuInteraction} int
 	 */
-	contextUser : async function(ctx){
-		this.call(ctx, ctx.targetMember);
+	contextUser : async function(int){
+		const content = await this.call(int, int.targetMember);
+		content.ephemeral = true;
+		await int.reply(content);
 	},
 
 
