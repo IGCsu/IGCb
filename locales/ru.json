@@ -20,5 +20,7 @@
 	"Voice channel configuration updated in DB": "Конфигурция канала записана в базу данных",
 	"Invalid duration provided": "Введена неверная продолжительность",
 	"Unknown User": "Неизвестный пользователь",
-	"Can't resolve the user data": "Неудалось обработать данные пользователя"
+	"Can't resolve the user data": "Неудалось обработать данные пользователя",
+	"Role not found": "Роль не найдена",
+	"Show list of all Game Roles": "Показать список всех доступных Игровых Ролей"
 }	 
