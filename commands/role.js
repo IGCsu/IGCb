@@ -53,20 +53,23 @@ module.exports = {
 	autocomplete : async function(int){
 		const timeStart = process.hrtime();
 		let choices = [];
-		if (!int.options.getFocused()) return;
 
 		const role = int.options.getFocused();
 		const create = int.options.getBoolean('create');
-
-		if(create) choices[0] = {name : role, value : role};
+		
 		let finded = await this.has(guild.roles, role);
 		let predict = finded.roles;
 
 		this.predict_name = role;
 		
-		if(role)
+		if(role){
 			predict.sort((a, b) => this.comporator(a, b));
-		for(let i = 0; i < predict.length && i < 25; i++) choices[i + 1 * create] = {name : predict[i].name, value : predict[i].id};
+			if(create) choices[0] = {name : role, value : role};
+		} else {
+			choices[0] = {name: localize(int.locale, 'Show list of all Game Roles'), value:'showAll'};
+		}
+		
+		for(let i = 0; i < predict.length && choices.length < 25; i++) choices[i + 1 * (create || !role)] = {name : predict[i].name, value : predict[i].id};
 
 		try{
 			await int.respond(choices);
@@ -80,6 +83,9 @@ module.exports = {
 	slash : async function(int){
 		const member = int.member;
 		const permission = this.permission(member)
+
+		if(int.options.get('role').value == 'showAll') 
+			return await int.reply({embeds:[this.help()]});
 	
 		let role = int.guild.roles.cache.get(int.options.get('role').value);
 		const create = int.options.getBoolean('create');
@@ -129,12 +135,9 @@ module.exports = {
 			if(role.color == 5095913 || role.color == 3447003 || role.color == 13084411) roles.push(role.name);
 		});
 	
-		const example = !commands.list.help ? ''
-			: commands.list.help.getExample(this);
 	
 		const embed = new Discord.MessageEmbed()
 			.setTitle('Игровые роли')
-			.setDescription(example + '\n' + this.text)
 			.setColor('BLURPLE')
 			.addField('Список доступных ролей', roles.sort().join('\n'));
 		return embed;
