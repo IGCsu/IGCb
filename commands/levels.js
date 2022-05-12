@@ -80,8 +80,8 @@ module.exports = {
 			user.nextRole = this.getNextRole(user);
 
 			if(user.nextRole != true){
-				embed.addField('\nСледующая роль:', user.nextRole.cache.name);
-				embed.addField('\nПрогресс до следующей роли:', (user.nextRoleProgress = this.getNextRoleProgress(user)) + '%');
+				embed.addField('Следующая роль:', user.nextRole.cache.name);
+				embed.addField('Прогресс до следующей роли:', (user.nextRoleProgress = this.getNextRoleProgress(user)) + '%');
 			}else{
 				embed.addField('Прогресс до следующей роли:', 'Достигнут максимальный уровень');
 			}
