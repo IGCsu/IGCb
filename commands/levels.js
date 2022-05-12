@@ -63,38 +63,36 @@ module.exports = {
 
 		if(!user) return { error: 'Unknown User' };
 
-		let text = '```';
+		let embed = new Discord.MessageEmbed()
+			.setTitle('Статистика пользователя')
+			.setThumbnail(/*{name: name, iconURL: */member.user.avatarURL({ dynamic: true })/*}*/)
 
 		try {
-			text += '\nВсего сообщений:                             ' + user.messagesAll.toLocaleString();
-			text += '\nЗасчитано сообщений:                         ' + user.messagesLegit.toLocaleString();
-			text += '\nВсего символов:                              ' + user.symbols.toLocaleString();
-			text += '\nПроцент оверпоста:                           ' + (user.overpost = this.getOverpost(user)) + '%';
-			text += '\nСреднее кол-во символов:                     ' + (user.symbolsAvg = this.getSymbolsAvg(user));
-			text += '\nАктивность за последние 30 дней:             ' + (user.activityPer = this.getActivityPer(user)) + '%';
-			text += '\nКол-во опыта:                                ' + (user.exp = this.getExp(user)).toLocaleString();
-			text += '\nКол-во оштрафованного опыта за неактивность: ' + (user.expFine = this.getExpFine(user)).toLocaleString();
+			embed.addField('Всего сообщений:', user.messagesAll.toLocaleString());
+			embed.addField('Засчитано сообщений:', user.messagesLegit.toLocaleString());
+			embed.addField('Всего символов:', user.symbols.toLocaleString());
+			embed.addField('Процент оверпоста:', (user.overpost = this.getOverpost(user)) + '%');
+			embed.addField('Среднее кол-во символов:', (user.symbolsAvg = this.getSymbolsAvg(user)).toLocaleString());
+			embed.addField('Активность за последние 30 дней:', (user.activityPer = this.getActivityPer(user)) + '%');
+			embed.addField('Кол-во опыта', (user.exp = this.getExp(user)).toLocaleString());
+			embed.addField('Кол-во оштрафованного опыта за неактивность:', (user.expFine = this.getExpFine(user)).toLocaleString());
 
 			user.nextRole = this.getNextRole(user);
 
 			if(user.nextRole != true){
-				text += '\nСледующая роль:                              ' + user.nextRole.cache.name;
-				text += '\nПрогресс до следующей роли:                  ' + (user.nextRoleProgress = this.getNextRoleProgress(user)) + '%';
+				embed.addField('\nСледующая роль:', user.nextRole.cache.name);
+				embed.addField('\nПрогресс до следующей роли:', (user.nextRoleProgress = this.getNextRoleProgress(user)) + '%');
 			}else{
-				text += '\nДостигнут максимальный уровень';
+				embed.addField('Прогресс до следующей роли:', 'Достигнут максимальный уровень');
 			}
-
-			text += '```';
+			embed
+				.setDescription('<@' + user.id + '> - <@&' + user.role.cache.id + '>')
+				.setColor(user.role.cache.color);
 		}catch(e){
-			console.error(int, member, user, e.toString());
+			console.error(int, member, user, embed, e.toString());
 			return { error: 'Can\'t resolve the user data' };
 		};
 
-		let embed = new Discord.MessageEmbed()
-			.setTitle('Статистика пользователя')
-			.setColor(user.role.cache.color)
-			.setAuthor({name: name, iconURL: member.user.avatarURL({ dynamic: true })})
-			.setDescription('<@' + user.id + '> - <@&' + user.role.cache.id + '>\n' + text);
 
 		return {
 			embeds : [embed],
