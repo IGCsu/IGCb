@@ -74,7 +74,7 @@ module.exports = {
 			embed.addField('Процент оверпоста:', (user.overpost = this.getOverpost(user)) + '%');
 			embed.addField('Среднее кол-во символов:', (user.symbolsAvg = this.getSymbolsAvg(user)).toLocaleString());
 			embed.addField('Активность за последние 30 дней:', (user.activityPer = this.getActivityPer(user)) + '%');
-			embed.addField('Кол-во опыта', (user.exp = this.getExp(user)).toLocaleString());
+			embed.addField('Кол-во опыта:', (user.exp = this.getExp(user)).toLocaleString());
 			embed.addField('Кол-во оштрафованного опыта за неактивность:', (user.expFine = this.getExpFine(user)).toLocaleString());
 
 			user.nextRole = this.getNextRole(user);
