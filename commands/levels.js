@@ -8,7 +8,8 @@ module.exports = {
 	name : 'levels',
 	title : 'Levels',
 	description : 'Мониторит сообщения пользователей для начисления опыта. При достижении определённых уровней, пользователи получают роли за активность',
-	descriptionShort : 'Роли за активность',
+	descriptionShort : 'Roles for activity',
+	description_localization: {ru: 'Роли за активность', uk: 'Ролі за активність'},
 
 	noXPChannels : [
 		'610371610620198922', // рандом
