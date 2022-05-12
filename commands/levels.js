@@ -9,7 +9,7 @@ module.exports = {
 	title : 'Levels',
 	description : 'Мониторит сообщения пользователей для начисления опыта. При достижении определённых уровней, пользователи получают роли за активность',
 	descriptionShort : 'Roles for activity',
-	description_localization: {ru: 'Роли за активность', uk: 'Ролі за активність'},
+	description_localization: { ru: 'Роли за активность', uk: 'Ролі за активність' },
 
 	noXPChannels : [
 		'610371610620198922', // рандом
@@ -28,7 +28,7 @@ module.exports = {
 		name : 'user',
 		name_localizations : {'ru': 'пользователь' , 'uk': 'користувач'},
 		description : 'Whose statistics to show. Yours by default.',
-		description_localizations : {'ru': 'Чью статистику показать. По усолчанию вашу', 'uk': 'Чию статистику показувати. Ваш за замовчуванням.'},
+		description_localizations : {'ru': 'Чью статистику показать. По умолчанию вашу', 'uk': 'Чию статистику показувати. Ваш за замовчуванням.'},
 		type : 6,
 		required : false
 	}],
