@@ -23,10 +23,10 @@ module.exports = {
 			description: 'Additional information',
 			description_localization: {ru: 'Дополнительная информация', uk: 'Додаткова інформація'},
 			choices: [
-				{ name: 'О Activities', value: 'activities' },
-				{ name: 'О Игровых ролях', value: 'roles' },
-				{ name: 'Об Опросах', value: 'polls' },
-				{ name: 'О Голосовых каналах', value: 'voices' },
+				{ name: 'About Activities', value: 'activities', name_localization: {ru: 'О Activities', uk: 'Про Activities'} },
+				{ name: 'About Game roles', value: 'roles', name_localization: {ru: 'О Игровых ролях', uk: 'Про Ігрових ролях'} },
+				{ name: 'About Polls', value: 'polls', name_localization: {ru: 'Об Опросах', uk: 'Про Опитування'} },
+				{ name: 'About Voice channels', value: 'voices', name_localization: {ru: 'О Голосовых каналах', uk: 'Про Голосових каналах'} },
 			]
 		}
 	],
