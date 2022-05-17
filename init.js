@@ -184,24 +184,13 @@ module.exports = async () => {
 		if(interaction.isMessageContextMenu()) type = 'contextMesage';
 		if(interaction.isAutocomplete()) type = 'autocomplete';
 		if(interaction.isButton()) type = 'button';
+		if(interaction.isModalSubmit()) type = 'modal';
 
 		if(!type || !command[type]) return;
 
 		await command[type](interaction);
 	});
 	console.timeEnd('Event interactionCreate');
-
-	console.time('Event raw');
-	client.on('raw', async data => {
-		if(data.t != 'INTERACTION_CREATE') return;
-		if(data.d.type != 5) return;
-		const command = commands.get('poll');
-		if(!command || !command.active) return;
-		const type = 'modal';
-
-		await command[type](data.d);
-	});
-	console.timeEnd('Event raw');
 
 	console.time('errorHandler');
 	client.on('error', async e => {

@@ -230,25 +230,17 @@ module.exports = {
 		})
     },
 	modal : async function(int){
-		const type = int.data.custom_id.split('|')[1];
+		const type = int.custom_id.split('|')[1];
 		let txt = ''
-		console.log(`\x1b[33m${int.message.content} ${int.member.user.username} ${(type == 'yes') ? 'за' : 'против'}:\x1b[0m ${int.data.components[0].components[0].value}`)
+		console.log(`\x1b[33m${int.message.content} ${int.member.user.username} ${(type == 'yes') ? 'за' : 'против'}:\x1b[0m ${int.components[0].components[0].value}`)
 		if(!this.fetchPollAnswer(int.member.user.id, int.message.id)){
-			this.createPollAnswer(int.member.user.id, int.message.id, int.data.components[0].components[0].value, (type == 'yes') ? 0 : this.FLAGS.ANSWERS.DISAGREE)
+			this.createPollAnswer(int.member.user.id, int.message.id, int.components[0].components[0].value, (type == 'yes') ? 0 : this.FLAGS.ANSWERS.DISAGREE)
 			txt = localize(int.locale, 'Vote submmited');
 		} else {
-			this.updatePollAnswer(int.member.user.id, int.message.id, {awnser: int.data.components[0].components[0].value, flags: (type == 'yes') ? 0 : this.FLAGS.ANSWERS.DISAGREE})
+			this.updatePollAnswer(int.member.user.id, int.message.id, {awnser: int.components[0].components[0].value, flags: (type == 'yes') ? 0 : this.FLAGS.ANSWERS.DISAGREE})
 			txt = localize(int.locale, 'Vote changed');
 		}
-		await client.api.interactions(int.id, int.token).callback.post({
-			data:{
-				type: 4,
-				data: {
-					content: txt,
-					flags: 64
-				}
-			}
-		})
+		await int.reply({ content: txt, ephemeral: true })
 	},
 
 	autocomplete : async function(int){
