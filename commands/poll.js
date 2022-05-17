@@ -230,7 +230,7 @@ module.exports = {
 		})
     },
 	modal : async function(int){
-		const type = int.custom_id.split('|')[1];
+		const type = int.customId.split('|')[1];
 		let txt = ''
 		console.log(`\x1b[33m${int.message.content} ${int.member.user.username} ${(type == 'yes') ? 'за' : 'против'}:\x1b[0m ${int.components[0].components[0].value}`)
 		if(!this.fetchPollAnswer(int.member.user.id, int.message.id)){
