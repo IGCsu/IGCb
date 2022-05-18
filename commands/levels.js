@@ -69,16 +69,20 @@ module.exports = {
 			.setThumbnail(/*{name: name, iconURL: */member.user.avatarURL({ dynamic: true })/*}*/)
 
 		try {
-			embed.addField('Всего сообщений:', user.messagesAll.toLocaleString());
-			embed.addField('Засчитано сообщений:', user.messagesLegit.toLocaleString());
-			embed.addField('Всего символов:', user.symbols.toLocaleString());
+			embed.addField('Cообщения:', 
+				user.messagesAll.toLocaleString() + ' (' + user.messagesLegit.toLocaleString() + ')');
+			embed.addField('Cимволы:', 
+				user.symbols.toLocaleString() + '  (AVG ' + (user.symbolsAvg = this.getSymbolsAvg(user)).toLocaleString() + ')');
 			embed.addField('Процент оверпоста:', (user.overpost = this.getOverpost(user)) + '%');
-			embed.addField('Среднее кол-во символов:', (user.symbolsAvg = this.getSymbolsAvg(user)).toLocaleString());
-			embed.addField('Активность за последние 30 дней:', (user.activityPer = this.getActivityPer(user)) + '%');
-			embed.addField('Кол-во опыта:', (user.exp = this.getExp(user)).toLocaleString());
+			
+			embed.addField('Активность за последние 30 дней:', 
+				(user.activityPer = this.getActivityPer(user)) + '% (' + Math.round(user.activityPer * 30/100) + '/' + '30)');
+			
 			user.expFine = this.getExpFine(user);
-			if(user.expFine)
-				embed.addField('Кол-во оштрафованного опыта за неактивность:', user.expFine.toLocaleString());
+
+			embed.addField('Кол-во опыта:', 
+				(user.exp = this.getExp(user)).toLocaleString() + 
+				(user.expFine ? (' (-' + user.expFine.toLocaleString() + ')') : ''));
 
 			user.nextRole = this.getNextRole(user);
 
