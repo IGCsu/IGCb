@@ -66,7 +66,7 @@ module.exports = {
 
 		let embed = new Discord.MessageEmbed()
 			.setTitle('Статистика пользователя')
-			.setThumbnail(/*{name: name, iconURL: */member.user.avatarURL({ dynamic: true })/*}*/)
+			.setThumbnail(member.user.avatarURL({ dynamic: true }))
 
 		try {
 			embed.addField('Cообщения:', 
