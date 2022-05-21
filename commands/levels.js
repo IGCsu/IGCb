@@ -70,31 +70,29 @@ module.exports = {
 
 		try {
 			embed.addField('Cообщения:', 
-				user.messagesAll.toLocaleString() + ' (' + user.messagesLegit.toLocaleString() + ')');
+				user.messagesAll.toLocaleString() + ' (Из них учитываются: ' + user.messagesLegit.toLocaleString() + ')');
 			embed.addField('Cимволы:', 
 				user.symbols.toLocaleString() + '  (AVG ' + (user.symbolsAvg = this.getSymbolsAvg(user)).toLocaleString() + ')');
-			embed.addField('Процент оверпоста:', (user.overpost = this.getOverpost(user)) + '%');
+			embed.addField('Оверпост:', (user.overpost = this.getOverpost(user)) + '%');
 			
 			embed.addField('Активность за последние 30 дней:', 
 				(user.activityPer = this.getActivityPer(user)) + '% (' + Math.round(user.activityPer * 30/100) + '/' + '30)');
 			
 			user.expFine = this.getExpFine(user);
 
-			embed.addField('Кол-во опыта:', 
+			embed.addField('Опыт:', 
 				(user.exp = this.getExp(user)).toLocaleString() + 
-				(user.expFine ? (' (-' + user.expFine.toLocaleString() + ')') : ''));
+				(user.expFine ? (' (Вычтено из за неактивности: ' + user.expFine.toLocaleString() + ')') : ''));
 
 			user.nextRole = this.getNextRole(user);
 
 			if(user.nextRole != true){
-				embed.addField('Следующая роль:', '<@&' + user.nextRole.cache.id + '>');
-				embed.addField('Прогресс до следующей роли:', (user.nextRoleProgress = this.getNextRoleProgress(user)) + '%');
+				embed.setDescription('<@' + user.id + '>\n<@&' + user.role.cache.id + '> -> <@&' + user.nextRole.cache.id + '> ' + (user.nextRoleProgress = this.getNextRoleProgress(user)) + '%');
 			}else{
-				embed.addField('Прогресс до следующей роли:', 'Достигнут максимальный уровень');
+				embed.setDescription('<@' + user.id + '> - <@&' + user.role.cache.id + '>');
 			}
-			embed
-				.setDescription('<@' + user.id + '> - <@&' + user.role.cache.id + '>')
-				.setColor(user.role.cache.color);
+			embed.setColor(user.role.cache.color);
+
 		}catch(e){
 			console.error(int, member, user, embed, e.toString());
 			return { error: 'Can\'t resolve the user data' };
