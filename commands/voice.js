@@ -82,7 +82,17 @@ module.exports = {
 	init : async function(path, logText){
 		guild.channels.cache.forEach(c => {
 			if(c.type != 'GUILD_VOICE' && c.type != 'GUILD_CATEGORY') return;
-			if(c.name == 'Создать канал') return this.channelCreate = c;
+			if(c.name == 'Создать канал') {
+				this.channelCreate = c;
+				if(this.channelCreate.members.filter(m => !m.user.bot).size && c.type == 'GUILD_VOICE'){
+					const channel = this.create(this.channelCreate.members.first().voice);
+					if(this.channelCreate.members) 
+						this.channelCreate.members.forEach(
+							memb => {memb.voice.setChannel(channel).catch(reason => console.warn(reason));}
+						)
+				};
+				return;
+			};
 			if(c.name == 'Голосовые') return this.channelCategory = c;
 			if(!c.members.filter(m => !m.user.bot).size && c.type == 'GUILD_VOICE') return this.delete(c, false, path);
 		});
@@ -201,6 +211,7 @@ module.exports = {
 		data.setChannel(channel).catch(reason => channel.delete());
 		this.channelCreate.permissionOverwrites.create(data.member, { CONNECT : false });
 		setTimeout(() => this.channelCreate.permissionOverwrites.delete(data.member), 60000);
+		return channel;
 	},
 
 
