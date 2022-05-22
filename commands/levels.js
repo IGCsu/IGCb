@@ -182,7 +182,7 @@ module.exports = {
 		if(!create) return false;
 
 		DB.query('INSERT INTO levels (`id`) VALUES (?)', [id]);
-		return { id : id, last : 0, messagesAll : 0, messagesLegit : 0, symbols : 0, activity : 0 };
+		return { id : id, last : 0, messagesAll : 0, messagesLegit : 0, symbols : 0, activity : 1 };
 
 	},
 
