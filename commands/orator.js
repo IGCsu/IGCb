@@ -4,7 +4,7 @@ module.exports = {
 	category : 'Роли',
 
 	name : 'orator',
-	title : 'Роли Младшего Оратора',
+	title : 'Роль Младшего Оратора',
 	description : 'Переключает у указанного пользователя роль Младшего Оратора',
 
 	slashOptions : [{
