@@ -2,11 +2,13 @@ const fs = require('fs');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 
+
 /**
  * Текст лога, который отправит бот на старте.
  * @type {String}
  */
 let logText = '';
+
 
 /**
  * Массив модулей разрешённых к подключению.
@@ -16,6 +18,7 @@ let logText = '';
  * @type {Array}
  */
 const debugAllowModules = [];
+
 
 /**
  * Возвращает команды бота
@@ -43,15 +46,16 @@ const getCommands = async () => {
 
 		if(command.active && command.slash)
 			commands.push({
-				name : command.name,
-				name_localizations : command.name_localizations,
-				description : command.descriptionShort ?? command.description,
-				description_localizations : command.description_localizations,
-				options : command.slashOptions
+				name: command.name,
+				name_localizations: command.name_localizations,
+				description: command.descriptionShort ?? command.description,
+				description_localizations: command.description_localizations,
+				options: command.slashOptions
 			});
 
-		if(command.active && command.contextUser)
-			commands.push({ name : command.name, type : 2 });
+		if(command.active && command.contextUser){
+			commands.push({ name: command.name, type: 2 });
+		}
 
 		const timeEnd = process.hrtime(timeStart);
 		const timePerf = (timeEnd[0]*1000) + (timeEnd[1] / 1000000);
@@ -60,10 +64,7 @@ const getCommands = async () => {
 	}
 
 	if(!debugAllowModules.length)
-		new REST({ version: '9' }).setToken(config.token).put( Routes.applicationGuildCommands(client.user.id, config.home), { body : commands });
-
-	// Генерирование и кэширование списка команд
-	if(list.help) list.help.generate(list);
+		new REST({ version: '9' }).setToken(config.token).put( Routes.applicationGuildCommands(client.user.id, config.home), { body: commands });
 
 	return list;
 }
@@ -81,14 +82,16 @@ const definitionFunctions = () => {
 	});
 }
 
+/**
+ * Определяет локализации бота
+ */
 const definitionLocales = () => {
-		let locales = {};
+	global.locales = {};
 	fs.readdirSync('./locales/').forEach(file => {
 		const path = './locales/' + file;
 		console.time(path);
 		locales[file.split('.')[0]] = require(path);
 		console.timeEnd(path);
-		global.locales = locales;
 	});
 }
 
@@ -102,16 +105,17 @@ module.exports = async () => {
 	global.guild = await client.guilds.fetch(config.home);
 	console.log('Selected guild "' + guild.name + '"');
 
-	console.log('Loading functions:');
-	await definitionFunctions();
-
 	console.log('Loading locales:');
 	await definitionLocales();
+
+	console.log('Loading functions:');
+	await definitionFunctions();
 
 	console.log('Loading commands:');
 	global.commands = await getCommands();
 
 	await client.user.setActivity('/help', { type: 'LISTENING' });
+
 
 	if(!debugAllowModules.length){
 		console.time('Send start bot');
@@ -120,63 +124,43 @@ module.exports = async () => {
 			.setTitle('Бот запущен')
 			.setTimestamp()
 			.setDescription('hosted by ' + author + '\n\n```ansi' + logText + '```');
-		await guild.channels.cache.get('574997373219110922').send({ embeds : [embed] });
+		await guild.channels.cache.get('574997373219110922').send({ embeds: [embed] });
 		console.timeEnd('Send start bot');
 	}
 
+
 	console.time('Event messageCreate');
 	client.on('messageCreate', async msg => {
-		if(msg.channel.type == 'DM'){
-			if(msg.author.id != client.user.id){
-				try{
-					return await msg.reply({ content : 'Лс для пидоров', failIfNotExists: false});
-				}catch(e){ }
-			} else {
-				return 0;
-			}
-		}
+		if(msg.channel.type == 'DM') return;
 		if(msg.channel.guild.id != config.home) return;
 
-		if(msg.content.substr(0, config.prefix.length) != config.prefix){
+		try{
 			if(commands.nocommand?.active) commands.nocommand.call(msg);
-			return;
+		}catch(e){
+			errorHandler(e, 'nocommand', msg);
 		}
-		if(msg.author.bot) return;
-
-		const content = msg.content.substr(config.prefix.length).split(/\s+/);
-		const command = commands[content.shift().toLowerCase()];
-
-		if(!command || !command.active || !command.message) return;
-
-		await command.message(msg, content);
 	});
 	console.timeEnd('Event messageCreate');
 
+
 	console.time('Event interactionCreate');
-	client.on('interactionCreate', async interaction => {
-		const command = commands[interaction.commandName ?? interaction.customId.split('|')[0]];
+	client.on('interactionCreate', async int => {
+		const name = int.commandName ?? int.customId.split('|')[0];
 
-		if(!command || !command.active) return;
+		if(!commands[name] || !commands[name].active) return;
 
-		let type = undefined;
-		if(interaction.isCommand()) type = 'slash';
-		if(interaction.isUserContextMenu()) type = 'contextUser';
-		if(interaction.isMessageContextMenu()) type = 'contextMesage';
-		if(interaction.isAutocomplete()) type = 'autocomplete';
-		if(interaction.isButton()) type = 'button';
-		if(interaction.isModalSubmit()) type = 'modal';
+		int.action = getInteractionAction(int);
 
-		if(!type || !command[type]) return;
+		if(!int.action || !commands[name][int.action]) return;
 
-		await command[type](interaction);
+		try{
+			await commands[name][int.action](int);
+		}catch(e){
+			errorHandler(e, name, int);
+		}
 	});
 	console.timeEnd('Event interactionCreate');
 
-	console.time('errorHandler');
-	client.on('error', async e => {
-		console.log(e);
-	});
-	console.timeEnd('errorHandler');
 
 	log.start('== Bot ready ==');
 

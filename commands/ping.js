@@ -49,13 +49,4 @@ module.exports = {
 		await this.call(int, m);
 	},
 
-	/**
-	 * Обработка традиционной команды
-	 * @param {Message} msg Сообщение пользователя
-	 */
-	message : async function(msg){
-		const m = await msg.channel.send({ embeds : [this.embed] });
-		await this.call(msg, m);
-	}
-
 };

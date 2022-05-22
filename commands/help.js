@@ -2,7 +2,7 @@ const localize = require("../functions/localize");
 
 module.exports = {
 
-	active : true,
+	active : false,
 	category : 'Утилиты',
 
 	name : 'help',
@@ -56,15 +56,6 @@ module.exports = {
 		}
 		embed.setColor('BLURPLE');
 		return await int.reply({ embeds : [embed], fetchReply: true });
-	},
-
-	/**
-	 * Обработка традиционной команды
-	 * @param {Message} msg Сообщение пользователя
-	 */
-	message : async function(msg, params){
-		const embed = await this.call(msg, params[0]);
-		await msg.channel.send({ embeds : [embed] });
 	},
 
 
