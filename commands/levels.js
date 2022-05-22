@@ -3,13 +3,11 @@ const fetch = require('node-fetch');
 module.exports = {
 
 	active : true,
-	category : 'Уровни активности',
+	category : 'Утилиты',
 
 	name : 'levels',
-	title : 'Levels',
-	description : 'Мониторит сообщения пользователей для начисления опыта. При достижении определённых уровней, пользователи получают роли за активность',
-	descriptionShort : 'Roles for activity',
-	description_localization: { ru: 'Роли за активность', uk: 'Ролі за активність' },
+	title : 'Мониторинг сообщений',
+	description : 'Выдаёт статистику пользователя',
 
 	noXPChannels : [
 		'610371610620198922', // рандом

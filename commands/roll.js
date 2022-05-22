@@ -3,7 +3,7 @@ const fetch = require('node-fetch');
 module.exports = {
 
 	active : true,
-	category : 'Голосовые каналы',
+	category : 'Развлечения',
 
 	name : 'roll',
 	title : 'Случайное число',

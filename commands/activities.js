@@ -5,9 +5,7 @@ module.exports = {
 
 	name : 'activities',
 	title : 'Activities',
-	description : 'Позволяет создавать в голосовых каналах Discord activities',
-	descriptionShort : 'Access to Discord activities',
-	description_localizations : {'ru': 'Доступ к Discord activities','uk': 'Доступ до Discord activities'},
+	description : 'Создание Discord activities в голосовых каналах',
 
 	slashOptions : [
 		{

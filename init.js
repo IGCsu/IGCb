@@ -47,9 +47,7 @@ const getCommands = async () => {
 		if(command.active && command.slash)
 			commands.push({
 				name: command.name,
-				name_localizations: command.name_localizations,
-				description: command.descriptionShort ?? command.description,
-				description_localizations: command.description_localizations,
+				description: command.description ?? command.title,
 				options: command.slashOptions
 			});
 

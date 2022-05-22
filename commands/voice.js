@@ -2,12 +2,8 @@ module.exports = {
 
 	active : true,
 	category : 'Голосовые каналы',
-
 	name : 'voice',
 	title : 'Управление голосовыми каналами',
-	text : 'Модуль для управления голосовыми каналами.\n\nПри заходе пользователя в #Создать канал - создаётся голосовой канал, в котором у автора будут все права. Он может редактировать канал как угодно. После выхода всех пользователей, канал удаляется, настройки не сохраняются.\n\nДля передачи прав владения другому пользователю, достаточно нажать на нужного пользователя правой кнопкой мыши и в меню "Приложения" выбрать команду "voice". Выбранный пользователь получит права владения над всеми голосовыми каналами, в которых у вас есть право редактирования ролей.\n\nБот не удаляет каналы, у которых в названии в конце есть звёздочка `*`.',
-	descriptionShort : 'Module for voice channel management',
-	description_localizations : {'ru': 'Модуль для управления голосовыми каналами', 'uk': 'Модуль для управління голосовими каналами'},
 
 	permission : {
 		MANAGE_CHANNELS : true,
@@ -86,7 +82,7 @@ module.exports = {
 				this.channelCreate = c;
 				if(this.channelCreate.members.filter(m => !m.user.bot).size && c.type == 'GUILD_VOICE'){
 					const channel = this.create(this.channelCreate.members.first().voice);
-					if(this.channelCreate.members) 
+					if(this.channelCreate.members)
 						this.channelCreate.members.forEach(
 							memb => {memb.voice.setChannel(channel).catch(reason => console.warn(reason));}
 						)

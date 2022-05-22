@@ -4,13 +4,12 @@ const localize = require('../functions/localize');
 module.exports = {
 
 	active : true,
+	category : 'Модерация',
+
 	name : 'poll',
 	title : 'Опросы',
-	description : 'Позволяет создавать общие и модераторские опросы',
-	descriptionShort : 'Allows you to create common and moderator polls',
-	description_localizations : {'ru': 'Позволяет создавать общие и модераторские опросы', 'uk': 'Дозволяє створювати загальні та модераторські опитування'},
+	description : 'Создание опросов',
 
-	category : 'Утилиты',
 
 	FLAGS : {
 		POLLS: {

@@ -3,13 +3,11 @@ const translit = require('transliteration');
 module.exports = {
 
 	active : true,
-	name : 'namefix',
-	title : 'Исправление никнейма',
-	description : 'Используется для исправления никнейма пользователей. Команда доступна всем.',
-	descriptionShort : 'Used to fix the nickname of users. The command is available to everyone.',
-	description_localizations : {'ru': 'Используется для исправления никнейма пользователей. Команда доступна всем.', 'uk': 'Використовується для виправлення імені користувача'},
 	category : 'Никнейм',
 
+	name : 'namefix',
+	title : 'Коррекция никнейма',
+	description : 'Используется для исправления никнейма пользователей. Команда доступна всем.',
 
 	slashOptions : [{
 		name : 'member',

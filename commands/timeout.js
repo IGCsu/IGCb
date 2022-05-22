@@ -3,13 +3,11 @@ const localize = require("../functions/localize");
 module.exports = {
 
 	active : true,
-	category : 'Роли',
+	category : 'Модерация',
 
 	name : 'timeout',
-	title : 'Доступ к timeout',
+	title : 'Модуль мутов',
 	description : 'Мутит указанного пользователя на указанное время',
-	descriptionShort : 'Switches the specified user to the alive role',
-	description_localizations : {'ru': 'Переключает у указанных пользователей роль alive', 'uk': 'Змінює у обраних користувачів роль alive'},
 
 	slashOptions : [{
 		name : 'user',
@@ -56,7 +54,7 @@ module.exports = {
 				content : reaction.emoji.error + ' ' + localize(int.locale, 'You do not have enough rights to change the roles of other users'),
 				ephemeral : true
 			});
-		
+
 		let duration = 1;
 		try{
 			const time = /^(?:(?<days>[1-9]\d*)d(?:\s(?!$))?)?(?:(?<hours>2[0-3]|1\d|[1-9])h(?:\s(?!$))?)?(?:(?<minutes>[1-5]\d|[1-9])m(?:\s(?!$))?)?(?:(?<seconds>[1-5]\d|[1-9])s)?$/gm.exec(string);
