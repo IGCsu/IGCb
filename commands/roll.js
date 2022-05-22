@@ -7,7 +7,7 @@ module.exports = {
 
 	name : 'roll',
 	title : 'Случайное число',
-	description : 'Выдаёт случайное число',
+	description : 'Выдаёт случайное число (По умолчанию 1-100)',
 
 	slashOptions : [
 		{
