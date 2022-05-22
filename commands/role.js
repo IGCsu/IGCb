@@ -1,9 +1,8 @@
 module.exports = {
 
 	active : true,
-  
+
 	name : 'role',
-	short : 'r',
 	title : 'Игровые роли',
 	description : 'Используется для работы с ролями:\nНеобходимо указать название роли. Название роли может содержать только латинский символы, а так же "-" и "_". Если роль не будет найдена - она будет создана, при наличии прав.\nПосле роли можно указать пользователей, кому вы хотите переключить роль. Указывать можно вводом ID или упоминанием, разделять нужно пробелом.\nЕсли не указывать пользователей - роль будет переключена у автора команды.',
 	descriptionShort : 'Game Role Management',
@@ -38,37 +37,37 @@ module.exports = {
 			required : false
 		},
 	],
-  
+
 
 	init : function(){ return this; },
-  
-  
+
+
 	/**
 	 *
 	 *
 	 * @param {Message} msg
 	 * @param {Array}   params Параметры команды
 	 */
-  
+
 	autocomplete : async function(int){
 		const timeStart = process.hrtime();
 		let choices = [];
 
 		const role = int.options.getFocused();
 		const create = int.options.getBoolean('create');
-		
+
 		let finded = await this.has(guild.roles, role);
 		let predict = finded.roles;
 
 		this.predict_name = role;
-		
+
 		if(role){
 			predict.sort((a, b) => this.comporator(a, b));
 			if(create) choices[0] = {name : role, value : role};
 		} else {
 			choices[0] = {name: localize(int.locale, 'Show list of all Game Roles'), value:'showAll'};
 		}
-		
+
 		for(let i = 0; i < predict.length && choices.length < 25; i++) choices[i + 1 * (create || !role)] = {name : predict[i].name, value : predict[i].id};
 
 		try{
@@ -79,20 +78,20 @@ module.exports = {
 			console.warn('Autocomplete Interaction Failed: ' + timePerf + 'ms' + '\n' + e)
 		};
 	},
-  
+
 	slash : async function(int){
 		const member = int.member;
 		const permission = this.permission(member)
 
-		if(int.options.get('role').value == 'showAll') 
+		if(int.options.get('role').value == 'showAll')
 			return await int.reply({embeds:[this.help()]});
-	
+
 		let role = int.guild.roles.cache.get(int.options.get('role').value);
 		const create = int.options.getBoolean('create');
 		let members = int.options.get('members')?.value;
 		if(members)
 			members = members.replace(/[^-_\w]/g, ' ').match(/[0-9]+/g);
-		
+
 		if(!role) {
 			if (permission && create){
 			role = (await this.create(member, int.options.get('role').value, 45)).role
@@ -112,7 +111,7 @@ module.exports = {
 		} else {text = 'Запускаю выдачу ролей'};
 
 		if (!int.replied) await int.reply({content: text, allowedMentions: { "parse": [] }});
-	
+
 		if (members && permission) members.forEach(user => {
 			let data = toggleRole(role, user, member);
 			const emj = data[0] ? reaction.emoji.success : reaction.emoji.error;
@@ -122,7 +121,7 @@ module.exports = {
 			int.followUp(payload);
 			});
 	},
-  
+
 	/**
 	 * Отправляет help и отсортированный список доступных игровых ролей
 	 *
@@ -130,20 +129,20 @@ module.exports = {
 	 */
 	help : function(){
 		let roles = [];
-	
+
 		guild.roles.cache.forEach(role => {
 			if(role.color == 5095913 || role.color == 3447003 || role.color == 13084411) roles.push(role.name);
 		});
-	
-	
+
+
 		const embed = new Discord.MessageEmbed()
 			.setTitle('Игровые роли')
 			.setColor('BLURPLE')
 			.addField('Список доступных ролей', roles.sort().join('\n'));
 		return embed;
 	},
-  
-  
+
+
 	/**
 	 * Создание роли
 	 *
@@ -163,9 +162,9 @@ module.exports = {
 		});
 		return { role : role , chk: true};
 	},
-  
-   
-  
+
+
+
 	comporator : function(a, b) {
 		let aConf = 0.0;
 		let bConf = 0.0;
@@ -175,7 +174,7 @@ module.exports = {
 
 		aConf = name.length / aName.length;
 		bConf = name.length / bName.length;
-		
+
 		if(aName.startsWith(name)) aConf += 2 * aConf;
 		if(bName.startsWith(name)) bConf += 2 * bConf;
 		if(aName.endsWith(name)) aConf += 0.2 * name.length / aName.length;
@@ -183,8 +182,8 @@ module.exports = {
 
 		return bConf - aConf
 	},
-  
-  
+
+
 	/**
 	 * Проверка существования роли. Возвращает найденную роль.
 	 *
@@ -195,7 +194,7 @@ module.exports = {
 		name = name.toLowerCase();
 		let position = 0;
 		let entry = false;
-  
+
 		const curr_roles = Array.from(roles.cache.filter(r => {
 			if(!(r.color == 5095913 || r.color == 3447003)) return false;
 			if(entry) return false;
@@ -204,11 +203,11 @@ module.exports = {
 			if(role == name) entry = true;
 			return role.includes(name);
 		}).values());
-  
+
 		return { position : position, roles : curr_roles };
 	},
-  
-  
+
+
 	/**
 	 * Отправляет help и отсортированный список доступных игровых ролей
 	 *
@@ -239,5 +238,5 @@ module.exports = {
 		member.roles.cache.has('809040260582998016') ||
 		member.roles.cache.has('916999822693789718') ||
 		member.id == '500020124515041283'
-  
+
   };

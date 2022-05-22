@@ -69,19 +69,19 @@ module.exports = {
 			.setThumbnail(member.user.avatarURL({ dynamic: true }))
 
 		try {
-			embed.addField('Cообщения:', 
+			embed.addField('Cообщения:',
 				user.messagesAll.toLocaleString() + ' (Из них учитываются: ' + user.messagesLegit.toLocaleString() + ')');
-			embed.addField('Cимволы:', 
+			embed.addField('Cимволы:',
 				user.symbols.toLocaleString() + '  (AVG ' + (user.symbolsAvg = this.getSymbolsAvg(user)).toLocaleString() + ')');
 			embed.addField('Оверпост:', (user.overpost = this.getOverpost(user)) + '%');
-			
-			embed.addField('Активность за последние 30 дней:', 
+
+			embed.addField('Активность за последние 30 дней:',
 				(user.activityPer = this.getActivityPer(user)) + '% (' + Math.round(user.activityPer * 30/100) + '/' + '30)');
-			
+
 			user.expFine = this.getExpFine(user);
 
-			embed.addField('Опыт:', 
-				(user.exp = this.getExp(user)).toLocaleString() + 
+			embed.addField('Опыт:',
+				(user.exp = this.getExp(user)).toLocaleString() +
 				(user.expFine ? (' (Вычтено из за неактивности: ' + user.expFine.toLocaleString() + ')') : ''));
 
 			user.nextRole = this.getNextRole(user);

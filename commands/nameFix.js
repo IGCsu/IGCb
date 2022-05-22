@@ -26,9 +26,9 @@ module.exports = {
 	 * @param {GuildMember} member Объект пользователя
 	 */
 	call : async member => {
-		if(!commands.list.name) return 'Модуль "name" не активен', false;
+		if(!commands.name) return 'Модуль "name" не активен', false;
 
-		const result = await commands.list.name.silent(member);
+		const result = await commands.name.silent(member);
 
 		return result.status
 			? { ephemeral : false, content : 'Никнейм исправлен `' + result.name + '` => `' + result.fixed + '`' }

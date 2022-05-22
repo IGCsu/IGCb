@@ -28,7 +28,7 @@ module.exports = {
 	 */
 	call : async function(msg){
 		await this.destroyBot(msg); // Прекращение работы бота при запуске дубликата
-		if(commands.list.levels) commands.list.levels.monitoring(msg); // Опыт за сообщение
+		if(commands.levels) commands.levels.monitoring(msg); // Опыт за сообщение
 		if(!this.siteOffline) await this.rule(msg); // Проверка на упоминание пункта Устава
 		await this.fixLink(msg); // Исправление нерабочей ссылки
 		await this.nsfw(msg) // Преобразование nsfw-кода в ссылку
@@ -36,7 +36,7 @@ module.exports = {
 		await this.event(msg); // Прикрепление реакций в #ивенты
 		await this.elections(msg); // Прикрепление реакций в #выборы
 
-		if(commands.list.phishing) commands.list.phishing.message(msg);
+		if(commands.phishing) commands.phishing.message(msg);
 	},
 
 

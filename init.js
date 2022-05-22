@@ -40,7 +40,6 @@ const getCommands = async () => {
 		if(command.active) command = await command.init(path);
 
 		list[command.name] = command;
-		if(command.short) list[command.short] = command.name;
 
 		if(command.active && command.slash)
 			commands.push({
@@ -66,26 +65,7 @@ const getCommands = async () => {
 	// Генерирование и кэширование списка команд
 	if(list.help) list.help.generate(list);
 
-	return {
-
-		list : list,
-
-		/**
-		 * Возвращает команду. При неудаче - false
-		 *
-		 * @param  {String} name Название команды
-		 * @return {Object}      Команда
-		 */
-		get : function(name){
-			let command = this.list[name];
-
-			if(!command) return false;
-			if(typeof command === 'string') command = this.list[command];
-
-			return command;
-		}
-
-	};
+	return list;
 }
 
 
@@ -158,13 +138,13 @@ module.exports = async () => {
 		if(msg.channel.guild.id != config.home) return;
 
 		if(msg.content.substr(0, config.prefix.length) != config.prefix){
-			if(commands.list.nocommand?.active) commands.list.nocommand.call(msg);
+			if(commands.nocommand?.active) commands.nocommand.call(msg);
 			return;
 		}
 		if(msg.author.bot) return;
 
 		const content = msg.content.substr(config.prefix.length).split(/\s+/);
-		const command = commands.get(content.shift().toLowerCase());
+		const command = commands[content.shift().toLowerCase()];
 
 		if(!command || !command.active || !command.message) return;
 
@@ -174,7 +154,7 @@ module.exports = async () => {
 
 	console.time('Event interactionCreate');
 	client.on('interactionCreate', async interaction => {
-		const command = commands.get(interaction.commandName ?? interaction.customId.split('|')[0]);
+		const command = commands[interaction.commandName ?? interaction.customId.split('|')[0]];
 
 		if(!command || !command.active) return;
 
