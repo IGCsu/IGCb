@@ -66,6 +66,9 @@ const getCommands = async () => {
 	if(!debugAllowModules.length)
 		new REST({ version: '9' }).setToken(config.token).put( Routes.applicationGuildCommands(client.user.id, config.home), { body: commands });
 
+	// Генерирование и кэширование списка команд
+	if(list.help) list.help.generate(list);
+
 	return list;
 }
 

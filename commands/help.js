@@ -2,7 +2,7 @@ const localize = require("../functions/localize");
 
 module.exports = {
 
-	active : false,
+	active : true,
 	category : 'Утилиты',
 
 	name : 'help',
