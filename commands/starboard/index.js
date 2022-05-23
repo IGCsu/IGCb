@@ -1,14 +1,12 @@
+const { title } = require('./about.json');
+
 module.exports = {
 
 	active : true,
 	category : 'Голосовые каналы',
 
 	name : 'starboard',
-	title : {
-		'ru':'Модуль закрепления сообщений',
-		'en':'Message pinning module',
-		'uk':'Модуль закріплення повідомлень',
-	},
+	title : title,
 
 	starboardChannel : guild.channels.cache.get('938171284553101456'),
 	starboardEmoji : '⭐',

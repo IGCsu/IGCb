@@ -1,33 +1,15 @@
+const slashOptions = require('./slashOptions.json');
+const { title, description } = require('./about.json');
+
 module.exports = {
 
 	active : true,
 	category : 'Роли',
 
 	name : 'alive',
-	title : {
-		'ru':'Доступ к сообществу',
-		'en':'Community Access',
-		'uk':'Доступ до спільноти',
-	},
-	description : {
-		'ru':'Переключает у указанного пользователя роль alive',
-		'en':'Switches the specified user\'s role to alive',
-		'uk':'Перемикає у вказаного користувача роль alive',
-	},
-
-	slashOptions : {
-
-		user : {
-			type : 6,
-			required : true,
-			description : {
-				'ru':'Участник Сообщества у которого будет переключена роль alive',
-				'en':'Community member whose alive role will be switched',
-				'uk':'Користувач спільноти у якого буде змінюватися роль alive',
-			}
-		}
-
-	},
+	title : title,
+	description : description,
+	slashOptions : slashOptions,
 
 
 	init : function(path){

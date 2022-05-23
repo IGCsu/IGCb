@@ -1,4 +1,7 @@
 const fetch = require('node-fetch');
+const slashOptions = require('./slashOptions.json');
+const { title, description } = require('./about.json');
+const noXPChannels = require('./noXPChannels.json');
 
 module.exports = {
 
@@ -6,43 +9,11 @@ module.exports = {
 	category : 'Уровни активности',
 
 	name : 'levels',
-	title : {
-		'ru':'Мониторинг сообщений',
-		'en':'Message monitoring',
-		'uk':'Моніторинг повідомлень',
-	},
-	description : {
-		'ru':'Выдаёт статистику пользователя',
-		'en':'Returns user statistics',
-		'uk':'Видає статистику користувача',
-	},
+	title : title,
+	description : description,
+	slashOptions : slashOptions,
 
-	noXPChannels : [
-		'610371610620198922', // рандом
-		'574997373219110922', // logs
-		'572472723624951839', // ивенты
-		'520289167889137665', // ссылки
-		'500013665538539523', // видео-с-канала
-
-		'761593401291571240', // Буфер
-		'500300747053989888', // Информационный
-		'562559696146530314', // Голосовые
-		'776918362482671616', // Удалённые каналы
-	],
-
-	slashOptions : {
-
-		user : {
-			type : 6,
-			required : false,
-			description : {
-				'ru':'Чью статистику показать. По умолчанию вашу',
-				'en':'Whose statistics to show. Yours by default',
-				'uk':'Чию статистику показувати. Ваш за замовчуванням',
-			}
-		}
-
-	},
+	noXPChannels : noXPChannels,
 
 	init : async function(path){
 

@@ -1,14 +1,12 @@
+const { title } = require('./about.json');
+
 module.exports = {
 
 	active : true,
 	category : 'Логирование',
 
 	name : 'necrology',
-	title : {
-		'ru':'Модуль логгирования таймаутов и банов',
-		'en':'Timeout and ban logging module',
-		'uk':'Модуль логування таймаутів та банів',
-	},
+	title : title,
 
 	cache : {},
 

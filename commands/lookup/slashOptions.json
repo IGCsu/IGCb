@@ -1,0 +1,13 @@
+{
+
+	"id": {
+		"type": 3,
+		"required": true,
+		"description": {
+			"ru": "ID юзера или приглашения",
+			"en": "User or invite ID",
+			"uk": "ID користувача/запрошення"
+		}
+	}
+
+}

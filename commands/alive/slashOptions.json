@@ -1,0 +1,13 @@
+{
+
+	"user": {
+		"type": 6,
+		"required": true,
+		"description" : {
+			"ru": "Участник Сообщества у которого будет переключена роль alive",
+			"en": "Community member whose alive role will be switched",
+			"uk": "Користувач спільноти у якого буде змінюватися роль alive"
+		}
+	}
+
+}

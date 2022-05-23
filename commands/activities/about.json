@@ -1,0 +1,13 @@
+{
+
+	"title": {
+		"ru": "Activities"
+	},
+
+	"description": {
+		"ru": "Создание Discord activities в голосовых каналах",
+		"en": "Creating Discord activities in voice channels",
+		"uk": "Створення Discord activities у голосових каналах"
+	}
+
+}

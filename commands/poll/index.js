@@ -1,21 +1,16 @@
 const { Collection } = require('@discordjs/collection');
+const slashOptions = require('./slashOptions.json');
+const { title, description } = require('./about.json');
 
 module.exports = {
 
 	active : true,
-	name : 'poll',
-	title : {
-		'ru':'Опросы',
-		'en':'Polls',
-		'uk':'Опитування',
-	},
-	description : {
-		'ru':'Создание опросов',
-		'en':'Create polls',
-		'uk':'Створення опитувань',
-	},
-
 	category : 'Утилиты',
+
+	name : 'poll',
+	title : title,
+	description : description,
+	slashOptions : slashOptions,
 
 	FLAGS : {
 		POLLS: {
@@ -29,116 +24,6 @@ module.exports = {
 		}
 	},
 
-	slashOptions : {
-
-		common : {
-			type : 1,
-			slashOptions : {
-
-				question : {
-					type : 3,
-					required : true,
-					description : {
-						'ru':'Задайте вопрос',
-						'en':'Ask a question',
-						'uk':'Задайте питання',
-					}
-				},
-
-				min : {
-					type : 4,
-					required : false,
-					description : {
-						'ru':'Минимально необходимое количество символов в ответе. (0 - ответ не обязателен)',
-						'en':'The minimum required number of characters in the answer. (0 - the answer is optional)',
-						'uk':'Мінімальна кількість символів у відповіді. (0 - відповідь не обов\'язкова)',
-					}
-				},
-
-				public : {
-					type : 5,
-					required : false,
-					description : {
-						'ru':'Если false, то опрос будет анонимным',
-						'en':'If false, the poll will be anonymous',
-						'uk':'Якщо false, опитування - анонімне',
-					}
-				}
-
-			},
-			description : {
-				'ru':'Общий опрос',
-				'en':'Сommon poll',
-				'uk':'Загальне опитування',
-			}
-		},
-
-		senate : {
-			type : 1,
-			slashOptions : {
-
-				question : {
-					type : 3,
-					required : true,
-					description : {
-						'ru':'Задайте вопрос',
-						'en':'Ask a question',
-						'uk':'Задайте питання',
-					}
-				},
-
-				min : {
-					type : 4,
-					required : false,
-					description : {
-						'ru':'Минимально необходимое количество символов в ответе. (0 - ответ не обязателен)',
-						'en':'The minimum required number of characters in the answer. (0 - the answer is optional)',
-						'uk':'Мінімальна кількість символів у відповіді. (0 - відповідь не обов\'язкова)',
-					}
-				},
-
-				public : {
-					type : 5,
-					required : false,
-					description : {
-						'ru':'Если false, то опрос будет анонимным',
-						'en':'If false, the poll will be anonymous',
-						'uk':'Якщо false, опитування - анонімне',
-					}
-				}
-
-			},
-			description : {
-				'ru':'Опрос среди модераторов',
-				'en':'Moderator poll',
-				'uk':'Опитування модерації',
-			}
-		},
-
-		show : {
-			type : 1,
-			slashOptions : {
-
-				search : {
-					type : 3,
-					autocomplete: true,
-					required : true,
-					description : {
-						'ru':'Укажите любую информацию которая может быть связана с опросом',
-						'en':'Specify any information that may be related to the poll',
-						'uk':'Вкажіть опис опитування',
-					}
-				}
-
-			},
-			description : {
-				'ru':'Показать информацию о любом опросе',
-				'en':'Show information about any poll',
-				'uk':'Відобразити результати опитування',
-			}
-		}
-
-	},
 
 	init : function(){
 		const data = this.fetchAll();

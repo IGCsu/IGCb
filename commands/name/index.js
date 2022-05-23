@@ -1,29 +1,18 @@
 const translit = require('transliteration');
+const slashOptions = require('./slashOptions.json');
+const { title } = require('./about.json');
+const transliterateOptions = require('./transliterateOptions.json');
 
 module.exports = {
 
 	active : true,
+	category : 'Никнейм',
+
 	name : 'name',
-	title : {
-		'ru':'Изменение никнейма',
-		'en':'Nickname change',
-		'uk':'Зміна нікнейму',
-	},
+	title : title,
+	slashOptions : slashOptions,
 
-	slashOptions : {
-
-		nick : {
-			type : 3,
-			required : true,
-			description : {
-				'ru':'Введите любой желаемый никнейм',
-				'en':'Enter any nickname you want',
-				'uk':'Введіть будь-який бажаний нікнейм',
-			}
-		}
-
-	},
-
+	transliterateOptions : transliterateOptions,
 
 	init : function(){
 		client.on('guildMemberAdd', async member => await this.silent(member));
@@ -38,16 +27,6 @@ module.exports = {
 		});
 
 		return this;
-	},
-
-
-	options : {
-		ignore : ['а', 'б', 'в', 'г', 'д', 'е', 'ё', 'ж', 'з', 'и', 'й', 'к', 'л',
-			'м', 'н', 'о', 'п', 'р', 'с', 'т', 'у', 'ф', 'х', 'ц', 'ч', 'ш', 'щ', 'ь',
-			'ы', 'ъ', 'э', 'ю', 'я', 'А', 'Б', 'В', 'Г', 'Д', 'Е', 'Ё', 'Ж', 'З', 'И',
-			'Й', 'К', 'Л', 'М', 'Н', 'О', 'П', 'Р', 'С', 'Т', 'У', 'Ф', 'Х', 'Ц', 'Ч',
-			'Ш', 'Щ', 'Ь', 'Ы', 'Ъ', 'Э', 'Ю', 'Я', '-', '_', '\'', '`', '.', '[', ']',
-			'(', ')']
 	},
 
 
@@ -129,7 +108,7 @@ module.exports = {
 	 * @return {String}
 	 */
 	fix : function(nickname, reason){
-		let name = translit.transliterate(nickname, this.options);
+		let name = translit.transliterate(nickname, this.transliterateOptions);
 		name = name.replace(/`/gi, '\'');
 		name = name.replace(/[^а-яёa-z0-9'\[\]\(\)_\-\.\s]/gi, '');
 		name = name.replace(/\s+/gi, ' ');

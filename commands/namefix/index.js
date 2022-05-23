@@ -1,34 +1,14 @@
-const translit = require('transliteration');
+const slashOptions = require('./slashOptions.json');
+const { title, description } = require('./about.json');
 
 module.exports = {
 
 	active : true,
 	name : 'namefix',
-	title : {
-		'ru':'Коррекция никнейма',
-		'en':'Nickname correction',
-		'uk':'Корекція нікнейму',
-	},
-	description : {
-		'ru':'Используется для исправления никнейма пользователей. Команда доступна всем',
-		'en':'Used to correct the nickname of users. The team is available to everyone',
-		'uk':'Використовується для виправлення нікнейму користувачів. Команда доступна всім',
-	},
 
-	slashOptions : {
-
-		member : {
-			type : 6,
-			required : true,
-			description : {
-				'ru':'Пользователь у которого будет исправлен ник',
-				'en':'The user whose nickname will be corrected',
-				'uk':'Користувач чиє ім\'я буде виправленно',
-			}
-		}
-
-	},
-
+	title : title,
+	description : description,
+	slashOptions : slashOptions,
 
 	init : function(){ return this; },
 

@@ -1,33 +1,15 @@
+const slashOptions = require('./slashOptions.json');
+const { title, description } = require('./about.json');
+
 module.exports = {
 
 	active : true,
 	category : 'Роли',
 
 	name : 'orator',
-	title : {
-		'ru':'Роль Младшего Оратора',
-		'en':'The Role of the Junior Orator',
-		'uk':'Роль Молодшого Оратора',
-	},
-	description : {
-		'ru':'Переключает у указанного пользователя роль Младшего Оратора',
-		'en':'Toggles the role of Junior Orator for the specified user',
-		'uk':'Переключає у вказаного користувача роль Молодшого Оратора',
-	},
-
-	slashOptions : {
-
-		user : {
-			type : 6,
-			required : true,
-			description : {
-				'ru':'Участник Сообщества у которого будет переключена роль Младшего Оратора',
-				'en':'Community member whose Junior Orator role will be switched',
-				'uk':'Користувач спільноти у якого буде перемикатися роль Молодшого Оратора',
-			}
-		}
-
-	},
+	title : title,
+	description : description,
+	slashOptions : slashOptions,
 
 	init : function(path){
 		this.role = guild.roles.cache.get('809040260582998016');

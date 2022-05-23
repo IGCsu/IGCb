@@ -1,15 +1,13 @@
 const fetch = require('node-fetch');
+const { title } = require('./about.json');
 
 module.exports = {
 
 	active : true,
 	category : 'Утилиты',
+
 	name : 'nocommand',
-	title : {
-		'ru':'Модуль реагирования на сообщения',
-		'en':'Message response module',
-		'uk':'Модуль реагування на повідомлення',
-	},
+	title : title,
 
 	/**
 	 * Получает json объект Устава Сообщества и помещает его в кэш

@@ -1,4 +1,6 @@
 const fetch = require('node-fetch');
+const slashOptions = require('./slashOptions.json');
+const { title } = require('./about.json');
 
 module.exports = {
 
@@ -6,37 +8,8 @@ module.exports = {
 	category : 'Голосовые каналы',
 
 	name : 'diplomacy',
-	title : {
-		'ru':'Модуль поддержки ивента по Diplomacy',
-		'en':'Diplomacy event support module',
-		'uk':'Модуль підтримки івента по Diplomacy'
-	},
-
-	slashOptions : {
-
-		flag : {
-			type : 3,
-			required : false,
-			choices : {
-				ping : {
-					'ru': 'Добавить упоминание игроков',
-					'en': 'Add a mention of players',
-					'uk': 'Додати згадування гравців'
-				},
-				ephemeral : {
-					'ru': 'Скрыть сообщение для остальных',
-					'en': 'Hide message for others',
-					'uk': 'Приховати повідомлення для інших'
-				}
-			},
-			description : {
-				'ru': 'Дополнительное свойство',
-				'en': 'Additional feature',
-				'uk': 'Додаткова властивість'
-			}
-		}
-
-	},
+	title : title,
+	slashOptions : slashOptions,
 
 	gameID : '51872', // ID игры на сайте
 	interval : 600, // Интервал в секундах между запросами

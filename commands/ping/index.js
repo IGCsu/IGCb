@@ -1,19 +1,13 @@
+const { title, description } = require('./about.json');
+
 module.exports = {
 
 	active : true,
 	category : 'Утилиты',
 
 	name : 'ping',
-	title : {
-		'ru':'Пинг',
-		'en':'Ping',
-		'uk':'Пінг',
-	},
-	description : {
-		'ru':'Информация о боте: пинг, uptime',
-		'en':'Bot information: ping, uptime',
-		'uk':'Інформація про роботу: пінг, uptime',
-	},
+	title : title,
+	description : description,
 
 
 	init : function(){ return this; },

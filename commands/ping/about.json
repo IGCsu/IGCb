@@ -1,0 +1,15 @@
+{
+
+	"title": {
+		"ru": "Пинг",
+		"en": "Ping",
+		"uk": "Пінг"
+	},
+
+	"description": {
+		"ru": "Информация о боте: пинг, uptime",
+		"en": "Bot information: ping, uptime",
+		"uk": "Інформація про роботу: пінг, uptime"
+	}
+
+}

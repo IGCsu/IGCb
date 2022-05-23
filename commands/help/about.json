@@ -1,0 +1,15 @@
+{
+
+	"title" : {
+		"ru": "Помощь по командам",
+		"en": "Help on commands",
+		"uk": "Допомога по командам"
+	},
+
+	"description" : {
+		"ru": "Показывает список доступных команд или описание указанной команды",
+		"en": "Shows a list of available commands or a description of the specified command",
+		"uk": "Показує список доступних команд або опис вказаної команди"
+	}
+
+}

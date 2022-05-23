@@ -1,55 +1,16 @@
+const slashOptions = require('./slashOptions.json');
+const { title, description } = require('./about.json');
+
 module.exports = {
 
 	active : true,
 
 	name : 'role',
-	title : {
-		'ru':'Игровые роли',
-		'en':'Game roles',
-		'uk':'Ігрові ролі',
-	},
-	description : {
-		'ru':'Управление игровыми ролями',
-		'en':'Game roles management',
-		'uk':'Управління ігровими ролями',
-	},
+	title : title,
+	description : description,
+	slashOptions : slashOptions,
 
 	predict_name : '',
-
-	slashOptions : {
-
-		role : {
-			type : 3,
-			required : true,
-			autocomplete: true,
-			description : {
-				'ru':'Имя роли или её ID',
-				'en':'Role name or ID',
-				'uk':'Назва ролі або її ID',
-			}
-		},
-
-		members : {
-			type : 3,
-			required : false,
-			description : {
-				'ru':'Укажите упоминания пользователя/ей его/их ID',
-				'en':'Specify the mention of the user(s) his/her/their ID',
-				'uk':'Вкажіть згадування користувача або його ID',
-			}
-		},
-
-		create : {
-			type : 5,
-			required : false,
-			description : {
-				'ru':'Создать роль если не было найдено таковой?',
-				'en':'Create a role if no one was found?',
-				'uk':'Створити роль, якщо вона відсутня?',
-			}
-		}
-
-	},
 
 
 	init : function(){ return this; },
@@ -61,7 +22,6 @@ module.exports = {
 	 * @param {Message} msg
 	 * @param {Array}   params Параметры команды
 	 */
-
 	autocomplete : async function(int){
 		const timeStart = process.hrtime();
 		let choices = [];

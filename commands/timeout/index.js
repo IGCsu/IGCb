@@ -1,53 +1,15 @@
+const slashOptions = require('./slashOptions.json');
+const { title, description } = require('./about.json');
+
 module.exports = {
 
 	active : true,
 	category : 'Роли',
 
 	name : 'timeout',
-	title : {
-		'ru':'Модуль мутов',
-		'en':'Mut module',
-		'uk':'Модуль мутів',
-	},
-	description : {
-		'ru':'Мутит указанного пользователя на указанное время',
-		'en':'Mutes the specified user for the specified time',
-		'uk':'Мутить вказаного користувача на вказаний час',
-	},
-
-	slashOptions : {
-
-		user : {
-			type : 6,
-			required : true,
-			description : {
-				'ru':'Участник Сообщества который будет отстранён от общения',
-				'en':'Community member who will be suspended from communication',
-				'uk':'Учасник Спільноти, який буде відсторонений від спілкування',
-			}
-		},
-
-		duration : {
-			type : 3,
-			required : true,
-			description : {
-				'ru':'Продолжительность таймаута. Формат времени: (1d6h30m5s)',
-				'en':'Timeout duartion. Time format: (1d6h30m5s)',
-				'uk':'Тривалість таймауту. Формат часу: (1d6h30m5s)',
-			}
-		},
-
-		reason : {
-			type : 3,
-			required : false,
-			description : {
-				'ru':'Причина таймаута. Будет видна в аудит логе и #некролог',
-				'en':'Reason for the timeout. It will be visible in the audit log and #некролог',
-				'uk':'Причина таймауту. Буде видно в аудит лозі і #некролог',
-			}
-		}
-
-	},
+	title : title,
+	description : description,
+	slashOptions : slashOptions,
 
 
 	init : function(path){

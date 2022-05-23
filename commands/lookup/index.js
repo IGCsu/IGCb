@@ -1,44 +1,20 @@
+const slashOptions = require('./slashOptions.json');
+const { title, description } = require('./about.json');
+const dateText = require('./dateText.json');
+
 module.exports = {
 
 	active : true,
 	category : 'Утилиты',
 
 	name : 'lookup',
-	title : {
-		'ru':'Информация по ID',
-		'en':'Information by ID',
-		'uk':'Інформація про ID',
-	},
-	description : {
-		'ru':'Выдаёт информацию о пользователе или приглашении по ID',
-		'en':'Returns information about the user or invitation by ID',
-		'uk':'Видає інформацію про користувача або запрошення за ID',
-	},
+	title : title,
+	description : description,
+	slashOptions : slashOptions,
 
-	slashOptions : {
-
-		id : {
-			type : 3,
-			required : true,
-			description : {
-				'ru':'ID юзера или приглашения',
-				'en':'User or invite ID',
-				'uk':'ID користувача/запрошення',
-			}
-		}
-
-	},
+	dateText : dateText,
 
 	init : function(){ return this; },
-
-
-	dateText : {
-		hours : ['час', 'часа', 'часов'],
-		minutes : ['минуту', 'минуты', 'минут'],
-		days : ['день', 'дня', 'дней'],
-		month : ['месяц', 'месяца', 'месяцев'],
-		year : ['год', 'года', 'лет']
-	},
 
 	/**
 	 * Собирает всю инфу о пользователе, формирует эмбед и возвращает его

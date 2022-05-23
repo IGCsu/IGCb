@@ -1,0 +1,34 @@
+{
+
+	"role": {
+		"type": 3,
+		"required": true,
+		"autocomplete": true,
+		"description": {
+			"ru": "Имя роли или её ID",
+			"en": "Role name or ID",
+			"uk": "Назва ролі або її ID"
+		}
+	},
+
+	"members": {
+		"type": 3,
+		"required": false,
+		"description": {
+			"ru": "Укажите упоминания пользователя/ей его/их ID",
+			"en": "Specify the mention of the user(s) his/her/their ID",
+			"uk": "Вкажіть згадування користувача або його ID"
+		}
+	},
+
+	"create": {
+		"type": 5,
+		"required": false,
+		"description": {
+			"ru": "Создать роль если не было найдено таковой?",
+			"en": "Create a role if no one was found?",
+			"uk": "Створити роль, якщо вона відсутня?"
+		}
+	}
+
+}

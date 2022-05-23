@@ -1,14 +1,14 @@
+const slashOptions = require('./slashOptions.json');
+const { title } = require('./about.json');
+
 module.exports = {
 
 	active : true,
 	category : 'Голосовые каналы',
 
 	name : 'voice',
-	title : {
-		'ru':'Управление голосовыми каналами',
-		'en':'Voice channel management',
-		'uk':'Управління голосовими каналами',
-	},
+	title : title,
+	slashOptions : slashOptions,
 
 	permission : {
 		MANAGE_CHANNELS : true,
@@ -20,89 +20,6 @@ module.exports = {
 		CONNECT : true,
 		STREAM : true,
 		SPEAK : true,
-	},
-
-	slashOptions : {
-
-		sync : {
-			type : 1,
-			description : {
-				'ru':'Синхронизовать канал с базой данных',
-				'en':'Synchronize the channel with the database',
-				'uk':'Синхронізувати канал з базою даних',
-			}
-		},
-
-		upload : {
-			type : 1,
-			description : {
-				'ru':'Загрузить конфигруацию в базу данных',
-				'en':'Upload the configuration to the database',
-				'uk':'Завантажити конфігурацію в базу даних',
-			}
-		},
-
-		'auto-sync' : {
-			type : 1,
-			slashOptions : {
-
-				mode : {
-					type : 3,
-					required : true,
-					choices : {
-						'0' : {
-							'ru':'Отключена',
-							'en':'Disabled',
-							'uk':'Відключений',
-						},
-						'1' : {
-							'ru':'Частичная (Настройки выгружаются из БД только при создании ГС)',
-							'en':'Partial (Settings are loaded from the DB only when creating a VC)',
-							'uk':'Часткова (Налаштування вивантажуються з БД тільки при створенні ГС)',
-						},
-						'2' : {
-							'ru':'Полная',
-							'en':'Full',
-							'uk':'Полная',
-						},
-					},
-					description : {
-						'ru':'Выберите режим автосинхронизации',
-						'en':'Select auto sync mode',
-						'uk':'Виберіть режим автосинхронізації',
-					}
-				}
-
-			},
-			description : {
-				'ru':'Настройка автосинхронизации',
-				'en':'Setting up auto-synchronization',
-				'uk':'Настройка автосинхронизации',
-			}
-		},
-
-		'add-owner' : {
-			type : 1,
-			slashOptions : {
-
-				member : {
-					type : 6,
-					required : true,
-					description : {
-						'ru':'Пользователь которому будут выданы права',
-						'en':'The user to whom the perms will be granted',
-						'uk':'Користувач якому будуть видані права',
-					}
-				}
-
-			},
-			description : {
-				'ru':'Дать права на управление каналом',
-				'en':'Grant channel management perms',
-				'uk':'Дати права на управління каналоми',
-			}
-		}
-
 	},
 
 	/**

@@ -1,0 +1,13 @@
+{
+
+	"nick" : {
+		"type": 3,
+		"required": true,
+		"description": {
+			"ru": "Введите любой желаемый никнейм",
+			"en": "Enter any nickname you want",
+			"uk": "Введіть будь-який бажаний нікнейм"
+		}
+	}
+
+}

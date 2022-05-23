@@ -1,4 +1,5 @@
 const fs = require('fs');
+const { title, description } = require('./about.json');
 
 module.exports = {
 
@@ -6,16 +7,8 @@ module.exports = {
 	category : 'Утилиты',
 
 	name : 'help',
-	title : {
-		'ru':'Помощь по командам',
-		'en':'Help on commands',
-		'uk':'Допомога по командам',
-	},
-	description : {
-		'ru':'Показывает список доступных команд или описание указанной команды',
-		'en':'Shows a list of available commands or a description of the specified command',
-		'uk':'Показує список доступних команд або опис вказаної команди',
-	},
+	title : title,
+	description : description,
 
 
 	/**
@@ -97,7 +90,7 @@ module.exports = {
 		let slash = 'Недоступно';
 		if(c.slash){
 			slash = '`/' + name + '` - ' + (c.description ? (c.description[lang] ?? c.description.ru) : (c.title[lang] ?? c.title.ru));
-			
+
 		}
 
 		let embed = new Discord.MessageEmbed()
