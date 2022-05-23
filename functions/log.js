@@ -39,7 +39,13 @@ const log = text => {
 
 module.exports = {
 
-	load : (path, perf, result) => log(path + ': ' + perf + 'ms ' + (result ? color.fg.Green + 'active' : color.fg.Red + 'inactive') + color.Reset),
+	/**
+	 * Текст лога, который отправит бот на старте.
+	 * @type {String}
+	 */
+	initText : '',
+
+	load : (path, perf, result) => log(path + ': ' + perf.toFixed(3) + 'ms ' + (result ? color.fg.Green + 'active' : color.fg.Red + 'inactive') + color.Reset),
 
 	start : text => log(color.fg.Cyan + text + color.Reset),
 	warn : text => log(color.fg.Yellow + text + color.Reset),

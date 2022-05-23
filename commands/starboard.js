@@ -4,7 +4,11 @@ module.exports = {
 	category : 'Развлечения',
 
 	name : 'starboard',
-	title : 'Модуль закрепления сообщений',
+	title : {
+		'ru':'Модуль закрепления сообщений',
+		'en-US':'Message pinning module',
+		'uk':'Модуль закріплення повідомлень',
+	},
 
 	starboardChannel : guild.channels.cache.get('938171284553101456'),
 	starboardEmoji : '⭐',
@@ -15,9 +19,9 @@ module.exports = {
 	*
 	* @return {Object}
 	*/
-	init : async function(path, logText){
+	init : async function(path){
 		if(!this.starboardChannel){
-			logText += log.error(path + ': Starboard канал не найден');
+			log.initText += log.error(path + ': Starboard канал не найден');
 			return this;
 		}
 

@@ -6,8 +6,16 @@ module.exports = {
 	category : 'Никнейм',
 
 	name : 'namefix',
-	title : 'Коррекция никнейма',
-	description : 'Используется для исправления никнейма пользователей. Команда доступна всем.',
+	title : {
+		'ru':'Коррекция никнейма',
+		'en-US':'Nickname correction',
+		'uk':'Корекція нікнейму',
+	},
+	description : {
+		'ru':'Используется для исправления никнейма пользователей. Команда доступна всем',
+		'en-US':'Used to correct the nickname of users. The team is available to everyone',
+		'uk':'Використовується для виправлення нікнейму користувачів. Команда доступна всім',
+	},
 
 	slashOptions : [{
 		name : 'member',

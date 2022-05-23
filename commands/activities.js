@@ -4,8 +4,12 @@ module.exports = {
 	category : 'Голосовые каналы',
 
 	name : 'activities',
-	title : 'Activities',
-	description : 'Создание Discord activities в голосовых каналах',
+	title : { 'ru':'Activities' },
+	description : {
+		'ru':'Создание Discord activities в голосовых каналах',
+		'en-US':'Creating Discord activities in voice channels',
+		'uk':'Створення Discord activities у голосових каналах',
+	},
 
 	slashOptions : [
 		{

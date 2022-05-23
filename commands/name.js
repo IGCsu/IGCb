@@ -6,7 +6,11 @@ module.exports = {
 	category : 'Никнейм',
 
 	name : 'name',
-	title : 'Изменение никнейма',
+	title : {
+		'ru':'Изменение никнейма',
+		'en-US':'Nickname change',
+		'uk':'Зміна нікнейму',
+	},
 
 
 	slashOptions : [{

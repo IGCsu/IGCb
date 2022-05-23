@@ -4,8 +4,16 @@ module.exports = {
 	category : 'Роли',
 
 	name : 'role',
-	title : 'Игровые роли',
-	description : 'Управление игровыми ролями',
+	title : {
+		'ru':'Игровые роли',
+		'en-US':'Game roles',
+		'uk':'Ігрові ролі',
+	},
+	description : {
+		'ru':'Управление игровыми ролями',
+		'en-US':'Game roles management',
+		'uk':'Управління ігровими ролями',
+	},
 
 	predict_name : '',
 

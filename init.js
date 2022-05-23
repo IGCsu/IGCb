@@ -4,13 +4,6 @@ const { Routes } = require('discord-api-types/v9');
 
 
 /**
- * Текст лога, который отправит бот на старте.
- * @type {String}
- */
-let logText = '';
-
-
-/**
  * Массив модулей разрешённых к подключению.
  * Если пустой - подключаются в естественном порядке. В ином случае, подключаются лишь указанные модули.
  *
@@ -32,7 +25,7 @@ const getCommands = async () => {
 	for(const file of files){
 		const path = './commands/' + file;
 		if(debugAllowModules.length && debugAllowModules.indexOf(file) === -1){
-			logText += log.warn(path + ': debug');
+			log.initText += log.warn(path + ': debug');
 			continue;
 		}
 
@@ -47,7 +40,8 @@ const getCommands = async () => {
 		if(command.active && command.slash)
 			commands.push({
 				name: command.name,
-				description: command.description ?? command.title,
+				description: command.description?.ru ?? command.title.ru,
+				descriptionLocalizations: command.description ?? command.title,
 				options: command.slashOptions
 			});
 
@@ -58,7 +52,7 @@ const getCommands = async () => {
 		const timeEnd = process.hrtime(timeStart);
 		const timePerf = (timeEnd[0]*1000) + (timeEnd[1] / 1000000);
 
-		logText += log.load(path, timePerf, command.active);
+		log.initText += log.load(path, timePerf, command.active);
 	}
 
 	if(!debugAllowModules.length)
@@ -121,7 +115,7 @@ module.exports = async () => {
 		let embed = new Discord.MessageEmbed()
 			.setTitle('Бот запущен')
 			.setTimestamp()
-			.setDescription('hosted by ' + author + '\n\n```ansi' + logText + '```');
+			.setDescription('hosted by ' + author + '\n\n```ansi' + log.initText + '```');
 		await guild.channels.cache.get('574997373219110922').send({ embeds: [embed] });
 		console.timeEnd('Send start bot');
 	}

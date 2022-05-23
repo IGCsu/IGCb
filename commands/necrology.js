@@ -4,7 +4,11 @@ module.exports = {
 	category : 'Модерация',
 
 	name : 'necrology',
-	title : 'Модуль логгирования таймаутов и банов',
+	title : {
+		'ru':'Модуль логгирования таймаутов и банов',
+		'en-US':'Timeout and ban logging module',
+		'uk':'Модуль логування таймаутів та банів',
+	},
 
 	cache : {},
 
@@ -14,19 +18,19 @@ module.exports = {
 	*
 	* @return {Object}
 	*/
-	init : async function(path, logText){
+	init : async function(path){
 		this.channel = guild.channels.cache.get('500010381490782238');
 		this.debugChannel = guild.channels.cache.get('634466120119877653');
 		this.priveteLogs = guild.channels.cache.get('574997373219110922');
 
 		if(!this.channel){
-			logText += log.error(path + ': Отсутствует #некролог');
+			log.initText += log.error(path + ': Отсутствует #некролог');
 			this.active = false;
 			return this;
 		}
 
 		if(!this.debugChannel){
-			logText += log.error(path + ': Отсутствует #канал-для-тестов');
+			log.initText += log.error(path + ': Отсутствует #канал-для-тестов');
 			this.active = false;
 			return this;
 		}

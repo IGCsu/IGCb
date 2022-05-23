@@ -4,8 +4,16 @@ module.exports = {
 	category : 'Утилиты',
 
 	name : 'ping',
-	title : 'Пинг',
-	description : 'Информация о боте: пинг, uptime',
+	title : {
+		'ru':'Пинг',
+		'en-US':'Ping',
+		'uk':'Пінг',
+	},
+	description : {
+		'ru':'Информация о боте: пинг, uptime',
+		'en-US':'Bot information: ping, uptime',
+		'uk':'Інформація про роботу: пінг, uptime',
+	},
 
 
 	init : function(){ return this; },

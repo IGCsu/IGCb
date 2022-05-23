@@ -6,8 +6,16 @@ module.exports = {
 	category : 'Развлечения',
 
 	name : 'roll',
-	title : 'Случайное число',
-	description : 'Выдаёт случайное число (По умолчанию 1-100)',
+	title : {
+		'ru':'Случайное число',
+		'en-US':'Random number',
+		'uk':'Випадкове число',
+	},
+	description : {
+		'ru':'Выдаёт случайное число (По умолчанию 1-100)',
+		'en-US':'Gives a random number (Default 1-100)',
+		'uk':'Видає довільне число (За замовчуванням 1-100)',
+	},
 
 	slashOptions : [
 		{
@@ -24,7 +32,7 @@ module.exports = {
 		}
 	],
 
-	init : async function(path, logText){
+	init : async function(path){
 
 		return this;
 

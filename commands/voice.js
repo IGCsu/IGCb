@@ -2,8 +2,13 @@ module.exports = {
 
 	active : true,
 	category : 'Голосовые каналы',
+
 	name : 'voice',
-	title : 'Управление голосовыми каналами',
+	title : {
+		'ru':'Управление голосовыми каналами',
+		'en-US':'Voice channel management',
+		'uk':'Управління голосовими каналами',
+	},
 
 	permission : {
 		MANAGE_CHANNELS : true,
@@ -75,7 +80,7 @@ module.exports = {
 	*
 	* @return {Object}
 	*/
-	init : async function(path, logText){
+	init : async function(path){
 		guild.channels.cache.forEach(c => {
 			if(c.type != 'GUILD_VOICE' && c.type != 'GUILD_CATEGORY') return;
 			if(c.name == 'Создать канал') {
@@ -94,18 +99,18 @@ module.exports = {
 		});
 
 		if(!this.channelCategory){
-			logText += log.error(path + ': Отсутствует категория голосовых каналов');
+			log.initText += log.error(path + ': Отсутствует категория голосовых каналов');
 			this.active = false;
 			return this;
 		}
 
 		if(!this.channelCreate){
-			logText += log.warn(path + ': Отсутствует #Создать канал');
+			log.initText += log.warn(path + ': Отсутствует #Создать канал');
 			this.channelCreate = await guild.channels.create('Создать канал', {
 				parent : this.channelCategory.id,
 				type : 'GUILD_VOICE'
 			});
-			logText += log.warn(path + ': Создан #Создать канал');
+			log.initText += log.warn(path + ': Создан #Создать канал');
 		}
 
 		this.channelCreate.permissionOverwrites.cache.forEach(p => {

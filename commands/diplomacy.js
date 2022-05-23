@@ -6,7 +6,11 @@ module.exports = {
 	category : 'Развлечения',
 
 	name : 'diplomacy',
-	title : 'Модуль поддержки ивента по Diplomacy',
+	title : {
+		'ru':'Модуль поддержки ивента по Diplomacy',
+		'en-US':'Diplomacy event support module',
+		'uk':'Модуль підтримки івента по Diplomacy'
+	},
 
 	slashOptions : [
 		{
@@ -112,12 +116,12 @@ module.exports = {
 	},
 
 
-	init : async function(path, logText){
+	init : async function(path){
 
 		const response = await fetch('https://www.vdiplomacy.com/board.php?gameID=' + this.gameID);
 
 		if(!response){
-			logText += log.error(path + ': Сайт недоступен');
+			log.initText += log.error(path + ': Сайт недоступен');
 			this.active = false;
 			return this;
 		}
@@ -125,7 +129,7 @@ module.exports = {
 		const body = await response.text();
 
 		if(body.includes('Game not found')){
-			logText += log.error(path + ': Игра ID:' + this.gameID + ' не найдена');
+			log.initText += log.error(path + ': Игра ID:' + this.gameID + ' не найдена');
 			this.active = false;
 			return this;
 		}
@@ -137,7 +141,7 @@ module.exports = {
 				const result = await this.update(false, true);
 				if(result.status) await this.channel.send(result.data);
 			}catch(e){
-				logText += log.error('./commands/' + this.name + '.js: ' + e.message);
+				log.initText += log.error('./commands/' + this.name + '.js: ' + e.message);
 				clearInterval(this.timerId);
 			}
 		}, this.interval * 1000);

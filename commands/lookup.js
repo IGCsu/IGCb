@@ -4,8 +4,16 @@ module.exports = {
 	category : 'Модерация',
 
 	name : 'lookup',
-	title : 'Информация по id',
-	description : 'Выдаёт информацию о пользователе или приглашении по id',
+	title : {
+		'ru':'Информация по ID',
+		'en-US':'Information by ID',
+		'uk':'Інформація про ID',
+	},
+	description : {
+		'ru':'Выдаёт информацию о пользователе или приглашении по ID',
+		'en-US':'Returns information about the user or invitation by ID',
+		'uk':'Видає інформацію про користувача або запрошення за ID',
+	},
 
 	slashOptions : [{
 		name : 'id',

@@ -6,8 +6,16 @@ module.exports = {
 	category : 'Утилиты',
 
 	name : 'levels',
-	title : 'Мониторинг сообщений',
-	description : 'Выдаёт статистику пользователя',
+	title : {
+		'ru':'Мониторинг сообщений',
+		'en-US':'Message monitoring',
+		'uk':'Моніторинг повідомлень',
+	},
+	description : {
+		'ru':'Выдаёт статистику пользователя',
+		'en-US':'Returns user statistics',
+		'uk':'Видає статистику користувача',
+	},
 
 	noXPChannels : [
 		'610371610620198922', // рандом

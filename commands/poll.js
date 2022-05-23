@@ -7,8 +7,16 @@ module.exports = {
 	category : 'Модерация',
 
 	name : 'poll',
-	title : 'Опросы',
-	description : 'Создание опросов',
+	title : {
+		'ru':'Опросы',
+		'en-US':'Polls',
+		'uk':'Опитування',
+	},
+	description : {
+		'ru':'Создание опросов',
+		'en-US':'Create polls',
+		'uk':'Створення опитувань',
+	},
 
 
 	FLAGS : {

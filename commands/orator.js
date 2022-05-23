@@ -4,8 +4,16 @@ module.exports = {
 	category : 'Роли',
 
 	name : 'orator',
-	title : 'Роль Младшего Оратора',
-	description : 'Переключает у указанного пользователя роль Младшего Оратора',
+	title : {
+		'ru':'Роль Младшего Оратора',
+		'en-US':'The Role of the Junior Orator',
+		'uk':'Роль Молодшого Оратора',
+	},
+	description : {
+		'ru':'Переключает у указанного пользователя роль Младшего Оратора',
+		'en-US':'Toggles the role of Junior Orator for the specified user',
+		'uk':'Переключає у вказаного користувача роль Молодшого Оратора',
+	},
 
 	slashOptions : [{
 		name : 'user',
@@ -16,12 +24,12 @@ module.exports = {
 		required : true
 	}],
 
-	init : function(path, logText){
+	init : function(path){
 		this.role = guild.roles.cache.get('809040260582998016');
 
 		if(!this.role){
 			this.active = false;
-			logText += log.error(path + ': Роль "Младший оратор" не найдена');
+			log.initText += log.error(path + ': Роль "Младший оратор" не найдена');
 		}
 
 		return this;

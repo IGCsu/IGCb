@@ -6,8 +6,16 @@ module.exports = {
 	category : 'Роли',
 
 	name : 'alive',
-	title : 'Доступ к сообществу',
-	description : 'Переключает у указанного пользователя роль alive',
+	title : {
+		'ru':'Доступ к сообществу',
+		'en-US':'Community Access',
+		'uk':'Доступ до спільноти',
+	},
+	description : {
+		'ru':'Переключает у указанного пользователя роль alive',
+		'en-US':'Switches the specified user\'s role to alive',
+		'uk':'Перемикає у вказаного користувача роль alive',
+	},
 
 	slashOptions : [{
 		name : 'user',
@@ -19,12 +27,12 @@ module.exports = {
 	}],
 
 
-	init : function(path, logText){
+	init : function(path){
 		this.role = guild.roles.cache.get('648762974277992448');
 
 		if(!this.role){
 			this.active = false;
-			logText += log.error(path + ': Роль "alive" не найдена');
+			log.initText += log.error(path + ': Роль "alive" не найдена');
 		}
 
 		return this;

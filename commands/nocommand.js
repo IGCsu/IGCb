@@ -6,17 +6,21 @@ module.exports = {
 	category : 'Утилиты',
 
 	name : 'nocommand',
-	title : 'Модуль реагирования на сообщения',
+	title : {
+		'ru':'Модуль реагирования на сообщения',
+		'en-US':'Message response module',
+		'uk':'Модуль реагування на повідомлення',
+	},
 
 	/**
 	 * Получает json объект Устава Сообщества и помещает его в кэш
 	 */
-	init : async function(path, logText){
+	init : async function(path){
 		try{
 			this.rules = await (await fetch('https://igc.su/rules?j=true')).json();
 		} catch(e) {
 			this.siteOffline = true;
-			logText += log.error(path + ': Сайт недоступен');
+			log.initText += log.error(path + ': Сайт недоступен');
 		}
 		return this;
 	},
