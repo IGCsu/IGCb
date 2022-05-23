@@ -5,7 +5,7 @@ const { title, description } = require('./about.json');
 module.exports = {
 
 	active : true,
-	category : 'Голосовые каналы',
+	category : 'Развлечения',
 
 	name : 'roll',
 	title : title,

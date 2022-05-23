@@ -145,7 +145,14 @@ module.exports = {
 			.addField('Контекстная команда к пользователю', contextUser);
 
 		if(this.texts[name]){
-			embed.setDescription(this.texts[name][lang] ?? this.texts[name].ru);
+			let desc = this.texts[name][lang] ?? this.texts[name].ru;
+
+			desc = desc.replace(/\${[a-zA-Z0-9]+}/gi, x => {
+				const name = x.match(/\${([a-zA-Z0-9]+)}/)[1];
+				return c[name] ?? '~~' + x + '~~';
+			});
+
+			embed.setDescription(desc);
 		}
 
 		return embed;
