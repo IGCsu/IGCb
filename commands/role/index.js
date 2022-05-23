@@ -10,8 +10,6 @@ module.exports = {
 	description : description,
 	slashOptions : slashOptions,
 
-	predict_name : '',
-
 
 	init : function(){ return this; },
 
@@ -32,10 +30,8 @@ module.exports = {
 		let finded = await this.has(guild.roles, role);
 		let predict = finded.roles;
 
-		this.predict_name = role;
-
 		if(role){
-			predict.sort((a, b) => this.comporator(a, b));
+			predict.sort((a, b) => getStringSimilarityDiff(a.name, b.name, role));
 			if(create) choices[0] = {name : role, value : role};
 		} else {
 			choices[0] = {name: localize(int.locale, 'Show list of all Game Roles'), value:'showAll'};
@@ -134,26 +130,6 @@ module.exports = {
 			reason : 'По требованию ' + member2name(member, 1)
 		});
 		return { role : role , chk: true};
-	},
-
-
-
-	comporator : function(a, b) {
-		let aConf = 0.0;
-		let bConf = 0.0;
-		const name = this.predict_name.toLowerCase();
-		const aName = a.name.toLowerCase();
-		const bName = b.name.toLowerCase();
-
-		aConf = name.length / aName.length;
-		bConf = name.length / bName.length;
-
-		if(aName.startsWith(name)) aConf += 2 * aConf;
-		if(bName.startsWith(name)) bConf += 2 * bConf;
-		if(aName.endsWith(name)) aConf += 0.2 * name.length / aName.length;
-		if(bName.endsWith(name)) bConf += 0.2 * name.length / bName.length;
-
-		return bConf - aConf
 	},
 
 

@@ -1,5 +1,7 @@
 const fs = require('fs');
+const slashOptions = require('./slashOptions.json');
 const { title, description } = require('./about.json');
+const applicationCommandOptionTypes = require('./applicationCommandOptionTypes.json');
 
 module.exports = {
 
@@ -9,6 +11,9 @@ module.exports = {
 	name : 'help',
 	title : title,
 	description : description,
+	slashOptions : slashOptions,
+
+	applicationCommandOptionTypes : applicationCommandOptionTypes,
 
 
 	/**
@@ -25,7 +30,7 @@ module.exports = {
 			const timeStart = process.hrtime();
 
 			const fileName = file.split('_');
-			const name = fileName[1].split('.');
+			const name = fileName[1].split('.')[0];
 			const locale = fileName[0];
 
 			if(!this.texts.hasOwnProperty(name)) this.texts[name] = {};
@@ -38,6 +43,39 @@ module.exports = {
 		}
 
 		return this;
+	},
+
+
+	/**
+	 * Подсказки названия модулей
+	 *
+	 * @param {AutocompleteInteraction} int
+	 */
+	autocomplete : async function(int){
+		const timeStart = process.hrtime();
+		let choices = [];
+
+		const command = int.options.getFocused();
+
+		let finded = [];
+		for(let name in commands){
+			if(name.indexOf(command) !== -1) finded.push(name);
+		}
+
+		finded.sort((a, b) => getStringSimilarityDiff(a, b, command));
+
+		for(let command of finded){
+			if(choices.length > 25) break;
+			choices.push({ name: command, value: command });
+		}
+
+		try{
+			await int.respond(choices);
+		} catch(e){
+			const timeEnd = process.hrtime(timeStart);
+			const timePerf = (timeEnd[0]*1000) + (timeEnd[1] / 1000000);
+			console.warn('Autocomplete Interaction Failed: ' + timePerf + 'ms' + '\n' + e)
+		};
 	},
 
 
@@ -79,7 +117,7 @@ module.exports = {
 	 */
 	command : async function(lang, name){
 
-		if(!commands[name]) return;
+		if(!commands[name]) return false;
 
 		const c = commands[name]; // command
 
@@ -87,17 +125,60 @@ module.exports = {
 			? reaction.emoji.success + ' Активен'
 			: reaction.emoji.error + ' Не активен';
 
-		let slash = 'Недоступно';
+		let slash = 'Неприменимо';
 		if(c.slash){
 			slash = '`/' + name + '` - ' + (c.description ? (c.description[lang] ?? c.description.ru) : (c.title[lang] ?? c.title.ru));
+			if(c.slashOptions) slash += this.getSlashOptions(c.slashOptions, 1, lang);
+		}
 
+		let contextUser = 'Неприменимо';
+		if(c.contextUser){
+			contextUser = '`#' + name + '` - ' + (c.description ? (c.description[lang] ?? c.description.ru) : (c.title[lang] ?? c.title.ru));
 		}
 
 		let embed = new Discord.MessageEmbed()
-			.setTitle(c.title)
+			.setTitle(c.title[lang] ?? c.title.ru)
 			.setColor('BLURPLE')
 			.setAuthor({ name : name })
-			.addField('Статус', status);
+			.addField('Статус', status)
+			.addField('Слеш-команда', slash)
+			.addField('Контекстная команда к пользователю', contextUser);
+
+		if(this.texts[name]){
+			embed.setDescription(this.texts[name][lang] ?? this.texts[name].ru);
+		}
+
+		return embed;
+
+	},
+
+
+	/**
+	 * Возвращает опции слеш-команды
+	 * @param  {Object} slashOptions Объект опций слеш-команды
+	 * @param  {Number} i            Текущий отступ
+	 * @param  {String} lang         Локализация юзера
+	 * @return {Array}
+	 */
+	getSlashOptions : function(slashOptions, i, lang){
+		let text = '';
+
+		for(let name in slashOptions){
+
+			const type = this.applicationCommandOptionTypes[slashOptions[name].type];
+
+			text += '\n' + ('- '.repeat(i)) + '`' + name + '` - ';
+			text += slashOptions[name].description[lang] ?? slashOptions[name].description.ru;
+			text += ' *[' + type.code + ']*';
+			if(slashOptions[name].required) text += ' *(Req*)';
+
+			if(slashOptions[name].slashOptions){
+				text += this.getSlashOptions(slashOptions[name].slashOptions, i + 1, lang);
+			}
+
+		}
+
+		return text;
 
 	},
 
@@ -112,7 +193,11 @@ module.exports = {
 
 		const embed = command ? await this.command(lang, command) : await this.call(lang);
 
-		await int.reply({ embeds : [embed], fetchReply: true });
+		if(embed == false){
+			return await int.reply({ content : reaction.emoji.error + ' Модуль "' + command + '" не найден', ephemeral: true });
+		}
+
+		await int.reply({ embeds : [embed] });
 	},
 
 

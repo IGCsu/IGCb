@@ -1,0 +1,102 @@
+{
+
+	"1": {
+		"code": "SUB_COMMAND",
+		"name": {
+			"ru": "Подкоманда",
+			"en": "Subcommand",
+			"uk": "Підкоманда"
+		}
+	},
+
+	"2": {
+		"code": "SUB_COMMAND_GROUP",
+		"name": {
+			"ru": "Группа подкоманд",
+			"en": "Subcommand group",
+			"uk": "Група підкоманд"
+		}
+	},
+
+	"3": {
+		"code": "STRING",
+		"name": {
+			"ru": "Строка",
+			"en": "String",
+			"uk": "Рядок"
+		}
+	},
+
+	"4": {
+		"code": "INTEGER",
+		"name": {
+			"ru": "Целое число",
+			"en": "Integer",
+			"uk": "Ціле число"
+		}
+	},
+
+	"5": {
+		"code": "BOOLEAN",
+		"name": {
+			"ru": "Логический",
+			"en": "Boolean",
+			"uk": "Логічне значення"
+		}
+	},
+
+	"6": {
+		"code": "USER",
+		"name": {
+			"ru": "Пользователь",
+			"en": "User",
+			"uk": "Користувач"
+		}
+	},
+
+	"7": {
+		"code": "CHANNEL",
+		"name": {
+			"ru": "Канал",
+			"en": "Channel",
+			"uk": "Канал"
+		}
+	},
+
+	"8": {
+		"code": "ROLE",
+		"name": {
+			"ru": "Роль",
+			"en": "Role",
+			"uk": "Роль"
+		}
+	},
+
+	"9": {
+		"code": "MENTIONABLE",
+		"name": {
+			"ru": "Упоминания",
+			"en": "Mentionable",
+			"uk": "Згадати"
+		}
+	},
+
+	"10": {
+		"code": "NUMBER",
+		"name": {
+			"ru": "Цифра",
+			"en": "Number",
+			"uk": "Цифра"
+		}
+	},
+
+	"11": {
+		"code": "ATTACHMENT",
+		"name": {
+			"ru": "Вложение",
+			"en": "Attachment",
+			"uk": "Вкладення"
+		}
+	}
+
+}
