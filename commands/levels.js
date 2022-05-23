@@ -8,12 +8,12 @@ module.exports = {
 	name : 'levels',
 	title : {
 		'ru':'Мониторинг сообщений',
-		'en-US':'Message monitoring',
+		'en':'Message monitoring',
 		'uk':'Моніторинг повідомлень',
 	},
 	description : {
 		'ru':'Выдаёт статистику пользователя',
-		'en-US':'Returns user statistics',
+		'en':'Returns user statistics',
 		'uk':'Видає статистику користувача',
 	},
 

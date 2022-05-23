@@ -6,7 +6,7 @@ module.exports = {
 	name : 'starboard',
 	title : {
 		'ru':'Модуль закрепления сообщений',
-		'en-US':'Message pinning module',
+		'en':'Message pinning module',
 		'uk':'Модуль закріплення повідомлень',
 	},
 

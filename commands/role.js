@@ -5,12 +5,12 @@ module.exports = {
 	name : 'role',
 	title : {
 		'ru':'Игровые роли',
-		'en-US':'Game roles',
+		'en':'Game roles',
 		'uk':'Ігрові ролі',
 	},
 	description : {
 		'ru':'Управление игровыми ролями',
-		'en-US':'Game roles management',
+		'en':'Game roles management',
 		'uk':'Управління ігровими ролями',
 	},
 

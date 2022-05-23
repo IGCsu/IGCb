@@ -7,7 +7,7 @@ module.exports = {
 	name : 'nocommand',
 	title : {
 		'ru':'Модуль реагирования на сообщения',
-		'en-US':'Message response module',
+		'en':'Message response module',
 		'uk':'Модуль реагування на повідомлення',
 	},
 

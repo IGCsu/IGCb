@@ -6,12 +6,12 @@ module.exports = {
 	name : 'orator',
 	title : {
 		'ru':'Роль Младшего Оратора',
-		'en-US':'The Role of the Junior Orator',
+		'en':'The Role of the Junior Orator',
 		'uk':'Роль Молодшого Оратора',
 	},
 	description : {
 		'ru':'Переключает у указанного пользователя роль Младшего Оратора',
-		'en-US':'Toggles the role of Junior Orator for the specified user',
+		'en':'Toggles the role of Junior Orator for the specified user',
 		'uk':'Переключає у вказаного користувача роль Молодшого Оратора',
 	},
 

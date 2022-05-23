@@ -6,12 +6,12 @@ module.exports = {
 	name : 'lookup',
 	title : {
 		'ru':'Информация по ID',
-		'en-US':'Information by ID',
+		'en':'Information by ID',
 		'uk':'Інформація про ID',
 	},
 	description : {
 		'ru':'Выдаёт информацию о пользователе или приглашении по ID',
-		'en-US':'Returns information about the user or invitation by ID',
+		'en':'Returns information about the user or invitation by ID',
 		'uk':'Видає інформацію про користувача або запрошення за ID',
 	},
 

@@ -8,15 +8,20 @@ module.exports = {
 	name : 'help',
 	title : {
 		'ru':'Помощь по командам',
-		'en-US':'Help on commands',
+		'en':'Help on commands',
 		'uk':'Допомога по командам',
 	},
 	description : {
 		'ru':'Показывает список доступных команд или описание указанной команды',
-		'en-US':'Shows a list of available commands or a description of the specified command',
+		'en':'Shows a list of available commands or a description of the specified command',
 		'uk':'Показує список доступних команд або опис вказаної команди',
 	},
 
+
+	/**
+	 * [texts description]
+	 * @type {Object}
+	 */
 	texts : {},
 
 
@@ -97,8 +102,9 @@ module.exports = {
 	 */
 	slash : async function(int){
 		const command = int.options.getString('command');
+		const lang = int.locale.split('-')[0];
 
-		const embed = command ? await this.command(int.locale, command) : await this.call(int.locale);
+		const embed = command ? await this.command(lang, command) : await this.call(lang);
 
 		await int.reply({ embeds : [embed], fetchReply: true });
 	},

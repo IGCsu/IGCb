@@ -8,12 +8,12 @@ module.exports = {
 	name : 'timeout',
 	title : {
 		'ru':'Модуль мутов',
-		'en-US':'Mut module',
+		'en':'Mut module',
 		'uk':'Модуль мутів',
 	},
 	description : {
 		'ru':'Мутит указанного пользователя на указанное время',
-		'en-US':'Mutes the specified user for the specified time',
+		'en':'Mutes the specified user for the specified time',
 		'uk':'Мутить вказаного користувача на вказаний час',
 	},
 

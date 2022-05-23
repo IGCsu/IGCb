@@ -8,12 +8,12 @@ module.exports = {
 	name : 'alive',
 	title : {
 		'ru':'Доступ к сообществу',
-		'en-US':'Community Access',
+		'en':'Community Access',
 		'uk':'Доступ до спільноти',
 	},
 	description : {
 		'ru':'Переключает у указанного пользователя роль alive',
-		'en-US':'Switches the specified user\'s role to alive',
+		'en':'Switches the specified user\'s role to alive',
 		'uk':'Перемикає у вказаного користувача роль alive',
 	},
 

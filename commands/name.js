@@ -6,7 +6,7 @@ module.exports = {
 	name : 'name',
 	title : {
 		'ru':'Изменение никнейма',
-		'en-US':'Nickname change',
+		'en':'Nickname change',
 		'uk':'Зміна нікнейму',
 	},
 

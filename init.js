@@ -37,13 +37,16 @@ const getCommands = async () => {
 
 		list[command.name] = command;
 
-		if(command.active && command.slash)
+		if(command.active && command.slash){
+			const desc = command.description ?? command.title;
+			if(desc['en']) desc['en-GB'] = desc['en-US'] = desc['en'];
 			commands.push({
 				name: command.name,
 				description: command.description?.ru ?? command.title.ru,
-				descriptionLocalizations: command.description ?? command.title,
+				descriptionLocalizations: desc,
 				options: command.slashOptions
 			});
+		}
 
 		if(command.active && command.contextUser){
 			commands.push({ name: command.name, type: 2 });

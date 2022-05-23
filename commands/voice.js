@@ -6,7 +6,7 @@ module.exports = {
 	name : 'voice',
 	title : {
 		'ru':'Управление голосовыми каналами',
-		'en-US':'Voice channel management',
+		'en':'Voice channel management',
 		'uk':'Управління голосовими каналами',
 	},
 

@@ -6,12 +6,12 @@ module.exports = {
 	name : 'ping',
 	title : {
 		'ru':'Пинг',
-		'en-US':'Ping',
+		'en':'Ping',
 		'uk':'Пінг',
 	},
 	description : {
 		'ru':'Информация о боте: пинг, uptime',
-		'en-US':'Bot information: ping, uptime',
+		'en':'Bot information: ping, uptime',
 		'uk':'Інформація про роботу: пінг, uptime',
 	},
 

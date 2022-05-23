@@ -7,12 +7,12 @@ module.exports = {
 	name : 'poll',
 	title : {
 		'ru':'Опросы',
-		'en-US':'Polls',
+		'en':'Polls',
 		'uk':'Опитування',
 	},
 	description : {
 		'ru':'Создание опросов',
-		'en-US':'Create polls',
+		'en':'Create polls',
 		'uk':'Створення опитувань',
 	},
 

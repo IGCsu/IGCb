@@ -8,7 +8,7 @@ module.exports = {
 	name : 'diplomacy',
 	title : {
 		'ru':'Модуль поддержки ивента по Diplomacy',
-		'en-US':'Diplomacy event support module',
+		'en':'Diplomacy event support module',
 		'uk':'Модуль підтримки івента по Diplomacy'
 	},
 

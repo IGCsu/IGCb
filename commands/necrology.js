@@ -6,7 +6,7 @@ module.exports = {
 	name : 'necrology',
 	title : {
 		'ru':'Модуль логгирования таймаутов и банов',
-		'en-US':'Timeout and ban logging module',
+		'en':'Timeout and ban logging module',
 		'uk':'Модуль логування таймаутів та банів',
 	},
 
