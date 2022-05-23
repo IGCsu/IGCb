@@ -1,5 +1,4 @@
 const { Collection } = require('@discordjs/collection');
-const localize = require('../functions/localize');
 
 module.exports = {
 

@@ -1,5 +1,3 @@
-const localize = require("../functions/localize");
-
 module.exports = {
 
 	active : true,

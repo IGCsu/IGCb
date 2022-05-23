@@ -145,10 +145,10 @@ const applicationGuildCommands = () => {
 module.exports = async debugAllowModules => {
 
 	const files = await fs.readdirSync('./commands/');
-	for(const file of files){
+	for(const name of files){
 
-		const path = './commands/' + file;
-		if(debugAllowModules.length && debugAllowModules.indexOf(file) === -1){
+		const path = './commands/' + name + '/index.js';
+		if(debugAllowModules.length && debugAllowModules.indexOf(name) === -1){
 			log.initText += log.warn(path + ': debug');
 			continue;
 		}
@@ -159,7 +159,7 @@ module.exports = async debugAllowModules => {
 
 		if(command.active) command = await command.init(path);
 
-		list[command.name] = command;
+		list[name] = command;
 
 		if(command.active){
 			if(command.slash) addSlashCommand(command);
