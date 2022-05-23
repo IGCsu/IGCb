@@ -57,7 +57,7 @@ module.exports = {
 			const category = commands[c].category ? commands[c].category : 'Остальные'
 
 			if(!help.hasOwnProperty(category)) help[category] = [];
-			help[category].push( this.getCommand(commands[c]) );
+			help[category].push( this.getCommand(commands[c], lang) );
 		}
 
 		let embed = new Discord.MessageEmbed()
@@ -106,9 +106,10 @@ module.exports = {
 
 	/**
 	 * Возвращает короткое описание команды
-	 * @param  {Object} c Объект команды
+	 * @param  {Object} c    Объект команды
+	 * @param  {Locale} lang Локализация пользователя
 	 * @return {String}
 	 */
-	getCommand : c => (reaction.emoji[ c.active ? 'success' : 'error' ]) + ' `' + c.name + '` - ' + c.title,
+	getCommand : (c, lang) => (reaction.emoji[ c.active ? 'success' : 'error' ]) + ' `' + c.name + '` - ' + (c.title[lang] ?? c.title.ru),
 
 };
