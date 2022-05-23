@@ -3,8 +3,6 @@ const translit = require('transliteration');
 module.exports = {
 
 	active : true,
-	category : 'Никнейм',
-
 	name : 'namefix',
 	title : {
 		'ru':'Коррекция никнейма',

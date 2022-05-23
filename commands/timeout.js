@@ -3,7 +3,7 @@ const localize = require("../functions/localize");
 module.exports = {
 
 	active : true,
-	category : 'Модерация',
+	category : 'Роли',
 
 	name : 'timeout',
 	title : {

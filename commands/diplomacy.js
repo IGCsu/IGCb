@@ -3,7 +3,7 @@ const fetch = require('node-fetch');
 module.exports = {
 
 	active : true,
-	category : 'Развлечения',
+	category : 'Голосовые каналы',
 
 	name : 'diplomacy',
 	title : {

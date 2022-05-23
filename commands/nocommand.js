@@ -4,7 +4,6 @@ module.exports = {
 
 	active : true,
 	category : 'Утилиты',
-
 	name : 'nocommand',
 	title : {
 		'ru':'Модуль реагирования на сообщения',

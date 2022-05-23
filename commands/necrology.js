@@ -1,7 +1,7 @@
 module.exports = {
 
 	active : true,
-	category : 'Модерация',
+	category : 'Логирование',
 
 	name : 'necrology',
 	title : {

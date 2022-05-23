@@ -1,7 +1,6 @@
 module.exports = {
 
 	active : true,
-	category : 'Роли',
 
 	name : 'role',
 	title : {

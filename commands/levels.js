@@ -3,7 +3,7 @@ const fetch = require('node-fetch');
 module.exports = {
 
 	active : true,
-	category : 'Утилиты',
+	category : 'Уровни активности',
 
 	name : 'levels',
 	title : {

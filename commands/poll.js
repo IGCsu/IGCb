@@ -4,8 +4,6 @@ const localize = require('../functions/localize');
 module.exports = {
 
 	active : true,
-	category : 'Модерация',
-
 	name : 'poll',
 	title : {
 		'ru':'Опросы',
@@ -18,6 +16,7 @@ module.exports = {
 		'uk':'Створення опитувань',
 	},
 
+	category : 'Утилиты',
 
 	FLAGS : {
 		POLLS: {

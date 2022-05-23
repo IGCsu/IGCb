@@ -1,7 +1,7 @@
 module.exports = {
 
 	active : true,
-	category : 'Развлечения',
+	category : 'Голосовые каналы',
 
 	name : 'starboard',
 	title : {
