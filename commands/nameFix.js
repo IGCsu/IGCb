@@ -15,13 +15,19 @@ module.exports = {
 		'uk':'Використовується для виправлення нікнейму користувачів. Команда доступна всім',
 	},
 
-	slashOptions : [{
-		name : 'member',
-		description : 'The user whose nickname will be corrected',
-		description_localizations : {'ru': 'Пользователь у которого будет исправлен ник', 'uk': 'Користувач чиє ім\'я буде виправленно'},
-		type : 6,
-		required : true
-	}],
+	slashOptions : {
+
+		member : {
+			type : 6,
+			required : true,
+			description : {
+				'ru':'Пользователь у которого будет исправлен ник',
+				'en':'The user whose nickname will be corrected',
+				'uk':'Користувач чиє ім\'я буде виправленно',
+			}
+		}
+
+	},
 
 
 	init : function(){ return this; },

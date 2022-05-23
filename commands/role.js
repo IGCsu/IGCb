@@ -16,32 +16,40 @@ module.exports = {
 
 	predict_name : '',
 
-	slashOptions : [
-		{
-			name : 'role',
-			name_localizations : {'ru': 'роль', 'uk': 'роль'},
-			description : 'Role name or ID',
-			description_localizations : {'ru': 'Имя роли или её ID', 'uk': 'Назва ролі або її ID'},
+	slashOptions : {
+
+		role : {
 			type : 3,
 			required : true,
-			autocomplete: true
+			autocomplete: true,
+			description : {
+				'ru':'Имя роли или её ID',
+				'en':'Role name or ID',
+				'uk':'Назва ролі або її ID',
+			}
 		},
-		{
-			name : 'members',
-			description : 'Specify the mention of the user(s) his/her/their ID',
-			description_localizations : {'ru': 'Укажите упоминания пользователя/ей его/их ID', 'uk': 'Вкажіть згадування користувача або його ID'},
+
+		members : {
 			type : 3,
-			required : false
+			required : false,
+			description : {
+				'ru':'Укажите упоминания пользователя/ей его/их ID',
+				'en':'Specify the mention of the user(s) his/her/their ID',
+				'uk':'Вкажіть згадування користувача або його ID',
+			}
 		},
-		{
-			name : 'create',
-			name_localizations : {'ru': 'создать', 'uk': 'створити'},
-			description : 'Create a role if no one was found?',
-			description_localizations : {'ru': 'Создать роль если не было найдено таковой?', 'uk': 'Створити роль, якщо вона відсутня?'},
+
+		create : {
 			type : 5,
-			required : false
-		},
-	],
+			required : false,
+			description : {
+				'ru':'Создать роль если не было найдено таковой?',
+				'en':'Create a role if no one was found?',
+				'uk':'Створити роль, якщо вона відсутня?',
+			}
+		}
+
+	},
 
 
 	init : function(){ return this; },

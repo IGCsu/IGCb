@@ -30,90 +30,116 @@ module.exports = {
 		}
 	},
 
-	slashOptions : [
-		{
-			name : 'common',
-			name_localizations : {'ru': 'общий', 'uk': 'загальний'},
-			description : 'Сommon poll',
-			description_localizations : {'ru': 'Общий опрос', 'uk': 'Загальне опитування'},
+	slashOptions : {
+
+		common : {
 			type : 1,
-			options : [
-				{
-					name : 'question',
-					name_localizations : {'ru': 'вопрос', 'uk': 'питання'},
-					description : 'Ask a question',
-					description_localizations : {'ru': 'Задайте вопрос', 'uk': 'Задайте питання'},
+			slashOptions : {
+
+				question : {
 					type : 3,
 					required : true,
+					description : {
+						'ru':'Задайте вопрос',
+						'en':'Ask a question',
+						'uk':'Задайте питання',
+					}
 				},
-				{
-					name : 'min',
-					name_localizations : {'ru': 'мин', 'uk': 'мін'},
-					description : 'The minimum required number of characters in the answer. (0 - the answer is optional)',
-					description_localizations : {'ru': 'Минимально необходимое количество символов в ответе. (0 - ответ не обязателен)', 'uk': 'Мінімальна кількість символів у відповіді. (0 - відповідь не обов\'язкова)'},
+
+				min : {
 					type : 4,
 					required : false,
+					description : {
+						'ru':'Минимально необходимое количество символов в ответе. (0 - ответ не обязателен)',
+						'en':'The minimum required number of characters in the answer. (0 - the answer is optional)',
+						'uk':'Мінімальна кількість символів у відповіді. (0 - відповідь не обов\'язкова)',
+					}
 				},
-				{
-					name : 'public',
-					name_localizations : {'ru': 'публичный', 'uk': 'публічний'},
-					description : 'Если false, то опрос будет анонимным',
-					description_localizations : {'ru': 'If false, the poll will be anonymous', 'uk': 'Якщо false, опитування - анонімне'},
+
+				public : {
 					type : 5,
-					required : false
-				},
-			]
+					required : false,
+					description : {
+						'ru':'Если false, то опрос будет анонимным',
+						'en':'If false, the poll will be anonymous',
+						'uk':'Якщо false, опитування - анонімне',
+					}
+				}
+
+			},
+			description : {
+				'ru':'Общий опрос',
+				'en':'Сommon poll',
+				'uk':'Загальне опитування',
+			}
 		},
-		{
-			name : 'senate',
-			description : 'Moderator poll',
-			description_localizations : {'ru': 'Опрос среди модераторов', 'uk': 'Опитування модерації'},
+
+		senate : {
 			type : 1,
-			options : [
-				{
-					name : 'question',
-					name_localizations : {'ru': 'вопрос', 'uk': 'питання'},
-					description : 'Ask a question',
-					description_localizations : {'ru': 'Задайте вопрос', 'uk': 'Задайте питання'},
+			slashOptions : {
+
+				question : {
 					type : 3,
 					required : true,
+					description : {
+						'ru':'Задайте вопрос',
+						'en':'Ask a question',
+						'uk':'Задайте питання',
+					}
 				},
-				{
-					name : 'min',
-					name_localizations : {'ru': 'мин', 'uk': 'мін'},
-					description : 'The minimum required number of characters in the answer. (0 - the answer is optional)',
-					description_localizations : {'ru': 'Минимально необходимое количество символов в ответе. (0 - ответ не обязателен)', 'uk': 'Мінімальна кількість символів у відповіді. (0 - відповідь не обов\'язкова)'},
+
+				min : {
 					type : 4,
 					required : false,
+					description : {
+						'ru':'Минимально необходимое количество символов в ответе. (0 - ответ не обязателен)',
+						'en':'The minimum required number of characters in the answer. (0 - the answer is optional)',
+						'uk':'Мінімальна кількість символів у відповіді. (0 - відповідь не обов\'язкова)',
+					}
 				},
-				{
-					name : 'public',
-					name_localizations : {'ru': 'публичный', 'uk': 'публічний'},
-					description : 'Если false, то опрос будет анонимным',
-					description_localizations : {'ru': 'If false, the poll will be anonymous', 'uk': 'Якщо false, опитування - анонімне'},
+
+				public : {
 					type : 5,
-					required : false
-				},
-			]
+					required : false,
+					description : {
+						'ru':'Если false, то опрос будет анонимным',
+						'en':'If false, the poll will be anonymous',
+						'uk':'Якщо false, опитування - анонімне',
+					}
+				}
+
+			},
+			description : {
+				'ru':'Опрос среди модераторов',
+				'en':'Moderator poll',
+				'uk':'Опитування модерації',
+			}
 		},
-		{
-			name : 'show',
-			description : 'Show information about any poll',
-			description_localizations : {'ru': 'Показать информацию о любом опросе', 'uk': 'Відобразити результати опитування'},
+
+		show : {
 			type : 1,
-			options : [
-				{
-					name : 'search',
-					name_localizations : {'ru': 'искать', 'uk': 'шукати'},
-					description : 'Specify any information that may be related to the poll',
-					description_localizations : {'ru': 'Укажите любую информацию которая может быть связана с опросом', 'uk': 'Вкажіть опис опитування'},
+			slashOptions : {
+
+				search : {
 					type : 3,
 					autocomplete: true,
 					required : true,
+					description : {
+						'ru':'Укажите любую информацию которая может быть связана с опросом',
+						'en':'Specify any information that may be related to the poll',
+						'uk':'Вкажіть опис опитування',
+					}
 				}
-			]
-		},
-	],
+
+			},
+			description : {
+				'ru':'Показать информацию о любом опросе',
+				'en':'Show information about any poll',
+				'uk':'Відобразити результати опитування',
+			}
+		}
+
+	},
 
 	init : function(){
 		const data = this.fetchAll();

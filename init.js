@@ -1,6 +1,5 @@
+const initCommands = require('./initCommands.js');
 const fs = require('fs');
-const { REST } = require('@discordjs/rest');
-const { Routes } = require('discord-api-types/v9');
 
 
 /**
@@ -11,58 +10,6 @@ const { Routes } = require('discord-api-types/v9');
  * @type {Array}
  */
 const debugAllowModules = [];
-
-
-/**
- * Возвращает команды бота
- * @return {Object}
- */
-const getCommands = async () => {
-	const commands = [];
-	const list = {};
-
-	const files = await fs.readdirSync('./commands/');
-	for(const file of files){
-		const path = './commands/' + file;
-		if(debugAllowModules.length && debugAllowModules.indexOf(file) === -1){
-			log.initText += log.warn(path + ': debug');
-			continue;
-		}
-
-		const timeStart = process.hrtime();
-
-		let command = require(path);
-
-		if(command.active) command = await command.init(path);
-
-		list[command.name] = command;
-
-		if(command.active && command.slash){
-			const desc = command.description ?? command.title;
-			if(desc['en']) desc['en-GB'] = desc['en-US'] = desc['en'];
-			commands.push({
-				name: command.name,
-				description: command.description?.ru ?? command.title.ru,
-				descriptionLocalizations: desc,
-				options: command.slashOptions
-			});
-		}
-
-		if(command.active && command.contextUser){
-			commands.push({ name: command.name, type: 2 });
-		}
-
-		const timeEnd = process.hrtime(timeStart);
-		const timePerf = (timeEnd[0]*1000) + (timeEnd[1] / 1000000);
-
-		log.initText += log.load(path, timePerf, command.active);
-	}
-
-	if(!debugAllowModules.length)
-		new REST({ version: '9' }).setToken(config.token).put( Routes.applicationGuildCommands(client.user.id, config.home), { body: commands });
-
-	return list;
-}
 
 
 /**
@@ -77,6 +24,7 @@ const definitionFunctions = () => {
 	});
 }
 
+
 /**
  * Определяет локализации бота
  */
@@ -89,7 +37,6 @@ const definitionLocales = () => {
 		console.timeEnd(path);
 	});
 }
-
 
 
 module.exports = async () => {
@@ -107,7 +54,7 @@ module.exports = async () => {
 	await definitionFunctions();
 
 	console.log('Loading commands:');
-	global.commands = await getCommands();
+	global.commands = await initCommands(debugAllowModules);
 
 	await client.user.setActivity('/help', { type: 'LISTENING' });
 

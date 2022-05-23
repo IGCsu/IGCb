@@ -30,14 +30,19 @@ module.exports = {
 		'776918362482671616', // Удалённые каналы
 	],
 
-	slashOptions : [{
-		name : 'user',
-		name_localizations : {'ru': 'пользователь' , 'uk': 'користувач'},
-		description : 'Whose statistics to show. Yours by default.',
-		description_localizations : {'ru': 'Чью статистику показать. По умолчанию вашу', 'uk': 'Чию статистику показувати. Ваш за замовчуванням.'},
-		type : 6,
-		required : false
-	}],
+	slashOptions : {
+
+		user : {
+			type : 6,
+			required : false,
+			description : {
+				'ru':'Чью статистику показать. По умолчанию вашу',
+				'en':'Whose statistics to show. Yours by default',
+				'uk':'Чию статистику показувати. Ваш за замовчуванням',
+			}
+		}
+
+	},
 
 	init : async function(path){
 

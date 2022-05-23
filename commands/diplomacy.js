@@ -12,19 +12,31 @@ module.exports = {
 		'uk':'Модуль підтримки івента по Diplomacy'
 	},
 
-	slashOptions : [
-		{
-			name : 'flag',
-			description : 'Additional feature',
-			description_localizations : {'ru': 'Дополнительное свойство', 'uk': 'Додаткова властивість'},
+	slashOptions : {
+
+		flag : {
 			type : 3,
 			required : false,
-			choices : [
-				{ name : 'Add a mention of players', value : 'ping', name_localizations : {'ru': 'Добавить упоминание игроков', 'uk': 'Додати згадування гравців'}},
-				{ name : 'Hide message for others', value : 'ephemeral', name_localizations : {'ru': 'Скрыть сообщение для остальных', 'uk': 'Приховати повідомлення для інших'}},
-			]
-		},
-	],
+			choices : {
+				ping : {
+					'ru': 'Добавить упоминание игроков',
+					'en': 'Add a mention of players',
+					'uk': 'Додати згадування гравців'
+				},
+				ephemeral : {
+					'ru': 'Скрыть сообщение для остальных',
+					'en': 'Hide message for others',
+					'uk': 'Приховати повідомлення для інших'
+				}
+			},
+			description : {
+				'ru': 'Дополнительное свойство',
+				'en': 'Additional feature',
+				'uk': 'Додаткова властивість'
+			}
+		}
+
+	},
 
 	gameID : '51872', // ID игры на сайте
 	interval : 600, // Интервал в секундах между запросами

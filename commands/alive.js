@@ -17,14 +17,19 @@ module.exports = {
 		'uk':'Перемикає у вказаного користувача роль alive',
 	},
 
-	slashOptions : [{
-		name : 'user',
-		name_localizations : {'ru': 'пользователь' , 'uk': 'користувач'},
-		description : 'Community member whose alive role will be switched',
-		description_localizations : {'ru': 'Участник Сообщества у которого будет переключена роль alive', 'uk': 'Користувач спільноти у якого буде змінюватися роль alive'},
-		type : 6,
-		required : true
-	}],
+	slashOptions : {
+
+		user : {
+			type : 6,
+			required : true,
+			description : {
+				'ru':'Участник Сообщества у которого будет переключена роль alive',
+				'en':'Community member whose alive role will be switched',
+				'uk':'Користувач спільноти у якого буде змінюватися роль alive',
+			}
+		}
+
+	},
 
 
 	init : function(path){

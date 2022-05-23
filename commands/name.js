@@ -10,14 +10,19 @@ module.exports = {
 		'uk':'Зміна нікнейму',
 	},
 
+	slashOptions : {
 
-	slashOptions : [{
-		name : 'nick',
-		description : 'Enter any nickname you want',
-		description_localizations : {'ru': 'Введите любой желаемый никнейм', 'uk': 'Введіть будь-який бажаний нікнейм'},
-		type : 3,
-		required : true
-	}],
+		nick : {
+			type : 3,
+			required : true,
+			description : {
+				'ru':'Введите любой желаемый никнейм',
+				'en':'Enter any nickname you want',
+				'uk':'Введіть будь-який бажаний нікнейм',
+			}
+		}
+
+	},
 
 
 	init : function(){

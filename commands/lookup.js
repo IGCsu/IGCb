@@ -15,13 +15,19 @@ module.exports = {
 		'uk':'Видає інформацію про користувача або запрошення за ID',
 	},
 
-	slashOptions : [{
-		name : 'id',
-		description : 'User or invite ID',
-		description_localizations : {'ru': 'ID юзера или приглашения', 'uk': 'ID користувача/запрошення'},
-		type : 3,
-		required : true
-	}],
+	slashOptions : {
+
+		id : {
+			type : 3,
+			required : true,
+			description : {
+				'ru':'ID юзера или приглашения',
+				'en':'User or invite ID',
+				'uk':'ID користувача/запрошення',
+			}
+		}
+
+	},
 
 	init : function(){ return this; },
 

@@ -15,14 +15,19 @@ module.exports = {
 		'uk':'Переключає у вказаного користувача роль Молодшого Оратора',
 	},
 
-	slashOptions : [{
-		name : 'user',
-		name_localizations : {'ru': 'пользователь', 'uk': 'користувач'},
-		description : 'Community member whose orator role will be switched',
-		description_localizations : {'ru': 'Участник Сообщества у которого будет переключена роль orator', 'uk': 'Користувач спільноти у якого буде перемикатися роль orator'},
-		type : 6,
-		required : true
-	}],
+	slashOptions : {
+
+		user : {
+			type : 6,
+			required : true,
+			description : {
+				'ru':'Участник Сообщества у которого будет переключена роль Младшего Оратора',
+				'en':'Community member whose Junior Orator role will be switched',
+				'uk':'Користувач спільноти у якого буде перемикатися роль Молодшого Оратора',
+			}
+		}
+
+	},
 
 	init : function(path){
 		this.role = guild.roles.cache.get('809040260582998016');

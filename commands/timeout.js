@@ -17,31 +17,39 @@ module.exports = {
 		'uk':'Мутить вказаного користувача на вказаний час',
 	},
 
-	slashOptions : [{
-		name : 'user',
-		name_localizations : {'ru': 'пользователь' , 'uk': 'користувач'},
-		description : 'Community member whose alive role will be switched',
-		description_localizations : {'ru': 'Участник Сообщества у которого будет переключена роль alive', 'uk': 'Користувач спільноти у якого буде змінюватися роль alive'},
-		type : 6,
-		required : true
+	slashOptions : {
+
+		user : {
+			type : 6,
+			required : true,
+			description : {
+				'ru':'Участник Сообщества который будет отстранён от общения',
+				'en':'Community member who will be suspended from communication',
+				'uk':'Учасник Спільноти, який буде відсторонений від спілкування',
+			}
+		},
+
+		duration : {
+			type : 3,
+			required : true,
+			description : {
+				'ru':'Продолжительность таймаута. Формат времени: (1d6h30m5s)',
+				'en':'Timeout duartion. Time format: (1d6h30m5s)',
+				'uk':'Тривалість таймауту. Формат часу: (1d6h30m5s)',
+			}
+		},
+
+		reason : {
+			type : 3,
+			required : false,
+			description : {
+				'ru':'Причина таймаута. Будет видна в аудит логе и #некролог',
+				'en':'Reason for the timeout. It will be visible in the audit log and #некролог',
+				'uk':'Причина таймауту. Буде видно в аудит лозі і #некролог',
+			}
+		}
+
 	},
-	{
-		name : 'duration',
-		name_localizations : {'ru': 'продолжительность' , 'uk': 'тривалість'},
-		description : 'Timeout duartion. Time format: (1d6h30m5s)',
-		description_localizations : {'ru': 'Продолжительность таймаута. Формат времени: (1d6h30m5s)', 'uk': 'Тривалість таймауту. Формат часу: (1d6h30m5s)'},
-		type : 3,
-		required : true
-	},
-	{
-		name : 'reason',
-		name_localizations : {'ru': 'причина' , 'uk': 'причина'},
-		description : 'Reason for the timeout. It will be visible in the audit log and #некролог',
-		description_localizations : {'ru': 'Причина таймаута. Будет видна в аудит логе и #некролог', 'uk': 'Причина таймауту. Буде видно в аудит лозі і #некролог'},
-		type : 3,
-		required : false
-	}
-	],
 
 
 	init : function(path){

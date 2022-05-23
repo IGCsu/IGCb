@@ -19,7 +19,7 @@ module.exports = {
 
 
 	/**
-	 * [texts description]
+	 * Список описаний для комманд
 	 * @type {Object}
 	 */
 	texts : {},
@@ -88,10 +88,23 @@ module.exports = {
 
 		if(!commands[name]) return;
 
+		const c = commands[name]; // command
+
+		const status = c.active
+			? reaction.emoji.success + ' Активен'
+			: reaction.emoji.error + ' Не активен';
+
+		let slash = 'Недоступно';
+		if(c.slash){
+			slash = '`/' + name + '` - ' + (c.description ? (c.description[lang] ?? c.description.ru) : (c.title[lang] ?? c.title.ru));
+			
+		}
+
 		let embed = new Discord.MessageEmbed()
-			.setTitle(commands[name].title)
+			.setTitle(c.title)
 			.setColor('BLURPLE')
-			.setAuthor({ name : name });
+			.setAuthor({ name : name })
+			.addField('Статус', status);
 
 	},
 

@@ -11,40 +11,46 @@ module.exports = {
 		'uk':'Створення Discord activities у голосових каналах',
 	},
 
-	slashOptions : [
-		{
-			type :7,
-			name : 'channel',
-			name_localizations : {'ru': 'канал', 'uk': 'канал'},
-			description : 'Choose voice channel',
-			description_localizations : {'ru': 'Выберите голосовой канал', 'uk': 'Оберіть голосовий канал'},
+	slashOptions : {
+
+		channel : {
+			type : 7,
 			required : true,
-			channel_types : [ 2 ]
+			channel_types : [2],
+			description : {
+				'ru':'Выберите голосовой канал',
+				'en':'Choose voice channel',
+				'uk':'Оберіть голосовий канал',
+			}
 		},
-		{
+
+		activity : {
 			type : 3,
-			name : 'activity',
-			description :'Choose activity',
-			description_localizations : {'ru': 'Выберите activity', 'uk': 'Оберіть activity'},
 			required : true,
-			choices : [
-				{ value : '880218394199220334', name : "Watch together" },
-				{ value : '755827207812677713', name : "Poker Night" },
-				{ value : '773336526917861400', name : "Betrayal.io" },
-				{ value : '814288819477020702', name : "Fishington.io" },
-				{ value : '832012774040141894', name : "Chess In The Park" },
-				{ value : '879864070101172255', name : "Sketchy Artist" },
-				{ value : '879863881349087252', name : "Awkword" },
-				{ value : '832012854282158180', name : "Putts" },
-				{ value : '878067389634314250', name : "Doodle Crew" },
-				{ value : '879863686565621790', name : "Letter Tile" },
-				{ value : '879863976006127627', name : "Word Snacks" },
-				{ value : '852509694341283871', name : "SpellCast" },
-				{ value : '832013003968348200', name : "Checkers In The Park" },
-				{ value : '832025144389533716', name : "CG4 Prod" }
-			]
+			choices : {
+				'880218394199220334' : { ru : 'Watch together' },
+				'755827207812677713' : { ru : 'Poker Night' },
+				'773336526917861400' : { ru : 'Betrayal.io' },
+				'814288819477020702' : { ru : 'Fishington.io' },
+				'832012774040141894' : { ru : 'Chess In The Park' },
+				'879864070101172255' : { ru : 'Sketchy Artist' },
+				'879863881349087252' : { ru : 'Awkword' },
+				'832012854282158180' : { ru : 'Putts' },
+				'878067389634314250' : { ru : 'Doodle Crew' },
+				'879863686565621790' : { ru : 'Letter Tile' },
+				'879863976006127627' : { ru : 'Word Snacks' },
+				'852509694341283871' : { ru : 'SpellCast' },
+				'832013003968348200' : { ru : 'Checkers In The Park' },
+				'832025144389533716' : { ru : 'CG4 Prod' }
+			},
+			description : {
+				'ru':'Выберите activity',
+				'en':'Choose activity',
+				'uk':'Оберіть activity',
+			}
 		}
-	],
+
+	},
 
 	init : function(){ return this; },
 

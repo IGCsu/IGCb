@@ -17,20 +17,29 @@ module.exports = {
 		'uk':'Видає довільне число (За замовчуванням 1-100)',
 	},
 
-	slashOptions : [
-		{
-			name : 'min',
-			description : 'Минимальное значение (По умолчанию 1)',
+	slashOptions : {
+
+		min : {
 			type : 4,
-			required : false
+			required : false,
+			description : {
+				'ru':'Минимальное значение (По умолчанию 1)',
+				'en':'Minimum value (Default 1)',
+				'uk':'Мінімальне значення (За замовчуванням 1)',
+			}
 		},
-		{
-			name : 'max',
-			description : 'Максимальное значение (По умолчанию 100)',
+
+		max : {
 			type : 4,
-			required : false
-		}
-	],
+			required : false,
+			description : {
+				'ru':'Максимальное значение (По умолчанию 100)',
+				'en':'Maximum value (Default 100)',
+				'uk':'Максимальне значення (За замовчуванням 100)',
+			}
+		},
+
+	},
 
 	init : async function(path){
 
