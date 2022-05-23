@@ -19,11 +19,12 @@ module.exports = {
 	/**
 	 * Обработка команды
 	 * Вычисляет пинг и время жизни бота и отправляет
-	 * @param {Message|CommandInteraction} msg Сообщение или команда пользователя
-	 * @param {Message} m                      Сообщение бота
+	 * @param {CommandInteraction} int Команда пользователя
+	 * @param {Message}            m   Сообщение бота
 	 */
-	call : async function(msg, m){
-		const ping = (m.createdTimestamp - msg.createdTimestamp) / 2;
+	call : async function(int, m){
+		const ping = (m.createdTimestamp - int.createdTimestamp) / 2;
+		const lang = int.locale.split('-')[0];
 
 		let uptime = client.uptime / 1000;
 
@@ -35,7 +36,7 @@ module.exports = {
 
 		const embed = new Discord.MessageEmbed()
 			.setTitle('Pong!')
-			.setDescription(`\`${ping}ms\` Uptime: ${uptime.join(':')}\n ${this.description}`);
+			.setDescription(`\`${ping}ms\` Uptime: ${uptime.join(':')}\n ${this.description[lang] ?? this.description.ru}`);
 
 		await m.edit({ embeds : [embed] });
 	},
