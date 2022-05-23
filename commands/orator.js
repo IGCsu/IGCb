@@ -6,6 +6,8 @@ module.exports = {
 	name : 'orator',
 	title : 'Роль Младшего Оратора',
 	description : 'Переключает у указанного пользователя роль Младшего Оратора',
+	descriptionShort : 'Switches the specified users to the orator role',
+	description_localizations : {'ru': 'Переключает у указанного пользователя роль orator', 'uk': 'Перемикає у вказаних користувачів роль orator'},
 
 	slashOptions : [{
 		name : 'user',

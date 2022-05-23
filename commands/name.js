@@ -3,10 +3,12 @@ const translit = require('transliteration');
 module.exports = {
 
 	active : true,
-	category : 'Никнейм',
-
 	name : 'name',
-	title : 'Изменение никнейма',
+	title : 'Обновление никнеймов',
+	description : 'Используется для обновления никнейма',
+	descriptionShort : 'Used to update a nickname',
+	description_localizations : {'ru': 'Используется для обновления никнейма', 'uk': 'Використовуюється для оновлення імені користувача'},
+	category : 'Никнейм',
 
 
 	slashOptions : [{

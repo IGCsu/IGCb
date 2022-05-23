@@ -1,10 +1,11 @@
 module.exports = {
 
 	active : true,
-	category : 'Модерация',
+	category : 'Логирование',
 
 	name : 'necrology',
 	title : 'Модуль логгирования таймаутов и банов',
+	description : 'Используется для логгирования таймаутов и банов',
 
 	cache : {},
 

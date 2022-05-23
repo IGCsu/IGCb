@@ -1,11 +1,13 @@
 module.exports = {
 
 	active : true,
-	category : 'Модерация',
+	category : 'Утилиты',
 
 	name : 'lookup',
 	title : 'Информация по id',
 	description : 'Выдаёт информацию о пользователе или приглашении по id',
+	descriptionShort : 'Returns information about the user or invite by id',
+	description_localizations : {'ru': 'Выдаёт информацию о пользователе или приглашении по id', 'uk': 'Відображає інформацію про користувача/запрошення по id'},
 
 	slashOptions : [{
 		name : 'id',

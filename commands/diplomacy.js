@@ -3,10 +3,13 @@ const fetch = require('node-fetch');
 module.exports = {
 
 	active : true,
-	category : 'Развлечения',
+	category : 'Голосовые каналы',
 
 	name : 'diplomacy',
-	title : 'Модуль поддержки ивента по Diplomacy',
+	title : 'Diplomacy',
+	description : 'Уведомления игры Diplomacy',
+	descriptionShort : 'Diplomacy game notifications',
+	description_localizations : {'ru': 'Уведомления игры Diplomacy ', 'uk': 'Повідомлення гри Diplomacy'},
 
 	slashOptions : [
 		{

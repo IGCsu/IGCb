@@ -1,10 +1,12 @@
 module.exports = {
 
 	active : true,
-	category : 'Развлечения',
+	category : 'Голосовые каналы',
 
-	name : 'starboard',
-	title : 'Модуль закрепления сообщений',
+	name : 'voice',
+	title : 'Управление голосовыми каналами',
+	text : 'Модуль для управления голосовыми каналами.\n\nПри заходе пользователя в #Создать канал - создаётся голосовой канал, в котором у автора будут все права. Он может редактировать канал как угодно. После выхода всех пользователей, канал удаляется, настройки не сохраняются.\n\nДля передачи прав владения другому пользователю, достаточно нажать на нужного пользователя правой кнопкой мыши и в меню "Приложения" выбрать команду "voice". Выбранный пользователь получит права владения над всеми голосовыми каналами, в которых у вас есть право редактирования ролей.\n\nБот не удаляет каналы, у которых в названии в конце есть звёздочка `*`.',
+	descriptionShort : 'Модуль для управления каналами',
 
 	starboardChannel : guild.channels.cache.get('938171284553101456'),
 	starboardEmoji : '⭐',
@@ -66,11 +68,11 @@ module.exports = {
 						embed.setDescription(embed.description.replace(img[i], ''));
 					}
 				};
-
+				
 			}
 		};
 		embeds.unshift(embed);
-		await this.starboardChannel.send({embeds: embeds});
+		await this.starboardChannel.send({embeds: embeds}); 
 		await message.react(this.starboardEmoji);
 
 	},
