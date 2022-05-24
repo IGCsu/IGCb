@@ -51,12 +51,14 @@ module.exports = {
 			.setThumbnail(member.user.avatarURL({ dynamic: true }))
 
 		try {
+			embed.setDescription('<@' + user.id + '>');
 			embed.addField('Cообщения:',
 				user.messagesAll.toLocaleString() + ' (Из них учитываются: ' + user.messagesLegit.toLocaleString() + ')');
 			embed.addField('Cимволы:',
 				user.symbols.toLocaleString() + '  (AVG ' + (user.symbolsAvg = this.getSymbolsAvg(user)).toLocaleString() + ')');
 			embed.addField('Оверпост:', (user.overpost = this.getOverpost(user)) + '%');
-
+			user.activityPer = this.getActivityPer(user);
+			if(user.activityPer != 100)
 			embed.addField('Активность за последние 30 дней:',
 				(user.activityPer = this.getActivityPer(user)) + '% (' + Math.round(user.activityPer * 30/100) + '/' + '30)');
 
@@ -68,11 +70,14 @@ module.exports = {
 
 			user.nextRole = this.getNextRole(user);
 
+			let txt = '🎉'
 			if(user.nextRole != true){
-				embed.setDescription('<@' + user.id + '>\n<@&' + user.role.cache.id + '> -> <@&' + user.nextRole.cache.id + '> ' + (user.nextRoleProgress = this.getNextRoleProgress(user)) + '%');
-			}else{
-				embed.setDescription('<@' + user.id + '> - <@&' + user.role.cache.id + '>');
-			}
+				txt = '<@&' + user.nextRole.cache.id + '> ' + (user.nextRoleProgress = this.getNextRoleProgress(user)) + '%'
+			};
+
+			embed.addField('Прогресс:', 
+				'<@&' + user.role.cache.id + '> -> ' + txt)
+			
 			embed.setColor(user.role.cache.color);
 
 		}catch(e){
