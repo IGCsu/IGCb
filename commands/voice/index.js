@@ -63,12 +63,14 @@ module.exports = {
 
 	slash: async function(int){
 		if(int.options.getSubcommand() == 'auto-sync'){
+			await int.deferReply();
 			DB.query(`UPDATE users SET mode = "${int.options.getString('mode')}" WHERE id = ${int.user.id};`)[0];
-			await int.reply({content: reaction.emoji.success + ' ' +localize(int.locale, 'Settings changed'), ephemeral: true});
+			await int.editReply({content: reaction.emoji.success + ' ' +localize(int.locale, 'Settings changed'), ephemeral: true});
 		} else if (int.options.getSubcommand() == 'upload') {
 			if(!int.member.voice.channel) return await int.reply({content: reaction.emoji.error + ' ' + localize(int.locale, 'You aren\'t connect to voice channel'), ephemeral: true});
+			await int.deferReply();
 			await this.upload(int.member.voice);
-			await int.reply({content: reaction.emoji.success + ' ' + localize(int.locale, 'Voice channel configuration updated in DB'), ephemeral: true});
+			await int.editReply({content: reaction.emoji.success + ' ' + localize(int.locale, 'Voice channel configuration updated in DB'), ephemeral: true});
 		} else {
 			await int.reply({content: localize(int.locale, 'In development'), ephemeral: true});
 		}
