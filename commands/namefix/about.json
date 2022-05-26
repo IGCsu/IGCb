@@ -8,7 +8,7 @@
 
 	"description": {
 		"ru": "Используется для исправления никнейма пользователей. Команда доступна всем",
-		"en": "Used to correct the nickname of users. The team is available to everyone",
+		"en": "Used to correct the nickname of users. The command is available to everyone",
 		"uk": "Використовується для виправлення нікнейму користувачів. Команда доступна всім"
 	}
 
