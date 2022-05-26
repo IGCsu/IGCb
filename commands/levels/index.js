@@ -2,6 +2,7 @@ const fetch = require('node-fetch');
 const slashOptions = require('./slashOptions.json');
 const { title, description } = require('./about.json');
 const noXPChannels = require('./noXPChannels.json');
+const { command } = require('../help');
 
 module.exports = {
 
@@ -66,7 +67,7 @@ module.exports = {
 
 			embed.addField('Опыт:',
 				(user.exp = this.getExp(user)).toLocaleString() +
-				(user.expFine ? (' (Вычтено из за неактивности: ' + user.expFine.toLocaleString() + ')') : ''));
+				(user.expFine ? (' (Вычтено из за неактивности: ' + user.expFine.toLocaleString() + ')') : ''), (user.activityPer == 100));
 
 			user.nextRole = this.getNextRole(user);
 
@@ -85,12 +86,13 @@ module.exports = {
 			return { error: 'Can\'t resolve the user data' };
 		};
 
+		const status = commands.nocommand.siteOffline;
 
 		return {
 			embeds : [embed],
 			components: [{type:1, components: [
-				{ type: 2, style: 5, url: 'https://igc.su/levels', label: 'Таблица' },
-				{ type: 2, style: 5, url: 'https://igc.su/levels?id=' + user.id, label: 'Статистика пользователя' }
+				{ type: 2, style: 5, url: 'https://igc.su/levels', label: 'Таблица' , disabled: status},
+				{ type: 2, style: 5, url: 'https://igc.su/levels?id=' + user.id, label: 'Статистика пользователя' , disabled: status}
 			]}],
 		};
 
