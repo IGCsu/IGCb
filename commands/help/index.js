@@ -56,17 +56,28 @@ module.exports = {
 		let choices = [];
 
 		const command = int.options.getFocused();
-
 		let finded = [];
-		for(let name in commands){
-			if(name.indexOf(command) !== -1) finded.push(name);
+
+		for(let cmd in commands){
+			if(commands[cmd].name.indexOf(command) !== -1 || !command) finded.push(commands[cmd]);
 		}
 
-		finded.sort((a, b) => getStringSimilarityDiff(a, b, command));
+		finded.sort((a, b) => getStringSimilarityDiff(a.name, b.name, command));
+
+		const lang = int.locale.split('-')[0];
+
+		let maxLength = 0;
+
+		for(let command of finded){
+			if(command.name.length > maxLength) maxLength = command.name.length;
+		}
 
 		for(let command of finded){
 			if(choices.length > 25) break;
-			choices.push({ name: command, value: command });
+
+			const name = truncate((command.name + ' '.repeat(maxLength - command.name.length + 1) +
+				(command.description?.[lang] ?? command.title[lang])), 100);
+			choices.push({ name: name, value: command.name });
 		}
 
 		try{
@@ -214,6 +225,6 @@ module.exports = {
 	 * @param  {Locale} lang Локализация пользователя
 	 * @return {String}
 	 */
-	getCommand : (c, lang) => (reaction.emoji[ c.active ? 'success' : 'error' ]) + ' `' + c.name + '` - ' + (c.title[lang] ?? c.title.ru),
+	getCommand : (c, lang) => (reaction.emoji[ c.active ? 'black_circle' : 'error' ]) + ' `' + c.name + '` - ' + (c.title[lang] ?? c.title.ru),
 
 };
