@@ -406,7 +406,7 @@ class UserLevels {
 		const nextRole = this.getNextRole();
 		const nextRoleProgress = this.getNextRoleProgress();
 
-		let text = nextRole ? '🎉' : nextRole.cache.toString() + ' ' + nextRoleProgress + '%';
+		let text = nextRole === true ? '🎉' : nextRole.cache.toString() + ' ' + nextRoleProgress + '%';
 
 		this.#embed.addField('Прогресс:', role.cache.toString() + ' -> ' + text);
 	};
