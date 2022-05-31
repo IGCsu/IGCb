@@ -29,9 +29,20 @@ module.exports = {
 	* @return {Object}
 	*/
 	init : async function(path){
-		guild.channels.cache.forEach(c => {
+		guild.channels.cache.forEach(async c => {
 			if(c.type != 'GUILD_VOICE' && c.type != 'GUILD_CATEGORY') return;
-			if(c.name == 'Создать канал') return this.channelCreate = c;
+			if(c.name == 'Создать канал') {
+				this.channelCreate = c;
+				if(this.channelCreate.members.filter(m => !m.user.bot).size && c.type == 'GUILD_VOICE'){
+					const channel = await this.create(this.channelCreate.members.first().voice);
+					if(this.channelCreate.members, '\n', channel) 
+						console.log(this.channelCreate.members)
+						this.channelCreate.members.forEach(
+							memb => {memb.voice.setChannel(channel).catch(reason => console.warn(reason));}
+						)
+				};
+				return;
+			};
 			if(c.name == 'Голосовые') return this.channelCategory = c;
 			if(!c.members.filter(m => !m.user.bot).size && c.type == 'GUILD_VOICE') return this.delete(c, false, path);
 		});
