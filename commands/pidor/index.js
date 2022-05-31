@@ -1,4 +1,4 @@
-const { title, description } = require('./about.json');
+п»їconst { title, description } = require('./about.json');
 module.exports = {
 
 
@@ -16,13 +16,13 @@ module.exports = {
 
 	call: function (int) {
 		int.reply({
-			content: 'Игогооооооо!'
+			content: 'РРіРѕРіРѕРѕРѕРѕРѕРѕРѕ!'
 		})
 		int.editReply({
-			content: 'Думаю...'
+			content: 'Р”СѓРјР°СЋ...'
 		})
 		int.editReply({
-			content: 'А пониеб-то у нас:'
+			content: 'Рђ РїРѕРЅРёРµР±-С‚Рѕ Сѓ РЅР°СЃ:'
 		})
 		int.followUp({
 			content: int.guild.members.cache.random().tag + '!'
@@ -30,8 +30,8 @@ module.exports = {
 	},
 
 	/**
-	 * Функция обработки slash-команды.
-	 * Если функция существует - то при инициализации будет добавлена слеш-команда с данными модуля и slashOptions, если тот имеется.
+	 * Р¤СѓРЅРєС†РёСЏ РѕР±СЂР°Р±РѕС‚РєРё slash-РєРѕРјР°РЅРґС‹.
+	 * Р•СЃР»Рё С„СѓРЅРєС†РёСЏ СЃСѓС‰РµСЃС‚РІСѓРµС‚ - С‚Рѕ РїСЂРё РёРЅРёС†РёР°Р»РёР·Р°С†РёРё Р±СѓРґРµС‚ РґРѕР±Р°РІР»РµРЅР° СЃР»РµС€-РєРѕРјР°РЅРґР° СЃ РґР°РЅРЅС‹РјРё РјРѕРґСѓР»СЏ Рё slashOptions, РµСЃР»Рё С‚РѕС‚ РёРјРµРµС‚СЃСЏ.
 	 * @param {CommandInteraction} int
 	 */
 	slash: async function (int) { 
