@@ -6,7 +6,7 @@ module.exports = {
 	category: 'nsfw',
 
 
-	name: 'poniyob',
+	name: 'pidor',
 	title: title,
 	description: description,
 
@@ -18,6 +18,7 @@ module.exports = {
 		int.reply({
 			content: 'Игогооооооо!'
 		})
+		
 		int.editReply({
 			content: 'Думаю...'
 		})
