@@ -33,9 +33,9 @@ module.exports = {
 			if(c.type != 'GUILD_VOICE' && c.type != 'GUILD_CATEGORY') return;
 			if(c.name == 'Создать канал') {
 				this.channelCreate = c;
+				const mbr = this.channelCreate.members.filter(m => !m.user.bot).first();
 				if(this.channelCreate.members.filter(m => !m.user.bot).size && c.type == 'GUILD_VOICE'){
-					this.channelCreate.members.first().send(sorryMessage['ru']).catch();
-					const channel = await this.create(this.channelCreate.members.first().voice);
+					const channel = await this.create(mbr.voice);
 					if(this.channelCreate.members) 
 						this.channelCreate.members.forEach(
 							memb => {
