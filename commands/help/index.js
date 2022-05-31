@@ -75,8 +75,8 @@ module.exports = {
 		for(let command of finded){
 			if(choices.length > 25) break;
 
-			const name = truncate((command.name + ' '.repeat(maxLength - command.name.length + 1) +
-				(command.description?.[lang] ?? command.title[lang])), 100);
+			const name = /*truncate((*/command.name/* + ' '.repeat(maxLength - command.name.length + 1) +
+				(command.description?.[lang] ?? command.title[lang])), 100)*/;
 			choices.push({ name: name, value: command.name });
 		}
 
