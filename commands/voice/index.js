@@ -35,8 +35,7 @@ module.exports = {
 				this.channelCreate = c;
 				if(this.channelCreate.members.filter(m => !m.user.bot).size && c.type == 'GUILD_VOICE'){
 					const channel = await this.create(this.channelCreate.members.first().voice);
-					if(this.channelCreate.members, '\n', channel) 
-						console.log(this.channelCreate.members)
+					if(this.channelCreate.members) 
 						this.channelCreate.members.forEach(
 							memb => {memb.voice.setChannel(channel).catch(reason => console.warn(reason));}
 						)
