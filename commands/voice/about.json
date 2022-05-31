@@ -4,6 +4,12 @@
 		"ru": "Управление голосовыми каналами",
 		"en": "Voice channel management",
 		"uk": "Управління голосовими каналами"
+	},
+
+	"sorryMessage": {
+		"ru": "Вы были перемещены в другой канал так как бот снова онлайн. Извините за доставленные неудобства",
+		"en": "You have been moved to another channel because the bot is online again. Sorry for the inconvenience",
+		"uk": "Ви були переміщені в інший канал так як бот знову онлайн. Вибачте за доставлені незручності"
 	}
 
 }
