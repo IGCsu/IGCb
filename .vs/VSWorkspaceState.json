@@ -2,11 +2,9 @@
   "ExpandedNodes": [
     "",
     "\\commands",
-    "\\commands\\Pidor",
-    "\\commands\\ping",
-    "\\commands\\poll",
+    "\\commands\\pidor",
     "\\commands\\role"
   ],
-  "SelectedNode": "\\commands\\Pidor\\about.json",
+  "SelectedNode": "\\commands\\pidor\\about.json",
   "PreviewInSolutionExplorer": false
 }
