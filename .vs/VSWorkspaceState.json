@@ -1,7 +1,12 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\commands",
+    "\\commands\\Pidor",
+    "\\commands\\ping",
+    "\\commands\\poll",
+    "\\commands\\role"
   ],
-  "SelectedNode": "\\C:\\Users\\lobzu\\Source\\Repos\\IGCbV2",
+  "SelectedNode": "\\commands\\Pidor\\about.json",
   "PreviewInSolutionExplorer": false
 }
