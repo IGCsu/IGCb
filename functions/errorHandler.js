@@ -6,21 +6,26 @@ let lastError = undefined;
 /**
  * Обработка ошибки. Если одна и та же ошибка повторяется подряд - модуль отключается.
  *
- * @param {Error}       e    Объект ошибки
- * @param {String}      name Название модуля
- * @param {Interaction} int  Interaction
+ * @param  {Error}   e          Объект ошибки
+ * @param  {String}  name       Название модуля
+ * @param  {Boolean} noshutdown Если true - модуль не будет отключён. Необходимо для кастомных обработок ошибок вне модулей
+ * @return {Boolean}                Статус
  */
-module.exports = (e, name, int) => {
+module.exports = (e, name, noshutdown) => {
 
-	let text = 'Ошибка в `' + name + '`!';
+	let text = 'Ошибка в `/' + name + '.js`!';
+	let active = true;
 
-	if(lastError == e.stack && name != 'nocommand'){
-		commands[name].active = false;
+	if(lastError == e.stack){
+		if(!noshutdown) commands[name].active = false;
+		active = false;
 		text += ' Модуль отключён.';
 	}
 
 	channel.send({ content: '<@&920407448697860106> ' + text + '```' + e.stack + '```' });
 
 	lastError = e.stack;
+
+	return active;
 
 };

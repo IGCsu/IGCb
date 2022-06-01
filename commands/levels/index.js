@@ -65,7 +65,7 @@ module.exports = {
 
 		const embed = user.getEmbed();
 
-		const status = commands.nocommand?.siteOffline;
+		const status = !commands.nocommand || commands.nocommand.siteStatus;
 
 		return {
 			embeds : [embed],
@@ -108,13 +108,15 @@ module.exports = {
 
 
 	/**
+	 * Обработчик сообщений пользователя
 	 * Мониторинг всех сообщений для начисления опыта пользователям. Игнорируются сообщения бота и в некоторых каналах.
 	 * @param {Message} msg Сообщение пользователя
 	 */
-	monitoring : async function(msg){
+	message : async function(msg){
 		if(msg.author.bot) return;
-		if(this.noXPChannels.includes(msg.channel.parentId)) return;
-		if(this.noXPChannels.includes(msg.channelId)) return;
+		const channel = msg.channel.isThread() ? msg.channel.parent : msg.channel;
+		if(this.noXPChannels.includes(channel.parentId)) return;
+		if(this.noXPChannels.includes(channel.id)) return;
 
 		let user = new UserLevels(msg.member, this.roles, this.rolesIDs, true);
 

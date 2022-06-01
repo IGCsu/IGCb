@@ -15,6 +15,12 @@ let commands = [];
  */
 let list = {};
 
+/**
+ * Массив модулей где есть обработчик сообщений
+ * @type {Array}
+ */
+let message = [];
+
 
 /**
  * Добавляет в массив слеш-команду
@@ -138,6 +144,16 @@ const applicationGuildCommands = () => {
 
 
 /**
+ * Добавляет к модулю "handler" массив модулей с обработкой сообщений
+ */
+const initMessageHandler = () => {
+	if(!list.handler?.active) return;
+
+	list.handler.commands = message;
+}
+
+
+/**
  * Возвращает команды бота
  * @param  {Array}  Массив модулей разрешённых к подключению.
  * @return {Object}
@@ -149,7 +165,7 @@ module.exports = async debugAllowModules => {
 
 		const path = './commands/' + name + '/index.js';
 		if(debugAllowModules.length && debugAllowModules.indexOf(name) === -1){
-			log.initText += log.warn(path + ': debug');
+			log.initText += log.warn('> ' + path + ': debug');
 			continue;
 		}
 
@@ -162,14 +178,17 @@ module.exports = async debugAllowModules => {
 		list[name] = command;
 
 		if(command.active){
+			if(command.message) message.push(name);
 			if(command.slash) addSlashCommand(command);
 			if(command.contextUser) addContextUserCommand(command);
 		}
 
-		log.initText += log.load(path, getTimePerformance(timeStart), command.active);
+		log.initText += log.load('> ' + path, getTimePerformance(timeStart), command.active);
 	}
 
 	if(!debugAllowModules.length) applicationGuildCommands();
+
+	initMessageHandler();
 
 	return list;
 };

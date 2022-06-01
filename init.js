@@ -6,7 +6,7 @@ const fs = require('fs');
  * Массив модулей разрешённых к подключению.
  * Если пустой - подключаются в естественном порядке. В ином случае, подключаются лишь указанные модули.
  *
- * Пример: "help.js"
+ * Пример: "help"
  * @type {Array}
  */
 const debugAllowModules = [];
@@ -53,36 +53,12 @@ module.exports = async () => {
 	console.log('Loading functions:');
 	await definitionFunctions();
 
+	global.hash = getRandomString(32);
+
 	console.log('Loading commands:');
 	global.commands = await initCommands(debugAllowModules);
 
 	await client.user.setActivity('/help', { type: 'LISTENING' });
-
-
-	if(!debugAllowModules.length){
-		console.time('Send start bot');
-		const author = process.env.USERNAME ?? 'Host';
-		let embed = new Discord.MessageEmbed()
-			.setTitle('Бот запущен')
-			.setTimestamp()
-			.setDescription('hosted by ' + author + '\n\n```ansi' + log.initText + '```');
-		await guild.channels.cache.get('574997373219110922').send({ embeds: [embed] });
-		console.timeEnd('Send start bot');
-	}
-
-
-	console.time('Event messageCreate');
-	client.on('messageCreate', async msg => {
-		if(msg.channel.type == 'DM') return;
-		if(msg.channel.guild.id != config.home) return;
-
-		try{
-			if(commands.nocommand?.active) commands.nocommand.call(msg);
-		}catch(e){
-			errorHandler(e, 'nocommand', msg);
-		}
-	});
-	console.timeEnd('Event messageCreate');
 
 
 	console.time('Event interactionCreate');
@@ -98,10 +74,24 @@ module.exports = async () => {
 		try{
 			await commands[name][int.action](int);
 		}catch(e){
-			errorHandler(e, name, int);
+			errorHandler(e, name);
 		}
 	});
 	console.timeEnd('Event interactionCreate');
+
+
+	if(!debugAllowModules.length){
+		console.time('Send start bot');
+		const author = process.env.USERNAME ?? 'Host';
+		log.initText = log.initText.replace(/.\/commands\//gi, './');
+		let embed = new Discord.MessageEmbed()
+			.setTitle('Бот запущен')
+			.setTimestamp()
+			.setFooter({ text: global.hash })
+			.setDescription('hosted by ' + author + '\n\n```ansi' + log.initText + '```');
+		await guild.channels.cache.get('574997373219110922').send({ embeds: [embed] });
+		console.timeEnd('Send start bot');
+	}
 
 
 	log.start('== Bot ready ==');
