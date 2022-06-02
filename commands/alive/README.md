@@ -1,9 +1,9 @@
-### About
+#### About
 
 ##### alive
 Модуль представления доступа к сообществу.
 
-### Dependencies
+#### Dependencies
 - `global.guild`
 - `/function/log.js`
 - `/function/localize.js`

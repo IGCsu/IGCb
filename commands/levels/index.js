@@ -65,7 +65,7 @@ module.exports = {
 
 		const embed = user.getEmbed();
 
-		const status = !commands.nocommand || commands.nocommand.siteStatus;
+		const status = !commands.handler || commands.handler.siteStatus;
 
 		return {
 			embeds : [embed],

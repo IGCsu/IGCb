@@ -1,32 +1,53 @@
 const fs = require('fs');
-const dir = './commands/handler/func/';
+const dir = './commands/handler/functions/';
 
-module.exports = async indexPath => {
+let data = {
+	functions: {},
+	allChannels: {},
+	allowedChannelsFunctions: {}
+};
 
-	let list = {};
+/**
+ * Возвращает функции-обработчики сообщений пользователя
+ * @return {Object} functions                Объект функций модуля
+ * @return {Object} allChannels              Объект названий функций, вызываемых при сообщении в любом канале
+ * @return {Object} allowedChannelsFunctions Объект каналов и категориий, содержашие объекты функций
+ */
+module.exports = async () => {
 
-	fs.readdirSync(dir).forEach(channel => {
-		const channelDir = dir + channel + '/';
-		list[channel] = {};
+	const files = fs.readdirSync(dir);
+	for(const file of files){
 
-		fs.readdirSync(channelDir).forEach(file => {
+		const timeStart = process.hrtime();
 
-			const timeStart = process.hrtime();
+		const name = file.split('.')[0];
 
-			const name = file.split('.')[0];
-			const func = require('./func/' + channel + '/' + file);
+		let func = require('./functions/' + file);
 
-			if(typeof func == 'function') list[channel][name] = func;
+		if(func.active) data.functions[name] = await func.init();
 
-			const timeEnd = process.hrtime(timeStart);
-			const pref = (timeEnd[0]*1000) + (timeEnd[1] / 1000000);
+		if(func.active){
+			if(func.allChannels){
 
-			log.initText += log.load(channelDir + file, pref, typeof func == 'function');
+				data.allChannels[name] = true;
 
-		});
+			}else{
 
-	});
+				for(let id in func.allowedChannels){
+					if(!data.allowedChannelsFunctions[id]) data.allowedChannelsFunctions[id] = {};
+					data.allowedChannelsFunctions[id][name] = func.allowedChannels[id];
+				}
 
-	return list;
+			}
+		}
+
+		const timeEnd = process.hrtime(timeStart);
+		const pref = (timeEnd[0]*1000) + (timeEnd[1] / 1000000);
+
+		log.initText += log.load(dir + file, pref, func.active);
+
+	}
+
+	return data;
 
 };
