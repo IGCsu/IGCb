@@ -18,11 +18,11 @@ module.exports = {
 		return this;
 	},
 
-	regex: /^\*\*([^\n]+)\*\*\n/i,
+	regex: /^\*\*([^\n]+)\*\*\s*\n/i,
 
 	call: async function(msg){
 		const match = msg.content.match(this.regex);
-		let title = 'Ответ - ';
+		let title = '';
 
 		if(match){
 			title += match[1];
