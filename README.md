@@ -163,6 +163,15 @@ module.exports = {
 	},
 
 	/**
+	 * Функция обработки сообщения пользователя.
+	 * Если функция существует - то при инициализации модуль будет сохранён в модуле handler.
+	 * @param {Message} msg
+	 */
+	message: async function(msg){ // not required
+		...
+	},
+
+	/**
 	 * Функция обработки автозаполнения.
 	 * https://discord.js.org/#/docs/discord.js/stable/class/AutocompleteInteraction
 	 * @param {AutocompleteInteraction} int
