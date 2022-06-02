@@ -70,3 +70,5 @@ module.exports = {
 - `/function/log.js`
 - `/function/reaction.js`
 - `/function/errorHandler.js`
+- `/function/member2name.js`
+- `/function/formatDate.js`
