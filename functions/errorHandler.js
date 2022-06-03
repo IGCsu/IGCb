@@ -22,7 +22,11 @@ module.exports = (e, name, noshutdown) => {
 		text += ' Модуль отключён.';
 	}
 
-	channel.send({ content: '<@&920407448697860106> ' + text + '```' + e.stack + '```' });
+	const mention = config.developer
+		?'<@' + config.developer + '> '
+		: '<@&920407448697860106> ';
+
+	channel.send({ content: mention + text + '```' + e.stack + '```' });
 
 	lastError = e.stack;
 

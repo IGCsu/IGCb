@@ -82,7 +82,9 @@ module.exports = async () => {
 
 	if(!debugAllowModules.length){
 		console.time('Send start bot');
-		const author = process.env.USERNAME ?? 'Host';
+		const author = config.developer
+			? '<@' + config.developer + '>'
+			: process.env.USERNAME ?? 'Host';
 		log.initText = log.initText.replace(/.\/commands\//gi, './');
 		let embed = new Discord.MessageEmbed()
 			.setTitle('Бот запущен')

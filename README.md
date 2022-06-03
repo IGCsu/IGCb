@@ -243,6 +243,11 @@ module.exports = {
 	"home": "<GuildID>",
 
 	/**
+	 * ID разработчика. Отображается в стартовом сообщении и пингуется в случае ошибки
+	 */
+	"home": "<UserID>",
+
+	/**
 	 * Конфигурация для подключения к MySQL базе данных.
 	 * https://github.com/ForbesLindesay/sync-mysql#usage
 	 */
