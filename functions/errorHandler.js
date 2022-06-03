@@ -23,7 +23,7 @@ module.exports = (e, name, noshutdown) => {
 	}
 
 	const mention = config.developer
-		?'<@' + config.developer + '> '
+		? '<@' + config.developer + '> '
 		: '<@&920407448697860106> ';
 
 	channel.send({ content: mention + text + '```' + e.stack + '```' });

@@ -32,7 +32,7 @@ module.exports = {
 		await this.out(int, 'Думаю...');
 		await this.out(int, 'А пониеб-то у нас:');
 		await int.followUp({
-			content: int.guild.members.cache.random() + '!'
+			content: int.channel.members.cache.random() + '!'
 		})
 	},
 
