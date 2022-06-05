@@ -10,7 +10,7 @@ const { command } = require('../help');
 module.exports = {
 
 	active : true,
-	category : 'Уровни активности',
+	category : 'Информация',
 
 	name : 'levels',
 	title : title,

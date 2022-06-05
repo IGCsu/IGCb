@@ -3,7 +3,7 @@ const { title, description } = require('./about.json');
 module.exports = {
 
 	active : true,
-	category : 'Утилиты',
+	category : 'Информация',
 
 	name : 'ping',
 	title : title,

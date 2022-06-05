@@ -6,7 +6,7 @@ const applicationCommandOptionTypes = require('./applicationCommandOptionTypes.j
 module.exports = {
 
 	active : true,
-	category : 'Утилиты',
+	category : 'Информация',
 
 	name : 'help',
 	title : title,
@@ -55,11 +55,16 @@ module.exports = {
 		const timeStart = process.hrtime();
 		let choices = [];
 
+		const perm = this.permission(int.member);
+
 		const command = int.options.getFocused();
 		let finded = [];
 
-		for(let cmd in commands){
-			if(commands[cmd].name.indexOf(command) !== -1 || !command) finded.push(commands[cmd]);
+		for(let name in commands){
+			if(commands[name].category == 'nsfw' && !perm) continue;
+			if(command && name.indexOf(command) === -1) continue;
+
+			finded.push(commands[name]);
 		}
 
 		finded.sort((a, b) => getStringSimilarityDiff(a.name, b.name, command));
@@ -75,9 +80,7 @@ module.exports = {
 		for(let command of finded){
 			if(choices.length > 25) break;
 
-			const name = /*truncate((*/command.name/* + ' '.repeat(maxLength - command.name.length + 1) +
-				(command.description?.[lang] ?? command.title[lang])), 100)*/;
-			choices.push({ name: name, value: command.name });
+			choices.push({ name: command.name, value: command.name });
 		}
 
 		try{
@@ -93,15 +96,16 @@ module.exports = {
 	/**
 	 * Генерирует эмбед со списком команд
 	 *
-	 * @param  {Locale}       lang Локализация пользователя
-	 * @return {MessageEmbed}
+	 * @param  {Locale}                  lang Локализация пользователя
+	 * @return {InteractionReplyOptions}
 	 */
 	call : async function(lang){
 
 		let help = {};
 
 		for(let c in commands){
-			const category = commands[c].category ? commands[c].category : 'Остальные'
+			const category = commands[c].category ? commands[c].category : 'Остальные';
+			if(commands[c].category == 'nsfw') continue;
 
 			if(!help.hasOwnProperty(category)) help[category] = [];
 			help[category].push( this.getCommand(commands[c], lang) );
@@ -115,22 +119,25 @@ module.exports = {
 			embed.addField(c, help[c].sort().join('\n'));
 		}
 
-		return embed;
+		return { embeds: [embed] };
 
 	},
 
 
 	/**
 	 * Возвращает эмбед с информацией о команде
-	 * @param  {Locale}       lang Локализация пользователя
-	 * @param  {String}       name Название команды
-	 * @return {MessageEmbed}
+	 * @param  {CommandInteraction}      int  Команда пользователя
+	 * @param  {Locale}                  lang Локализация пользователя
+	 * @param  {String}                  name Название команды
+	 * @return {InteractionReplyOptions}
 	 */
-	command : async function(lang, name){
+	command : async function(int, lang, name){
 
-		if(!commands[name]) return false;
+		if(!commands[name]) return 404;
 
 		const c = commands[name]; // command
+
+		if(c.category == 'nsfw' && !this.permission(int.member)) return 403;
 
 		const status = c.active
 			? reaction.emoji.success + ' Активен'
@@ -166,7 +173,10 @@ module.exports = {
 			embed.setDescription(desc);
 		}
 
-		return embed;
+		return {
+			embeds: [embed],
+			ephemeral: c.category == 'nsfw'
+		};
 
 	},
 
@@ -209,13 +219,19 @@ module.exports = {
 		const command = int.options.getString('command');
 		const lang = int.locale.split('-')[0];
 
-		const embed = command ? await this.command(lang, command) : await this.call(lang);
+		const options = command ? await this.command(int, lang, command) : await this.call(lang);
 
-		if(embed == false){
-			return await int.reply({ content : reaction.emoji.error + ' Модуль "' + command + '" не найден', ephemeral: true });
+		if(typeof options == 'number'){
+			let content = reaction.emoji.error + ' Неизвестная ошибка';
+			if(options == 404) content = reaction.emoji.error + ' Модуль "' + command + '" не найден';
+			if(options == 403) content = reaction.emoji.error + ' Модуль "' + command + '" не доступен';
+			return await int.reply({
+				content: content,
+				ephemeral: true
+			});
 		}
 
-		await int.reply({ embeds : [embed] });
+		await int.reply(options);
 	},
 
 
@@ -226,5 +242,14 @@ module.exports = {
 	 * @return {String}
 	 */
 	getCommand : (c, lang) => (reaction.emoji[ c.active ? 'black_circle' : 'error' ]) + ' `' + c.name + '` - ' + (c.title[lang] ?? c.title.ru),
+
+
+
+	/**
+	 * Проверка наличия роли Пониёб
+	 *
+	 * @param {GuildMember} member
+	 */
+	permission : member => member.roles.cache.has('682317950568628398')
 
 };

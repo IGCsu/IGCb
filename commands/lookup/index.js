@@ -5,7 +5,7 @@ const dateText = require('./dateText.json');
 module.exports = {
 
 	active : true,
-	category : 'Утилиты',
+	category : 'Информация',
 
 	name : 'lookup',
 	title : title,

@@ -6,7 +6,7 @@ const transliterateOptions = require('./transliterateOptions.json');
 module.exports = {
 
 	active : true,
-	category : 'Никнейм',
+	category : 'Инструменты',
 
 	name : 'name',
 	title : title,
