@@ -22,5 +22,7 @@
 	"Unknown User": "Неизвестный пользователь",
 	"Can't resolve the user data": "Неудалось обработать данные пользователя",
 	"Role not found": "Роль не найдена",
-	"Show list of all Game Roles": "Показать список всех доступных Игровых Ролей"
+	"Show list of all Game Roles": "Показать список всех доступных Игровых Ролей",
+	"There is no data entry in the database associated with you. Use `/upload` to fix it.": "Отсутствует запись в базе данных связанная с вами. Используйте `/upload` чтобы исправить это.",
+	"Syncing complete": "Синхронизация завершена"
 }	 

@@ -1,5 +1,6 @@
 const slashOptions = require('./slashOptions.json');
 const { title, sorryMessage } = require('./about.json');
+const { ApplicationCommand, CommandInteraction, User } = require('discord.js');
 
 module.exports = {
 
@@ -74,7 +75,10 @@ module.exports = {
 		return this;
 	},
 
-
+	/**
+	 * 
+	 * @param {CommandInteraction} int 
+	 */
 	slash: async function(int){
 		if(int.options.getSubcommand() == 'auto-sync'){
 			await int.deferReply();
@@ -85,6 +89,15 @@ module.exports = {
 			await int.deferReply();
 			await this.upload(int.member.voice);
 			await int.editReply({content: reaction.emoji.success + ' ' + localize(int.locale, 'Voice channel configuration updated in DB'), ephemeral: true});
+		} else if (int.options.getSubcommand() == 'sync') {
+			if(!int.member.voice.channel) return await int.reply({content: reaction.emoji.error + ' ' + localize(int.locale, 'You aren\'t connect to voice channel'), ephemeral: true});
+			await int.deferReply();
+			const response = await this.sync(int.member.voice);
+			const content = response 
+				? reaction.emoji.success + ' ' + localize(int.locale, 'Syncing complete')
+				: reaction.emoji.error + ' ' + localize(int.locale, response);
+			
+			await int.editReply({content: content, ephemeral: true});
 		} else {
 			await int.reply({content: localize(int.locale, 'In development'), ephemeral: true});
 		}
@@ -223,12 +236,26 @@ module.exports = {
 	 */
 	upload : async function(voice){
 		let voice_data = JSON.stringify({name: voice.channel.name, bitrate: voice.channel.bitrate, userLimit: voice.channel.userLimit})
-		console.log(voice_data);
 		if(DB.query(`SELECT * FROM users WHERE id = ${voice.member.user.id};`)[0]){
 			DB.query(`UPDATE users SET voice_data = ? WHERE id = ${voice.member.user.id};`, [voice_data])[0];
 		} else {
 			DB.query(`INSERT INTO users VALUES (?, ?, ?, ?);`, [voice.member.user.id, 0, voice.channelId, voice_data])[0];
 		}
 	},
+
+	/**
+	 * 
+	 * @param {VoiceState} voice 
+	 */
+	sync : async function(voice){
+		const voiceConfiguration = (DB.query(`SELECT * FROM users WHERE id = ${voice.member.user.id};`)[0]).voice_data;
+		if(!voiceConfiguration) return 'There is no data entry in the database associated with you. Use `/upload` to fix it.';
+		await voice.channel.edit({
+			name: voiceConfiguration.name,
+			bitrate: voiceConfiguration.bitrate,
+			userLimit: voiceConfiguration.userLimit
+		});
+		return 0;
+	}
 
 };
