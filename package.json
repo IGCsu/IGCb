@@ -9,9 +9,9 @@
   "author": "BVN4",
   "license": "ISC",
   "dependencies": {
-    "@discordjs/collection": "^0.5.0",
-    "@discordjs/rest": "^0.1.0-canary.0",
-    "discord-api-types": "^0.25.2",
+    "@discordjs/collection": "^0.7.0",
+    "@discordjs/rest": "^0.5.0",
+    "discord-api-types": "^0.33.4",
     "discord.js": "^13.8.0",
     "sync-mysql": "^3.0.1",
     "transliteration": "^2.2.0"

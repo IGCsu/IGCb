@@ -81,23 +81,26 @@ module.exports = {
 	 */
 	slash: async function(int){
 		if(int.options.getSubcommand() == 'auto-sync'){
-			await int.deferReply();
+			await int.deferReply({ephemeral: true});
 			DB.query(`UPDATE users SET mode = "${int.options.getString('mode')}" WHERE id = ${int.user.id};`)[0];
 			await int.editReply({content: reaction.emoji.success + ' ' +localize(int.locale, 'Settings changed'), ephemeral: true});
+		
 		} else if (int.options.getSubcommand() == 'upload') {
 			if(!int.member.voice.channel) return await int.reply({content: reaction.emoji.error + ' ' + localize(int.locale, 'You aren\'t connect to voice channel'), ephemeral: true});
-			await int.deferReply();
+			await int.deferReply({ephemeral: true});
 			await this.upload(int.member.voice);
 			await int.editReply({content: reaction.emoji.success + ' ' + localize(int.locale, 'Voice channel configuration updated in DB'), ephemeral: true});
+		
 		} else if (int.options.getSubcommand() == 'sync') {
 			if(!int.member.voice.channel) return await int.reply({content: reaction.emoji.error + ' ' + localize(int.locale, 'You aren\'t connect to voice channel'), ephemeral: true});
-			await int.deferReply();
+			await int.deferReply({ephemeral: true});
 			const response = await this.sync(int.member.voice);
-			const content = response 
+			const content = response == 0 
 				? reaction.emoji.success + ' ' + localize(int.locale, 'Syncing complete')
 				: reaction.emoji.error + ' ' + localize(int.locale, response);
 			
 			await int.editReply({content: content, ephemeral: true});
+		
 		} else {
 			await int.reply({content: localize(int.locale, 'In development'), ephemeral: true});
 		}
@@ -248,13 +251,11 @@ module.exports = {
 	 * @param {VoiceState} voice 
 	 */
 	sync : async function(voice){
-		const voiceConfiguration = (DB.query(`SELECT * FROM users WHERE id = ${voice.member.user.id};`)[0]).voice_data;
+		const voiceConfiguration = JSON.parse((DB.query(`SELECT * FROM users WHERE id = ${voice.member.user.id};`)[0]).voice_data);
+		
 		if(!voiceConfiguration) return 'There is no data entry in the database associated with you. Use `/upload` to fix it.';
-		await voice.channel.edit({
-			name: voiceConfiguration.name,
-			bitrate: voiceConfiguration.bitrate,
-			userLimit: voiceConfiguration.userLimit
-		});
+
+		await voice.channel.edit(voiceConfiguration, 'По требованию ' + member2name(voice.member));
 		return 0;
 	}
 
