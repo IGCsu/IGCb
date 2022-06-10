@@ -97,6 +97,15 @@
 					"en": "Specify any information that may be related to the poll",
 					"uk": "Вкажіть опис опитування"
 				}
+			},
+			"ephemeral": {
+				"type": 5,
+				"required": false,
+				"description": {
+					"ru": "Скрыть ли ответ бота от остальных",
+					"en": "Whether to hide the bot's answer from the others",
+					"uk": "Чи приховати відповідь бота від інших"
+				}
 			}
 
 		},

@@ -86,10 +86,13 @@ module.exports = {
 				this.createPoll(message.id, question, min, 1000, flags);
 			};
 		} else {
+			const eph = int.options.getBoolean('ephemeral') ?? true;
+			await int.deferReply({ephemeral: eph});
 			const search = int.options.getString('search')?.split('|');
+			
 			if(search){
-				if(search[0] == 'poll') return int.reply({content: await this.getPollResultsContent(search[1], int), ephemeral: true});
-				if(search[0] == 'answer') return int.reply({content: this.getPollAnswerContent(search[1], search[2], int), ephemeral: true});
+				if(search[0] == 'poll') return int.editReply({content: await this.getPollResultsContent(search[1], int)});
+				if(search[0] == 'answer') return int.editReply({content: this.getPollAnswerContent(search[1], search[2], int)});
 			};
 			int.reply({content: localize(int.locale, 'In development'), ephemeral: true});
 		};
