@@ -104,11 +104,11 @@ module.exports = {
 		const poll = this.fetchPoll(int.message.id);
 		if(resp == 'result') {
 			if(!poll) if(!poll) return int.editReply({content: localize(int.locale, 'This poll was not found in the database'), ephemeral: true});
-			const content = this.getPollResultsContent(int.message.id, int);
+			const content = await this.getPollResultsContent(int.message.id, int);
 			try{
 				return await int.editReply({content: content, ephemeral: true});
 			} catch(e){
-				console.log(e);
+				return console.log(e);
 			}
 		};
 		const answer = this.fetchPollAnswer(int.member.user.id, int.message.id);
@@ -259,7 +259,7 @@ module.exports = {
 		};
 		return content;
 	},
-	getPollResultsContent: function (message_id, int=undefined) {
+	getPollResultsContent: async function (message_id, int=undefined) {
 		const poll = this.fetchPoll(message_id);
 		const results = this.fetchPollResults(message_id);
 		let content = localize(int.locale, 'There are no votes yet');
@@ -267,11 +267,11 @@ module.exports = {
 		if(results.result.length){
 			if(poll.flags & this.FLAGS.POLLS.PUBLIC){
 				results.result.sort((a, b) => {return (a.flags & this.FLAGS.ANSWERS.DISAGREE) - (b.flags & this.FLAGS.ANSWERS.DISAGREE)})
-				results.result.forEach(vote => {
+				for (let vote of results.result)  {
 					vote.answer = vote.answer.replace('\n', ' _ ')
-					votes += ((vote.flags & this.FLAGS.ANSWERS.DISAGREE) ? '[0;41m✖[0m ' : '[0;45m✓[0m ') + `${guild.members.cache.get(vote.user_id)?.displayName ?? vote.user_id} ` +
-					((vote.answer.length > 60) ? vote.answer.slice(0, 60) + '...' : vote.answer) + '\n';
-				});
+					votes += ((vote.flags & this.FLAGS.ANSWERS.DISAGREE) ? '[0;41m✖[0m ' : '[0;45m✓[0m ') +
+						`${member2name((await guild.members.fetch(vote.user_id)))} ` + truncate(vote.answer, 60) + '\n';
+				};
 			};
 			content =
 			'```ansi\n' +
