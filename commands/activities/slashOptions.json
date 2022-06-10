@@ -1,16 +1,4 @@
 {
-
-	"channel": {
-		"type": 7,
-		"required": true,
-		"channel_types": [2],
-		"description": {
-			"ru": "Выберите голосовой канал",
-			"en": "Choose voice channel",
-			"uk": "Оберіть голосовий канал"
-		}
-	},
-
 	"activity": {
 		"type": 3,
 		"required": true,
@@ -34,6 +22,17 @@
 			"ru": "Выберите activity",
 			"en": "Choose activity",
 			"uk": "Оберіть activity"
+		}
+	},
+	
+	"channel": {
+		"type": 7,
+		"required": false,
+		"channel_types": [2],
+		"description": {
+			"ru": "Выберите голосовой канал",
+			"en": "Choose voice channel",
+			"uk": "Оберіть голосовий канал"
 		}
 	}
 
