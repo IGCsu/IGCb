@@ -88,7 +88,7 @@ module.exports = {
 		} else {
 			const search = int.options.getString('search')?.split('|');
 			if(search){
-				if(search[0] == 'poll') return int.reply({content: this.getPollResultsContent(search[1], int), ephemeral: true});
+				if(search[0] == 'poll') return int.reply({content: await this.getPollResultsContent(search[1], int), ephemeral: true});
 				if(search[0] == 'answer') return int.reply({content: this.getPollAnswerContent(search[1], search[2], int), ephemeral: true});
 			};
 			int.reply({content: localize(int.locale, 'In development'), ephemeral: true});
