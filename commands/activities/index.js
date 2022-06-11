@@ -23,7 +23,7 @@ module.exports = {
 
 		const lang = int.locale.split('-')[0];
 
-		const channel = int.options.get('channel')?.value ?? int.member.voice.cahnnel_id;
+		const channel = int.options.get('channel')?.value ?? int.member.voice.channelId;
 		const activityId = int.options.get('activity').value;
 
 		const activity = this.slashOptions.activity.choices[activityId];
