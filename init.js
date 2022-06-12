@@ -41,6 +41,8 @@ const definitionLocales = () => {
 
 module.exports = async () => {
 
+	console.timeEnd('Client login');
+
 	console.log('Start init.js');
 
 	global.guild = await client.guilds.fetch(process.env.HOME);
