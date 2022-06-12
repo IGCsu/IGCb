@@ -228,35 +228,20 @@ module.exports = {
 В `/helpTexts/` содержатся файлы в формате `.md`. Эти файлы содержат подробную информацию о модуле. Используется в модуле `help`.
 Если файл существует, при help-запросе с указанным модулем, то текст будет выведен в эмбед.
 
-#### config.json
-```js
-{
+#### .env
+```dotenv
+# Конфигурация для подключения к MySQL базе данных
+CLEARDB_DATABASE=<database>
+CLEARDB_PASSWORD=<password>
+CLEARDB_HOST=<host>
+CLEARDB_USER=<user>
 
-	/**
-	 * Токен бота
-	 */
-	"token": "<TOKEN>",
+# ID разработчика. Отображается в стартовом сообщении и пингуется в случае ошибки
+DEVELOPER=<UserID>
 
-	/**
-	 * ID сообщества, в котором бот будет работать
-	 */
-	"home": "<GuildID>",
+# ID сообщества, в котором бот будет работать
+HOME=<GuildID>
 
-	/**
-	 * ID разработчика. Отображается в стартовом сообщении и пингуется в случае ошибки
-	 */
-	"developer": "<UserID>",
-
-	/**
-	 * Конфигурация для подключения к MySQL базе данных.
-	 * https://github.com/ForbesLindesay/sync-mysql#usage
-	 */
-	"mysql": {
-		"host": "<host>",
-		"user": "<user>",
-		"password": "<password>",
-		"charset": "utf8mb4",
-		"database": "<database>"
-	}
-}
+# Токен бота
+TOKEN=<TOKEN>
 ```

@@ -48,7 +48,7 @@ module.exports = {
 
 		client.on('messageCreate', async msg => {
 			if(msg.channel.type == 'DM') return;
-			if(msg.channel.guild.id != config.home) return;
+			if(msg.channel.guild.id != process.env.HOME) return;
 
 			await this.call(msg);
 		});

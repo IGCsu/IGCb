@@ -22,8 +22,8 @@ module.exports = (e, name, noshutdown) => {
 		text += ' Модуль отключён.';
 	}
 
-	const mention = config.developer
-		? '<@' + config.developer + '> '
+	const mention = process.env.DEVELOPER
+		? '<@' + process.env.DEVELOPER + '> '
 		: '<@&920407448697860106> ';
 
 	channel.send({ content: mention + text + '```' + e.stack + '```' });

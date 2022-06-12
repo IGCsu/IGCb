@@ -118,7 +118,7 @@ module.exports = {
 	 */
 	update : async function(before, after){
 		const state = after.channel ? after : before;
-		if(state.guild.id != config.home) return;
+		if(state.guild.id != process.env.HOME) return;
 
 		const channel = {
 			before : before.channel ? before.channel : { name : 'X' },

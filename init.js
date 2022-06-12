@@ -41,10 +41,9 @@ const definitionLocales = () => {
 
 module.exports = async () => {
 
-	console.timeEnd('Сlient login');
 	console.log('Start init.js');
 
-	global.guild = await client.guilds.fetch(config.home);
+	global.guild = await client.guilds.fetch(process.env.HOME);
 	console.log('Selected guild "' + guild.name + '"');
 
 	console.log('Loading locales:');
@@ -82,8 +81,8 @@ module.exports = async () => {
 
 	if(!debugAllowModules.length){
 		console.time('Send start bot');
-		const author = config.developer
-			? '<@' + config.developer + '>'
+		const author = process.env.DEVELOPER
+			? '<@' + process.env.DEVELOPER + '>'
 			: process.env.USERNAME ?? 'Host';
 		log.initText = log.initText.replace(/.\/commands\//gi, './');
 		let embed = new Discord.MessageEmbed()
