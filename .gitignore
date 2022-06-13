@@ -2,4 +2,5 @@
 /package-lock.json
 /.vs
 /*.bat
+/.idea
 /.env

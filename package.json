@@ -16,7 +16,6 @@
     "sync-mysql": "^3.0.1",
     "transliteration": "^2.2.0"
   },
-  "devDependencies": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/BVN4/IGCbV2.git"
