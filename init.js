@@ -45,7 +45,7 @@ module.exports = async () => {
 
 	console.log('Start init.js');
 
-	global.guild = await client.guilds.fetch(process.env.HOME);
+	global.guild = await client.guilds.fetch('433242520034738186');
 	console.log('Selected guild "' + guild.name + '"');
 
 	console.log('Loading locales:');

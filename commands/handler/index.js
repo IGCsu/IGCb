@@ -47,8 +47,8 @@ module.exports = {
 		this.allowedChannelsFunctions = allowedChannelsFunctions;
 
 		client.on('messageCreate', async msg => {
-			if(msg.channel.type == 'DM') return;
-			if(msg.channel.guild.id != process.env.HOME) return;
+			if(msg.channel.type === 'DM') return;
+			if(msg.channel.guild.id !== guild.id) return;
 
 			await this.call(msg);
 		});

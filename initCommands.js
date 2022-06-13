@@ -136,7 +136,7 @@ const getTimePerformance = timeStart => {
  * Отправляет запрос к API с добавлением контекстных и слеш команд
  */
 const applicationGuildCommands = () => {
-	const route = Routes.applicationGuildCommands(client.user.id, process.env.HOME);
+	const route = Routes.applicationGuildCommands(client.user.id, guild.id);
 	new REST({ version: '9' }).setToken(process.env.TOKEN).put(route, {
 		body: commands
 	});

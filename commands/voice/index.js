@@ -118,7 +118,7 @@ module.exports = {
 	 */
 	update : async function(before, after){
 		const state = after.channel ? after : before;
-		if(state.guild.id != process.env.HOME) return;
+		if(state.guild.id !== guild.id) return;
 
 		const channel = {
 			before : before.channel ? before.channel : { name : 'X' },
@@ -127,15 +127,15 @@ module.exports = {
 
 		const user = member2name(state.member, 1, 1);
 
-		if(channel.before.id == channel.after.id) return;
+		if(channel.before.id === channel.after.id) return;
 
 		log.info(user, 'voiceState', channel.before.name + ' => ' + channel.after.name);
 
 		if(state.member.user.bot) return; // проверка на бота
 
-		if(channel.after.id == this.channelCreate.id) this.create(after);
+		if(channel.after.id === this.channelCreate.id) this.create(after);
 
-		if(!before.channel || channel.before.id == this.channelCreate.id || before.channel.members.filter(m => !m.user.bot).size) return;
+		if(!before.channel || channel.before.id === this.channelCreate.id || before.channel.members.filter(m => !m.user.bot).size) return;
 
 		this.delete(before.channel, user);
 	},
