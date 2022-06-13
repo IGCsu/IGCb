@@ -98,7 +98,7 @@ module.exports = {
 		try{
 			if(command.active) await command.message(msg);
 		}catch(e){
-			const active = errorHandler(e, command.name, true);
+			const active = errorHandler(e, command.name, false);
 			if(!active) delete this.commands[command.name];
 		}
 	},
@@ -139,7 +139,7 @@ module.exports = {
 			try{
 				await this.functions[name].call(msg);
 			}catch(e){
-				const active = errorHandler(e, 'handler/func/' + name, true);
+				const active = errorHandler(e, 'handler/func/' + name, false);
 				if(!active) this.shutdownFunction(name);
 			}
 

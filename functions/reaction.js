@@ -1,5 +1,9 @@
-module.exports = {
+global.reaction = {
 
+	/**
+	 * Список эмодзи
+	 * @type {Object}
+	 */
 	emoji : {
 		success : '<:done:905609029282304051>',
 		error : '<:error:905609067106553886>',
@@ -14,6 +18,10 @@ module.exports = {
 		Sg0 : guild.emojis.cache.get('499316230172442625'),
 	},
 
+	/**
+	 * Список цветов
+	 * @type {Object}
+	 */
 	color : {
 		success : 0x43b581,
 		warning: 0xfaa61a,

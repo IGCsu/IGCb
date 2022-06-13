@@ -1,7 +1,10 @@
 /**
  * Полифил функции sleep()
  *
- * @param  {Number}  ms Время в ms
+ * @example
+ * await sleep(2000); // Код будет остановлен на 2 секунды
+ *
+ * @param {Number} ms Время в ms
  * @return {Promise}
  */
-module.exports = ms => new Promise(resolve => setTimeout(resolve, ms));
+global.sleep = ms => new Promise(resolve => setTimeout(resolve, ms));

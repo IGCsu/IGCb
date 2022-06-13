@@ -19,7 +19,7 @@ const definitionFunctions = () => {
 	fs.readdirSync('./functions/').forEach(file => {
 		const path = './functions/' + file;
 		console.time(path);
-		global[file.split('.')[0]] = require(path);
+		require(path);
 		console.timeEnd(path);
 	});
 }
@@ -75,7 +75,7 @@ module.exports = async () => {
 		try{
 			await commands[name][int.action](int);
 		}catch(e){
-			errorHandler(e, name);
+			errorHandler(e, name, true);
 		}
 	});
 	console.timeEnd('Event interactionCreate');

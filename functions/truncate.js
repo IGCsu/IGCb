@@ -1,12 +1,10 @@
 /** 
- * Функция для динамического усечения строк по максимальной длине
+ * Усечение строки по максимальной длине
  * 
  * @param {String} str Строка для сокращения
  * @param {Number} maxlength Максимальная длина
- * 
+ * @return {String}
  */
-
-module.exports = (str, maxlength) => {
-	return (str.length > maxlength) ? 
-		str.slice(0, maxlength - 1) + '…' : str;
+global.truncate = (str, maxlength) => {
+	return str.length > maxlength ? str.slice(0, maxlength - 1) + '…' : str;
 }

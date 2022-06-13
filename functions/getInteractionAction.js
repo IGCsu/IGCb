@@ -10,19 +10,18 @@ const targetType = {
 
 const componentType = {
 	'BUTTON': 'button',
-	'SELECT_MENU': 'selectMenu',
-	'TEXT_INPUT': 'textInput',
+	'SELECT_MENU': 'selectMenu'
 };
 
 /**
- * Возвращает название функции для обработки данной Interaction
+ * Возвращает название функции для обработки данной интерации
  *
- * @param  {Interaction} int Interaction
- * @return {String}
+ * @param {AutocompleteInteraction|ModalSubmitInteraction|UserContextMenuInteraction|MessageContextMenuInteraction|ButtonInteraction|SelectMenuInteraction} int Объект интерации
+ * @return {String} Название входной функции
  */
-module.exports = int => {
+global.getInteractionAction = (int) => {
 
-	if(int.type == 'APPLICATION_COMMAND'){
+	if(int.type === 'APPLICATION_COMMAND'){
 
 		if(int.targetId === undefined){
 			return 'slash';
@@ -30,10 +29,14 @@ module.exports = int => {
 			return targetType[int.targetType];
 		}
 
-	}else if(int.type == 'MESSAGE_COMPONENT'){
+	}else if(int.type === 'MESSAGE_COMPONENT'){
+
 		return componentType[int.componentType];
+
 	}else{
+
 		return type[int.type];
+
 	}
 
-};
+}

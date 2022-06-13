@@ -1,13 +1,16 @@
 /**
  * Формирует дату
  *
- * @param  {Date|String|Boolean} date Объект или метка времени. Если false или undefined - устанавливает текущее время
- * @param  {Boolean}             time Если true - добавляет к результату время
+ * @param {Date|String|Number|Boolean} date=Date Объект или метка времени. Если false или undefined - устанавливает текущее время
+ * @param {Boolean} time Если true - добавляет к результату время
  * @return {String}
  */
-module.exports = (date, time) => {
+global.formatDate = (date, time) => {
+
 	if(!date) date = new Date();
-	if(typeof date != 'object') date = new Date(date);
+
+	if(typeof date == 'string' || typeof date == 'number') date = new Date(date);
+
 	let r = '';
 
 	r += date.getFullYear();
@@ -27,4 +30,4 @@ module.exports = (date, time) => {
 	}
 
 	return r;
-};
+}

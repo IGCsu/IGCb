@@ -1,7 +1,7 @@
 /**
  * Возвращает коэффициент схожести двух строк
- * @param  {String} str  Исходная строка
- * @param  {String} find Искомый текст
+ * @param {String} str Исходная строка
+ * @param {String} find Искомый текст
  * @return {Number}
  */
 const getStringSimilarityCoeff = (str, find) => {
@@ -13,19 +13,19 @@ const getStringSimilarityCoeff = (str, find) => {
 	if(str.endsWith(find)) coeff += 0.2 * find.length / str.length;
 
 	return coeff;
-};
+}
 
 /**
  * Используется для сортировки
  * Сравнивает на схожесть 3 строки и выдаёт разницу в коэффициенте
  *
- * @param  {String} a    Первая строка
- * @param  {String} b    Вторая строка
- * @param  {String} find Искомый текст
+ * @param {String} a Первая строка
+ * @param {String} b Вторая строка
+ * @param {String} find Искомый текст
  * @return {Number}
  */
-module.exports = (a, b, find) => {
+global.getStringSimilarityDiff = (a, b, find) => {
 	find = find.toLowerCase();
 
 	return getStringSimilarityCoeff(b, find) - getStringSimilarityCoeff(a, find);
-};
+}

@@ -1,13 +1,13 @@
 /**
  * Формирует имя участника гильдии
  *
- * @param  {GuildMember} m   Объект участника гильдии
- * @param  {Boolean}     dis Если true - добавляет к нику дискриминатор
- * @param  {Boolean}     id  Если true - добавляет к результату ID
- * @return {String}
+ * @param {GuildMember} m Объект участника гильдии
+ * @param {Boolean} [dis=false] Если true - добавляет к нику дискриминатор
+ * @param {Boolean} [id=false] Если true - добавляет к результату ID
+ * @return {String} Имя участника
  */
-module.exports = (m, dis, id) => {
-	let text = m.displayName ?? m.nick ?? m.nickname ?? m.user.username;
+global.member2name = (m, dis, id) => {
+	let text = m.displayName ?? m.nickname ?? m.user.username;
 
 	if(dis) text += '#' + m.user.discriminator;
 
@@ -17,4 +17,4 @@ module.exports = (m, dis, id) => {
 	}
 
 	return text;
-};
+}
