@@ -3,7 +3,7 @@ global.client = new Discord.Client({
     intents: new Discord.Intents(46847)
 });
 
-console.log('Start bot.js');
+console.log('Start index.js');
 
 global.DB = new (require('sync-mysql'))({
     host: process.env.CLEARDB_HOST,
