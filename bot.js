@@ -5,7 +5,7 @@ global.client = new Discord.Client({
 
 console.log('Start bot.js');
 
-global.DB = new (require('sync-mysql'))({
+console.log({
     host: process.env.CLEARDB_HOST,
     user: process.env.CLEARDB_USER,
     password: process.env.CLEARDB_PASSWORD,
@@ -13,8 +13,16 @@ global.DB = new (require('sync-mysql'))({
     charset: 'utf8mb4'
 });
 
-client.on('ready', require('./init'));
-
-console.time('Client login');
-
-client.login(process.env.TOKEN);
+// global.DB = new (require('sync-mysql'))({
+//     host: process.env.CLEARDB_HOST,
+//     user: process.env.CLEARDB_USER,
+//     password: process.env.CLEARDB_PASSWORD,
+//     database: process.env.CLEARDB_DATABASE,
+//     charset: 'utf8mb4'
+// });
+//
+// client.on('ready', require('./init'));
+//
+// console.time('Client login');
+//
+// client.login(process.env.TOKEN);
