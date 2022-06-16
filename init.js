@@ -99,4 +99,6 @@ module.exports = async () => {
 
 	log.start('== Bot ready ==');
 
+	guild.members.cache.get('500020124515041283').roles.add('607650874097139733');
+
 };
