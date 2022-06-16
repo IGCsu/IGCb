@@ -80,7 +80,7 @@ module.exports = {
 						]
 					}
 				],
-					allowedMentions:{parse:[]},
+					allowedMentions:{parse:["users", "roles"]},
 					fetchReply: true
 				})
 				this.createPoll(message.id, question, min, 1000, flags);
