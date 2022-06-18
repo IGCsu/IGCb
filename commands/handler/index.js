@@ -62,9 +62,9 @@ module.exports = {
 	 * @return {Boolean}
 	 */
 	siteStatusCheck: async function(){
-		const response = await fetch('https://igc.su', { redirect: 'manual' });
+		const response = await fetch(constants.SITE_LINK, { redirect: 'manual' });
 
-		return this.siteStatus = response.status == '200' ? true : false;
+		return this.siteStatus = response.status === 200;
 	},
 
 	/**

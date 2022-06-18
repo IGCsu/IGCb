@@ -23,7 +23,7 @@ module.exports = {
 
 		return result.status
 			? { ephemeral : false, content : 'Никнейм исправлен `' + result.name + '` => `' + result.fixed + '`' }
-			: { ephemeral : true, content : `Никнейм пользователя ${member.user} корректен`, allowedMentions : { parse: [] }};
+			: { ephemeral : true, content : `Никнейм пользователя ${member.user} корректен`, allowedMentions : constants.AM_NONE};
 	},
 
 

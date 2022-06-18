@@ -38,7 +38,7 @@ module.exports = {
 			});
 
 		toggleRole(this.role, member, int.member).then(result => {
-			int.reply({ content : reaction.emoji.success + ' ' + result, allowedMentions: {parse: []}});
+			int.reply({ content : reaction.emoji.success + ' ' + result, allowedMentions: constants.AM_NONE});
 		}).catch(result => {
 			int.reply({ content : reaction.emoji.error + ' ' + result, ephemeral : true});
 		});

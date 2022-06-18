@@ -65,27 +65,27 @@ module.exports = {
 		if(!role) {
 			if (permission && create){
 			role = (await this.create(member, int.options.get('role').value, 45)).role
-			await int.reply({content: reaction.emoji.success + ' Роль <@&' + role.id + '> создана', allowed_mentions: { "parse": [] }})
+			await int.reply({content: reaction.emoji.success + ' Роль <@&' + role.id + '> создана', allowed_mentions: constants.AM_NONE})
 			} else {
-			return await int.reply({content: reaction.emoji.error + ' ' + localize(int.locale, 'Role not found'), allowedMentions: { "parse": [] }, ephemeral: true})
+			return await int.reply({content: reaction.emoji.error + ' ' + localize(int.locale, 'Role not found'), allowedMentions: constants.AM_NONE, ephemeral: true})
 			}
 		}
 
 
 		if(!members || !permission){
 			toggleRole(role, member, int.member).then(result => {
-				int.reply({ content: reaction.emoji.success + ' ' + result, allowedMentions: {parse: []}});
+				int.reply({ content: reaction.emoji.success + ' ' + result, allowedMentions: constants.AM_NONE});
 			}).catch(result => {
 				int.reply({ content: reaction.emoji.error + ' ' + result, ephemeral: true});
 			});
 		}else{
-			if(!int.replied) await int.reply({ content: 'Запускаю выдачу ролей', allowedMentions: { parse: [] } });
+			if(!int.replied) await int.reply({ content: 'Запускаю выдачу ролей', allowedMentions: constants.AM_NONE });
 
 			members.forEach(user => {
 				toggleRole(role, user, member).then(result => {
-					int.followUp({ content: reaction.emoji.success + ' ' + result, allowedMentions: {parse: []} });
+					int.followUp({ content: reaction.emoji.success + ' ' + result, allowedMentions: constants.AM_NONE });
 				}).catch(result => {
-					int.followUp({ content: reaction.emoji.error + ' ' + result, allowedMentions: {parse: []}, ephemeral : true});
+					int.followUp({ content: reaction.emoji.error + ' ' + result, allowedMentions: constants.AM_NONE, ephemeral : true});
 				});
 			});
 		}

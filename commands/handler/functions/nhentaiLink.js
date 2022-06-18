@@ -24,9 +24,7 @@ module.exports = {
 
 		await msg.channel.send({
 			content: msg.author.toString() + ': https://nhentai.net/g/' + msg.content + '/',
-			allowedMentions: {
-				parse: []
-			},
+			allowedMentions: constants.AM_NONE,
 			reply: {
 				messageReference: msg.reference?.messageId,
 				failIfNotExists: false
