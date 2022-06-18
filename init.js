@@ -54,6 +54,18 @@ module.exports = async () => {
 	console.log('Loading functions:');
 	await definitionFunctions();
 
+	console.time('Events unhandledRejection & uncaughtException');
+	process
+		.on('unhandledRejection', (reason, p) => {
+			errorHandler(reason);
+			process.exit(1);
+		})
+		.on('uncaughtException', err => {
+			errorHandler(err);
+			process.exit(1);
+		});
+	console.timeEnd('Event interactionCreate');
+
 	global.hash = getRandomString(32);
 
 	console.log('Loading commands:');
@@ -98,7 +110,5 @@ module.exports = async () => {
 
 
 	log.start('== Bot ready ==');
-
-	//guild.members.cache.get('500020124515041283').roles.remove('607650874097139733');
 
 };
