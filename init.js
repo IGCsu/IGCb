@@ -2,6 +2,7 @@ const initConstants = require('./init/constants.js');
 const initCommands = require('./init/commands.js');
 const initLocales = require('./init/locales.js');
 const initFunctions = require('./init/functions.js');
+const initInteractionCreate = require('./init/interactionCreate.js');
 const initGuild = require('./init/guild.js');
 const initGlobalErrorHandler = require('./init/globalErrorHandler.js');
 const initSessionId = require('./init/sessionId.js');
@@ -32,6 +33,7 @@ module.exports = async () => {
 	await initSessionId();
 	await initCommands();
 	await initSetActivity();
+	await initInteractionCreate();
 	await initStartMessage();
 
 	log.start('== Bot ready ==');

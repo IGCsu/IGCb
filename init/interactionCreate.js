@@ -4,6 +4,7 @@
 module.exports = async () => {
     console.time('Event interactionCreate');
     client.on('interactionCreate', async int => {
+        console.log(int)
         const name = int.commandName ?? int.customId.split('|')[0];
 
         if(!commands[name] || !commands[name].active) return;
