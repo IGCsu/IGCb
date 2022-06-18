@@ -37,11 +37,11 @@ module.exports = {
 				ephemeral : true
 			});
 
-		const result = toggleRole(this.role, member, int.member);
-
-		if(!result[0]) return int.reply({ content : reaction.emoji.error + ' ' + result[1], ephemeral : true});
-
-		return int.reply({ content : reaction.emoji.success + ' ' + result[1], allowedMentions: {parse: []}});
+		toggleRole(this.role, member, int.member).then(result => {
+			int.reply({ content : reaction.emoji.success + ' ' + result, allowedMentions: {parse: []}});
+		}).catch(result => {
+			int.reply({ content : reaction.emoji.error + ' ' + result, ephemeral : true});
+		});
 	},
 
 

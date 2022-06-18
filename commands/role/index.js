@@ -46,14 +46,14 @@ module.exports = {
 			const timeEnd = process.hrtime(timeStart);
 			const timePerf = (timeEnd[0]*1000) + (timeEnd[1] / 1000000);
 			console.warn('Autocomplete Interaction Failed: ' + timePerf + 'ms' + '\n' + e)
-		};
+		}
 	},
 
 	slash : async function(int){
 		const member = int.member;
 		const permission = this.permission(member)
 
-		if(int.options.get('role').value == 'showAll')
+		if(int.options.get('role').value === 'showAll')
 			return await int.reply({embeds:[this.help()]});
 
 		let role = int.guild.roles.cache.get(int.options.get('role').value);
@@ -68,28 +68,27 @@ module.exports = {
 			await int.reply({content: reaction.emoji.success + ' Роль <@&' + role.id + '> создана', allowed_mentions: { "parse": [] }})
 			} else {
 			return await int.reply({content: reaction.emoji.error + ' ' + localize(int.locale, 'Role not found'), allowedMentions: { "parse": [] }, ephemeral: true})
-			};
-		};
+			}
+		}
 
-		let action = { val : 'add', text : 'выдана' };
-		if (member.roles.cache.get(role.id))
-			action = { val : 'remove', text : 'убрана у' };
-		let text;
-		if (!(members && permission)){
-			member.roles[action.val](role.id, 'По требованию ' + member2name(member, 1));
-			text = reaction.emoji.success + ' Роль <@&' + role.id + '> ' + action.text + ' <@' + member.id + '>';
-		} else {text = 'Запускаю выдачу ролей'};
 
-		if (!int.replied) await int.reply({content: text, allowedMentions: { "parse": [] }});
-
-		if (members && permission) members.forEach(user => {
-			let data = toggleRole(role, user, member);
-			const emj = data[0] ? reaction.emoji.success : reaction.emoji.error;
-			let payload = { content: emj + ' ' + data[1], allowedMentions: { parse: [] },
-				ephemeral: !data[0]
-			};
-			int.followUp(payload);
+		if(!members || !permission){
+			toggleRole(role, member, int.member).then(result => {
+				int.reply({ content: reaction.emoji.success + ' ' + result, allowedMentions: {parse: []}});
+			}).catch(result => {
+				int.reply({ content: reaction.emoji.error + ' ' + result, ephemeral: true});
 			});
+		}else{
+			int.reply({ content: 'Запускаю выдачу ролей', allowedMentions: { parse: [] } });
+
+			members.forEach(user => {
+				toggleRole(role, user, member).then(result => {
+					int.followUp({ content: reaction.emoji.success + ' ' + result, allowedMentions: {parse: []} });
+				}).catch(result => {
+					int.followUp({ content: reaction.emoji.error + ' ' + result, allowedMentions: {parse: []}, ephemeral : true});
+				});
+			});
+		}
 	},
 
 	/**
