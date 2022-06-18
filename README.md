@@ -20,7 +20,8 @@
 - `/init/locales.js` - подгрузка всех файлов локализации из `/locales/`.
 - `/init/functions.js` - определение всех функций из `/functions/`.
 - `/init/guild.js` - определение основной гильдии.
-- `/init/globalErrorHandler.js` - Инициализация отлова ошибок.
+- `/init/globalErrorHandler.js` - инициализация отлова ошибок.
+- `/init/interactionCreate.js` - инициализация прослушки взаимодействий.
 - `/init/sessionId.js` - определение ID сессии бота.
 - `/init/setActivity.js` - установка статуса бота.
 - `/init/startMessage.js` - отправка стартового сообщения.
