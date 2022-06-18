@@ -79,7 +79,7 @@ module.exports = {
 				int.reply({ content: reaction.emoji.error + ' ' + result, ephemeral: true});
 			});
 		}else{
-			int.reply({ content: 'Запускаю выдачу ролей', allowedMentions: { parse: [] } });
+			if(!int.replied) await int.reply({ content: 'Запускаю выдачу ролей', allowedMentions: { parse: [] } });
 
 			members.forEach(user => {
 				toggleRole(role, user, member).then(result => {
