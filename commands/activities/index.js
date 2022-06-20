@@ -73,6 +73,7 @@ module.exports = {
 	},
 
 	resolveCache: async function(rawCache){
+		rawCache = JSON.parse(rawCache);
 		let choices = [];
 		console.log('Resolving activities cache')
 		for (const property in rawCache) {
