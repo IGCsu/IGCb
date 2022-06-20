@@ -13,8 +13,8 @@ module.exports = {
 	slashOptions : slashOptions,
 
 	init : async function(){
-		this.activitiesCache = await resolveCache((await fetch('https://derpystuff.gitlab.io/webstorage/discord/activities/ids.json')).content);
-		this.activitiesCacheLastUpdate = new Date().getTime();
+		await this.updateActivities();
+
 		return this;
 	},
 
@@ -31,8 +31,7 @@ module.exports = {
 		const channel = int.options.get('channel')?.value ?? int.member.voice.channelId;
 		const activityId = int.options.get('activity').value;
 
-		const activity = this.slashOptions.activity.choices[activityId];
-		const activityName = activity[lang] ?? activity.ru
+		const activity = this.activitiesCache.find(a => a.value === activityId);
 
 		if(!channel)
 			return int.reply({
@@ -49,7 +48,7 @@ module.exports = {
 		});
 
 		await int.reply({
-			content : 'Приглашение сгенерированно, нажмите на кнопку ниже чтобы присоедениться к ' + activityName,
+			content : 'Приглашение сгенерированно, нажмите на кнопку ниже чтобы присоедениться к ' + activity.name,
 			components : [{
 				type : 1,
 				components : [{
@@ -64,23 +63,25 @@ module.exports = {
 	},
 
 	autocomplete: async function(int){
-		await int.respond(this.activitiesCache)
+		await int.respond(this.activitiesCache);
 
-		if(this.activitiesCacheLastUpdate + 1000*60*60 < new Date().getTime()){
-			this.activitiesCache = await resolveCache((await fetch('https://derpystuff.gitlab.io/webstorage/discord/activities/ids.json')).content);
-			this.activitiesCacheLastUpdate = new Date().getTime();
+		if(this.activitiesCacheLastUpdate + 1000*60*60 < Date.now()){
+			await this.updateActivities();
 		}
 	},
 
-	resolveCache: async function(rawCache){
-		rawCache = JSON.parse(rawCache);
-		let choices = [];
-		console.log('Resolving activities cache')
-		for (const property in rawCache) {
-			choices.push({name: property, value: rawCache[property]})
-		};
-		console.log('Activities cache resolved')
-		return choices;
+	/**
+	 * Обновление списка активностей
+	 */
+	updateActivities: async function(){
+		const data = await (await fetch('https://derpystuff.gitlab.io/webstorage/discord/activities/ids.json')).json();
+
+		this.activitiesCache = [];
+		this.activitiesCacheLastUpdate = Date.now();
+
+		for(const key in data){
+			this.activitiesCache.push({ name: key, value: data[key] });
+		}
 	}
 
 };
