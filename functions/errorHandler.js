@@ -12,7 +12,7 @@ let lastError = undefined;
  */
 global.errorHandler = async (e, name, shutdown) => {
 
-	let text = name ? 'Ошибка в `/' + name + '.js`!' : 'Категорическая ошибка!';
+	let text = name ? 'Ошибка в `/' + name + '.js`!' : 'Фатальная ошибка!';
 	let active = true;
 
 	if(lastError === e.stack){
@@ -25,7 +25,7 @@ global.errorHandler = async (e, name, shutdown) => {
 		? '<@' + process.env.DEVELOPER + '> '
 		: '<@&920407448697860106> ';
 
-	channel.send({ content: mention + text + '```' + e.stack + '```' }).catch(console.error);
+	await channel.send({ content: mention + text + '```' + e.stack + '```' });
 
 	lastError = e.stack;
 
