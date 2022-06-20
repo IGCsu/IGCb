@@ -35,8 +35,11 @@ module.exports = {
 		const activityName = activity[lang] ?? activity.ru
 
 		if(!channel)
-			return await int.reply({content: reaction.emoji.error + ' ' +
-				localize(int, 'You are not connected to a voice channel and did not specify a channel'), ephemeral: true})
+			return int.reply({
+				content: reaction.emoji.error + ' ' +
+					localize(int, 'You are not connected to a voice channel and did not specify a channel'),
+				ephemeral: true
+			});
 
 		const invite = await client.api.channels(channel).invites.post({
 			data : {

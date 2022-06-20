@@ -76,11 +76,11 @@ module.exports = {
 
 
 	/**
-	* Получение разницы меж датами
-	*
-	* @param  Number difference Разница во времени
-	* @return String
-	*/
+	 * Получение разницы меж датами
+	 *
+	 * @return String
+	 * @param difference
+	 */
 	getDateFromNow : function(difference){
 		difference = difference / 1000;
 
@@ -90,7 +90,7 @@ module.exports = {
 		const month = +(days/30).toFixed(1);
 		const year = +(days/365).toFixed(1);
 
-		if(days == 0){
+		if(days === 0){
 			if(hours > 0) return hours + ' ' + num2str(hours, this.dateText.hours) + ' назад';
 			if(minutes > 0) return minutes + ' ' + num2str(minutes, this.dateText.minutes) + ' назад';
 			return 'меньше минуты назад...';

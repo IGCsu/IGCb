@@ -20,7 +20,7 @@ module.exports = {
 	call: async function(msg){
 		if(msg.author.id != client.user.id) return;
 		if(msg.embeds[0]?.title != 'Бот запущен') return;
-		if(msg.embeds[0]?.footer?.text == hash) return;
+		if(msg.embeds[0]?.footer?.text == sessionId) return;
 
 		await msg.reply({ content : 'Прекращена работа бота-дубликата у ' + (process.env.USERNAME ?? 'Host') });
 

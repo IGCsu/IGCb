@@ -12,7 +12,7 @@ let lastError = undefined;
  */
 global.errorHandler = async (e, name, shutdown) => {
 
-	let text = 'Ошибка в `/' + name + '.js`!';
+	let text = name ? 'Ошибка в `/' + name + '.js`!' : 'Категорическая ошибка!';
 	let active = true;
 
 	if(lastError === e.stack){
