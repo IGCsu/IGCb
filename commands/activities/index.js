@@ -1,4 +1,5 @@
 const slashOptions = require('./slashOptions.json');
+const fetch = require('node-fetch');
 const { title, description } = require('./about.json');
 
 module.exports = {
@@ -11,7 +12,11 @@ module.exports = {
 	description : description,
 	slashOptions : slashOptions,
 
-	init : function(){ return this; },
+	init : async function(){
+		this.activitiesCache = await resolveCache((await fetch('https://derpystuff.gitlab.io/webstorage/discord/activities/ids.json')).content);
+		this.activitiesCacheLastUpdate = new Date().getTime();
+		return this;
+	},
 
 
 	/**
@@ -54,5 +59,24 @@ module.exports = {
 		});
 
 	},
+
+	autocomplete: async function(int){
+		await int.respond(this.activitiesCache)
+
+		if(this.activitiesCacheLastUpdate + 1000*60*60 < new Date().getTime()){
+			this.activitiesCache = await resolveCache((await fetch('https://derpystuff.gitlab.io/webstorage/discord/activities/ids.json')).content);
+			this.activitiesCacheLastUpdate = new Date().getTime();
+		}
+	},
+
+	resolveCache: async function(rawCache){
+		let choices = [];
+		console.log('Resolving activities cache')
+		for (const property in rawCache) {
+			choices.push({name: property, value: rawCache[property]})
+		};
+		console.log('Activities cache resolved')
+		return choices;
+	}
 
 };
