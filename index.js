@@ -1,3 +1,4 @@
+console.time('Client initialized in');
 global.Discord = require('discord.js');
 global.client = new Discord.Client({
     intents: new Discord.Intents(46847)
