@@ -1,6 +1,7 @@
 const slashOptions = require('./slashOptions.json');
 const { title, description } = require('./about.json');
 const { commands } = require('../handler');
+const fetch = require("node-fetch");
 
 module.exports = {
 
@@ -13,14 +14,18 @@ module.exports = {
 	slashOptions : slashOptions,
 
 
-	init : function(path){
+	init : async function(path){
 		this.rulesCache = {};
-		if(commands.handler.functions.rule.active){
-			for(let rule in commands.handler.functions.rule.rules){
+		try{
+			this.rules = await (await fetch(constants.SITE_LINK + '/rules?j=true')).json();
+			for(let rule in this.rules){
 				if(!rule.startsWith('a'))
-					this.rulesCache[rule] = commands.handler.functions.rule.rules[rule];
+					this.rulesCache[rule] = this.rules[rule];
 			}
+		}catch(e){
+			this.active = false;
 		}
+
 		return this;
 	},
 
@@ -31,8 +36,9 @@ module.exports = {
 	 * @param {CommandInteraction|UserContextMenuInteraction} int    Команда пользователя
 	 * @param {GuildMember|Number}                            member Объект или ID пользователя
 	 * @param {String}                                        string Строка для парсинга врпемени
+	 * @param {String}                                        reason Причина
 	 */
-	call : async function(int, member, string, reason= ''){
+	call : async function(int, member, string, reason){
 		if(!this.permission(int.member))
 			return int.reply({
 				content : reaction.emoji.error + ' ' + localize(int.locale, 'You do not have enough rights to change the roles of other users'),
@@ -65,7 +71,7 @@ module.exports = {
 	slash : async function(int){
 		msg = '';
 		if (int.options.getString('reason') === 'SITE_OFFLINE')
-			msg = {contnet: 'Этот вариант не предусмотрен для выбора как причина мута, а всего лишь информирует о том, что бот не смог получить список всех правил.\nВпредь пожалуйста больше не выбирайте данный пункт', ephemeral: true} 
+			msg = { contnet: 'Этот вариант не предусмотрен для выбора как причина мута, а всего лишь информирует о том, что бот не смог получить список всех правил.\nВпредь пожалуйста больше не выбирайте данный пункт', ephemeral: true }
 		if (msg === '')
 			msg = await this.call(int, int.options.getMember('user'), int.options.getString('duration'), int.options.getString('reason') ?? '');
 		
@@ -79,7 +85,7 @@ module.exports = {
 	 */
 	autocomplete : async function(int){
 		const rawReason = int.options.getFocused();
-		let choises = [{name: rawReason, value: rawReason}];
+		let choises = [{ name: rawReason, value: rawReason }];
 		if(!this.rulesCache){
 			choises.push({name:'Неудалось сгенерировать подсказки', value:'SITE_OFFLINE'})
 			return await int.respond(choises);
@@ -92,15 +98,15 @@ module.exports = {
 			if(fullKeyMatch)
 				ruleReasons.push(fullKeyMatch);
 			if(partialKeyMatches)
-				ruleReasons.contact(partialKeyMatches);
+				ruleReasons.concat(partialKeyMatches);
 			if(partialValueMatchesKeys)
-				ruleReasons.contact(partialValueMatchesKeys);
+				ruleReasons.concat(partialValueMatchesKeys);
 		}
 
 		const reasons = new Set(ruleReasons);
-		for(reason of reasons){
-			choises.push({name: reason + ': ' + this.ruleReasons[reason], value: reason})
-		};
+		for(let reason of reasons){
+			choises.push({ name: reason + ': ' + ruleReasons[reason], value: reason })
+		}
 	},
 
 	/**
@@ -111,6 +117,6 @@ module.exports = {
 	permission : member =>
 		member.roles.cache.has('916999822693789718') ||
 		member.roles.cache.has('613412133715312641') ||
-		member.id == '500020124515041283'
+		member.id === '500020124515041283'
 
 };
