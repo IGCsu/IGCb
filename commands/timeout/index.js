@@ -1,6 +1,5 @@
 const slashOptions = require('./slashOptions.json');
 const { title, description } = require('./about.json');
-const { commands } = require('../handler');
 const fetch = require("node-fetch");
 
 module.exports = {
@@ -14,7 +13,7 @@ module.exports = {
 	slashOptions : slashOptions,
 
 
-	init : async function(path){
+	init : async function(){
 		this.rulesCache = {};
 		try{
 			this.rules = await (await fetch(constants.SITE_LINK + '/rules?j=true')).json();
@@ -69,7 +68,7 @@ module.exports = {
 	 * @param {CommandInteraction} int Команда пользователя
 	 */
 	slash : async function(int){
-		msg = '';
+		let msg = '';
 		if (int.options.getString('reason') === 'SITE_OFFLINE')
 			msg = { contnet: 'Этот вариант не предусмотрен для выбора как причина мута, а всего лишь информирует о том, что бот не смог получить список всех правил.\nВпредь пожалуйста больше не выбирайте данный пункт', ephemeral: true }
 		if (msg === '')
@@ -85,28 +84,32 @@ module.exports = {
 	 */
 	autocomplete : async function(int){
 		const rawReason = int.options.getFocused();
-		let choises = [{ name: rawReason, value: rawReason }];
+		if(!rawReason) return
+		let choices = [{ name: rawReason, value: rawReason }];
 		if(!this.rulesCache){
-			choises.push({name:'Неудалось сгенерировать подсказки', value:'SITE_OFFLINE'})
-			return await int.respond(choises);
+			choices.push({name:'Неудалось сгенерировать подсказки', value:'SITE_OFFLINE'})
+			return await int.respond(choices);
 		}
 		let ruleReasons = [];
-		for(let subReason of rawReason.split(', ')){
-			const fullKeyMatch = this.rulesCache[subReason];
-			const partialKeyMatches = this.rulesCache.keys().filter(key => key.includes(subReason));
-			const partialValueMatchesKeys = this.rulesCache.keys().filter(key => this.rulesCache[key].includes(subReason));
-			if(fullKeyMatch)
-				ruleReasons.push(fullKeyMatch);
-			if(partialKeyMatches)
-				ruleReasons.concat(partialKeyMatches);
-			if(partialValueMatchesKeys)
-				ruleReasons.concat(partialValueMatchesKeys);
-		}
+
+		let subReason = rawReason.split(', ').at(-1);
+
+		const fullKeyMatch = this.rulesCache[subReason] ? subReason : undefined;
+		const partialKeyMatches = Object.keys(this.rulesCache).filter(key => key.includes(subReason));
+		const partialValueMatchesKeys = Object.keys(this.rulesCache).filter(key => this.rulesCache[key].toLowerCase().includes(subReason.toLowerCase()));
+		if(fullKeyMatch)
+			ruleReasons.push(fullKeyMatch);
+		if(partialKeyMatches)
+			ruleReasons = ruleReasons.concat(partialKeyMatches);
+		if(partialValueMatchesKeys)
+			ruleReasons = ruleReasons.concat(partialValueMatchesKeys);
+
 
 		const reasons = new Set(ruleReasons);
 		for(let reason of reasons){
-			choises.push({ name: reason + ': ' + ruleReasons[reason], value: reason })
+			choices.push({ name: reason + ': ' + this.rulesCache[reason], value: rawReason })
 		}
+		return await int.respond(choices);
 	},
 
 	/**
