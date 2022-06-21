@@ -15,7 +15,7 @@ module.exports = {
 
 	init: async function(){
 		try{
-			this.rules = await (await fetch('https://igc.su/rules?j=true')).json();
+			this.rules = await (await fetch(constants.SITE_LINK + '/rules?j=true')).json();
 		}catch(e){
 			this.active = false;
 		}
@@ -32,7 +32,7 @@ module.exports = {
 		if(!this.rules[msg.content]) return;
 
 		await msg.channel.send({
-			content: 'https://igc.su/rules?f=' + msg.content,
+			content: constants.SITE_LINK + '/rules?f=' + msg.content,
 			messageReference: msg.reference?.messageId
 		});
 	}

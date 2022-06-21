@@ -17,12 +17,12 @@ module.exports = {
 	init : function(){
 		client.on('guildMemberAdd', async member => await this.silent(member));
 		client.on('userUpdate', async (oldUser, newUser) => {
-			if(oldUser.username == newUser.username) return;
+			if(oldUser.username === newUser.username) return;
 			const member = await guild.members.fetch({ user : newUser });
 			if(member) await this.silent(member);
 		});
 		client.on('guildMemberUpdate', async (oldMember, newMember) => {
-			if(member2name(oldMember) == member2name(newMember)) return;
+			if(member2name(oldMember) === member2name(newMember)) return;
 			await this.silent(newMember);
 		});
 
@@ -39,7 +39,7 @@ module.exports = {
 	call : async function(nickname, member){
 		const fixed = this.fix(nickname, true);
 
-		if(fixed.status == 'error')
+		if(fixed.status === 'error')
 			return { error : reaction.emoji.error + ' ' + fixed.text };
 
 		try{
@@ -96,7 +96,7 @@ module.exports = {
 			return { status : true, fixed : fixed, name : name };
 		}catch(e){
 			console.warn(e);
-		};
+		}
 	},
 
 

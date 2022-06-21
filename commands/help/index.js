@@ -25,7 +25,7 @@ module.exports = {
 
 	init : async function(path){
 
-		const files = await fs.readdirSync('./helpTexts/');
+		const files = fs.readdirSync('./helpTexts/');
 		for(const file of files){
 			const timeStart = process.hrtime();
 
@@ -61,7 +61,7 @@ module.exports = {
 		let finded = [];
 
 		for(let name in commands){
-			if(commands[name].category == 'nsfw' && !perm) continue;
+			if(commands[name].category === 'nsfw' && !perm) continue;
 			if(command && name.indexOf(command) === -1) continue;
 
 			finded.push(commands[name]);
@@ -105,7 +105,7 @@ module.exports = {
 
 		for(let c in commands){
 			const category = commands[c].category ? commands[c].category : 'Остальные';
-			if(commands[c].category == 'nsfw') continue;
+			if(commands[c].category === 'nsfw') continue;
 
 			if(!help.hasOwnProperty(category)) help[category] = [];
 			help[category].push( this.getCommand(commands[c], lang) );
@@ -137,7 +137,7 @@ module.exports = {
 
 		const c = commands[name]; // command
 
-		if(c.category == 'nsfw' && !this.permission(int.member)) return 403;
+		if(c.category === 'nsfw' && !this.permission(int.member)) return 403;
 
 		const status = c.active
 			? reaction.emoji.success + ' Активен'
@@ -175,7 +175,7 @@ module.exports = {
 
 		return {
 			embeds: [embed],
-			ephemeral: c.category == 'nsfw'
+			ephemeral: c.category === 'nsfw'
 		};
 
 	},
@@ -223,8 +223,8 @@ module.exports = {
 
 		if(typeof options == 'number'){
 			let content = reaction.emoji.error + ' Неизвестная ошибка';
-			if(options == 404) content = reaction.emoji.error + ' Модуль "' + command + '" не найден';
-			if(options == 403) content = reaction.emoji.error + ' Модуль "' + command + '" не доступен';
+			if(options === 404) content = reaction.emoji.error + ' Модуль "' + command + '" не найден';
+			if(options === 403) content = reaction.emoji.error + ' Модуль "' + command + '" не доступен';
 			return await int.reply({
 				content: content,
 				ephemeral: true

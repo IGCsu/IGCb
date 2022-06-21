@@ -33,12 +33,12 @@ const addSlashCommand = c => {
 		description_localizations: getUpdatedLangs(c.description ?? c.title),
 		options: getSlashOptions(c.slashOptions)
 	});
-};
+}
 
 
 /**
  * Возвращает опции слеш-команды
- * @param  {Object} slashOptions Объект опций слеш-команды
+ * @param {Object} slashOptions Объект опций слеш-команды
  * @return {Array}
  */
 const getSlashOptions = slashOptions => {
@@ -61,7 +61,7 @@ const getSlashOptions = slashOptions => {
 		}
 
 		for(let i in slashOptions[name]){
-			if(i == 'description' || i == 'slashOptions' || i == 'choices') continue;
+			if(i === 'description' || i === 'slashOptions' || i === 'choices') continue;
 			data[i] = slashOptions[name][i];
 		}
 
@@ -71,12 +71,12 @@ const getSlashOptions = slashOptions => {
 
 	return options;
 
-};
+}
 
 
 /**
  * Возвращает селектор слеш-команды
- * @param  {Object} slashChoices Объект опций слеш-команды
+ * @param {Object} slashChoices Объект опций слеш-команды
  * @return {Array}
  */
 const getChoices = slashChoices => {
@@ -91,27 +91,27 @@ const getChoices = slashChoices => {
 	}
 
 	return choices;
-};
+}
 
 
 /**
  * Обновляет объект локализации.
  * Удаляет "en", заменяя его на "en-US" и "en-GB"
- * @param  {Object} oldData Объект с разными локализациями
+ * @param {Object} oldData Объект с разными локализациями
  * @return {Object}
  */
 const getUpdatedLangs = oldData => {
 	let newData = {};
 
 	for(let lang in oldData){
-		if(lang == 'en') continue;
+		if(lang === 'en') continue;
 		newData[lang] = oldData[lang];
 	}
 
 	if(oldData['en']) newData['en-GB'] = newData['en-US'] = oldData['en'];
 
 	return newData;
-};
+}
 
 
 /**
@@ -123,13 +123,13 @@ const addContextUserCommand = c => commands.push({ name: c.name, type: 2 });
 
 /**
  * Возвращает разницу во времени в ms
- * @param  {Number} timeStart Стартовая unixtime метка
+ * @param {[Number, Number]} timeStart Стартовая unixtime метка
  * @return {Number}
  */
 const getTimePerformance = timeStart => {
 	const timeEnd = process.hrtime(timeStart);
 	return (timeEnd[0]*1000) + (timeEnd[1] / 1000000);
-};
+}
 
 
 /**
@@ -154,13 +154,13 @@ const initMessageHandler = () => {
 
 
 /**
- * Возвращает команды бота
- * @param  {Array}  Массив модулей разрешённых к подключению.
- * @return {Object}
+ * Определяет модули бота
  */
-module.exports = async debugAllowModules => {
+module.exports = async () => {
 
-	const files = await fs.readdirSync('./commands/');
+	console.log('Loading commands:');
+
+	const files = fs.readdirSync('./commands/');
 	for(const name of files){
 
 		const path = './commands/' + name + '/index.js';
@@ -171,7 +171,7 @@ module.exports = async debugAllowModules => {
 
 		const timeStart = process.hrtime();
 
-		let command = require(path);
+		let command = require('.' + path);
 
 		if(command.active) command = await command.init(path);
 
@@ -190,5 +190,6 @@ module.exports = async debugAllowModules => {
 
 	initMessageHandler();
 
-	return list;
-};
+	global.commands = list;
+
+}

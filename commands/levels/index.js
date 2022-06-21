@@ -40,7 +40,7 @@ module.exports = {
 		for(let r = 0; r < this.roles.length; r++){
 			this.roles[r].pos = r;
 			this.roles[r].cache = guild.roles.cache.get(this.roles[r].id);
-			if(this.roles[r].id == '648762974277992448') continue;
+			if(this.roles[r].id === '648762974277992448') continue;
 			this.rolesIDs.push(this.roles[r].id);
 		}
 
@@ -70,8 +70,8 @@ module.exports = {
 		return {
 			embeds : [embed],
 			components: [{type:1, components: [
-				{ type: 2, style: 5, url: 'https://igc.su/levels', label: 'Таблица' , disabled: status},
-				{ type: 2, style: 5, url: 'https://igc.su/levels?id=' + user.id, label: 'Статистика пользователя' , disabled: status}
+				{ type: 2, style: 5, url: constants.SITE_LINK + '/levels', label: 'Таблица' , disabled: status},
+				{ type: 2, style: 5, url: constants.SITE_LINK + '/levels?id=' + user.id, label: 'Статистика пользователя' , disabled: status}
 			]}],
 		};
 

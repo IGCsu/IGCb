@@ -115,17 +115,17 @@ class UserLevels {
 	 * Обновляет роль пользователя в дискорде, если требуется
 	 */
 	updateRole(){
-		if(this.member.id == '256114365894230018') return;
+		if(this.member.id === '256114365894230018') return;
 
 		const role = this.getRole();
 
 		if(this.member.roles.cache.has(role.id)) return;
 
-		if(role.id != '648762974277992448')
+		if(role.id !== '648762974277992448')
 			this.member.roles.add(role.cache, 'По причине изменения уровня');
 
 		this.member.roles.cache.filter(r => this.#rolesIDs.includes(r.id)).each(r => {
-			if(r.id != role.id) this.member.roles.remove(r, 'По причине изменения уровня');
+			if(r.id !== role.id) this.member.roles.remove(r, 'По причине изменения уровня');
 		});
 
 		return this;
