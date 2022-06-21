@@ -43,7 +43,7 @@ module.exports = {
 
 		await int.reply({ embeds: [
 			new Discord.MessageEmbed()
-				.setTitle(reaction.emoji.success + ' ' + member.user.tag + ' Был замьючен | ' + reason)
+				.setTitle(reaction.emoji.success + ' ' + member.user.tag + ' Был замьючен')
 				.setColor(2075752)
 		]});
 		await member.timeout(duration, reason);
