@@ -23,6 +23,7 @@
 	"reason": {
 		"type": 3,
 		"required": false,
+		"autocomplete": true,
 		"description": {
 			"ru": "Причина таймаута. Будет видна в аудит логе и #некролог",
 			"en": "Reason for the timeout. It will be visible in the audit log and #некролог",
