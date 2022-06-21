@@ -53,10 +53,10 @@ module.exports = {
 			return int.reply({ content : localize(int.locale, 'Invalid duration provided'), ephemeral : true});
 		}
 		if(!duration || Math.floor(duration / 86400000) > 28) return int.reply({ content : localize(int.locale, 'Invalid duration provided'), ephemeral : true});
-		await member.timeout(duration, reason);
+		//await member.timeout(duration, reason);
 		return { embeds: [
 			new Discord.MessageEmbed()
-				.setTitle(reaction.emoji.success + ' ' + member.user.tag + ' Был замьючен')
+				.setTitle(reaction.emoji.success + ' ' + member.user.tag + ' Был замьючен | ' + reason)
 				.setColor(2075752)
 		]};
 		
