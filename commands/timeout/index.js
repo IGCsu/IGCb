@@ -1,5 +1,6 @@
 const slashOptions = require('./slashOptions.json');
 const { title, description } = require('./about.json');
+const fetch = require("node-fetch");
 
 module.exports = {
 
@@ -12,7 +13,18 @@ module.exports = {
 	slashOptions : slashOptions,
 
 
-	init : function(path){
+	init : async function(){
+		this.rulesCache = {};
+		try{
+			this.rules = await (await fetch(constants.SITE_LINK + '/rules?j=true')).json();
+			for(let rule in this.rules){
+				if(!rule.startsWith('a'))
+					this.rulesCache[rule] = this.rules[rule];
+			}
+		}catch(e){
+			this.active = false;
+		}
+
 		return this;
 	},
 
@@ -23,8 +35,9 @@ module.exports = {
 	 * @param {CommandInteraction|UserContextMenuInteraction} int    Команда пользователя
 	 * @param {GuildMember|Number}                            member Объект или ID пользователя
 	 * @param {String}                                        string Строка для парсинга врпемени
+	 * @param {String}                                        reason Причина
 	 */
-	call : async function(int, member, string, reason= ''){
+	call : async function(int, member, string, reason){
 		if(!this.permission(int.member))
 			return int.reply({
 				content : reaction.emoji.error + ' ' + localize(int.locale, 'You do not have enough rights to change the roles of other users'),
@@ -40,13 +53,13 @@ module.exports = {
 			return int.reply({ content : localize(int.locale, 'Invalid duration provided'), ephemeral : true});
 		}
 		if(!duration || Math.floor(duration / 86400000) > 28) return int.reply({ content : localize(int.locale, 'Invalid duration provided'), ephemeral : true});
-
-		await int.reply({ embeds: [
+		await member.timeout(duration, reason);
+		return { embeds: [
 			new Discord.MessageEmbed()
 				.setTitle(reaction.emoji.success + ' ' + member.user.tag + ' Был замьючен | ' + reason)
 				.setColor(2075752)
-		]});
-		await member.timeout(duration, reason);
+		]};
+		
 	},
 
 
@@ -55,7 +68,48 @@ module.exports = {
 	 * @param {CommandInteraction} int Команда пользователя
 	 */
 	slash : async function(int){
-		this.call(int, int.options.getMember('user'), int.options.getString('duration'), int.options.getString('reason') ?? '');
+		let msg = '';
+		if (int.options.getString('reason') === 'SITE_OFFLINE')
+			msg = { contnet: 'Этот вариант не предусмотрен для выбора как причина мута, а всего лишь информирует о том, что бот не смог получить список всех правил.\nВпредь пожалуйста больше не выбирайте данный пункт', ephemeral: true }
+		if (msg === '')
+			msg = await this.call(int, int.options.getMember('user'), int.options.getString('duration'), int.options.getString('reason') ?? '');
+		
+		await int.reply(msg);
+	},
+
+
+	/**
+	 * 
+	 * @param {AutocompleteInteraction} int 
+	 */
+	autocomplete : async function(int){
+		const rawReason = int.options.getFocused();
+		if(!rawReason) return
+		let choices = [{ name: rawReason, value: rawReason }];
+		if(!this.rulesCache){
+			choices.push({ name: localize(int.locale, 'Failed to generate suggestions'), value:'SITE_OFFLINE' })
+			return await int.respond(choices);
+		}
+		let ruleReasons = [];
+
+		let subReason = rawReason.split(', ').at(-1);
+
+		const fullKeyMatch = this.rulesCache[subReason] ? subReason : undefined;
+		const partialKeyMatches = Object.keys(this.rulesCache).filter(key => key.includes(subReason));
+		const partialValueMatchesKeys = Object.keys(this.rulesCache).filter(key => this.rulesCache[key].toLowerCase().includes(subReason.toLowerCase()));
+		if(fullKeyMatch)
+			ruleReasons.push(fullKeyMatch);
+		if(partialKeyMatches)
+			ruleReasons = ruleReasons.concat(partialKeyMatches);
+		if(partialValueMatchesKeys)
+			ruleReasons = ruleReasons.concat(partialValueMatchesKeys);
+
+
+		const reasons = new Set(ruleReasons);
+		for(let reason of reasons){
+			choices.push({ name: reason + ': ' + this.rulesCache[reason], value: rawReason })
+		}
+		return await int.respond(choices);
 	},
 
 	/**
@@ -66,6 +120,6 @@ module.exports = {
 	permission : member =>
 		member.roles.cache.has('916999822693789718') ||
 		member.roles.cache.has('613412133715312641') ||
-		member.id == '500020124515041283'
+		member.id === '500020124515041283'
 
 };

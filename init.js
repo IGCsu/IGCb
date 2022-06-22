@@ -36,6 +36,7 @@ module.exports = async () => {
 	await initInteractionCreate();
 	await initStartMessage();
 
+	console.timeEnd('Client initialized in');
 	log.start('== Bot ready ==');
 
 };
