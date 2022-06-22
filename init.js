@@ -16,7 +16,7 @@ const initStartMessage = require('./init/startMessage.js');
  * Пример: "help"
  * @type {Array}
  */
-global.debugAllowModules = ['timeout'];
+global.debugAllowModules = [];
 
 module.exports = async () => {
 
@@ -36,7 +36,7 @@ module.exports = async () => {
 	await initInteractionCreate();
 	await initStartMessage();
 
-	log.start('== Bot ready ==');
 	console.timeEnd('Client initialized in');
+	log.start('== Bot ready ==');
 
 };

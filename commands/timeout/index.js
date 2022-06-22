@@ -53,7 +53,7 @@ module.exports = {
 			return int.reply({ content : localize(int.locale, 'Invalid duration provided'), ephemeral : true});
 		}
 		if(!duration || Math.floor(duration / 86400000) > 28) return int.reply({ content : localize(int.locale, 'Invalid duration provided'), ephemeral : true});
-		//await member.timeout(duration, reason);
+		await member.timeout(duration, reason);
 		return { embeds: [
 			new Discord.MessageEmbed()
 				.setTitle(reaction.emoji.success + ' ' + member.user.tag + ' Был замьючен | ' + reason)
@@ -87,7 +87,7 @@ module.exports = {
 		if(!rawReason) return
 		let choices = [{ name: rawReason, value: rawReason }];
 		if(!this.rulesCache){
-			choices.push({name:'Неудалось сгенерировать подсказки', value:'SITE_OFFLINE'})
+			choices.push({ name: localize(int.locale, 'Failed to generate suggestions'), value:'SITE_OFFLINE' })
 			return await int.respond(choices);
 		}
 		let ruleReasons = [];
