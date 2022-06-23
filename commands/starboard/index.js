@@ -24,9 +24,9 @@ module.exports = {
 		}
 
 		client.on('raw', async (data) => {
-			if(data.t != 'MESSAGE_REACTION_ADD') return;
+			if(data.t !== 'MESSAGE_REACTION_ADD') return;
 			const reaction = data.d
-			if(reaction.emoji.name != this.starboardEmoji) return;
+			if(reaction.emoji.name !== this.starboardEmoji) return;
 			const message = await ((await (client.channels.fetch(data.d.channel_id))).messages.fetch(data.d.message_id))
 			await this.call(message.reactions.cache.get(reaction.emoji.name), message);
 		});
@@ -36,7 +36,7 @@ module.exports = {
 
 	call : async function(reaction, message){
 		if(message.channel.nsfw) return;
-		if(message.channel == this.starboardChannel) return;
+		if(message.channel === this.starboardChannel) return;
 		if(reaction.count < this.defaultEmojiCount) return;
 		const users = await message.reactions.cache.get(this.starboardEmoji).users.fetch();
 		if(users.get(client.user.id)) return;
@@ -50,12 +50,18 @@ module.exports = {
 			.setURL(message.url)
 			.addField('Оригинал', `[#${message.channel.name}](${message.url})`)
 			.setTimestamp();
+
+		if(message.reference?.messageId){
+			const replyMessage = (await message.channel.messages.fetch(message.reference?.messageId))
+			embed.addField('В ответ на:', `<@${replyMessage.author.id}>: ` + replyMessage.content)
+		}
+
 		let embeds = []
 		if(message.attachments.size){
 			embed.setImage(message.attachments.at(0).url).setURL('https://google.com/');
 			for(let i = 1; (i < 4) && (i < message.attachments.size); i++) {
 				embeds.push(new Discord.MessageEmbed().setImage(message.attachments.at(i).url).setURL('https://google.com/'))
-			};
+			}
 		} else {
 			const img = message.content.match(/https?:\/\/((media)|(cdn))\.discordapp\.((net)|(com))\/\S+/igm)
 			if(img){
@@ -67,10 +73,10 @@ module.exports = {
 					if(!(img[i].endsWith('mp4') || img[i].endsWith('mov') || img[i].endsWith('webp'))){
 						embed.setDescription(embed.description.replace(img[i], ''));
 					}
-				};
+				}
 
 			}
-		};
+		}
 		embeds.unshift(embed);
 		await this.starboardChannel.send({embeds: embeds});
 		await message.react(this.starboardEmoji);

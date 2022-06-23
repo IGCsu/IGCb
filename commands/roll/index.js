@@ -1,4 +1,3 @@
-const fetch = require('node-fetch');
 const slashOptions = require('./slashOptions.json');
 const { title, description } = require('./about.json');
 
@@ -12,7 +11,7 @@ module.exports = {
 	description : description,
 	slashOptions : slashOptions,
 
-	init : async function(path){
+	init : async function(){
 		return this;
 	},
 
@@ -22,7 +21,7 @@ module.exports = {
 	 * @param  {Number} max Максимальное значение (По умолчанию 100)
 	 * @return {Number}
 	 */
-	call : async function(min, max){
+	call : function(min, max){
 
 		if(!min) min = 1;
 		if(!max) max = 100;
@@ -36,9 +35,13 @@ module.exports = {
 	 * @param {CommandInteraction} int Команда пользователя
 	 */
 	slash : async function(int){
-		const value = await this.call(int.options.getInteger('min'), int.options.getInteger('max'));
+		let min = int.options.getInteger('min');
+		let max = int.options.getInteger('max');
+
+		const expr = (!min && !max && int.channel.nsfw === true)
+
+		const value = expr ? 'https://nhentai.net/g/' + this.call(1, 303999) + '/' : this.call(min, max);
 
 		await int.reply({ content : value.toString() });
 	}
-
 };
