@@ -38,7 +38,7 @@ module.exports = {
 		let min = int.options.getInteger('min');
 		let max = int.options.getInteger('max');
 
-		const expr = (!min && !max && (int.channel.nsfw === true || int.channel.parent?.nsfw === true));
+		const expr = (!min && !max && (int.channel.nsfw === true || int.channel?.parent?.nsfw === true));
 
 		const value = expr ? 'https://nhentai.net/g/' + this.call(1, 303999) + '/' : this.call(min, max);
 
