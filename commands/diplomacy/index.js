@@ -11,7 +11,7 @@ module.exports = {
 	title : title,
 	slashOptions : slashOptions,
 
-	gameID : '51872', // ID игры на сайте
+	gameID : '52972', // ID игры на сайте
 	interval : 600, // Интервал в секундах между запросами
 
 	/**
@@ -38,7 +38,11 @@ module.exports = {
 		'19667' : '475011645912121364',
 		'19697' : '262987240488042496',
 		'19672' : '385450870638247958',
-		'19655' : '256114365894230018'
+		'19655' : '256114365894230018',
+		'20222' : '500020124515041283',
+		'20227' : '830829700237885530',
+		'20221' : '703752912651681843',
+		'20225' : '318998098225528832'
 	},
 
 	/**
@@ -66,6 +70,16 @@ module.exports = {
 		'Ireland' : '🇮🇪',
 		'Portugal' : '🇵🇹',
 		'Russia' : '🇷🇺',
+		'Britain' : '🇬🇧',
+		'Holland' : '🇳🇱',
+		'China' : '🇨🇳',
+		'USA' : '🇺🇸',
+		'Brazil' : '🇧🇷',
+		'Japan' : '🇯🇵',
+		'Austria' : '🇦🇺',
+		'Mexico' : '🇲🇽',
+		'CSA': 'CSA',
+		'Prussia' : 'PRU'
 	},
 
 	/**
@@ -131,7 +145,7 @@ module.exports = {
 			}
 		}, this.interval * 1000);
 
-		const pattern = '<tr class="member memberAlternate\\d"><td class="memberLeftSide">\\s+<span class="memberCountryName"> <span class="member\\d+StatusIcon">(-|<img src=".+" alt=".+" title=".+" \\/>) <\\/span><span class="country\\d+  memberStatusPlaying">(.+)<\\/span><\\/span>\\s+<\\/td>\\s+<td class="memberRightSide ">\\s+<div>\\s+<div class="memberUserDetail">\\s+<span class="memberName"><a href=profile\\.php\\?userID=(\\d+)">.+<\\/a>\\s+<span class="points">\\(1000 <img src="images\\/icons\\/vpoints\\.png" alt="D" title="vDiplomacy points" \\/><\\/b>\\)<\\/span><\\/span>  - Delays left: <span class="excusedNMRs">(\\d+)<\\/span> of <span class="excusedNMRs">(\\d+)<\\/span>(| - <span class="missedPhases">Missed last deadline</span>)?<\\/span>\\s+<\\/div>\\s+<div class="memberGameDetail">\\s+<span class="memberPointsCount"><\\/span><br \\/><span class="memberUnitCount"><span class="memberSCCount"><em>(\\d+)<\\/em> supply-centers, <em class=".+">(\\d+)<\\/em> units<\\/span><\\/span>';
+		const pattern = /<tr class="member memberAlternate\d"><td class="memberLeftSide">\s+<span class="memberCountryName"> <span class="member\d+StatusIcon">(-|<img src=".+" alt=".+" title=".+" \/>) <\/span><span class="country\d+ {2}memberStatusPlaying">(.+)<\/span><\/span>\s+<\/td>\s+<td class="memberRightSide ">\s+<div>\s+<div class="memberUserDetail">\s+<span class="memberName"><a href=profile\.php\?userID=(\d+)">.+<\/a>\s+<span class="points">\(1000 <img src="images\/icons\/vpoints\.png" alt="D" title="vDiplomacy points" \/><\/b>\)<\/span><\/span> {2}- Delays left: <span class="excusedNMRs">(\d+)<\/span> of <span class="excusedNMRs">(\d+)<\/span>(| - <span class="missedPhases">Missed last deadline<\/span>)?<\/span>\s+<\/div>\s+<div class="memberGameDetail">\s+<span class="memberPointsCount">.+<\/span><br \/><span class="memberUnitCount"><span class="memberSCCount"><em>(\d+)<\/em> supply-centers, <em class=".+">(\d+)<\/em> units<\/span><\/span>/;
 
 		this.globalRegExp = new RegExp(pattern, 'g');
 		this.localRegExp = new RegExp(pattern);
@@ -146,21 +160,21 @@ module.exports = {
 	 */
 	slash : async function(int){
 		const flag = int.options.getString('flag');
-		await int.deferReply({ephemeral : (flag == 'ephemeral') });
-		try{
-			const result = await this.update(true, flag == 'ping');
-			result.data.ephemeral = flag == 'ephemeral';
+		await int.deferReply({ephemeral : (flag === 'ephemeral') });
+		//try{
+			const result = await this.update(true, flag === 'ping');
+			result.data.ephemeral = flag === 'ephemeral';
 			const pings = result.data.content;
 			result.data.content = undefined;
 			result.status
 				? await int.editReply(result.data)
 				: await int.editReply({ content : reaction.emoji.error + ' ' + result.data, ephemeral : true });
 			if(pings) await int.followUp({content: pings});
-		}catch(e){
-			await int.editReply({ content : reaction.emoji.error + ' [500] Ошибка!', ephemeral : true });
-			log.error('./commands/' + this.name + '.js: ' + e.message);
-			clearInterval(this.timerId);
-		}
+		//}catch(e){
+		//	await int.editReply({ content : reaction.emoji.error + ' [500] Ошибка!', ephemeral : true });
+		//	log.error('./commands/' + this.name + '.js: ' + e.message);
+		//	clearInterval(this.timerId);
+		//}
 	},
 
 
@@ -190,7 +204,7 @@ module.exports = {
 			ping = false;
 
 		const users = body.match(this.globalRegExp);
-		if(!users) return { status : false, data : 'Ошибка!' };
+		if(!users) return { status : false, data : 'Ошибка парсинга!' };
 
 		let text = '';
 		let pingList = '';
@@ -198,12 +212,12 @@ module.exports = {
 			const data = user.match(this.localRegExp);
 			let userStatus = data[1].match(/<img src=".+" alt="(.+)" title=".+" \/>/);
 			userStatus = userStatus ? userStatus[1] : 'Skip';
-			text += '\n' + reaction.emoji[this.statuses[userStatus]] + '  ' + this.flags[data[2]] + '<@' + this.players[data[3]] + '> ' + data[7] + ' supply, ' + data[8] + ' units';
-			if(userStatus == 'Not received') pingList += '<@' + this.players[data[3]] + '> ';
+			text += '\n' + reaction.emoji[this.statuses[userStatus]] + '  ' + (this.flags[data[2]] ?? data[2]) + ' <@' + (this.players[data[3]] ?? data[3]) + '> ' + data[7] + ' supply, ' + data[8] + ' units';
+			if(userStatus === 'Not received') pingList += '<@' + this.players[data[3]] + '> ';
 		}
 
-		const turn = body.match(/src="map\.php\?gameID=\d+&turn=(\d+)&mapType=large"/)[1];
-		const info = body.match(/<div class="titleBarLeftSide"><div><i><a class="light" href=".+">.+<\/a><\/i> - <span class="gameDate">(\w+),\s+(\d+)<\/span>, <span class="gamePhase">(.+)<\/span>/);
+		const turn = body.match(/src="map\.php\?gameID=\d+&turn=(\d+|-1)&mapType=large"/)[1];
+		const info = body.match(/<div class="titleBarLeftSide"><div>.+<span class="gameDate">(\w+),\s+(\d+)<\/span>, <span class="gamePhase">(.+)<\/span>/);
 
 		let embed = new Discord.MessageEmbed()
 			.setTimestamp()
@@ -212,7 +226,7 @@ module.exports = {
 			.setFooter({ text : (this.seasons[info[1]] ?? info[1]) + ', ' + info[2] + ', ' + (this.phases[info[3]] ?? info[3]) })
 			.setImage('https://www.vdiplomacy.com/map.php?gameID=' + this.gameID + '&turn=' + turn + '&mapType=large');
 
-		if(status == 'turn')
+		if(status === 'turn')
 			embed.setTitle('Новый ход!');
 
 		let data = { embeds : [embed] };
