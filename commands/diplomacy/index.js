@@ -78,8 +78,6 @@ module.exports = {
 		'Japan' : '🇯🇵',
 		'Austria' : '🇦🇺',
 		'Mexico' : '🇲🇽',
-		'CSA': 'CSA',
-		'Prussia' : 'PRU'
 	},
 
 	/**
@@ -161,7 +159,7 @@ module.exports = {
 	slash : async function(int){
 		const flag = int.options.getString('flag');
 		await int.deferReply({ephemeral : (flag === 'ephemeral') });
-		//try{
+		try{
 			const result = await this.update(true, flag === 'ping');
 			result.data.ephemeral = flag === 'ephemeral';
 			const pings = result.data.content;
@@ -170,11 +168,11 @@ module.exports = {
 				? await int.editReply(result.data)
 				: await int.editReply({ content : reaction.emoji.error + ' ' + result.data, ephemeral : true });
 			if(pings) await int.followUp({content: pings});
-		//}catch(e){
-		//	await int.editReply({ content : reaction.emoji.error + ' [500] Ошибка!', ephemeral : true });
-		//	log.error('./commands/' + this.name + '.js: ' + e.message);
-		//	clearInterval(this.timerId);
-		//}
+		}catch(e){
+			await int.editReply({ content : reaction.emoji.error + ' [500] Ошибка!', ephemeral : true });
+			log.error('./commands/' + this.name + '.js: ' + e.message);
+			clearInterval(this.timerId);
+		}
 	},
 
 
@@ -212,7 +210,7 @@ module.exports = {
 			const data = user.match(this.localRegExp);
 			let userStatus = data[1].match(/<img src=".+" alt="(.+)" title=".+" \/>/);
 			userStatus = userStatus ? userStatus[1] : 'Skip';
-			text += '\n' + reaction.emoji[this.statuses[userStatus]] + '  ' + (this.flags[data[2]] ?? data[2]) + ' <@' + (this.players[data[3]] ?? data[3]) + '> ' + data[7] + ' supply, ' + data[8] + ' units';
+			text += '\n' + reaction.emoji[this.statuses[userStatus]] + '  ' + (this.flags[data[2]] ? (this.flags[data[2]] + ' `') : '`⠀⠀ ') + data[2].slice(0,2).toUpperCase() + '` <@' + (this.players[data[3]] ?? data[3]) + '> ' + data[7] + ' supply, ' + data[8] + ' units';
 			if(userStatus === 'Not received') pingList += '<@' + (this.players[data[3]] ?? data[3]) + '> ';
 		}
 
