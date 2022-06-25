@@ -1,6 +1,6 @@
 const slashOptions = require('./slashOptions.json');
 const { title, sorryMessage } = require('./about.json');
-const { ApplicationCommand, CommandInteraction, User } = require('discord.js');
+const { VoiceState, CommandInteraction, UserContextMenuInteraction, VoiceChannel } = require('discord.js');
 
 module.exports = {
 
@@ -31,11 +31,11 @@ module.exports = {
 	*/
 	init : async function(path){
 		guild.channels.cache.forEach(async c => {
-			if(c.type != 'GUILD_VOICE' && c.type != 'GUILD_CATEGORY') return;
-			if(c.name == 'Создать канал') {
+			if(c.type !== 'GUILD_VOICE' && c.type !== 'GUILD_CATEGORY') return;
+			if(c.name === 'Создать канал') {
 				this.channelCreate = c;
 				const mbr = this.channelCreate.members.filter(m => !m.user.bot).first();
-				if(this.channelCreate.members.filter(m => !m.user.bot).size && c.type == 'GUILD_VOICE'){
+				if(this.channelCreate.members.filter(m => !m.user.bot).size && c.type === 'GUILD_VOICE'){
 					const channel = await this.create(mbr.voice);
 					if(this.channelCreate.members) 
 						this.channelCreate.members.forEach(
@@ -44,11 +44,11 @@ module.exports = {
 								memb.send(sorryMessage['ru']).catch();
 							}
 						)
-				};
+				}
 				return;
-			};
-			if(c.name == 'Голосовые') return this.channelCategory = c;
-			if(!c.members.filter(m => !m.user.bot).size && c.type == 'GUILD_VOICE') return this.delete(c, false, path);
+			}
+			if(c.name === 'Голосовые') return this.channelCategory = c;
+			if(!c.members.filter(m => !m.user.bot).size && c.type === 'GUILD_VOICE') return this.delete(c, false, path);
 		});
 
 		if(!this.channelCategory){
@@ -67,7 +67,7 @@ module.exports = {
 		}
 
 		this.channelCreate.permissionOverwrites.cache.forEach(p => {
-			if(p.type == 'member') p.delete();
+			if(p.type === 'member') p.delete();
 		});
 
 		client.on('voiceStateUpdate', (before, after) => this.update(before, after));
@@ -80,22 +80,22 @@ module.exports = {
 	 * @param {CommandInteraction} int 
 	 */
 	slash: async function(int){
-		if(int.options.getSubcommand() == 'auto-sync'){
+		if(int.options.getSubcommand() === 'auto-sync'){
 			await int.deferReply({ephemeral: true});
 			DB.query(`UPDATE users SET mode = "${int.options.getString('mode')}" WHERE id = ${int.user.id};`)[0];
 			await int.editReply({content: reaction.emoji.success + ' ' +localize(int.locale, 'Settings changed'), ephemeral: true});
 		
-		} else if (int.options.getSubcommand() == 'upload') {
+		} else if (int.options.getSubcommand() === 'upload') {
 			if(!int.member.voice.channel) return await int.reply({content: reaction.emoji.error + ' ' + localize(int.locale, 'You aren\'t connect to voice channel'), ephemeral: true});
 			await int.deferReply({ephemeral: true});
 			await this.upload(int.member.voice);
 			await int.editReply({content: reaction.emoji.success + ' ' + localize(int.locale, 'Voice channel configuration updated in DB'), ephemeral: true});
 		
-		} else if (int.options.getSubcommand() == 'sync') {
+		} else if (int.options.getSubcommand() === 'sync') {
 			if(!int.member.voice.channel) return await int.reply({content: reaction.emoji.error + ' ' + localize(int.locale, 'You aren\'t connect to voice channel'), ephemeral: true});
 			await int.deferReply({ephemeral: true});
 			const response = await this.sync(int.member.voice);
-			const content = response == 0 
+			const content = response === 0
 				? reaction.emoji.success + ' ' + localize(int.locale, 'Syncing complete')
 				: reaction.emoji.error + ' ' + localize(int.locale, response);
 			
@@ -161,7 +161,7 @@ module.exports = {
 			console.log("DB error occurred:\n" + e)
 		};
 		if(preset) preset.voice_data = JSON.parse(preset.voice_data);
-		const name = (preset?.mode != 0 ? preset?.voice_data?.name : undefined) ?? member2name(data.member);
+		const name = (preset?.mode !== 0 ? preset?.voice_data?.name : undefined) ?? member2name(data.member);
 
 		log.info(member2name(data.member, 1, 1), 'create', '#' + name);
 		let obj = {
@@ -174,7 +174,7 @@ module.exports = {
 			bitrate: preset?.voice_data?.bitrate > guild.maximumBitrate ? guild.maximumBitrate : preset?.voice_data?.bitrate,
 			userLimit: preset?.voice_data?.userLimit
 		}
-		if(preset?.mode != 0) Object.assign(obj, obj, objFromPreset);
+		if(preset?.mode !== 0) Object.assign(obj, obj, objFromPreset);
 		const channel = await data.guild.channels.create(name, obj);
 
 		channel.permissionOverwrites.create(data.member, this.permission);
@@ -197,7 +197,7 @@ module.exports = {
 		let channels = [];
 
 		client.channels.cache.forEach(c => {
-			if(c.type != 'GUILD_VOICE' || c.name == 'Создать канал') return;
+			if(c.type !== 'GUILD_VOICE' || c.name === 'Создать канал') return;
 
 			if(!c.permissionOverwrites.cache.find(p => p.id === ctx.user.id && p.allow.has('MANAGE_ROLES'))) return;
 
@@ -224,7 +224,7 @@ module.exports = {
 	 * @param {String}       path    Путь к модулю
 	 */
 	delete : async function(channel, user, path){
-		if(channel.name.slice(-1) == '*') return;
+		if(channel.name.slice(-1) === '*') return;
 
 		const func = path
 			? () => log.warn(path + ': Удалён #' + channel.name)
@@ -251,9 +251,10 @@ module.exports = {
 	 * @param {VoiceState} voice 
 	 */
 	sync : async function(voice){
-		const voiceConfiguration = JSON.parse((DB.query(`SELECT * FROM users WHERE id = ${voice.member.user.id};`)[0]).voice_data);
-		
+		let voiceConfiguration = JSON.parse((DB.query(`SELECT * FROM users WHERE id = ${voice.member.user.id};`)[0]).voice_data);
 		if(!voiceConfiguration) return 'There is no data entry in the database associated with you. Use `/upload` to fix it.';
+
+		if (voiceConfiguration.bitrate > voice.guild.maximumBitrate) voiceConfiguration.bitrate = voice.guild.maximumBitrate;
 
 		await voice.channel.edit(voiceConfiguration, 'По требованию ' + member2name(voice.member));
 		return 0;
