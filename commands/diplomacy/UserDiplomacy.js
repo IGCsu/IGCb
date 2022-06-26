@@ -13,10 +13,16 @@ module.exports = class UserDiplomacy {
 	id;
 
 	/**
-	 * Необходимость пингануть юзера
+	 * Необходимость пингануть юзера по причине отсутствия действий
 	 * @type {boolean}
 	 */
-	ping;
+	primaryPing;
+
+	/**
+	 * Необходимость пингануть юзера по причине не готовности
+	 * @type {boolean}
+	 */
+	secondPing;
 
 	/**
 	 * Эмодзи статуса игрока
@@ -61,7 +67,8 @@ module.exports = class UserDiplomacy {
 		let status = data[1].match(/<img src=".+" alt="(.+)" title=".+" \/>/);
 		status = status ? status[1]: 'Skip';
 
-		this.ping = status === 'Not received';
+		this.primaryPing = status === 'Not received';
+		this.secondPing = status === 'Completed';
 		this.id = players[data[3]] ?? data[3];
 
 		this.status = reaction.emoji[statuses[status]];

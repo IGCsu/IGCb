@@ -127,6 +127,8 @@ module.exports = {
 	 */
 	generateUsers: function(users, ping){
 		let description = '';
+		let primaryPingList = '';
+		let secondPingList = '';
 		let pingList = '';
 
 		for(const userHTML of users){
@@ -139,7 +141,15 @@ module.exports = {
 			description += user.supply + ' supply, ';
 			description += user.units + ' units';
 
-			if(ping && user.ping) pingList += user;
+			if(ping){
+				if(user.primaryPing) primaryPingList += user;
+				if(user.secondPing) secondPingList += user;
+			}
+		}
+
+		if(ping){
+			if(secondPingList) pingList = secondPingList;
+			if(primaryPingList) pingList = primaryPingList;
 		}
 
 		return {
