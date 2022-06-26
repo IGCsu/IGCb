@@ -85,7 +85,7 @@ module.exports = {
 
 			if(!status && !newTurn) return reject('Нет новостей');
 
-			if(!newTurn && this.lastPing !== undefined && this.lastPing + 6 >= currentHour && !ping){
+			if(!newTurn && this.lastPing !== undefined && this.lastPing + config.intervalPing >= currentHour && !ping){
 				ping = false;
 			}
 
@@ -131,15 +131,17 @@ module.exports = {
 		let secondPingList = '';
 		let pingList = '';
 
+		description = '';
+
 		for(const userHTML of users){
 			const user = new UserDiplomacy(userHTML);
 
 			description += '\n';
 			description += user.status + ' ';
-			description += user.flag + ' ';
-			description += user.toString() + ' ';
-			description += user.supply + ' supply, ';
-			description += user.units + ' units';
+			description += user.flag;
+			description += '`' + String(user.supply).padStart(2);
+			description += '|' + String(user.units).padStart(2) + '`';
+			description += user.toString();
 
 			if(ping){
 				if(user.primaryPing) primaryPingList += user;
