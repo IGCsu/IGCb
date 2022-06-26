@@ -35,7 +35,7 @@ module.exports = class Game {
 	 * Временная метка обновления
 	 * @type {number}
 	 */
-	updateTime;
+	updatedAt;
 
 	/**
 	 * Парсит данные юзера. Возвращает объект с данными
@@ -57,7 +57,7 @@ module.exports = class Game {
 	async fetch(){
 		const response = await fetch('https://www.vdiplomacy.com/board.php?gameID=' + this.id);
 
-		this.updateTime = Math.floor(Date.now() / 1000);
+		this.updatedAt = Math.floor(Date.now() / 1000);
 		this.body = await response.text();
 	}
 
@@ -69,7 +69,7 @@ module.exports = class Game {
 		const phaseLength = this.getPhaseLength();
 		const turnDeadline = this.getDeadline();
 
-		return this.updateTime + phaseLength - this.interval < turnDeadline && this.interval < phaseLength;
+		return this.updatedAt + phaseLength - this.interval < turnDeadline && this.interval < phaseLength;
 	}
 
 	/**
