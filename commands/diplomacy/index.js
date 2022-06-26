@@ -42,7 +42,8 @@ module.exports = {
 		'20222' : '500020124515041283',
 		'20227' : '830829700237885530',
 		'20221' : '703752912651681843',
-		'20225' : '318998098225528832'
+		'20225' : '318998098225528832',
+		'19313' : '368442268274655235'
 	},
 
 	/**
@@ -167,7 +168,16 @@ module.exports = {
 			result.status
 				? await int.editReply(result.data)
 				: await int.editReply({ content : reaction.emoji.error + ' ' + result.data, ephemeral : true });
-			if(pings) await int.followUp({content: pings});
+
+			if(pings)
+				await int.followUp({ content: pings });
+
+			if(result.suppressed)
+				await int.followUp({
+					content: reaction.emoji.error + ' ' + localize(int.locale, 'Mentions were suppressed due to the fact that too little time has passed since past mentions'),
+					ephemeral: true
+				})
+
 		}catch(e){
 			await int.editReply({ content : reaction.emoji.error + ' [500] Ошибка!', ephemeral : true });
 			log.error('./commands/' + this.name + '.js: ' + e.message);
@@ -188,7 +198,6 @@ module.exports = {
 		const response = await fetch('https://www.vdiplomacy.com/board.php?gameID=' + this.gameID);
 		const body = await response.text();
 
-		const currentHour = new Date().getHours();
 		const currentTime = Math.floor(Date.now() / 1000);
 		const turnDeadline = body.match(/<span class="timestampGames" unixtime="([0-9]+)">/)[1];
 		const phaseLength = this.convertTimeToSeconds(body.match(/<span class="gameHoursPerPhase"><strong>([0-9\sa-z]+)<\/strong>/i)[1]);
@@ -198,9 +207,11 @@ module.exports = {
 
 		if(!status) return { status : false, data : 'Нет новостей' };
 
-		if((status !== 'turn' && this.lastPing !== undefined && this.lastPing + 6 >= currentHour) && !ping)
+		let supp = false;
+		if((status !== 'turn' && this.lastPing !== undefined && this.lastPing + 2*3600 >= currentTime) || !ping){
+			if(ping) supp = true;
 			ping = false;
-
+		}
 		const users = body.match(this.globalRegExp);
 		if(!users) return { status : false, data : 'Ошибка парсинга!' };
 
@@ -230,10 +241,10 @@ module.exports = {
 		let data = { embeds : [embed] };
 		if(ping && pingList.length){
 			data.content = pingList;
-			this.lastPing = currentHour;
+			this.lastPing = currentTime;
 		}
 
-		return { status : true, data : data };
+		return { status : true, data : data, suppressed: supp };
 	},
 
 
