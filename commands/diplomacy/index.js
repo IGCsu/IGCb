@@ -142,9 +142,10 @@ module.exports = {
 
 			description += '\n';
 			description += user.status + ' ';
-			description += user.flag;
 			description += '`' + String(user.supply).padStart(2);
-			description += '|' + String(user.units).padStart(2) + '`';
+			description += '|' + String(user.units).padStart(2) + '` ';
+			description += user.flag;
+			description += ' `' + user.tag + '` ';
 			description += user.toString();
 
 			if(user.primaryPing) primaryPingList += user;

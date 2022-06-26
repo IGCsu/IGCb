@@ -72,8 +72,9 @@ module.exports = class UserDiplomacy {
 		this.id = players[data[3]] ?? data[3];
 
 		this.status = reaction.emoji[statuses[status]];
-		this.flag = flags[data[2]];
-		this.tag = data[2].slice(0,2).toUpperCase();
+		this.country = data[2];
+		this.flag = flags[this.country];
+		this.tag = this.country.slice(0,3).toUpperCase();
 		this.supply = Number(data[7]);
 		this.units = Number(data[8]);
 
