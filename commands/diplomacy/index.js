@@ -235,7 +235,8 @@ module.exports = {
 			.setFooter({ text : (this.seasons[info[1]] ?? info[1]) + ', ' + info[2] + ', ' + (this.phases[info[3]] ?? info[3]) })
 			.setImage('https://www.vdiplomacy.com/map.php?gameID=' + this.gameID + '&turn=' + turn + '&mapType=large');
 
-		if(status === 'turn')
+		if(status === 'turn' && this.lastTurn.turn !== turn)
+			this.lastTurn = { time: currentTime, turn: turn};
 			embed.setTitle('Новый ход!');
 
 		let data = { embeds : [embed] };
