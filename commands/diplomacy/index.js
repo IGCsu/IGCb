@@ -53,8 +53,14 @@ module.exports = {
 			res.data.ephemeral = flag === 'ephemeral';
 
 			await int.editReply(res.data);
+
 			if(res.pingList){
 				await int.followUp({ content: res.pingList });
+			}else if(flag === 'ping'){
+				await int.followUp({
+					content: reaction.emoji.error + ' ' + localize(int.locale, 'Mentions were suppressed due to the fact that too little time has passed since past mentions'),
+					ephemeral: true
+				});
 			}
 		}).catch(err => {
 			int.editReply({
@@ -79,13 +85,11 @@ module.exports = {
 			const game = new Game(config.gameID, config.interval);
 			await game.fetch();
 
-			const currentHour = new Date().getHours();
-
 			const newTurn = game.newTurnCheck();
 
 			if(!status && !newTurn) return reject('Нет новостей');
 
-			if(!newTurn && this.lastPing !== undefined && this.lastPing + 6 >= currentHour && !ping){
+			if((!newTurn && this.lastPing !== undefined && this.lastPing + config.intervalPing * 3600000 >= game.updatedAt) || !ping){
 				ping = false;
 			}
 
@@ -97,7 +101,7 @@ module.exports = {
 			const data = this.generateEmbed(game, description);
 
 			if(ping && pingList){
-				this.lastPing = currentHour;
+				this.lastPing = game.updatedAt;
 			}
 
 			resolve({
@@ -131,20 +135,20 @@ module.exports = {
 		let secondPingList = '';
 		let pingList = '';
 
+		description = '';
+
 		for(const userHTML of users){
 			const user = new UserDiplomacy(userHTML);
 
 			description += '\n';
 			description += user.status + ' ';
-			description += user.flag + ' ';
-			description += user.toString() + ' ';
-			description += user.supply + ' supply, ';
-			description += user.units + ' units';
+			description += user.flag;
+			description += '`' + String(user.supply).padStart(2);
+			description += '|' + String(user.units).padStart(2) + '`';
+			description += user.toString();
 
-			if(ping){
-				if(user.primaryPing) primaryPingList += user;
-				if(user.secondPing) secondPingList += user;
-			}
+			if(user.primaryPing) primaryPingList += user;
+			if(user.secondPing) secondPingList += user;
 		}
 
 		if(ping){
