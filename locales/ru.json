@@ -26,5 +26,6 @@
 	"There is no data entry in the database associated with you. Use `/upload` to fix it.": "Отсутствует запись в базе данных связанная с вами. Используйте `/upload` чтобы исправить это.",
 	"Syncing complete": "Синхронизация завершена",
 	"You are not connected to a voice channel and did not specify a channel" : "Вы не подключены к голосовому каналу и не указали канал",
-	"Failed to generate suggestions": "Не удалось сгенерировать подсказки"
+	"Failed to generate suggestions": "Не удалось сгенерировать подсказки",
+	"Mentions were suppressed due to the fact that too little time has passed since past mentions": "Упоминания были подавлены, т.к. с момента предыдущих прошло слишком мало времени"
 }	 
