@@ -58,7 +58,8 @@ module.exports = {
 				await int.followUp({ content: res.pingList });
 			}else if(flag === 'ping'){
 				await int.followUp({
-					content: reaction.emoji.error + ' ' + localize(int.locale, 'Mentions were suppressed due to the fact that too little time has passed since past mentions'),
+					content: reaction.emoji.error + ' ' + localize(int.locale, 'Mentions were suppressed due to the fact that too little time has passed since past mentions')
+						+ '(<t:' + (this.lastPing + config.intervalPing * 3600) + ':R>)',
 					ephemeral: true
 				});
 			}
@@ -89,7 +90,7 @@ module.exports = {
 
 			if(!status && !newTurn) return reject('Нет новостей');
 
-			if((!newTurn && this.lastPing !== undefined && this.lastPing + config.intervalPing * 3600000 >= game.updatedAt) || !ping){
+			if((!newTurn && this.lastPing !== undefined && this.lastPing + config.intervalPing * 3600 >= game.updatedAt) || !ping){
 				ping = false;
 			}
 
