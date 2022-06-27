@@ -58,7 +58,7 @@ module.exports = {
 				await int.followUp({ content: res.pingList });
 			}else if(flag === 'ping'){
 				await int.followUp({
-					content: reaction.emoji.error + ' ' + localize(int.locale, 'Mentions were suppressed due to the fact that too little time has passed since past mentions')
+					content: reaction.emoji.error + ' ' + localize(int.locale, 'Mentions were suppressed because too little time had passed since last mentions')
 						+ '(<t:' + (this.lastPing + config.intervalPing * 3600) + ':R>)',
 					ephemeral: true
 				});
