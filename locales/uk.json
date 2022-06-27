@@ -27,6 +27,6 @@
 	"Syncing complete": "Синхронізація завершена",
 	"You are not connected to a voice channel and did not specify a channel" : "Ви не підключені до голосового каналу і не вказали канал",
 	"Failed to generate suggestions": "Не вдалося згенерувати підказки",
-	"Mentions were suppressed due to the fact that too little time has passed since past mentions": "Згадки були придушені, тому що з моменту попередніх пройшло занадто мало часу"
+	"Mentions were suppressed because too little time had passed since last mentions": "Згадки були придушені, тому що з моменту попередніх пройшло занадто мало часу"
 	
 }	 
