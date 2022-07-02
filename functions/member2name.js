@@ -7,6 +7,7 @@
  * @return {String} Имя участника
  */
 global.member2name = (m, dis, id) => {
+	if(!m) return undefined;
 	let text = m.displayName ?? m.nickname ?? m.user.username;
 
 	if(dis) text += '#' + m.user.discriminator;
