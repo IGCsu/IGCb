@@ -1,0 +1,105 @@
+const {Modal, MessageEmbed} = require("discord.js");
+module.exports = {
+    NewWarnModal: function (int, target_id){
+        return new Modal({title: 'New warn', custom_id:`warn|NewWarnModal|${target_id}`,
+            components:[{
+                type: 1,
+                components:[{
+                    type: 4,
+                    style: 2,
+                    custom_id: 'reason',
+                    label: 'Reason',
+                    required: false,
+                    placeholder: '1.2, 1.10'
+                }]
+            }]
+        });
+    },
+    GetDirectWarnEmbed: function (int, warn){
+        const embed = new MessageEmbed({title: 'Warn', color: reaction.color.warning});
+        embed.setDescription('reason text' /* warn.getReason() */);
+        embed.setAuthor({name: int.user.username, iconURL: int.user.avatarURL()} /* warn.getAuthor() */);
+        embed.setTimestamp(int.timestamp/* warn.getTimestamp() */);
+        embed.setThumbnail(int.user.avatarURL()/* warn.getTarget().iconURL */);
+        embed.setFooter({text: 'ID: ' + warn}/* warn.getCase() */);
+        return {embeds: [embed], components:[{
+                type: 1,
+                components: [
+                    {
+                        type: 2,
+                        style: 2,
+                        custom_id: 'warn|embedEditReason',
+                        label: 'Edit Reason'
+                    },
+                    {
+                        type: 2,
+                        style: 4,
+                        custom_id: 'warn|embedRemoveWarn',
+                        label: 'Remove Warn'
+                    }
+            ]}]
+        };
+    },
+    GetLastWarnEmbed: function (int, warn){
+        const embed = new MessageEmbed({title: 'Warn', color: reaction.color.warning});
+        embed.setDescription('reason text' /* warn.getReason() */);
+        embed.setAuthor({name: int.user.username, iconURL: int.user.avatarURL()} /* warn.getAuthor() */);
+        embed.setTimestamp(int.timestamp/* warn.getTimestamp() */);
+        embed.setThumbnail(warn?.avatarURL() ?? int.user.avatarURL()/* warn.getTarget().iconURL */);
+        embed.setFooter({text: 'ID: 1'}/* warn.getCase() */);
+        return {embeds: [embed], components:[{
+                type: 1,
+                components: [
+                    {
+                        type: 2,
+                        style: 2,
+                        custom_id: 'warn|embedEditReason',
+                        label: 'Edit Reason'
+                    },
+                    {
+                        type: 2,
+                        style: 4,
+                        custom_id: 'warn|embedRemoveWarn',
+                        label: 'Remove Warn'
+                    }
+                ]}]};
+    },
+
+    GetListWarnEmbed: function (int, warn){
+        const embed = new MessageEmbed({title: 'Warn', color: reaction.color.warning});
+        embed.setDescription(
+            `1: reason text by <@${int.user.id}> <t:${Math.floor(int.createdTimestamp/1000)}:R>` +
+            '\n2: reason text by <@123456789109999> <t:0:R>' +
+            '\n3: reason text by <@123456789109999> <t:0:R>' +
+            '\n4: reason text by <@123456789109999> <t:0:R>' +
+            '\n5: reason text by <@123456789109999> <t:0:R>' +
+            '\n6: reason text by <@123456789109999> <t:0:R>' +
+            '\n7: reason text by <@123456789109999> <t:0:R>' +
+            '\n8: reason text by <@123456789109999> <t:0:R>' +
+            '\n9: reason text by <@123456789109999> <t:0:R>' +
+            '\n10: reason text by <@123456789109999> <t:0:R>' /* warn.getReason() */);
+        embed.setAuthor({name: int.user.username, iconURL: int.user.avatarURL()} /* warn.getAuthor() */);
+        embed.setTimestamp(int.createdTimestamp/* warn.getTimestamp() */);
+        embed.setThumbnail(warn.avatarURL()/* warn.getTarget().iconURL */);
+        embed.setFooter({text: 'Page: 1/5'}/* warn.getCase() */);
+        return {embeds: [embed], components:[{
+                type: 1,
+                components: [
+                    {
+                        type: 2,
+                        style: 1,
+                        custom_id: 'warn|embedPrevious',
+                        label: 'Previous'
+                    },
+                    {
+                        type: 2,
+                        style: 1,
+                        custom_id: 'warn|embedNext',
+                        label: 'Next'
+                    },
+                ]
+
+            }]};
+
+    },
+}
