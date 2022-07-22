@@ -16,7 +16,7 @@ const initStartMessage = require('./init/startMessage.js');
  * Пример: "help"
  * @type {Array}
  */
-global.debugAllowModules = [];
+global.debugAllowModules = ['warn'];
 
 module.exports = async () => {
 

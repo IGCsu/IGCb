@@ -1,7 +1,16 @@
-const {Modal, MessageEmbed} = require("discord.js");
+const {Modal, MessageEmbed, CommandInteraction, ButtonInteraction, ModalSubmitInteraction} = require("discord.js");
+require('./Warn');
+
 module.exports = {
-    NewWarnModal: function (int, target_id){
-        return new Modal({title: 'New warn', custom_id:`warn|NewWarnModal|${target_id}`,
+
+    /**
+     * Конструктор модального окна создания нового Варна
+     * @param  {CommandInteraction} int
+     * @param  {Warn}               warn
+     * @return {Modal}
+     */
+    newWarnModal: function (int, warn){
+        return new Modal({title: 'New warn', custom_id:`warn|NewWarnModal|${warn.targetId}`,
             components:[{
                 type: 1,
                 components:[{
@@ -15,7 +24,35 @@ module.exports = {
             }]
         });
     },
-    GetDirectWarnEmbed: function (int, warn){
+    /**
+     * Конструктор модального окна изменения причины Варна
+     * @param  {ButtonInteraction} int
+     * @param  {Warn}               warn
+     * @return {Modal}
+     */
+    editWarnModal: function (int, warn){
+        return new Modal({title: 'Edit reason', custom_id:`warn|EditWarnModal|${warn.targetId}`,
+            components:[{
+                type: 1,
+                components:[{
+                    type: 4,
+                    style: 2,
+                    custom_id: 'reason',
+                    label: 'Reason',
+                    required: false,
+                    value: warn.reason,
+                    placeholder: '1.2, 1.10'
+                }]
+            }]
+        });
+    },
+    /**
+     * Конструктор модального окна изменения причины Варна
+     * @param  {CommandInteraction} int
+     * @param  {Warn}               warn
+     * @return {MessageEmbed}
+     */
+    getDirectWarnEmbed: function (int, warn){
         const embed = new MessageEmbed({title: 'Warn', color: reaction.color.warning});
         embed.setDescription('reason text' /* warn.getReason() */);
         embed.setAuthor({name: int.user.username, iconURL: int.user.avatarURL()} /* warn.getAuthor() */);
@@ -40,7 +77,7 @@ module.exports = {
             ]}]
         };
     },
-    GetLastWarnEmbed: function (int, warn){
+    getLastWarnEmbed: function (int, warn){
         const embed = new MessageEmbed({title: 'Warn', color: reaction.color.warning});
         embed.setDescription('reason text' /* warn.getReason() */);
         embed.setAuthor({name: int.user.username, iconURL: int.user.avatarURL()} /* warn.getAuthor() */);
@@ -65,7 +102,7 @@ module.exports = {
                 ]}]};
     },
 
-    GetListWarnEmbed: function (int, warn){
+    getListWarnEmbed: function (int, warn){
         const embed = new MessageEmbed({title: 'Warn', color: reaction.color.warning});
         embed.setDescription(
             `1: reason text by <@${int.user.id}> <t:${Math.floor(int.createdTimestamp/1000)}:R>` +

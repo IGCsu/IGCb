@@ -1,0 +1,11 @@
+{
+  "flags": {
+    "referenceDeleted": 1,
+    "auto": 2
+  },
+  "types": {
+    "direct": 0,
+    "mute": 1,
+    "ban": 2
+  }
+}

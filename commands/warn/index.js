@@ -16,15 +16,16 @@ module.exports = {
 
     slash : async function(int){
 
-        if(int.options.getSubcommand() === 'add') return await int.showModal(ui.NewWarnModal(int, int.options.getUser('user').id))
+        if(int.options.getSubcommand() === 'add')
+            return await int.showModal(ui.newWarnModal(int, int.options.getUser('user').id))
 
         if(int.options.getSubcommandGroup() === 'get') {
             if(int.options.getSubcommand() === 'direct')
-                return await int.reply(ui.GetDirectWarnEmbed(int, int.options.getString('case')));
+                return await int.reply(ui.getDirectWarnEmbed(int, int.options.getString('case')));
             if(int.options.getSubcommand() === 'last')
-                return await int.reply(ui.GetLastWarnEmbed(int, int.options.getUser('user')));
+                return await int.reply(ui.getLastWarnEmbed(int, int.options.getUser('user')));
             if(int.options.getSubcommand() === 'list')
-                return await int.reply(ui.GetListWarnEmbed(int, int.options.getUser('user')));
+                return await int.reply(ui.getListWarnEmbed(int, int.options.getUser('user')));
         }
 
 
@@ -32,6 +33,9 @@ module.exports = {
     },
 
     button: async function(int){
+        if(int.customId.split('|')[1] === 'embedEditReason')
+            return await int.showModal(ui.editWarnModal(int, int.user.id, 'Primary reason'));
+
         await int.reply({content: reaction.emoji.error + ' ' + localize(int.locale, 'In development'), ephemeral: true});
     },
 
