@@ -26,6 +26,7 @@ global.reaction = {
 		success : 0x43b581,
 		warning: 0xfaa61a,
 		error : 0xf04747,
+		blurple : 0x5865F2,
 	}
 
 };

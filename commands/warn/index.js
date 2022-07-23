@@ -2,6 +2,7 @@ const slashOptions = require('./slashOptions.json');
 const { title, description } = require('./about.json');
 const ui =  require('./ui.js');
 const Warn =  require('./Warn.js');
+const WarnsManager =  require('./WarnsManager.js');
 
 module.exports = {
 
@@ -16,6 +17,8 @@ module.exports = {
     testWarn1 : new Warn(1, 'direct', '256114365894230018', 'Кошара', '500020124515041283', undefined, new Date(), 0),
     testWarn2 : new Warn(2, 'direct', '500020124515041283', 'Пидор','256114365894230018' , undefined, new Date(), 0),
 
+    warnsManager: new WarnsManager(),
+
     init : function(){ return this; },
 
     slash : async function(int){
@@ -24,14 +27,34 @@ module.exports = {
             return await int.showModal(ui.newWarnModal(int, int.options.getUser('user').id))
 
         if(int.options.getSubcommandGroup() === 'get') {
-            if(int.options.getSubcommand() === 'direct')
-                return await int.reply(await ui.getSingleWarnEmbed(int, this.testWarn1));
-            if(int.options.getSubcommand() === 'last')
-                return await int.reply(await ui.getSingleWarnEmbed(int, this.testWarn2));
-            if(int.options.getSubcommand() === 'list')
-                return await int.reply(await ui.getListWarnEmbed(int, [this.testWarn1, this.testWarn2], int.options.getUser('user')));
-        }
 
+            if(int.options.getSubcommand() === 'direct'){
+
+                const warn = this.warnsManager.fetch(int.options.getInteger('case'));
+                console.log(warn);
+                let msg = ui.noSuchWarnEmbed();
+                if (warn)
+                    msg = await ui.getSingleWarnEmbed(int, warn);
+
+                return await int.reply(msg);
+            }
+
+            if(int.options.getSubcommand() === 'last'){
+
+                const warn = this.warnsManager.fetchLast(int.options.getUser('user', false)?.id);
+
+                let msg = ui.noWarnsEmbed();
+                if (warn)
+                    msg = await ui.getSingleWarnEmbed(int, warn);
+
+                return await int.reply(msg);
+            }
+
+            if(int.options.getSubcommand() === 'list'){
+
+                return await int.reply(await ui.getListWarnEmbed(int, [this.testWarn1, this.testWarn2], int.options.getUser('user')));
+            }
+        }
 
         await int.reply({content: reaction.emoji.error + ' ' + localize(int.locale, 'In development'), ephemeral: true});
     },
@@ -39,7 +62,8 @@ module.exports = {
     button: async function(int){
         let customId = int.customId.split('|');
         if(customId[1] === 'embedEditReason'){
-            return await int.showModal(ui.editWarnModal(int, this.testWarn1));
+            const warn = this.warnsManager.fetch(customId[2]);
+            return await int.showModal(ui.editWarnModal(int, warn));
         }
 
         if(customId[1] === 'embedPrevious'){
@@ -53,15 +77,19 @@ module.exports = {
         }
 
         if(customId[1] === 'embedRemoveWarn'){
-            this.testWarn1.flags = {removed: true};
-            await int.update(await ui.getSingleWarnEmbed(int, this.testWarn1));
-            return int.followUp(await ui.removeWarnEmbed(int, this.testWarn1, true));
+            const warn = this.warnsManager.fetch(customId[2]);
+            warn.flags = {removed: true};
+            this.warnsManager.update(warn);
+            await int.update(await ui.getSingleWarnEmbed(int, warn));
+            return int.followUp(await ui.removeWarnEmbed(int, warn, true));
         }
 
         if(customId[1] === 'embedAddWarn'){
-            this.testWarn1.flags = {removed: false};
-            await int.update(await ui.getSingleWarnEmbed(int, this.testWarn1));
-            return int.followUp(await ui.newWarnEmbed(int, this.testWarn1, true));
+            const warn = this.warnsManager.fetch(customId[2]);
+            warn.flags = {removed: false};
+            this.warnsManager.update(warn);
+            await int.update(await ui.getSingleWarnEmbed(int, warn));
+            return int.followUp(await ui.newWarnEmbed(int, warn, true));
         }
 
         await int.reply({content: reaction.emoji.error + ' ' + localize(int.locale, 'In development'), ephemeral: true});
@@ -69,15 +97,21 @@ module.exports = {
 
     modal : async function(int){
         let customId = int.customId.split('|');
+        const reason = int.fields.getField('reason').value
 
         if(customId[1] === 'NewWarnModal'){
-            return await int.reply(await ui.newWarnEmbed(int, this.testWarn1));
+            const warn = this.warnsManager.create(customId[2], reason, int.user.id);
+            return await int.reply(await ui.newWarnEmbed(int, warn));
         }
 
         if(customId[1] === 'EditWarnModal'){
-            this.testWarn1.reason = int.fields.getField('reason').value;
-            await int.update(await ui.getSingleWarnEmbed(int, this.testWarn1))
-            return await int.followUp(await ui.editWarnEmbed(int, this.testWarn1, true));
+
+            const warn = this.warnsManager.fetch(customId[2]);
+            warn.reason = reason;
+            this.warnsManager.update(warn);
+
+            await int.update(await ui.getSingleWarnEmbed(int, warn))
+            return await int.followUp(await ui.editWarnEmbed(int, warn, true));
         }
 
         await int.reply({content: reaction.emoji.error + ' ' + localize(int.locale, 'In development'), ephemeral: true});

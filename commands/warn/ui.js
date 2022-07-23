@@ -1,4 +1,4 @@
-const {Modal, MessageEmbed, CommandInteraction, ButtonInteraction, ModalSubmitInteraction} = require("discord.js");
+const {Modal, MessageEmbed, CommandInteraction, ButtonInteraction, ModalSubmitInteraction, Snowflake} = require("discord.js");
 require('./Warn');
 const {getCompactWarnCase} = require("./ui");
 
@@ -7,11 +7,11 @@ module.exports = {
     /**
      * Конструктор модального окна создания нового Варна
      * @param  {CommandInteraction} int
-     * @param  {Warn}               warn
+     * @param  {Snowflake}          targetId
      * @return {Modal}
      */
-    newWarnModal: function (int, warn){
-        return new Modal({title: 'Новый варн', custom_id:`warn|NewWarnModal|${warn.targetId}`,
+    newWarnModal: function (int, targetId){
+        return new Modal({title: 'Новый варн', custom_id:`warn|NewWarnModal|${targetId}`,
             components:[{
                 type: 1,
                 components:[{
@@ -163,6 +163,22 @@ module.exports = {
         const embed = new MessageEmbed({
             title: `${reaction.emoji.success} | Варн номер ${warn.case} был снят с пользователя ${(await warn.target).tag}`,
             color: reaction.color.success
+        })
+        return {embeds: [embed], ephemeral: ephemeral}
+    },
+
+    noWarnsEmbed: function (ephemeral=false) {
+        const embed = new MessageEmbed({
+            title: 'У этого пользователя отсутствуют варны',
+            color: reaction.color.blurple
+        })
+        return {embeds: [embed], ephemeral: ephemeral}
+    },
+
+    noSuchWarnEmbed: function (ephemeral=false) {
+        const embed = new MessageEmbed({
+            title: 'Такого варна не существует',
+            color: reaction.color.blurple
         })
         return {embeds: [embed], ephemeral: ephemeral}
     },

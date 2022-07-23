@@ -16,7 +16,7 @@
         },
         "slashOptions": {
           "case": {
-            "type": 3,
+            "type": 4,
             "description": {
               "ru": "Case ID необходимомого варна",
               "en": "TODO",
@@ -123,7 +123,7 @@
         },
         "slashOptions": {
           "case": {
-            "type": 3,
+            "type": 4,
             "description": {
               "ru": "Case ID необходимомого варна",
               "en": "TODO",
