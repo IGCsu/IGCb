@@ -112,7 +112,7 @@ class Warn {
     get flags() {
         let flags = {};
         for(let flagEntry in bitFields.flags){
-            flags[flagEntry] = this.#flagsRaw & bitFields.flags[flagEntry];
+            flags[flagEntry] = Boolean(this.#flagsRaw & bitFields.flags[flagEntry]);
         }
         return flags;
 
@@ -166,7 +166,8 @@ class Warn {
         this.author = client.users.fetch(authorId);
 
         this.#referenceId = referenceId?.message;
-        this.reference = client.channels.cache.get(referenceId.channel)?.messages?.fetch(referenceId.message);
+        if(referenceId)
+            this.reference = guild.channels.cache.get(referenceId?.channel)?.messages?.fetch(referenceId?.message);
 
         this.#dateRaw = Math.floor(date.getTime()/1000);
         this.#flagsRaw = flagsRaw ?? 0;

@@ -1,7 +1,8 @@
 {
   "flags": {
     "referenceDeleted": 1,
-    "auto": 2
+    "auto": 2,
+    "removed": 4
   },
   "types": {
     "direct": 0,
