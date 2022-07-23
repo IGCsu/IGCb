@@ -56,7 +56,8 @@ module.exports = {
     getSingleWarnEmbed: async function (int, warn){
         const embed = new MessageEmbed({title: 'Варн' + (warn.flags.removed ? ' (Снят)': ''), color: (warn.flags.removed ? 0x808080 : reaction.color.warning)});
         embed.addField('Пользователь', (await warn.target).tag);
-        embed.addField('Причина', warn.reason);
+        if(warn.reason)
+            embed.addField('Причина', warn.reason);
         embed.addField('Тип', warn.type);
         embed.setAuthor({name: (await warn.author).tag, iconURL: (await warn.author).avatarURL()});
         embed.setTimestamp(warn.date);
@@ -190,6 +191,6 @@ module.exports = {
      */
     getCompactWarnCase : function (warn){
         const caseShifting = 3;
-        return `\`${warn.case + ' '.repeat(caseShifting - String(warn.case).length)}\`: ${truncate(warn.reason, 10)} от <@${(warn.authorId)}>| <t:${Math.floor(warn.date/1000)}:R>`
+        return `\`${warn.case + ' '.repeat(caseShifting - String(warn.case).length)}\`: ${truncate(warn.reason ?? 'Не указана', 10)} от <@${(warn.authorId)}>| <t:${Math.floor(warn.date/1000)}:R>`
     }
 }

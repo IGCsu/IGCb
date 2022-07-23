@@ -44,10 +44,10 @@ class WarnsManager {
 
     /**
      * @param   {Snowflake} authorId
-     * @param   {string} type
+     * @param   {string}    type
      * @param   {Snowflake} targetId
-     * @param   {string} reason
-     * @param   {Object} flags
+     * @param   {string}    reason
+     * @param   {Object}    flags
      * @param   {Snowflake} referenceId
      * @return  {Warn}
      */
