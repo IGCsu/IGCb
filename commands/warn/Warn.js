@@ -217,7 +217,7 @@ class Warn {
      * @param  {String}      data.reason         Причина варна
      * @param  {Snowflake}   data.author_id      ID автора варна (ID пользователя выдавшего варн).
      * @param  {Object}      data.reference_id   ID сообщения на которое ссылвется варн.
-     * @param  {number}        data.date           Время выдачи выарна
+     * @param  {number}      data.date           Время выдачи выарна
      * @param  {number}      data.flags          Число выражающее все флаги варна
      *
      * @return {Object}                     Объект Warn

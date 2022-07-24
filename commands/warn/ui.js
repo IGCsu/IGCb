@@ -1,6 +1,5 @@
 const {Modal, MessageEmbed, CommandInteraction, ButtonInteraction, ModalSubmitInteraction, Snowflake} = require("discord.js");
 require('./Warn');
-const {getCompactWarnCase} = require("./ui");
 
 module.exports = {
 
@@ -178,8 +177,16 @@ module.exports = {
 
     noSuchWarnEmbed: function (ephemeral=false) {
         const embed = new MessageEmbed({
-            title: 'Такого варна не существует',
-            color: reaction.color.blurple
+            title: reaction.emoji.error + ' Такого варна не существует',
+            color: reaction.color.error
+        })
+        return {embeds: [embed], ephemeral: ephemeral}
+    },
+
+    noPermissionsEmbed: function (ephemeral=false) {
+        const embed = new MessageEmbed({
+            title: reaction.emoji.error + 'У вас недостаточно прав для совершения этого действия',
+            color: reaction.color.error
         })
         return {embeds: [embed], ephemeral: ephemeral}
     },
@@ -191,6 +198,7 @@ module.exports = {
      */
     getCompactWarnCase : function (warn){
         const caseShifting = 3;
-        return `\`${warn.case + ' '.repeat(caseShifting - String(warn.case).length)}\`: ${truncate(warn.reason ?? 'Не указана', 10)} от <@${(warn.authorId)}>| <t:${Math.floor(warn.date/1000)}:R>`
+        const reasonShifting = 15;
+        return `\`${truncate2(String(warn.case), caseShifting, 0)}: ${truncate2(warn.reason ?? 'Не указана', reasonShifting, 1)} от\` <@${(warn.authorId)}> | <t:${Math.floor(warn.date/1000)}:R>`
     }
 }

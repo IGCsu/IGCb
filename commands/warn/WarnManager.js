@@ -1,7 +1,7 @@
 const Warn = require('./Warn.js')
 const {Snowflake} = require('discord.js')
 
-class WarnsManager {
+class WarnManager {
 
     /**
      *
@@ -33,6 +33,10 @@ class WarnsManager {
         return warn.resolveFromObject(rawData);
     };
 
+    /**
+     * @param   {Snowflake} targetID
+     * @return  {Warn}
+     */
     fetchLast(targetID){
         const expression = targetID ? `SELECT * FROM warns WHERE case_id = (SELECT MAX(case_id) FROM warns WHERE target_id = ${targetID})`: 'SELECT * FROM warns WHERE case_id = (SELECT MAX(case_id) FROM warns)'
         const rawData = DB.query(expression)?.[0]
@@ -40,6 +44,28 @@ class WarnsManager {
 
         const warn = new Warn();
         return warn.resolveFromObject(rawData);
+    };
+
+    /**
+     * @param   {Snowflake} targetID
+     * @return  {Warn[]}
+     */
+    fetchAll(targetID){
+        const expression = targetID ? `SELECT * FROM warns WHERE target_id = ${targetID}`: 'SELECT * FROM warns'
+
+        const rawData = DB.query(expression);
+        if(rawData === undefined) return undefined;
+
+        let warns = [];
+        for (let warnRow of rawData){
+            const warn = new Warn();
+            warn.resolveFromObject(warnRow);
+            if(!warn.flags.removed)
+                warns.push(warn);
+        }
+        warns.reverse()
+
+        return warns;
     };
 
     /**
@@ -68,4 +94,4 @@ class WarnsManager {
     };
 }
 
-module.exports = WarnsManager;
+module.exports = WarnManager;

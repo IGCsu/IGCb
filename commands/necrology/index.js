@@ -1,5 +1,4 @@
 const { title } = require('./about.json');
-const {resolveAdvancedBanData} = require("./index");
 
 module.exports = {
 
@@ -59,9 +58,9 @@ module.exports = {
 			.setTimestamp()
 			.setThumbnail(ban.user.avatarURL({ dynamic: true }));
 		try{
-			let data = await resolveAdvancedBanData(ban, embed, channel);
+			let data = await this.resolveAdvancedBanData(ban, embed, channel);
 			if(data.error){
-				data = await resolveAdvancedBanData(ban, embed, channel);
+				data = await this.resolveAdvancedBanData(ban, embed, channel);
 			}
 			embed = data.embed;
 			channel = data.channel;
@@ -124,6 +123,8 @@ module.exports = {
 
 		const msg = await this[channel].send({ embeds : [embed] });
 		const thread = await msg.startThread({ name : text });
+
+		warnsManager.create(after.user.id, advancedMuteData?.reason, advancedMuteData.author.id, undefined, 'mute');
 
 		this.cache[after.id] = {until: after.communicationDisabledUntilTimestamp, messageId: msg.id};
 	},
