@@ -169,6 +169,7 @@ class Warn {
 		this.#targetId = data.target;
 		this.#authorId = data.author;
 
+		// TODO: Не имею ни малейшего представления, что такое "reference", зачем оно нужно и тп. Тыкай это сам, все упоминания задокументировал или закрыл заглушками через null
 		// this.#referenceId = referenceId?.message;
 		// if(referenceId)
 		// 	this.#reference = guild.channels.cache.get(referenceId?.channel)?.messages?.fetch(referenceId?.message);
@@ -259,6 +260,7 @@ class Warn {
 	 * @return {Warn[]}
 	 */
 	static all(target){
+		// TODO: Не стал делать фильтр удалённых варнов по флагам
 		const query = target
 			? `SELECT * FROM warns WHERE NOT flags & 4 && target = ${target}`
 			: `SELECT * FROM warns WHERE NOT flags & 4`;

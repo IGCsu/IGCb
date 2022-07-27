@@ -54,6 +54,7 @@ class WarnPagination {
 
 		const skip = this.pageCount * (this.pageNumber - 1);
 
+		// TODO: Не стал делать фильтр удалённых варнов по флагам
 		const query = target
 			? `FROM warns WHERE target = ${this.target.id}`
 			: `FROM warns`;
