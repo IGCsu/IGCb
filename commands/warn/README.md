@@ -134,14 +134,19 @@ channel.send(msg);
 
 Получение экземпляра пагинации:
 ```js
-const pagination = Warn.pagination(user);
+const pagination = Warn.pagination();
+const paginationUserWarns = Warn.pagination(user);
 const pagination2page = Warn.pagination(user, 2);
 const pagination20rowsInOnePage = Warn.pagination(user, 1, 20);
 ```
 Получение эмбеда для постраничного списка:
 ```js
-const pagination = Warn.pagination(user);
+const pagination = Warn.pagination();
 const msg = await pagination.getEmbed(int);
+int.reply(msg);
+```
+```js
+const msg = await Warn.pagination().getEmbed(int);
 int.reply(msg);
 ```
 

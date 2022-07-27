@@ -62,9 +62,7 @@ module.exports = {
             if(subcommand === 'list'){
                 const target = int.options.getUser('user');
 
-				const pagination = Warn.pagination(target);
-
-				const msg = await pagination.getEmbed(int);
+				const msg = await Warn.pagination(target).getEmbed(int);
 
                 return int.reply(msg);
             }
@@ -106,9 +104,7 @@ module.exports = {
             let page = data[3];
             const target = client.users.cache.get(data[2]);
 
-			const pagination = Warn.pagination(target, page);
-
-			const msg = await pagination.getEmbed(int);
+			const msg = await Warn.pagination(target, page).getEmbed(int);
 
             return int.update(msg);
         }
