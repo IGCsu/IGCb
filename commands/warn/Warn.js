@@ -9,26 +9,26 @@ class Warn {
 	 * ID варна
 	 * @type {number}
 	 */
-    get id(){
-        return this.#id;
-    }
+	get id(){
+		return this.#id;
+	}
 
 	#id;
 
-    /**
-     * Тип варна
-     * @type {string}
-     */
+	/**
+	 * Тип варна
+	 * @type {string}
+	 */
 	get type(){
 		return this.#type;
 	}
 
-    #type;
+	#type;
 
-    /**
-     * ID участника получившего варн
-     * @type {Snowflake}
-     */
+	/**
+	 * ID участника получившего варн
+	 * @type {Snowflake}
+	 */
 	get targetId(){
 		return this.#targetId;
 	}
@@ -41,7 +41,7 @@ class Warn {
 		return client.users.fetch(this.#targetId);
 	}
 
-    #targetId;
+	#targetId;
 
 	/**
 	 * ID автор варна
@@ -93,45 +93,45 @@ class Warn {
 		return new Date(this.#date);
 	}
 
-    /**
-     * Флаги в формате для хранения в БД
-     * @type {number}
-     */
-    #flagsRaw = 0
+	/**
+	 * Флаги в формате для хранения в БД
+	 * @type {number}
+	 */
+	#flagsRaw = 0
 
-    get flagsRaw() {
-        return this.#flagsRaw;
-    }
+	get flagsRaw(){
+		return this.#flagsRaw;
+	}
 
-    /**
-     * Объект содержащий пары ключ + bool значение
-     * @return {Object}
-     */
-    get flags() {
-        let flags = {};
-        for(let flagEntry in bitFields.flags){
-            flags[flagEntry] = Boolean(this.#flagsRaw & bitFields.flags[flagEntry]);
-        }
-        return flags;
-    }
+	/**
+	 * Объект содержащий пары ключ + bool значение
+	 * @return {Object}
+	 */
+	get flags(){
+		let flags = {};
+		for(let flagEntry in bitFields.flags){
+			flags[flagEntry] = Boolean(this.#flagsRaw & bitFields.flags[flagEntry]);
+		}
+		return flags;
+	}
 
-    /**
-     * Объект содержащий пары ключ + bool значение
-     * @param flags {Object}
-     */
-    set flags(flags) {
-        let flagsObjectCurrent = {};
-        for(let flagEntry in bitFields.flags){
-            flagsObjectCurrent[flagEntry] = Boolean(this.#flagsRaw & bitFields.flags[flagEntry]);
-        }
-        let flagsNumericTarget = 0;
-        for(let flagEntry in flagsObjectCurrent){
-            if(bitFields.flags[flagEntry] === undefined)
-                throw new Error('Attempting to change an unknown flag');
-            flagsNumericTarget += ((flags[flagEntry] !== undefined) ? bitFields.flags[flagEntry] * flags[flagEntry] : bitFields.flags[flagEntry] * flagsObjectCurrent[flagEntry]);
-        }
-        this.#flagsRaw = flagsNumericTarget;
-    }
+	/**
+	 * Объект содержащий пары ключ + bool значение
+	 * @param flags {Object}
+	 */
+	set flags(flags){
+		let flagsObjectCurrent = {};
+		for(let flagEntry in bitFields.flags){
+			flagsObjectCurrent[flagEntry] = Boolean(this.#flagsRaw & bitFields.flags[flagEntry]);
+		}
+		let flagsNumericTarget = 0;
+		for(let flagEntry in flagsObjectCurrent){
+			if(bitFields.flags[flagEntry] === undefined)
+				throw new Error('Attempting to change an unknown flag');
+			flagsNumericTarget += ((flags[flagEntry] !== undefined) ? bitFields.flags[flagEntry] * flags[flagEntry] : bitFields.flags[flagEntry] * flagsObjectCurrent[flagEntry]);
+		}
+		this.#flagsRaw = flagsNumericTarget;
+	}
 
 	/**
 	 * Причина варна
@@ -139,19 +139,19 @@ class Warn {
 	 */
 	reason;
 
-    /**
+	/**
 	 * @param {Object} data
-     * @param {number} [data.id] ID варна
-     * @param {string|number} [data.type='direct'] Тип варна, принимает либо текстовое значение типа, либо его номерное значение
-     * @param {Snowflake|string} data.target ID пользователя получившего варн
-     * @param {Snowflake|string} data.author ID пользователя выдавшего варн
-     * @param {Snowflake|string} [data.reference=null] ID сообщения на которое ссылается варн
-     * @param {number} [data.date=Date.now()] Unixtime метка выдачи варна
-     * @param {number} [data.flags=0] Число выражающее все флаги варна
+	 * @param {number} [data.id] ID варна
+	 * @param {string|number} [data.type='direct'] Тип варна, принимает либо текстовое значение типа, либо его номерное значение
+	 * @param {Snowflake|string} data.target ID пользователя получившего варн
+	 * @param {Snowflake|string} data.author ID пользователя выдавшего варн
+	 * @param {Snowflake|string} [data.reference=null] ID сообщения на которое ссылается варн
+	 * @param {number} [data.date=Date.now()] Unixtime метка выдачи варна
+	 * @param {number} [data.flags=0] Число выражающее все флаги варна
 	 * @param {string} data.reason Причина варна
 	 * @constructor
-     */
-    constructor(data){
+	 */
+	constructor(data){
 		if(!data.type) data.type = 'direct';
 		if(!data.date) data.date = Date.now();
 		if(!data.flags) data.flags = 0;
@@ -179,7 +179,7 @@ class Warn {
 		this.#flagsRaw = data.flags ?? 0;
 
 		this.reason = data.reason;
-    }
+	}
 
 	/**
 	 * Сохраняет модель в базу данных

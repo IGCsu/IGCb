@@ -7,124 +7,124 @@ const ModalBuilder = require('./ModalBuilder');
 
 module.exports = {
 
-    active: true,
-    category: 'Модерация',
+	active: true,
+	category: 'Модерация',
 
-    name: 'warn',
-    title: title,
-    description: description,
-    slashOptions: slashOptions,
+	name: 'warn',
+	title: title,
+	description: description,
+	slashOptions: slashOptions,
 
-    init: async function(){
-        return this;
-    },
+	init: async function(){
+		return this;
+	},
 
-    /**
-     * Обработка слеш-команды
-     * @param {CommandInteraction} int
-     */
-    slash: async function(int){
+	/**
+	 * Обработка слеш-команды
+	 * @param {CommandInteraction} int
+	 */
+	slash: async function(int){
 
 		const subcommand = int.options.getSubcommand();
 		const subcommandGroup = int.options.getSubcommandGroup();
 
-        if(subcommand === 'add'){
-            if(!this.permission(int.member))
-                return int.reply(EmbedBuilder.noPermissions(true));
+		if(subcommand === 'add'){
+			if(!this.permission(int.member))
+				return int.reply(EmbedBuilder.noPermissions(true));
 
-            return int.showModal(ModalBuilder.newWarn(int, int.options.getUser('user').id))
-        }
+			return int.showModal(ModalBuilder.newWarn(int, int.options.getUser('user').id))
+		}
 
-        if(subcommandGroup === 'get'){
+		if(subcommandGroup === 'get'){
 
-            if(subcommand === 'direct'){
+			if(subcommand === 'direct'){
 				const warn = Warn.get(int.options.getInteger('id'));
-
-                const msg = warn
-					? await warn.getEmbed(int)
-					: EmbedBuilder.noSuchWarn();
-
-                return int.reply(msg);
-            }
-
-            if(subcommand === 'last'){
-				const target = int.options.getUser('user', false);
-
-                const warn = Warn.last(target.id);
 
 				const msg = warn
 					? await warn.getEmbed(int)
 					: EmbedBuilder.noSuchWarn();
 
-                return int.reply(msg);
-            }
+				return int.reply(msg);
+			}
 
-            if(subcommand === 'list'){
-                const target = int.options.getUser('user');
+			if(subcommand === 'last'){
+				const target = int.options.getUser('user', false);
+
+				const warn = Warn.last(target.id);
+
+				const msg = warn
+					? await warn.getEmbed(int)
+					: EmbedBuilder.noSuchWarn();
+
+				return int.reply(msg);
+			}
+
+			if(subcommand === 'list'){
+				const target = int.options.getUser('user');
 
 				const msg = await Warn.pagination(target).getEmbed(int);
 
-                return int.reply(msg);
-            }
-        }
+				return int.reply(msg);
+			}
+		}
 
-        await int.reply({
+		await int.reply({
 			content: reaction.emoji.error + ' ' + localize(int.locale, 'In development'),
 			ephemeral: true
 		});
-    },
+	},
 
-    /**
-     * Обработка контекстной команды на пользователе
-     * @param {UserContextMenuInteraction} int
-     */
-    contextUser: async function(int){
-        if(!this.permission(int.member))
-            return int.reply(EmbedBuilder.noPermissions(true));
+	/**
+	 * Обработка контекстной команды на пользователе
+	 * @param {UserContextMenuInteraction} int
+	 */
+	contextUser: async function(int){
+		if(!this.permission(int.member))
+			return int.reply(EmbedBuilder.noPermissions(true));
 
-        return int.showModal(ModalBuilder.newWarn(int, int.targetUser.id))
-    },
+		return int.showModal(ModalBuilder.newWarn(int, int.targetUser.id))
+	},
 
 	/**
 	 * Обработка нажатия на кнопку
 	 * @param {ButtonInteraction} int
 	 */
-    button: async function(int){
-        const data = int.customId.split('|');
+	button: async function(int){
+		const data = int.customId.split('|');
 
-        if(data[1] === 'embedEditReason'){
-            if(!this.permission(int.member))
-                return int.reply(EmbedBuilder.noPermissions(true));
+		if(data[1] === 'embedEditReason'){
+			if(!this.permission(int.member))
+				return int.reply(EmbedBuilder.noPermissions(true));
 
-            const warn = Warn.get(data[2]);
-            return int.showModal(ModalBuilder.editWarn(int, warn));
-        }
+			const warn = Warn.get(data[2]);
+			return int.showModal(ModalBuilder.editWarn(int, warn));
+		}
 
-        if(data[1] === 'embedPage'){
-            let page = data[3];
-            const target = client.users.cache.get(data[2]);
+		if(data[1] === 'embedPage'){
+			let page = data[3];
+			const target = client.users.cache.get(data[2]);
 
 			const msg = await Warn.pagination(target, page).getEmbed(int);
 
-            return int.update(msg);
-        }
+			return int.update(msg);
+		}
 
-        if(data[1] === 'embedRemoveWarn'){
-            if(!this.permission(int.member))
-                return int.reply(EmbedBuilder.noPermissions(true));
+		if(data[1] === 'embedRemoveWarn'){
+			if(!this.permission(int.member))
+				return int.reply(EmbedBuilder.noPermissions(true));
 
-            const warn = Warn.get(data[2]);
-            warn.flags = { removed: true };
+			const warn = Warn.get(data[2]);
+			warn.flags = { removed: true };
 			warn.save();
 
-            await int.update(await warn.getEmbed(int));
+			await int.update(await warn.getEmbed(int));
 
-            return int.followUp(await EmbedBuilder.removeWarn(int, warn, true));
-        }
+			return int.followUp(await EmbedBuilder.removeWarn(int, warn, true));
+		}
 
-        if(data[1] === 'embedAddWarn'){
-            if(!this.permission(int.member))
-                return int.reply(EmbedBuilder.noPermissions(true));
+		if(data[1] === 'embedAddWarn'){
+			if(!this.permission(int.member))
+				return int.reply(EmbedBuilder.noPermissions(true));
 
 			const warn = Warn.get(data[2]);
 			warn.flags = { removed: false };
@@ -133,59 +133,59 @@ module.exports = {
 			await int.update(await warn.getEmbed(int));
 
 			return int.followUp(await EmbedBuilder.removeWarn(int, warn, true));
-        }
+		}
 
-        await int.reply({
+		await int.reply({
 			content: reaction.emoji.error + ' ' + localize(int.locale, 'In development'),
 			ephemeral: true
 		});
-    },
+	},
 
 	/**
 	 * Обработка модалки
 	 * @param {ModalSubmitInteraction} int
 	 */
-    modal: async function(int){
-        const data = int.customId.split('|');
-        const reason = int.fields.getField('reason').value;
+	modal: async function(int){
+		const data = int.customId.split('|');
+		const reason = int.fields.getField('reason').value;
 
-        if(data[1] === 'NewWarnModal'){
-            const warn = new Warn({
+		if(data[1] === 'NewWarnModal'){
+			const warn = new Warn({
 				target: data[2],
 				reason: reason,
 				author: int.user.id
 			});
 			warn.save();
 
-            return int.reply(await EmbedBuilder.newWarn(int, warn));
-        }
+			return int.reply(await EmbedBuilder.newWarn(int, warn));
+		}
 
-        if(data[1] === 'EditWarnModal'){
+		if(data[1] === 'EditWarnModal'){
 
-            const warn = Warn.get(data[2]);
-            warn.reason = reason;
-            warn.save();
+			const warn = Warn.get(data[2]);
+			warn.reason = reason;
+			warn.save();
 
 			await int.update(await warn.getEmbed(int));
 
 			return int.followUp(await EmbedBuilder.editWarn(int, warn, true));
-        }
+		}
 
-        await int.reply({
+		await int.reply({
 			content: reaction.emoji.error + ' ' + localize(int.locale, 'In development'),
 			ephemeral: true
 		});
-    },
+	},
 
-    /**
-     * Проверка наличия роли Оратор или права управления ролями
-     *
-     * @param {GuildMember} member
-     */
-    permission: member =>
-        member.roles.cache.has('916999822693789718') ||
-        member.roles.cache.has('613412133715312641') ||
-        member.id === '500020124515041283'
+	/**
+	 * Проверка наличия роли Оратор или права управления ролями
+	 *
+	 * @param {GuildMember} member
+	 */
+	permission: member =>
+		member.roles.cache.has('916999822693789718') ||
+		member.roles.cache.has('613412133715312641') ||
+		member.id === '500020124515041283'
 
 
 };
