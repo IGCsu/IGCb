@@ -9,8 +9,8 @@
 - `./slashOptions.json` - Объект для формирования слеш-команд
 - `./EmbedBuilder.js` - [Класс-конструктор Эмбедов](#EmbedBuilder)
 - `./ModalBuilder.js` - [Класс-конструктор Модалок](#ModalBuilder)
-- `./Warn.js` - ORM-класс. Модель для связи с таблицей варнов в базе данных
-- `./WarnPagination.js` - Класс пагинации для `Warn.js`
+- `./Warn.js` - [ORM-класс. Модель для связи с таблицей варнов в базе данных](#Warn)
+- `./WarnPagination.js` - [Класс пагинации для `Warn.js`](#WarnPagination)
 - `./index.js` - входной файл
 
 <h3 name="EmbedBuilder">EmbedBuilder</h3>
