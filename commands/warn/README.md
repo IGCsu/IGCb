@@ -109,9 +109,15 @@ for(const warn of warns){
 
 channel.send(text);
 ```
+Получение эмбеда варна (Оба варианта идентичны):
 ```js
 const warn = Warn.get(1);
-const msg = warn.getEmbed();
+const msg = warn.getEmbed(int);
+channel.send(msg);
+```
+```js
+const warn = Warn.get(1);
+const msg = EmbedBuilder.showWarn(int, warn);
 channel.send(msg);
 ```
 
@@ -139,7 +145,12 @@ const paginationUserWarns = Warn.pagination(user);
 const pagination2page = Warn.pagination(user, 2);
 const pagination20rowsInOnePage = Warn.pagination(user, 1, 20);
 ```
-Получение эмбеда для постраничного списка:
+Получение эмбеда для постраничного списка (Все варианты идентичны):
+```js
+const pagination = Warn.pagination();
+const msg = await EmbedBuilder.paginationWarns(int, pagination);
+int.reply(msg);
+```
 ```js
 const pagination = Warn.pagination();
 const msg = await pagination.getEmbed(int);
@@ -149,6 +160,3 @@ int.reply(msg);
 const msg = await Warn.pagination().getEmbed(int);
 int.reply(msg);
 ```
-
-## Dependencies
-- `global.client`
