@@ -10,15 +10,15 @@
       "direct": {
         "type": 1,
         "description": {
-          "ru": "Получения информации о варнах через Case ID",
+          "ru": "Получения информации о варнах через ID",
           "en": "TODO",
           "uk": "TODO"
         },
         "slashOptions": {
-          "case": {
+          "id": {
             "type": 4,
             "description": {
-              "ru": "Case ID необходимомого варна",
+              "ru": "ID необходимомого варна",
               "en": "TODO",
               "uk": "TODO"
             },
@@ -117,15 +117,15 @@
       "direct": {
         "type": 1,
         "description": {
-          "ru": "Удаление варна через Case ID",
+          "ru": "Удаление варна через ID",
           "en": "TODO",
           "uk": "TODO"
         },
         "slashOptions": {
-          "case": {
+          "id": {
             "type": 4,
             "description": {
-              "ru": "Case ID необходимомого варна",
+              "ru": "ID необходимомого варна",
               "en": "TODO",
               "uk": "TODO"
             },

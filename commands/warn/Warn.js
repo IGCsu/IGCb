@@ -1,128 +1,110 @@
-const {User, Message, Snowflake} = require('discord.js')
-const bitFields = require('./bitFields.json')
+const {User, Message, Snowflake} = require('discord.js');
+const bitFields = require('./bitFields.json');
+const WarnPagination = require('./WarnPagination');
+const EmbedBuilder = require('./EmbedBuilder');
 
 class Warn {
 
-    /**
-     * Фактический ID класса Warn
-     * @type {number}
-     */
-    #caseId = -1;
-
-    /**
-     * ReadOnly свойство возвращающее ID варна
-     * @return {number}
-     */
-    get case() {
-        return this.#caseId;
+	/**
+	 * ID варна
+	 * @type {number}
+	 */
+    get id(){
+        return this.#id;
     }
 
-    /**
-     * Тип варна в форме пригодной для БД
-     * @type {number}
-     */
-    #typeRaw = 0;
+	#id;
 
     /**
-     * Тип варна в форме пригодной для БД
-     * @return {string}
-     */
-    get type(){
-        return Object.keys(bitFields.types).find(key => bitFields.types[key] === this.#typeRaw);
-    }
-
-    /**
-     * Свойство ID цели варна.
-     * @type {Snowflake}
-     */
-    #targetId = undefined;
-
-    get targetId(){
-        return this.#targetId;
-    }
-
-    /**
-     * Свойство цели варна.
-     * @type {Promise<User>}
-     */
-    #target = undefined;
-
-    get target(){
-        return this.#target;
-    }
-
-    /**
-     * Свойство причины варна
+     * Тип варна
      * @type {string}
      */
-    reason = undefined;
+	get type(){
+		return this.#type;
+	}
+
+    #type;
 
     /**
-     * Свойство ID автора варна.
+     * ID участника получившего варн
      * @type {Snowflake}
      */
-    #authorId = undefined;
+	get targetId(){
+		return this.#targetId;
+	}
 
-    get authorId(){
-        return this.#authorId;
-    }
+	/**
+	 * Возвращает пользователя получивший варн
+	 * @type {Promise<User>}
+	 */
+	getTarget(){
+		return client.users.fetch(this.#targetId);
+	}
+
+    #targetId;
+
+	/**
+	 * ID автор варна
+	 * @type {Snowflake}
+	 */
+	get authorId(){
+		return this.#authorId;
+	}
+
+	/**
+	 * Возвращает автора варна
+	 * @type {Promise<User>}
+	 */
+	getAuthor(){
+		return client.users.fetch(this.#authorId);
+	}
+
+	#authorId;
+
+	// /**
+	//  * ID референс(???) варна.
+	//  * @type {Snowflake}
+	//  */
+	// get referenceId(){
+	// 	return this.#referenceId;
+	// }
+	//
+	// /**
+	//  * Референс варна.
+	//  * @type {Promise<Message>}
+	//  */
+	// get reference(){
+	// 	return this.#referenceId;
+	// }
+	//
+	// #referenceId;
+
+	/**
+	 * Unixtime метка выдачи варна
+	 * @type {number}
+	 */
+	#date;
+
+	/**
+	 * Временная метка выдачи варна
+	 * @type {Date}
+	 */
+	get date(){
+		return new Date(this.#date);
+	}
 
     /**
-     * Свойство автора варна.
-     * @type {Promise<User>}
-     */
-    #author = undefined;
-
-    get author(){
-        return this.#author;
-    }
-
-    /**
-     * Свойство ID референса варна.
-     * @type {Snowflake}
-     */
-    #referenceId = undefined;
-
-    get referenceId(){
-        return this.#referenceId;
-    }
-
-    /**
-     * Свойство референса варна.
-     * @type {Promise<Message>}
-     */
-    #reference = undefined;
-
-    get reference(){
-        return this.#reference;
-    }
-
-    /**
-     * Количество секунд прошедших с 1970.01.01 00:00
-     * @type {number}
-     */
-    #dateRaw = undefined;
-
-    /**
-     * Класс Date обозначающий время варна
-     * @return {Date}
-     */
-    get date() {
-        return new Date(this.#dateRaw * 1000);
-    };
-
-    /**
-     * Флаги в формате для храннения в БД
+     * Флаги в формате для хранения в БД
      * @type {number}
      */
     #flagsRaw = 0
 
     get flagsRaw() {
         return this.#flagsRaw;
-    };
+    }
 
     /**
-     * Обект содержащий пары ключ + bool значение
+     * Объект содержащий пары ключ + bool значение
      * @return {Object}
      */
     get flags() {
@@ -131,12 +113,10 @@ class Warn {
             flags[flagEntry] = Boolean(this.#flagsRaw & bitFields.flags[flagEntry]);
         }
         return flags;
-
-
-    };
+    }
 
     /**
-     * Обект содержащий пары ключ + bool значение
+     * Объект содержащий пары ключ + bool значение
      * @param flags {Object}
      */
     set flags(flags) {
@@ -151,84 +131,175 @@ class Warn {
             flagsNumericTarget += ((flags[flagEntry] !== undefined) ? bitFields.flags[flagEntry] * flags[flagEntry] : bitFields.flags[flagEntry] * flagsObjectCurrent[flagEntry]);
         }
         this.#flagsRaw = flagsNumericTarget;
-    };
+    }
+
+	/**
+	 * Причина варна
+	 * @type {string}
+	 */
+	reason;
 
     /**
-     * Тип данных Warn.
-     * @param  {Number}      caseId         ID варна
-     * @param  {String}      type           Тип варна
-     * @param  {Snowflake}   targetId       ID цели варна (ID пользователя получившего варн).
-     * @param  {String}      reason         Причина варна
-     * @param  {Snowflake}   authorId       ID автора варна (ID пользователя выдавшего варн).
-     * @param  {Object}      referenceId    ID сообщения на которое ссылвется варн.
-     * @param  {Date}        date           Время выдачи выарна
-     * @param  {Number}      flagsRaw       Число выражающее все флаги варна
-     *
-     * @return {Object}                     Объект Warn
+	 * @param {Object} data
+     * @param {number} [data.id] ID варна
+     * @param {string|number} [data.type='direct'] Тип варна, принимает либо текстовое значение типа, либо его номерное значение
+     * @param {Snowflake|string} data.target ID пользователя получившего варн
+     * @param {Snowflake|string} data.author ID пользователя выдавшего варн
+     * @param {Snowflake|string} [data.reference=null] ID сообщения на которое ссылается варн
+     * @param {number} [data.date=Date.now()] Unixtime метка выдачи варна
+     * @param {number} [data.flags=0] Число выражающее все флаги варна
+	 * @param {string} data.reason Причина варна
+	 * @constructor
      */
-    constructor(caseId, type, targetId, reason, authorId, referenceId, date, flagsRaw) {
-        this.resolve(caseId, type, targetId, reason, authorId, referenceId, date, flagsRaw);
+    constructor(data){
+		if(!data.type) data.type = 'direct';
+		if(!data.date) data.date = Date.now();
+		if(!data.flags) data.flags = 0;
+		if(!data.reference) data.reference = null;
+
+		this.#id = data.id;
+
+		this.#type = typeof data.type == 'number'
+			? Object.keys(bitFields.types).find(key => bitFields.types[key] === data.type)
+			: data.type;
+
+		if(bitFields.types[this.#type] === undefined)
+			throw new Error(`Attempting to set an unknown type: \"${data.type}\"`);
+
+		this.#targetId = data.target;
+		this.#authorId = data.author;
+
+		// this.#referenceId = referenceId?.message;
+		// if(referenceId)
+		// 	this.#reference = guild.channels.cache.get(referenceId?.channel)?.messages?.fetch(referenceId?.message);
+
+		this.#date = data.date;
+
+		this.#flagsRaw = data.flags ?? 0;
+
+		this.reason = data.reason;
     }
 
-    /**
-     * Базовая функция для разрешения данных Warn.
-     * @param  {Number}      caseId         ID варна
-     * @param  {String}      type           Тип варна
-     * @param  {Snowflake}   targetId       ID цели варна (ID пользователя получившего варн).
-     * @param  {String}      reason         Причина варна
-     * @param  {Snowflake}   authorId       ID автора варна (ID пользователя выдавшего варн).
-     * @param  {Object}      referenceId    ID сообщения на которое ссылвется варн.
-     * @param  {Date}        date           Время выдачи выарна
-     * @param  {Number}      flagsRaw       Число выражающее все флаги варна
-     *
-     * @return {Object}                     Объект Warn
-     */
-    resolve(caseId, type, targetId, reason, authorId, referenceId, date, flagsRaw) {
-        if(!caseId) return undefined;
+	/**
+	 * Сохраняет модель в базу данных
+	 */
+	save(){
 
-        this.#caseId = caseId;
+		if(this.#id){
 
-        if(bitFields.types[type] === undefined)
-            throw new Error(`Attempting to set an unknown type: \"${type}\"`);
-        this.#typeRaw = bitFields.types[type]
+			DB.query('UPDATE warns SET reason = ?, flags = ? WHERE id = ?', [this.reason, this.flagsRaw, this.#id]);
 
-        this.#targetId = targetId;
-        this.#target = client.users.fetch(targetId);
+		}else{
 
-        this.reason = reason;
+			DB.query('INSERT INTO warns (type, target, reason, author, reference, date, flags) VALUES (?, ?, ?, ?, ?, ?, ?)', [
+				this.#type, this.#targetId, this.reason, this.#authorId, null, this.#date, this.flagsRaw
+			]);
 
-        this.#authorId = authorId;
-        this.#author = client.users.fetch(authorId);
+			this.#id = DB.query('SELECT MAX(id) as max FROM warns')[0].max;
 
-        this.#referenceId = referenceId?.message;
-        if(referenceId)
-            this.#reference = guild.channels.cache.get(referenceId?.channel)?.messages?.fetch(referenceId?.message);
+		}
 
-        this.#dateRaw = Math.floor(date.getTime()/1000);
-        this.#flagsRaw = flagsRaw ?? 0;
-        return this;
-    }
+		return this;
+	}
 
-    /**
-     * Базовая функция для разрешения данных Warn.
-     * @param  {number}      data.case_id        ID варна
-     * @param  {String}      data.type           Тип варна
-     * @param  {Snowflake}   data.target_id      ID цели варна (ID пользователя получившего варн).
-     * @param  {String}      data.reason         Причина варна
-     * @param  {Snowflake}   data.author_id      ID автора варна (ID пользователя выдавшего варн).
-     * @param  {Object}      data.reference_id   ID сообщения на которое ссылвется варн.
-     * @param  {number}      data.date           Время выдачи выарна
-     * @param  {number}      data.flags          Число выражающее все флаги варна
-     *
-     * @return {Object}                     Объект Warn
-     */
-    resolveFromObject(data){
-        return this.resolve(data.case_id, Object.keys(bitFields.types).find(key => bitFields.types[key] === data.type), data.target_id, data.reason, data.author_id, data.reference_id, new Date(data.date*1000), data.flags);
-    }
+	/**
+	 * Возвращает строку варна
+	 * @return {string}
+	 */
+	toString(){
+		let str = '';
 
-    toRawArray(){
-        return [this.#caseId, this.#typeRaw, this.#targetId, this.reason ?? '', this.#authorId, this.#referenceId ?? null, this.#dateRaw ?? 0, this.#flagsRaw ?? 0]
-    }
+		str += this.#id + ': ';
+		str += truncate(this.reason ?? 'Не указана', 13);
+		str += ` от <@${(this.#authorId)}>`;
+		str += ` от <t:${Math.floor(this.#date/1000)}:R>`;
+
+		return str;
+	}
+
+	/**
+	 * Возвращает эмбед варна
+	 * @param {CommandInteraction|ButtonInteraction|ModalSubmitInteraction} int
+	 * @return {Object<InteractionReplyOptions>}
+	 */
+	async getEmbed(int){
+		return EmbedBuilder.showWarn(int, this);
+	}
+
+	/**
+	 * Возвращает варн по ID
+	 * @param {number|string} id
+	 * @return {Warn}
+	 */
+	static get(id){
+		const data = DB.query('SELECT * FROM warns WHERE id = ?', [id]);
+		if(!data[0]) return undefined;
+
+		return new this(data[0]);
+	}
+
+	/**
+	 * Возвращает последний варн. Если указать ID пользователя - выборка будет только по указанному пользователю
+	 * @param {Snowflake|string} [target] ID пользователя
+	 * @return {Warn}
+	 */
+	static last(target){
+		const query = target
+			? `SELECT * FROM warns WHERE id = (SELECT MAX(id) FROM warns WHERE target = ${target})`
+			: `SELECT * FROM warns WHERE id = (SELECT MAX(id) FROM warns)`;
+		const data = DB.query(query);
+		if(!data[0]) return undefined;
+
+		return new this(data[0]);
+	}
+
+	/**
+	 * Возвращает все варны. Если указать ID пользователя - выборка будет только по указанному пользователю
+	 * @param {Snowflake|string} [target] ID пользователя
+	 * @return {Warn[]}
+	 */
+	static all(target){
+		const query = target
+			? `SELECT * FROM warns WHERE NOT flags & 4 && target = ${target}`
+			: `SELECT * FROM warns WHERE NOT flags & 4`;
+		const data = DB.query(query);
+
+		let warns = [];
+		for(let i = data.length; i >= 0; i--){
+			warns.push(new this(data[i]));
+		}
+
+		return warns;
+	}
+
+	/**
+	 * Возвращает пагинацию варнов. Если указать ID пользователя - выборка будет только по указанному пользователю
+	 * @param {User} [target] ID пользователя
+	 * @param {number|string} [pageNumber=1] Текущая страница
+	 * @param {number|string} [pageCount=10] Кол-во записей на одной странице
+	 * @return {WarnPagination}
+	 */
+	static pagination(target, pageNumber, pageCount){
+		return new WarnPagination(this, target, pageNumber, pageCount);
+	}
+
+	/**
+	 * Создаёт варн
+	 * @param {Object} data
+	 * @param {string|number} [data.type='direct'] Тип варна, принимает либо текстовое значение типа, либо его номерное значение
+	 * @param {Snowflake|string} data.target ID пользователя получившего варн
+	 * @param {Snowflake|string} data.author ID пользователя выдавшего варн
+	 * @param {Snowflake|string} [data.reference=null] ID сообщения на которое ссылается варн
+	 * @param {number} [data.date=Date.now()] Unixtime метка выдачи варна
+	 * @param {number} [data.flags=0] Число выражающее все флаги варна
+	 * @param {string} data.reason Причина варна
+	 * @return {Warn} Созданный варн
+	 */
+	static create(data){
+		const warn = new this(data);
+		return warn.save();
+	}
+
 }
 
 module.exports = Warn;

@@ -1,171 +1,184 @@
 const slashOptions = require('./slashOptions.json');
 const { title, description } = require('./about.json');
 const { CommandInteraction, UserContextMenuInteraction, GuildMember} = require('discord.js');
-const ui = require('./ui.js');
-const Warn = require('./Warn.js');
-const WarnManager = require('./WarnManager.js');
+const Warn = require('./Warn');
+const EmbedBuilder = require('./EmbedBuilder');
+const ModalBuilder = require('./ModalBuilder');
 
 module.exports = {
 
-    active : true,
-    category : 'Модерация',
+    active: true,
+    category: 'Модерация',
 
-    name : 'warn',
-    title : title,
-    description : description,
-    slashOptions : slashOptions,
+    name: 'warn',
+    title: title,
+    description: description,
+    slashOptions: slashOptions,
 
-    rowsInOnePage: 10,
-
-    init : function(){
-        global.warnsManager = new WarnManager();
+    init: async function(){
         return this;
     },
 
     /**
-     *
-     * @param   {CommandInteraction} int
+     * Обработка слеш-команды
+     * @param {CommandInteraction} int
      */
-    slash : async function(int){
+    slash: async function(int){
 
-        if(int.options.getSubcommand() === 'add'){
-            if (this.permission(int.member))
-                return await int.reply(ui.noPermissionsEmbed(true));
+		const subcommand = int.options.getSubcommand();
+		const subcommandGroup = int.options.getSubcommandGroup();
 
-            return await int.showModal(ui.newWarnModal(int, int.options.getUser('user').id))
+        if(subcommand === 'add'){
+            if(!this.permission(int.member))
+                return int.reply(EmbedBuilder.noPermissions(true));
+
+            return int.showModal(ModalBuilder.newWarn(int, int.options.getUser('user').id))
         }
 
-        if(int.options.getSubcommandGroup() === 'get') {
+        if(subcommandGroup === 'get'){
 
-            if(int.options.getSubcommand() === 'direct'){
+            if(subcommand === 'direct'){
+				const warn = Warn.get(int.options.getInteger('id'));
 
-                const warn = warnsManager.fetch(int.options.getInteger('case'));
-                console.log(warn);
-                let msg = ui.noSuchWarnEmbed();
-                if (warn)
-                    msg = await ui.getSingleWarnEmbed(int, warn);
-
-                return int.reply(msg);
-            }
-
-            if(int.options.getSubcommand() === 'last'){
-
-                const warn = warnsManager.fetchLast(int.options.getUser('user', false)?.id);
-
-                let msg = ui.noWarnsEmbed();
-                if (warn)
-                    msg = await ui.getSingleWarnEmbed(int, warn);
+                const msg = warn
+					? await warn.getEmbed(int)
+					: EmbedBuilder.noSuchWarn();
 
                 return int.reply(msg);
             }
 
-            if(int.options.getSubcommand() === 'list'){
+            if(subcommand === 'last'){
+				const target = int.options.getUser('user', false);
+
+                const warn = Warn.last(target.id);
+
+				const msg = warn
+					? await warn.getEmbed(int)
+					: EmbedBuilder.noSuchWarn();
+
+                return int.reply(msg);
+            }
+
+            if(subcommand === 'list'){
                 const target = int.options.getUser('user');
 
-                return int.reply(await ui.getListWarnEmbed(int, this.getPagedList(target, 1), target, '1/' + this.getLastPageNumber(target)));
+				const pagination = Warn.pagination(target);
+
+				const msg = await pagination.getEmbed(int);
+
+                return int.reply(msg);
             }
         }
 
-        await int.reply({content: reaction.emoji.error + ' ' + localize(int.locale, 'In development'), ephemeral: true});
+        await int.reply({
+			content: reaction.emoji.error + ' ' + localize(int.locale, 'In development'),
+			ephemeral: true
+		});
     },
 
     /**
-     *
-     * @param   {UserContextMenuInteraction} int
-     *
+     * Обработка контекстной команды на пользователе
+     * @param {UserContextMenuInteraction} int
      */
     contextUser: async function(int){
-        if(this.permission(int.member))
-            return await int.reply(ui.noPermissionsEmbed(true));
+        if(!this.permission(int.member))
+            return int.reply(EmbedBuilder.noPermissions(true));
 
-        return await int.showModal(ui.newWarnModal(int, int.targetUser.id))
+        return int.showModal(ModalBuilder.newWarn(int, int.targetUser.id))
     },
 
+	/**
+	 * Обработка нажатия на кнопку
+	 * @param {ButtonInteraction} int
+	 */
     button: async function(int){
-        let customId = int.customId.split('|');
-        if(customId[1] === 'embedEditReason'){
-            if(this.permission(int.member))
-                return await int.reply(ui.noPermissionsEmbed(true));
+        const data = int.customId.split('|');
 
-            const warn = warnsManager.fetch(customId[2]);
-            return await int.showModal(ui.editWarnModal(int, warn));
+        if(data[1] === 'embedEditReason'){
+            if(!this.permission(int.member))
+                return int.reply(EmbedBuilder.noPermissions(true));
+
+            const warn = Warn.get(data[2]);
+            return int.showModal(ModalBuilder.editWarn(int, warn));
         }
 
-        if(customId[1] === 'embedPrevious'){
-            let page = customId[3].split('/')[0] - 1;
-            const target = client.users.cache.get(customId[2]);
+        if(data[1] === 'embedPage'){
+            let page = data[3];
+            const target = client.users.cache.get(data[2]);
 
-            return await int.update(await ui.getListWarnEmbed(int, this.getPagedList(target, page), target, page + '/' + this.getLastPageNumber(target)));
+			const pagination = Warn.pagination(target, page);
+
+			const msg = await pagination.getEmbed(int);
+
+            return int.update(msg);
         }
 
-        if(customId[1] === 'embedNext'){
-            let page = Number(customId[3].split('/')[0]) + 1;
-            const target = client.users.cache.get(customId[2]);
+        if(data[1] === 'embedRemoveWarn'){
+            if(!this.permission(int.member))
+                return int.reply(EmbedBuilder.noPermissions(true));
 
-            return await int.update(await ui.getListWarnEmbed(int, this.getPagedList(target, page), target, page + '/' + this.getLastPageNumber(target)));
+            const warn = Warn.get(data[2]);
+            warn.flags = { removed: true };
+			warn.save();
+
+            await int.update(await warn.getEmbed(int));
+
+            return int.followUp(await EmbedBuilder.removeWarn(int, warn, true));
         }
 
-        if(customId[1] === 'embedRemoveWarn'){
-            if(this.permission(int.member))
-                return await int.reply(ui.noPermissionsEmbed(true));
+        if(data[1] === 'embedAddWarn'){
+            if(!this.permission(int.member))
+                return int.reply(EmbedBuilder.noPermissions(true));
 
-            const warn = warnsManager.fetch(customId[2]);
-            warn.flags = {removed: true};
-            warnsManager.update(warn);
-            await int.update(await ui.getSingleWarnEmbed(int, warn));
-            return int.followUp(await ui.removeWarnEmbed(int, warn, true));
+			const warn = Warn.get(data[2]);
+			warn.flags = { removed: false };
+			warn.save();
+
+			await int.update(await warn.getEmbed(int));
+
+			return int.followUp(await EmbedBuilder.removeWarn(int, warn, true));
         }
 
-        if(customId[1] === 'embedAddWarn'){
-            if(this.permission(int.member))
-                return await int.reply(ui.noPermissionsEmbed(true));
-
-            const warn = warnsManager.fetch(customId[2]);
-            warn.flags = {removed: false};
-            warnsManager.update(warn);
-            await int.update(await ui.getSingleWarnEmbed(int, warn));
-            return int.followUp(await ui.newWarnEmbed(int, warn, true));
-        }
-
-        await int.reply({content: reaction.emoji.error + ' ' + localize(int.locale, 'In development'), ephemeral: true});
+        await int.reply({
+			content: reaction.emoji.error + ' ' + localize(int.locale, 'In development'),
+			ephemeral: true
+		});
     },
 
-    modal : async function(int){
-        let customId = int.customId.split('|');
-        const reason = int.fields.getField('reason').value
+	/**
+	 * Обработка модалки
+	 * @param {ModalSubmitInteraction} int
+	 */
+    modal: async function(int){
+        const data = int.customId.split('|');
+        const reason = int.fields.getField('reason').value;
 
-        if(customId[1] === 'NewWarnModal'){
-            const warn = warnsManager.create(customId[2], reason, int.user.id);
-            return await int.reply(await ui.newWarnEmbed(int, warn));
+        if(data[1] === 'NewWarnModal'){
+            const warn = new Warn({
+				target: data[2],
+				reason: reason,
+				author: int.user.id
+			});
+			warn.save();
+
+            return int.reply(await EmbedBuilder.newWarn(int, warn));
         }
 
-        if(customId[1] === 'EditWarnModal'){
+        if(data[1] === 'EditWarnModal'){
 
-            const warn = warnsManager.fetch(customId[2]);
+            const warn = Warn.get(data[2]);
             warn.reason = reason;
-            warnsManager.update(warn);
+            warn.save();
 
-            await int.update(await ui.getSingleWarnEmbed(int, warn));
+			await int.update(await warn.getEmbed(int));
 
-            return await int.followUp(await ui.editWarnEmbed(int, warn, true));
+			return int.followUp(await EmbedBuilder.editWarn(int, warn, true));
         }
 
-        await int.reply({content: reaction.emoji.error + ' ' + localize(int.locale, 'In development'), ephemeral: true});
-    },
-
-    getPagedList: function(target, page){
-        const warnList = warnsManager.fetchAll(target.id);
-
-        const warnPagedList = [];
-        for(let i = (page - 1) * this.rowsInOnePage; i < Math.min(page * this.rowsInOnePage, warnList.length); i++){
-            warnPagedList.push(warnList[i]);
-        }
-        return warnPagedList;
-    },
-
-    getLastPageNumber: function (target){
-        const warnList = warnsManager.fetchAll(target.id);
-        return Math.ceil(warnList.length/this.rowsInOnePage);
+        await int.reply({
+			content: reaction.emoji.error + ' ' + localize(int.locale, 'In development'),
+			ephemeral: true
+		});
     },
 
     /**
@@ -173,7 +186,7 @@ module.exports = {
      *
      * @param {GuildMember} member
      */
-    permission : member =>
+    permission: member =>
         member.roles.cache.has('916999822693789718') ||
         member.roles.cache.has('613412133715312641') ||
         member.id === '500020124515041283'

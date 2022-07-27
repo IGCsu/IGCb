@@ -1,4 +1,5 @@
 const { title } = require('./about.json');
+const Warn = require('../warn/Warn');
 
 module.exports = {
 
@@ -124,9 +125,14 @@ module.exports = {
 		const msg = await this[channel].send({ embeds : [embed] });
 		const thread = await msg.startThread({ name : text });
 
-		warnsManager.create(after.user.id, advancedMuteData?.reason, advancedMuteData.author.id, undefined, 'mute');
-
 		this.cache[after.id] = {until: after.communicationDisabledUntilTimestamp, messageId: msg.id};
+
+		Warn.create({
+			target: after.user.id,
+			reason: advancedMuteData?.reason,
+			author: advancedMuteData.author.id,
+			type: 'mute'
+		});
 	},
 
 	/**
