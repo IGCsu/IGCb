@@ -51,7 +51,7 @@ module.exports = {
 			if(subcommand === 'last'){
 				const target = int.options.getUser('user', false);
 
-				const warn = Warn.last(target.id);
+				const warn = Warn.last(target?.id);
 
 				const msg = warn
 					? await warn.getEmbed(int)
@@ -62,9 +62,10 @@ module.exports = {
 
 			if(subcommand === 'list'){
 				const target = int.options.getUser('user');
+				const ephemeral = int.options.getBoolean('ephemeral', false);
 
 				const msg = await Warn.pagination(target).getEmbed(int);
-
+				msg.ephemeral = ephemeral;
 				return int.reply(msg);
 			}
 		}

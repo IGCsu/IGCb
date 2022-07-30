@@ -90,7 +90,7 @@ class Warn {
 	 * @type {Date}
 	 */
 	get date(){
-		return new Date(this.#date * 1000);
+		return new Date(this.#date * 1000000);
 	}
 
 	/**
