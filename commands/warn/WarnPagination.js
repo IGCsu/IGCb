@@ -54,14 +54,14 @@ class WarnPagination {
 
 		const skip = this.pageCount * (this.pageNumber - 1);
 
-		// TODO: Не стал делать фильтр удалённых варнов по флагам
 		const query = target
-			? `FROM warns WHERE target = ${this.target.id}`
-			: `FROM warns`;
+			? `FROM warns WHERE target = ${this.target.id} AND NOT flags & 4`
+			: `FROM warns WHERE NOT flags & 4`;
 		this.count = DB.query('SELECT COUNT(*) AS count ' + query)[0].count;
 		const data = DB.query('SELECT * ' + query + ' ORDER BY id DESC LIMIT ?, ?', [skip, this.pageCount]);
 
 		for(const row of data){
+			row.date*=1000;
 			this.list.push(new Warn(row));
 		}
 

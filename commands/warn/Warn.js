@@ -90,7 +90,7 @@ class Warn {
 	 * @type {Date}
 	 */
 	get date(){
-		return new Date(this.#date);
+		return new Date(this.#date * 1000);
 	}
 
 	/**
@@ -140,15 +140,15 @@ class Warn {
 	reason;
 
 	/**
-	 * @param {Object} data
-	 * @param {number} [data.id] ID варна
-	 * @param {string|number} [data.type='direct'] Тип варна, принимает либо текстовое значение типа, либо его номерное значение
-	 * @param {Snowflake|string} data.target ID пользователя получившего варн
-	 * @param {Snowflake|string} data.author ID пользователя выдавшего варн
-	 * @param {Snowflake|string} [data.reference=null] ID сообщения на которое ссылается варн
-	 * @param {number} [data.date=Date.now()] Unixtime метка выдачи варна
-	 * @param {number} [data.flags=0] Число выражающее все флаги варна
-	 * @param {string} data.reason Причина варна
+	 * @param {Object} 				 data
+	 * @param {number} 				[data.id] 				ID варна
+	 * @param {string|number} 		[data.type='direct'] 	Тип варна, принимает либо текстовое значение типа, либо его номерное значение
+	 * @param {Snowflake|string} 	 data.target 			ID пользователя получившего варн
+	 * @param {Snowflake|string} 	 data.author 			ID пользователя выдавшего варн
+	 * @param {Snowflake|string} 	[data.reference=null] 	ID сообщения на которое ссылается варн
+	 * @param {number} 				[data.date=Date.now()] 	Unixtime метка выдачи варна
+	 * @param {number} 				[data.flags=0] 			Число выражающее все флаги варна
+	 * @param {string} 				 data.reason 			Причина варна
 	 * @constructor
 	 */
 	constructor(data){
@@ -174,7 +174,7 @@ class Warn {
 		// if(referenceId)
 		// 	this.#reference = guild.channels.cache.get(referenceId?.channel)?.messages?.fetch(referenceId?.message);
 
-		this.#date = data.date;
+		this.#date = Math.round(data.date/1000);
 
 		this.#flagsRaw = data.flags ?? 0;
 
@@ -208,14 +208,13 @@ class Warn {
 	 * @return {string}
 	 */
 	toString(){
-		let str = '';
-
-		str += this.#id + ': ';
-		str += truncate(this.reason ?? 'Не указана', 13);
-		str += ` от <@${(this.#authorId)}>`;
-		str += ` от <t:${Math.floor(this.#date/1000)}:R>`;
-
-		return str;
+		const reasonShifting 	= 15;
+		const caseShifting 		= 3;
+		const reason = this.reason.replace(/\n/gm, '')
+		return `\`${str2targetLength(String(this.id), caseShifting, 0)}:`
+			+ ` ${str2targetLength(reason ?? 'Не указана', reasonShifting, 1)}`
+			+ ` от\` <@${(this.authorId)}> |`
+			+ ` <t:${Math.floor(this.#date)}:R>`
 	}
 
 	/**
@@ -260,9 +259,8 @@ class Warn {
 	 * @return {Warn[]}
 	 */
 	static all(target){
-		// TODO: Не стал делать фильтр удалённых варнов по флагам
 		const query = target
-			? `SELECT * FROM warns WHERE NOT flags & 4 && target = ${target}`
+			? `SELECT * FROM warns WHERE NOT flags & 4 AND target = ${target}`
 			: `SELECT * FROM warns WHERE NOT flags & 4`;
 		const data = DB.query(query);
 

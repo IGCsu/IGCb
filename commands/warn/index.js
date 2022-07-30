@@ -26,7 +26,6 @@ module.exports = {
 	slash: async function(int){
 
 		const subcommand = int.options.getSubcommand();
-		const subcommandGroup = int.options.getSubcommandGroup();
 
 		if(subcommand === 'add'){
 			if(!this.permission(int.member))
@@ -34,6 +33,8 @@ module.exports = {
 
 			return int.showModal(ModalBuilder.newWarn(int, int.options.getUser('user').id))
 		}
+
+		const subcommandGroup = int.options.getSubcommandGroup();
 
 		if(subcommandGroup === 'get'){
 
