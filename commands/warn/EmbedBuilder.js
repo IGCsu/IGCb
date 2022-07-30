@@ -168,7 +168,7 @@ class EmbedBuilder {
 		embed.setAuthor({ name: int.user.tag, iconURL: int.user.avatarURL() });
 		embed.setTimestamp(int.createdTimestamp);
 		embed.setThumbnail(pagination.target.avatarURL());
-		embed.setFooter({ text: 'Страница: ' + pagination.pageNumber + '/' + pagination.pageLast } + ' | Всего:' + pagination.count + ' варнов');
+		embed.setFooter({ text: 'Страница: ' + pagination.pageNumber + '/' + pagination.pageLast } + ' | Всего: ' + pagination.count + ' варнов');
 
 		return this.#getReplyOptions(embed, false, [
 			{
