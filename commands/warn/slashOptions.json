@@ -42,15 +42,6 @@
 							"uk": "TODO"
 						},
 						"required": false
-					},
-					"ephemeral": {
-						"type": 5,
-						"description": {
-							"ru": "Скрыть сообщение для остальных?",
-							"en": "TODO",
-							"uk": "TODO"
-						},
-						"required": false
 					}
 				}
 			},
@@ -70,6 +61,15 @@
 							"uk": "TODO"
 						},
 						"required": true
+					},
+					"ephemeral": {
+						"type": 5,
+						"description": {
+							"ru": "Скрыть сообщение для остальных?",
+							"en": "TODO",
+							"uk": "TODO"
+						},
+						"required": false
 					}
 				}
 			},
