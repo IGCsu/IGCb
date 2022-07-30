@@ -2,7 +2,7 @@ const { title, description } = require('./about.json');
 
 module.exports = {
 
-	active: false,
+	active: true,
 	category: 'nsfw',
 
 	name: 'fag',
@@ -28,18 +28,17 @@ module.exports = {
 	 * @param {CommandInteraction} int
 	 */
 	call: async function(int){
-		const channel = await guild.channels.fetch(int.channel.id, {
-			cache: true, force: true
-		});
 
-		console.log(channel.members.size);
+		await int.reply({ content: 'Игогооооооо!' });
 
-		// await int.reply({ content: 'Игогооооооо!' });
-		// await this.out(int, 'Думаю...');
-		// await this.out(int, 'А пониеб-то у нас:');
-		// await int.followUp({
-		// 	content: '<@' + int.channel.members.random() + '>!'
-		// })
+		const list = await int.guild.members.fetch({cache: false})
+		list.filter(memb => {return memb.roles.highest.id === '575721274693910528' && memb.presence.status !== 'offline'})
+
+		await this.out(int, 'Думаю...');
+		await this.out(int, 'А пониеб-то у нас:');
+		await int.followUp({
+		 	content: '<@' + list.random() + '>!'
+		})
 	},
 
 	/**

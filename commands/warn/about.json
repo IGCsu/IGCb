@@ -1,0 +1,15 @@
+{
+
+	"title": {
+		"ru": "Модуль варнов",
+		"en": "Warns module",
+		"uk": "Модуль мутів"
+	},
+
+	"description": {
+		"ru": "Команда для взаимодействия с системой варнов",
+		"en": "Warns the specified user for the specified time",
+		"uk": "Мутить вказаного користувача на вказаний час"
+	}
+
+}

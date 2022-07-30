@@ -1,4 +1,5 @@
 const { title } = require('./about.json');
+const Warn = require('../warn/Warn');
 
 module.exports = {
 
@@ -57,22 +58,13 @@ module.exports = {
 			.setColor(0x808080)
 			.setTimestamp()
 			.setThumbnail(ban.user.avatarURL({ dynamic: true }));
-		try {
-			const auditLogs = await guild.fetchAuditLogs({ limit : 1, type : 22 });
-			const entrie = auditLogs.entries.first();
-
-			if(entrie){
-				embed.setFooter({
-					iconURL : entrie.executor.displayAvatarURL({ dynamic: true }),
-					text : entrie.executor.username + '#' + entrie.executor.discriminator
-				})
-				embed.setDescription(
-					'Пользователь: **`' + ban.user.username + '#' + ban.user.discriminator +
-					'`**\nID пользователя: **`' + ban.user.id +
-					'`**\nПричина: **`' + (entrie.reason ? entrie.reason : 'не указана') + '`**'
-				);
-				if(entrie.reason && /\((test|тест)\)/.test(entrie.reason)) channel = 'debugChannel';
+		try{
+			let data = await this.resolveAdvancedBanData(ban, embed, channel);
+			if(data.error){
+				data = await this.resolveAdvancedBanData(ban, embed, channel);
 			}
+			embed = data.embed;
+			channel = data.channel;
 		}catch(e){}
 
 		const msg = await this[channel].send({ embeds : [embed] });
@@ -90,7 +82,7 @@ module.exports = {
 	 * @param {GuildMember} after  Юзер после обновления
 	 */
 	update : async function(before, after){
-		if(before.communicationDisabledUntilTimestamp == after.communicationDisabledUntilTimestamp) return;
+		if(before.communicationDisabledUntilTimestamp === after.communicationDisabledUntilTimestamp) return;
 		const advancedMuteData = await this.getAdvancedTimeoutData(after.user);
 		if(!after.communicationDisabledUntilTimestamp) {
 			const message = this.channel.messages.cache.get(this.cache[after.id]?.messageId);
@@ -106,7 +98,7 @@ module.exports = {
 			await message.edit({embeds: [embed]})
 			delete this.cache[after.id]
 			return
-		};
+		}
 
 		const time = this.getTimeMute(after.communicationDisabledUntilTimestamp);
 		const date = formatDate();
@@ -134,6 +126,13 @@ module.exports = {
 		const thread = await msg.startThread({ name : text });
 
 		this.cache[after.id] = {until: after.communicationDisabledUntilTimestamp, messageId: msg.id};
+
+		Warn.create({
+			target: after.user.id,
+			reason: advancedMuteData?.reason,
+			author: advancedMuteData.author.id,
+			type: 'mute'
+		});
 	},
 
 	/**
@@ -150,12 +149,33 @@ module.exports = {
 
 		const entrie = auditLogs.entries.first();
 		if(!entrie) return result;
-		if(entrie.changes[0].key == 'communication_disabled_until' && entrie.target == target){
+		if(entrie.changes[0].key === 'communication_disabled_until' && entrie.target === target){
 			result.author = entrie.executor;
 			result.reason = entrie.reason;
-		};
+		}
 
 		return result;
+	},
+
+	resolveAdvancedBanData : async function(ban, embed, channel){
+		const auditLogs = await guild.fetchAuditLogs({ limit : 1, type : 22 });
+		const entre = auditLogs.entries.first();
+
+		if(entre?.target.id === ban.user.id){
+			embed.setFooter({
+				iconURL : entre.executor.displayAvatarURL({ dynamic: true }),
+				text : entre.executor.username + '#' + entre.executor.discriminator
+			})
+			embed.setDescription(
+				'Пользователь: **`' + ban.user.username + '#' + ban.user.discriminator +
+				'`**\nID пользователя: **`' + ban.user.id +
+				'`**\nПричина: **`' + (entre.reason ? entre.reason : 'не указана') + '`**'
+			);
+			if(entre.reason && /\((test|тест)\)/.test(entre.reason)) channel = 'debugChannel';
+		} else {
+			return {error: 'SYNC_ERROR'}
+		}
+		return {embed: embed, channel: channel};
 	},
 
 	getTimeMute : function(timestamp){

@@ -193,7 +193,7 @@ module.exports = {
 	 * Находит каналы, которые под владением автора команды и передаёт их указанному пользователю
 	 * @param {UserContextMenuInteraction} ctx
 	 */
-	contextUser : async function(ctx){
+	/*contextUser : async function(ctx){
 		let channels = [];
 
 		client.channels.cache.forEach(c => {
@@ -211,7 +211,7 @@ module.exports = {
 			: 'У вас нет каналов во владении'
 
 		ctx.reply({ content : content, ephemeral: true });
-	},
+	},*/
 
 
 
