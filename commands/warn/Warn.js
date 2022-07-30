@@ -140,15 +140,15 @@ class Warn {
 	reason;
 
 	/**
-	 * @param {Object} 				 data
-	 * @param {number} 				[data.id] 				ID варна
-	 * @param {string|number} 		[data.type='direct'] 	Тип варна, принимает либо текстовое значение типа, либо его номерное значение
-	 * @param {Snowflake|string} 	 data.target 			ID пользователя получившего варн
-	 * @param {Snowflake|string} 	 data.author 			ID пользователя выдавшего варн
-	 * @param {Snowflake|string} 	[data.reference=null] 	ID сообщения на которое ссылается варн
-	 * @param {number} 				[data.date=Date.now()] 	Unixtime метка выдачи варна
-	 * @param {number} 				[data.flags=0] 			Число выражающее все флаги варна
-	 * @param {string} 				 data.reason 			Причина варна
+	 * @param {Object} data
+	 * @param {number} [data.id] ID варна
+	 * @param {string|number} [data.type='direct'] Тип варна, принимает либо текстовое значение типа, либо его номерное значение
+	 * @param {Snowflake|string} data.target ID пользователя получившего варн
+	 * @param {Snowflake|string} data.author ID пользователя выдавшего варн
+	 * @param {Snowflake|string} [data.reference=null] ID сообщения на которое ссылается варн
+	 * @param {number} [data.date=Date.now()] Unixtime метка выдачи варна
+	 * @param {number} [data.flags=0] Число выражающее все флаги варна
+	 * @param {string} data.reason Причина варна
 	 * @constructor
 	 */
 	constructor(data){
@@ -208,13 +208,23 @@ class Warn {
 	 * @return {string}
 	 */
 	toString(){
-		const reasonShifting 	= 15;
-		const caseShifting 		= 3;
-		const reason = this.reason.replace(/\n/gm, '')
-		return `\`${str2targetLength(String(this.id), caseShifting, 0)}:`
-			+ ` ${str2targetLength(reason ?? 'Не указана', reasonShifting, 1)}`
-			+ ` от\` <@${(this.authorId)}> |`
-			+ ` <t:${Math.floor(this.#date)}:R>`
+		// const reasonShifting 	= 15;
+		// const caseShifting 		= 3;
+		// const reason = this.reason.replace(/\n/gm, '')
+		// return `\`${str2targetLength(String(this.id), caseShifting, 0)}:`
+		// 	+ ` ${str2targetLength(reason ?? 'Не указана', reasonShifting, 1)}`
+		// 	+ ` от\` <@${(this.authorId)}> |`
+		// 	+ ` <t:${Math.floor(this.#date)}:R>`
+
+		let str = this.#id + ': <@' + this.authorId + '> <t:' + Math.floor(this.#date) + ':R>';
+
+		if(this.reason){
+			str += '\n Причина: *' + this.reason.trim() + '*';
+		}
+
+		str += '\n';
+
+		return str;
 	}
 
 	/**
