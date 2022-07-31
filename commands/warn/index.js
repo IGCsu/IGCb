@@ -55,7 +55,7 @@ module.exports = {
 
 				const msg = warn
 					? await warn.getEmbed(int)
-					: EmbedBuilder.noWarns();
+					: (target ? EmbedBuilder.noWarns() : EmbedBuilder.noSuchWarn());
 
 				return int.reply(msg);
 			}
@@ -65,7 +65,9 @@ module.exports = {
 				const ephemeral = int.options.getBoolean('ephemeral', false);
 
 				let msg = await Warn.pagination(target).getEmbed(int);
-				msg ? msg.ephemeral = ephemeral : msg = EmbedBuilder.noWarns();
+
+				if(!msg) msg = EmbedBuilder.noWarns();
+				msg.ephemeral = ephemeral
 
 				return int.reply(msg);
 			}
