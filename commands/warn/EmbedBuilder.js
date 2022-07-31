@@ -160,6 +160,9 @@ class EmbedBuilder {
 		});
 
 		let description = '';
+
+		if(!pagination.list) return;
+
 		for(let warn of pagination.list){
 			description += warn.toString() + '\n';
 		}
@@ -184,7 +187,7 @@ class EmbedBuilder {
 				style: 1,
 				custom_id: `warn|embedPage|${pagination.target.id}|${pagination.pageNumber + 1}`,
 				label: 'Следующая',
-				disabled: pagination.pageNumber === pagination.pageLast
+				disabled: pagination.pageNumber >= pagination.pageLast
 			},
 		]);
 
