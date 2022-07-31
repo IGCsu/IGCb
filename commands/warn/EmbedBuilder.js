@@ -161,7 +161,7 @@ class EmbedBuilder {
 
 		let description = '';
 
-		if(!pagination.list) return;
+		if(!pagination.list.length) return;
 
 		for(let warn of pagination.list){
 			description += warn.toString() + '\n';
