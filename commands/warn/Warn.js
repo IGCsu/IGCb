@@ -1,4 +1,4 @@
-const {User, Message, Snowflake} = require('discord.js');
+const {User, Message, Snowflake, BitField} = require('discord.js');
 const bitFields = require('./bitFields.json');
 const WarnPagination = require('./WarnPagination');
 const EmbedBuilder = require('./EmbedBuilder');
@@ -20,7 +20,7 @@ class Warn {
 	 * @type {string}
 	 */
 	get type(){
-		return this.#type;
+		return Object.keys(bitFields.types).find(key => bitFields.types[key] === this.#type);
 	}
 
 	#type;
@@ -160,10 +160,10 @@ class Warn {
 		this.#id = data.id;
 
 		this.#type = typeof data.type == 'number'
-			? Object.keys(bitFields.types).find(key => bitFields.types[key] === data.type)
-			: data.type;
+			? data.type
+			: bitFields.types[data.type];
 
-		if(bitFields.types[this.#type] === undefined)
+		if(bitFields.types[this.type] === undefined)
 			throw new Error(`Attempting to set an unknown type: \"${data.type}\"`);
 
 		this.#targetId = data.target;
