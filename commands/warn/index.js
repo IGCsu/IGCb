@@ -110,8 +110,11 @@ module.exports = {
 			const target = client.users.cache.get(data[2]);
 
 			const msg = await Warn.pagination(target, page).getEmbed(int);
-
-			return int.update(msg);
+			if(!msg) {
+				return int.update(msg);
+			} else {
+				return int.reply(EmbedBuilder.noSuchWarn(true))
+			}
 		}
 
 		if(data[1] === 'embedRemoveWarn'){
