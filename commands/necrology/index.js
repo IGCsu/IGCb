@@ -101,7 +101,7 @@ module.exports = {
 		}
 
 		const time = this.getTimeMute(after.communicationDisabledUntilTimestamp);
-		const date = formatDate();
+		const date = new Date().toISO();
 		const text = date + ' ' + time + ' ' + after.toName() + ' ' + after.user.id;
 
 		let embed = new Discord.MessageEmbed()

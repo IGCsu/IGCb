@@ -28,7 +28,7 @@ module.exports = {
 			title += match[1];
 		}else{
 			const name = msg.member.toName();
-			const time = formatDate(msg.createdTimestamp);
+			const time = new Date(msg.createdTimestamp).toISO();
 			title += name + ' ' + time;
 		}
 
