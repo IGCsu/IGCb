@@ -22,7 +22,7 @@ module.exports = {
 			if(member) await this.silent(member);
 		});
 		client.on('guildMemberUpdate', async (oldMember, newMember) => {
-			if(member2name(oldMember) === member2name(newMember)) return;
+			if(oldMember.toName() === newMember.toName()) return;
 			await this.silent(newMember);
 		});
 
@@ -33,8 +33,8 @@ module.exports = {
 	/**
 	 * Обработка
 	 *
-	 * @param {String}      nickname Указанный никнейм
-	 * @param {GuildMember} member   Объект пользователя
+	 * @param {string} nickname Указанный никнейм
+	 * @param {GuildMember} member Объект пользователя
 	 */
 	call : async function(nickname, member){
 		const fixed = this.fix(nickname, true);
@@ -43,8 +43,8 @@ module.exports = {
 			return { error : reaction.emoji.error + ' ' + fixed.text };
 
 		try{
-			const old = member2name(member);
-			await member.setNickname(fixed.name, 'По требованию ' + member2name(member, 1));
+			const old = member.toName();
+			await member.setNickname(fixed.name, 'По требованию ' + member.toName(true));
 			let response = { success : reaction.emoji.success + ' Никнейм изменён `' + old + '` => `' + fixed.name + '`' };
 			if(fixed.text.length) response.warning = reaction.emoji[fixed.status] + ' ' + fixed.text;
 			return response;
@@ -78,11 +78,11 @@ module.exports = {
 	 * Тихое обновление
 	 * Обновление никнейма пользователя без его участия
 	 *
-	 * @param  {GuildMember} member Объект пользователя
+	 * @param {GuildMember} member Объект пользователя
 	 * @return {String}
 	 */
 	silent : async function(member){
-		const name = member2name(member);
+		const name = member.toName();
 
 		let fixed = this.fix(name);
 		if(fixed.length > 30) fixed = fixed.substring(0, 30);

@@ -115,7 +115,7 @@ module.exports = {
 	/**
 	 * Создание роли
 	 *
-	 * @param {Message} msg
+	 * @param {GuildMember} member
 	 * @param {String}  name Название роли
 	 * @param {Number}  pos  Позиция роли
 	 */
@@ -127,7 +127,7 @@ module.exports = {
 			mentionable : true,
 			color : 5095913,
 			position : pos,
-			reason : 'По требованию ' + member2name(member, 1)
+			reason : 'По требованию ' + member.toName(true)
 		});
 		return { role : role , chk: true};
 	},
