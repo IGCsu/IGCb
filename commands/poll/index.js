@@ -269,7 +269,7 @@ module.exports = {
 				for (let vote of results.result)  {
 					vote.answer = vote.answer.replace('\n', ' _ ')
 					votes += ((vote.flags & this.FLAGS.ANSWERS.DISAGREE) ? '[0;41m✖[0m ' : '[0;45m✓[0m ') +
-						`${(await guild.members.cache.get(vote.user_id)).toName()} ` + truncate(vote.answer, 60) + '\n';
+						`${(await guild.members.cache.get(vote.user_id)).toName()} ` + vote.answer.truncate(60) + '\n';
 				}
 			}
 			content =
