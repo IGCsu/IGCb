@@ -32,7 +32,8 @@ module.exports = {
 		let predict = finded.roles;
 
 		if(role){
-			predict.sort((a, b) => getStringSimilarityDiff(a.name, b.name, role));
+			const find = role.toLowerCase();
+			predict.sort((a, b) => b.name.similarity(find) - a.name.similarity(find));
 			if(create) choices[0] = {name : role, value : role};
 		} else {
 			choices[0] = {name: localize(int.locale, 'Show list of all Game Roles'), value:'showAll'};
