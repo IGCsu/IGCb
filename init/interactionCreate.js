@@ -13,7 +13,7 @@ module.exports = async () => {
         try{
             await commands[name][int.indexFunc](int);
         }catch(e){
-            errorHandler(e, name, true);
+            e.handler(name, true);
         }
     });
     console.timeEnd('Event interactionCreate');
