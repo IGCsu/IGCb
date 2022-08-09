@@ -39,7 +39,7 @@ module.exports = {
 	},
 
 	/**
-	 * @param {Object} int CommandInteraction
+	 * @param {CommandInteraction} int
 	 */
 	slash : async function(int){
         const type = int.options.getSubcommand();
@@ -52,7 +52,7 @@ module.exports = {
 			flags += (type === 'common' ? 0 : this.FLAGS.POLLS.PRIVATE);
 			flags += (isPublic ? this.FLAGS.POLLS.PUBLIC : 0);
 			if(min > 1000){
-				return await int.reply({content: localize(int.locale, 'The minimum number of characters exceeds the maximum'), ephemeral: true})
+				return await int.reply({content: int.str('The minimum number of characters exceeds the maximum'), ephemeral: true})
 			} else {
             	const message = await int.reply({content: `${txt} опрос: ${question}`, components:
 				[
@@ -94,19 +94,19 @@ module.exports = {
 				if(search[0] === 'poll') return int.editReply({content: await this.getPollResultsContent(search[1], int)});
 				if(search[0] === 'answer') return int.editReply({content: this.getPollAnswerContent(search[1], search[2], int)});
 			}
-			int.reply({content: localize(int.locale, 'In development'), ephemeral: true});
+			int.reply({content: int.str('In development'), ephemeral: true});
 		}
     },
 
 	/**
-	 * @param {Object} int ButtonInteraction
+	 * @param {ButtonInteraction} int
 	 */
     button : async function(int){
 		const resp = int.customId.split('|')[1]
         if(resp === 'result') await int.deferReply({ephemeral: true});
 		const poll = this.fetchPoll(int.message.id);
 		if(resp === 'result') {
-			if(!poll) if(!poll) return int.editReply({content: localize(int.locale, 'This poll was not found in the database'), ephemeral: true});
+			if(!poll) if(!poll) return int.editReply({content: int.str('This poll was not found in the database'), ephemeral: true});
 			const content = await this.getPollResultsContent(int.message.id, int);
 			try{
 				return await int.editReply({content: content, ephemeral: true});
@@ -116,28 +116,28 @@ module.exports = {
 		}
 		const answer = this.fetchPollAnswer(int.member.user.id, int.message.id);
 		const value = answer ? answer.answer : undefined;
-		if(!poll) int.reply({content: localize(int.locale, 'This poll was not found in the database'), ephemeral: true});
+		if(!poll) int.reply({content: int.str('This poll was not found in the database'), ephemeral: true});
 		const isPrivate = poll.flags & this.FLAGS.POLLS.PRIVATE;
 		if(isPrivate && !(int.member.roles.cache.get('916999822693789718') || int.member.roles.cache.get('613412133715312641'))){
-			return await int.reply({content: localize(int.locale, 'Access denied'), ephemeral: true})
+			return await int.reply({content: int.str('Access denied'), ephemeral: true})
 		}
 
 		const min = poll.min;
 
 		await int.showModal({
-			title: localize(int.locale, value ? 'Confirm your vote changes' : 'Confirm your vote'),
+			title: int.str(value ? 'Confirm your vote changes' : 'Confirm your vote'),
 			customId: 'poll|' + resp,
 			components:[{
 				type: 1,
 				components:[{
 					type: 4,
 					customId: 'opininon',
-					label: localize(int.locale, 'Why you choose') + ' \"' + localize(int.locale, ((resp === 'yes') ? 'yes': 'no')) + '\"',
+					label: int.str('Why you choose') + ' \"' + int.str(((resp === 'yes') ? 'yes': 'no')) + '\"',
 					style: 2,
 					value: value,
 					min_length: min,
 					max_length: 1000,
-					placeholder: localize(int.locale, 'Enter your valuable opinion'),
+					placeholder: int.str('Enter your valuable opinion'),
 					required: min !== 0
 				}]
 			}],
@@ -150,10 +150,10 @@ module.exports = {
 		console.log(`\x1b[33m${int.message.content} ${int.member.user.username} ${(type === 'yes') ? 'за' : 'против'}:\x1b[0m ${int.components[0].components[0].value}`)
 		if(!this.fetchPollAnswer(int.member.user.id, int.message.id)){
 			this.createPollAnswer(int.member.user.id, int.message.id, int.components[0].components[0].value, (type === 'yes') ? 0 : this.FLAGS.ANSWERS.DISAGREE)
-			txt = localize(int.locale, 'Vote submmited');
+			txt = int.str('Vote submmited');
 		} else {
 			this.updatePollAnswer(int.member.user.id, int.message.id, {awnser: int.components[0].components[0].value, flags: (type === 'yes') ? 0 : this.FLAGS.ANSWERS.DISAGREE})
-			txt = localize(int.locale, 'Vote changed');
+			txt = int.str('Vote changed');
 		}
 		await int.reply({ content: txt, ephemeral: true })
 	},
@@ -252,7 +252,7 @@ module.exports = {
 	getPollAnswerContent: function (user_id, message_id, int=undefined) {
 		const poll = this.fetchPoll(message_id);
 		const answer = this.fetchPollAnswer(user_id, message_id);
-		let content = localize(int.locale, 'Vote not found');
+		let content = int.str('Vote not found');
 		if(answer){
 			content = `${poll.question}\n<@${user_id}> ${(answer.flags & this.FLAGS.ANSWERS.DISAGREE) ? 'против' : 'за'}\n\`\`\`ansi\n${answer.answer}\`\`\``
 		}
@@ -261,7 +261,7 @@ module.exports = {
 	getPollResultsContent: async function (message_id, int=undefined) {
 		const poll = this.fetchPoll(message_id);
 		const results = this.fetchPollResults(message_id);
-		let content = localize(int.locale, 'There are no votes yet');
+		let content = int.str('There are no votes yet');
 		let votes = '';
 		if(results.result.length){
 			if(poll.flags & this.FLAGS.POLLS.PUBLIC){
@@ -274,7 +274,7 @@ module.exports = {
 			}
 			content =
 			'```ansi\n' +
-			`${localize(int.locale, 'no')} ${results.no} [[0;41m${' '.repeat(Math.round((results.no/results.result.length)*20))}[0;45m${' '.repeat(Math.round((results.yes/results.result.length)*20))}[0m] ${results.yes} ${localize(int.locale, 'yes')}\n` + votes +
+			`${int.str('no')} ${results.no} [[0;41m${' '.repeat(Math.round((results.no/results.result.length)*20))}[0;45m${' '.repeat(Math.round((results.yes/results.result.length)*20))}[0m] ${results.yes} ${int.str('yes')}\n` + votes +
 			'```';
 		}
 		return content;

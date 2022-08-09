@@ -36,7 +36,7 @@ module.exports = {
 		if(!channel)
 			return int.reply({
 				content: reaction.emoji.error + ' ' +
-					localize(int, 'You are not connected to a voice channel and did not specify a channel'),
+					int.str('You are not connected to a voice channel and did not specify a channel'),
 				ephemeral: true
 			});
 

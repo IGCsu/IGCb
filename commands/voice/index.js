@@ -83,26 +83,26 @@ module.exports = {
 		if(int.options.getSubcommand() === 'auto-sync'){
 			await int.deferReply({ephemeral: true});
 			DB.query(`UPDATE users SET mode = "${int.options.getString('mode')}" WHERE id = ${int.user.id};`)[0];
-			await int.editReply({content: reaction.emoji.success + ' ' +localize(int.locale, 'Settings changed'), ephemeral: true});
+			await int.editReply({content: reaction.emoji.success + ' ' +int.str('Settings changed'), ephemeral: true});
 		
 		} else if (int.options.getSubcommand() === 'upload') {
-			if(!int.member.voice.channel) return await int.reply({content: reaction.emoji.error + ' ' + localize(int.locale, 'You aren\'t connect to voice channel'), ephemeral: true});
+			if(!int.member.voice.channel) return await int.reply({content: reaction.emoji.error + ' ' + int.str('You aren\'t connect to voice channel'), ephemeral: true});
 			await int.deferReply({ephemeral: true});
 			await this.upload(int.member.voice);
-			await int.editReply({content: reaction.emoji.success + ' ' + localize(int.locale, 'Voice channel configuration updated in DB'), ephemeral: true});
+			await int.editReply({content: reaction.emoji.success + ' ' + int.str('Voice channel configuration updated in DB'), ephemeral: true});
 		
 		} else if (int.options.getSubcommand() === 'sync') {
-			if(!int.member.voice.channel) return await int.reply({content: reaction.emoji.error + ' ' + localize(int.locale, 'You aren\'t connect to voice channel'), ephemeral: true});
+			if(!int.member.voice.channel) return await int.reply({content: reaction.emoji.error + ' ' + int.str('You aren\'t connect to voice channel'), ephemeral: true});
 			await int.deferReply({ephemeral: true});
 			const response = await this.sync(int.member.voice);
 			const content = response === 0
-				? reaction.emoji.success + ' ' + localize(int.locale, 'Syncing complete')
-				: reaction.emoji.error + ' ' + localize(int.locale, response);
+				? reaction.emoji.success + ' ' + int.str('Syncing complete')
+				: reaction.emoji.error + ' ' + int.str(response);
 			
 			await int.editReply({content: content, ephemeral: true});
 		
 		} else {
-			await int.reply({content: localize(int.locale, 'In development'), ephemeral: true});
+			await int.reply({content: int.str('In development'), ephemeral: true});
 		}
 	},
 
