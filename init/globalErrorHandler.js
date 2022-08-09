@@ -4,15 +4,15 @@
 module.exports = async () => {
     console.time('Events unhandledRejection & uncaughtException');
     process
-        .on('unhandledRejection', (reason, p) => {
-            console.error(reason);
-            errorHandler(reason).then(() => {
+        .on('unhandledRejection', error => {
+            console.error(error);
+            error.handler().then(() => {
                 process.exit(1);
             });
         })
-        .on('uncaughtException', err => {
-            console.error(err);
-            errorHandler(err).then(() => {
+        .on('uncaughtException', error => {
+            console.error(error);
+            error.handler().then(() => {
                 process.exit(1);
             });
         });
