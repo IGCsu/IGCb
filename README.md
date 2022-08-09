@@ -166,7 +166,7 @@ module.exports = {
 	 * Если функция существует - то при инициализации будет добавлена контекстная-команда на сообщение.
 	 * @param {ContextMenuInteraction} int
 	 */
-	contextMesage: async function(int){ // not required
+	contextMessage: async function(int){ // not required
 		await this.call(int);
 	},
 
