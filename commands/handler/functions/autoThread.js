@@ -27,7 +27,7 @@ module.exports = {
 		if(match){
 			title += match[1];
 		}else{
-			const name = member2name(msg.member);
+			const name = msg.member.toName();
 			const time = formatDate(msg.createdTimestamp);
 			title += name + ' ' + time;
 		}

@@ -125,7 +125,7 @@ module.exports = {
 			after : after.channel ? after.channel : { name : 'X' },
 		};
 
-		const user = member2name(state.member, 1, 1);
+		const user = state.member.toName(true, true);
 
 		if(channel.before.id === channel.after.id) return;
 
@@ -161,11 +161,11 @@ module.exports = {
 			console.log("DB error occurred:\n" + e)
 		};
 		if(preset) preset.voice_data = JSON.parse(preset.voice_data);
-		const name = (preset?.mode !== 0 ? preset?.voice_data?.name : undefined) ?? member2name(data.member);
+		const name = (preset?.mode !== 0 ? preset?.voice_data?.name : undefined) ?? data.member.toName();
 
-		log.info(member2name(data.member, 1, 1), 'create', '#' + name);
+		log.info(data.member.toName(true, true), 'create', '#' + name);
 		let obj = {
-			reason : 'По требованию ' + member2name(data.member, 1),
+			reason : 'По требованию ' + data.member.toName(true),
 			parent : this.channelCategory.id,
 			type : 'GUILD_VOICE'
 		}
@@ -256,7 +256,7 @@ module.exports = {
 
 		if (voiceConfiguration.bitrate > voice.guild.maximumBitrate) voiceConfiguration.bitrate = voice.guild.maximumBitrate;
 
-		await voice.channel.edit(voiceConfiguration, 'По требованию ' + member2name(voice.member));
+		await voice.channel.edit(voiceConfiguration, 'По требованию ' + voice.member.toName());
 		return 0;
 	}
 

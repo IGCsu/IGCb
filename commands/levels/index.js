@@ -58,7 +58,6 @@ module.exports = {
 	 */
 	call : async function(int, member){
 
-		const name = member2name(member, true);
 		const user = new UserLevels(member, this.roles, this.rolesIDs);
 
 		if(!user.finded) return { error: 'Unknown User' };
