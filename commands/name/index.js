@@ -14,19 +14,33 @@ module.exports = {
 
 	transliterateOptions : transliterateOptions,
 
+	userUpdateListener : async (oldUser, newUser) => {
+		if(oldUser.username === newUser.username) return;
+		const member = await guild.members.fetch({ user : newUser });
+		if(member) await this.silent(member);
+	},
+
+	guildMemberUpdateListener : async (oldMember, newMember) => {
+		if(member2name(oldMember) === member2name(newMember)) return;
+		await this.silent(newMember);
+	},
+
 	init : function(){
-		client.on('guildMemberAdd', async member => await this.silent(member));
-		client.on('userUpdate', async (oldUser, newUser) => {
-			if(oldUser.username === newUser.username) return;
-			const member = await guild.members.fetch({ user : newUser });
-			if(member) await this.silent(member);
-		});
-		client.on('guildMemberUpdate', async (oldMember, newMember) => {
-			if(member2name(oldMember) === member2name(newMember)) return;
-			await this.silent(newMember);
-		});
+		client.on('guildMemberAdd', this.silent);
+		client.on('userUpdate', this.userUpdateListener);
+		client.on('guildMemberUpdate', this.guildMemberUpdateListener);
 
 		return this;
+	},
+
+	switchPause : async function(action){
+		if(!action) {
+			client.off('guildMemberAdd', this.silent);
+			client.off('userUpdate', this.userUpdateListener);
+			client.off('guildMemberUpdate', this.guildMemberUpdateListener);
+		} else {
+			this.init();
+		}
 	},
 
 

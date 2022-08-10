@@ -46,14 +46,17 @@ module.exports = {
 		this.allChannels = allChannels;
 		this.allowedChannelsFunctions = allowedChannelsFunctions;
 
-		client.on('messageCreate', async msg => {
-			if(msg.channel.type === 'DM') return;
-			if(msg.channel.guild.id !== guild.id) return;
-
-			await this.call(msg);
-		});
+		client.on('messageCreate', this.call);
 
 		return this;
+	},
+
+	switchPause : async function(action){
+		if(!action) {
+			client.off('messageCreate', this.call);
+		} else {
+			client.on('messageCreate', this.call);
+		}
 	},
 
 
@@ -72,6 +75,9 @@ module.exports = {
 	 * @param {Message} msg Сообщение пользователя
 	 */
 	call: async function(msg){
+		if(msg.channel.type === 'DM') return;
+		if(msg.channel.guild.id !== guild.id) return;
+
 		for(let command of this.commands) this.commandMessage(commands[command], msg);
 
 		const thread = msg.channel.isThread();

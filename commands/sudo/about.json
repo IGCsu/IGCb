@@ -1,0 +1,15 @@
+{
+
+  "description": {
+    "ru": "Инструмент для инженерного управления ботом",
+    "en": "Tool for engineering bot control",
+    "uk": "Інструмент для інженерного управління ботом"
+  },
+
+  "title": {
+    "ru": "Sudo",
+    "en": "Sudo",
+    "uk": "Sudo"
+  }
+
+}

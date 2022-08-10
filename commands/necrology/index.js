@@ -34,13 +34,21 @@ module.exports = {
 			return this;
 		}
 
-		client.on('guildMemberUpdate', (before, after) => this.update(before, after));
-		client.on('guildBanAdd', ban => this.ban(ban));
+		client.on('guildMemberUpdate', this.update);
+		client.on('guildBanAdd', this.ban);
 
 		return this;
 	},
 
-
+	switchPause : async function(action){
+		if(!action) {
+			client.off('guildMemberUpdate', this.update);
+			client.off('guildBanAdd', this.ban);
+		} else {
+			client.on('guildMemberUpdate', this.update);
+			client.on('guildBanAdd', this.ban);
+		}
+	},
 
 
 	/**

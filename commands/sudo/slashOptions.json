@@ -1,0 +1,68 @@
+{
+	"restart": {
+		"type": 1,
+		"description": {
+			"ru": "Перезагрузка бота или модуля",
+			"en": "TODO",
+			"uk": "TODO"
+		},
+		"slashOptions": {
+			"module": {
+				"type": 3,
+				"required": false,
+				"autocomplete": true,
+				"description": {
+					"ru": "Перезапускаемый модуль. Не указывайте для перезапуска всего бота",
+					"en": "TODO",
+					"uk": "TODO"
+				}
+			},
+			"forced": {
+				"type": 5,
+				"required": false,
+				"description": {
+					"ru": "Силовой перезапуск проигнорирует функцию отключения бота или модуля",
+					"en": "TODO",
+					"uk": "TODO"
+				}
+			}
+		}
+},
+	"pause": {
+		"type": 1,
+		"description": {
+			"ru": "Пауза бота или модуля",
+			"en": "TODO",
+			"uk": "TODO"
+		},
+		"slashOptions": {
+			"module": {
+				"type": 3,
+				"required": false,
+				"autocomplete": true,
+				"description": {
+					"ru": "Останавливаемый модуль. Не указывайте для пауза всего бота (кроме этой команды)",
+					"en": "TODO",
+					"uk": "TODO"
+				}
+			},
+			"forced": {
+				"type": 5,
+				"required": false,
+				"description": {
+					"ru": "Силовая пауза проигнорирует функцию паузы бота или модуля (Модуль будет выгружен вместо паузы)",
+					"en": "TODO",
+					"uk": "TODO"
+				}
+			}
+		}
+	},
+	"eval": {
+		"type": 1,
+		"description": {
+			"ru": "Исполнение кода",
+			"en": "TODO",
+			"uk": "TODO"
+		}
+	}
+}

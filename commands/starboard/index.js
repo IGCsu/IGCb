@@ -17,21 +17,32 @@ module.exports = {
 	*
 	* @return {Object}
 	*/
+
+	lsitener: async (data) => {
+		if(data.t !== 'MESSAGE_REACTION_ADD') return;
+		const reaction = data.d
+		if(reaction.emoji.name !== this.starboardEmoji) return;
+		const message = await ((await (client.channels.fetch(data.d.channel_id))).messages.fetch(data.d.message_id))
+		await this.call(message.reactions.cache.get(reaction.emoji.name), message);
+	},
+
 	init : async function(path){
 		if(!this.starboardChannel){
 			log.initText += log.error(path + ': Starboard канал не найден');
 			return this;
 		}
 
-		client.on('raw', async (data) => {
-			if(data.t !== 'MESSAGE_REACTION_ADD') return;
-			const reaction = data.d
-			if(reaction.emoji.name !== this.starboardEmoji) return;
-			const message = await ((await (client.channels.fetch(data.d.channel_id))).messages.fetch(data.d.message_id))
-			await this.call(message.reactions.cache.get(reaction.emoji.name), message);
-		});
+		client.on('raw', this.lsitener);
 
 		return this;
+	},
+
+	switchPause : async function(action){
+		if(!action) {
+			client.off('raw', this.lsitener);
+		} else {
+			client.on('raw', this.lsitener);
+		}
 	},
 
 	call : async function(reaction, message){

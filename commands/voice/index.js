@@ -70,9 +70,17 @@ module.exports = {
 			if(p.type === 'member') p.delete();
 		});
 
-		client.on('voiceStateUpdate', (before, after) => this.update(before, after));
+		client.on('voiceStateUpdate', this.update);
 
 		return this;
+	},
+
+	switchPause : async function(action){
+		if(!action) {
+			client.off('voiceStateUpdate', this.update);
+		} else {
+			client.on('voiceStateUpdate', this.update);
+		}
 	},
 
 	/**
