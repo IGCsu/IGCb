@@ -6,7 +6,9 @@ module.exports = async () => {
     client.on('interactionCreate', async int => {
         const name = int.commandName ?? int.customId.split('|')[0];
 
-        if(!commands[name] || !commands[name].active) return;
+        if(!commands[name]) return;
+
+        if(!commands[name].active) return int.reply({content: `Модуль ${name} оффлайн`, ephemeral: true})
 
         int.action = getInteractionAction(int);
 
