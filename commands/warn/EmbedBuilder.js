@@ -62,7 +62,7 @@ class EmbedBuilder {
 		const target = await warn.getTarget();
 
 		const embed = new MessageEmbed({
-			title: `${reaction.emoji.success} | Варн номер ${warn.id} был выдан пользователю ${target.tag}`,
+			title: `${reaction.emoji.success} | Варн выдан: ${warn.id} | ${target.tag} | ${warn.reason}`,
 			color: reaction.color.success
 		});
 
