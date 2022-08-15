@@ -8,7 +8,9 @@ module.exports = async () => {
 
         if(!commands[name]) return;
 
-        if(!commands[name].active) return int.reply({content: `Модуль ${name} оффлайн`, ephemeral: true})
+        if(client.paused && name !== 'sudo') return;
+
+        if(!commands[name].active) return int.reply({content: `Модуль ${name} оффлайн`, ephemeral: true});
 
         int.action = getInteractionAction(int);
 
