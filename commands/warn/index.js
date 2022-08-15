@@ -74,7 +74,7 @@ module.exports = {
 		}
 
 		await int.reply({
-			content: reaction.emoji.error + ' ' + localize(int.locale, 'In development'),
+			content: reaction.emoji.error + ' ' + int.str('In development'),
 			ephemeral: true
 		});
 	},
@@ -144,7 +144,7 @@ module.exports = {
 		}
 
 		await int.reply({
-			content: reaction.emoji.error + ' ' + localize(int.locale, 'In development'),
+			content: reaction.emoji.error + ' ' + int.str('In development'),
 			ephemeral: true
 		});
 	},
@@ -180,7 +180,7 @@ module.exports = {
 		}
 
 		await int.reply({
-			content: reaction.emoji.error + ' ' + localize(int.locale, 'In development'),
+			content: reaction.emoji.error + ' ' + int.str('In development'),
 			ephemeral: true
 		});
 	},

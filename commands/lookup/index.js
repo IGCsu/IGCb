@@ -58,7 +58,7 @@ module.exports = {
 			const embed = await this.call(id.replace(/[^-_\w]/g, ' ').match(/[0-9]+/g)[0]);
 			int.reply({ embeds : [embed] });
 		}catch(e){
-			int.reply({ content : reaction.emoji.error + ' ' + localize(int.locale, 'User not found'), ephemeral : true });
+			int.reply({ content : reaction.emoji.error + ' ' + int.str('User not found'), ephemeral : true });
 			console.log(e)
 		}
 	},
@@ -69,7 +69,7 @@ module.exports = {
 			const embed = await this.call(id.replace(/[^-_\w]/g, ' ').match(/[0-9]+/g)[0]);
 			int.reply({ embeds : [embed], ephemeral : true });
 		}catch(e){
-			int.reply({ content : reaction.emoji.error + ' ' + localize(int.locale, 'User not found'), ephemeral : true });
+			int.reply({ content : reaction.emoji.error + ' ' + int.str('User not found'), ephemeral : true });
 			console.log(e)
 		}
 	},
