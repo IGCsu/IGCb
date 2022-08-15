@@ -26,18 +26,18 @@ module.exports = {
 	},
 
 	init : function(){
-		client.on('guildMemberAdd', this.silent);
-		client.on('userUpdate', this.userUpdateListener);
-		client.on('guildMemberUpdate', this.guildMemberUpdateListener);
+		client.on('guildMemberAdd', member => this.silent(member));
+		client.on('userUpdate', (oldUser, newUser) => this.userUpdateListener(oldUser, newUser));
+		client.on('guildMemberUpdate', (oldUser, newUser) => this.guildMemberUpdateListener(oldUser, newUser));
 
 		return this;
 	},
 
 	switchPause : async function(action){
 		if(!action) {
-			client.off('guildMemberAdd', this.silent);
-			client.off('userUpdate', this.userUpdateListener);
-			client.off('guildMemberUpdate', this.guildMemberUpdateListener);
+			client.off('guildMemberAdd', member => this.silent(member));
+			client.off('userUpdate', (oldUser, newUser) => this.userUpdateListener(oldUser, newUser));
+			client.off('guildMemberUpdate', (oldUser, newUser) => this.guildMemberUpdateListener(oldUser, newUser));
 		} else {
 			this.init();
 		}

@@ -8,7 +8,7 @@ const UserDiplomacy = require('./UserDiplomacy');
 
 module.exports = {
 
-	active: true,
+	active: false,
 	category: 'Развлечения',
 
 	name: 'diplomacy',

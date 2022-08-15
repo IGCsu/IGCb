@@ -38,7 +38,7 @@ module.exports = {
 
 	init : async function(path){
 
-		await this.siteStatusCheck();
+		this.siteStatusCheck();
 		if(!this.siteStatus) log.initText += log.error(path + ': Сайт недоступен');
 
 		const { functions, allChannels, allowedChannelsFunctions } = await initFunctions();
@@ -46,16 +46,16 @@ module.exports = {
 		this.allChannels = allChannels;
 		this.allowedChannelsFunctions = allowedChannelsFunctions;
 
-		client.on('messageCreate', this.call);
+		client.on('messageCreate', msg => this.call(msg));
 
 		return this;
 	},
 
 	switchPause : async function(action){
 		if(!action) {
-			client.off('messageCreate', this.call);
+			client.off('messageCreate', msg => this.call(msg));
 		} else {
-			client.on('messageCreate', this.call);
+			client.on('messageCreate', msg => this.call(msg));
 		}
 	},
 
@@ -78,7 +78,7 @@ module.exports = {
 		if(msg.channel.type === 'DM') return;
 		if(msg.channel.guild.id !== guild.id) return;
 
-		for(let command of this.commands) this.commandMessage(commands[command], msg);
+		for(let command in this.commands) this.commandMessage(this.commands[command], msg);
 
 		const thread = msg.channel.isThread();
 		const channel = thread ? msg.channel.parentId : msg.channel.id;
@@ -86,11 +86,11 @@ module.exports = {
 
 		let functions = new Set();
 
-		this.addAllowedChannelsFunctions(functions, category, thread);
-		this.addAllowedChannelsFunctions(functions, channel, thread);
-		this.addAllChannelsFunctions(functions);
+		await this.addAllowedChannelsFunctions(functions, category, thread);
+		await this.addAllowedChannelsFunctions(functions, channel, thread);
+		await this.addAllChannelsFunctions(functions);
 
-		this.callFunctions(functions, msg);
+		await this.callFunctions(functions, msg);
 
 	},
 

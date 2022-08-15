@@ -18,7 +18,7 @@ module.exports = {
 	* @return {Object}
 	*/
 
-	lsitener: async (data) => {
+	listener: async (data) => {
 		if(data.t !== 'MESSAGE_REACTION_ADD') return;
 		const reaction = data.d
 		if(reaction.emoji.name !== this.starboardEmoji) return;
@@ -32,16 +32,16 @@ module.exports = {
 			return this;
 		}
 
-		client.on('raw', this.lsitener);
+		client.on('raw', async data => this.listener(data));
 
 		return this;
 	},
 
 	switchPause : async function(action){
 		if(!action) {
-			client.off('raw', this.lsitener);
+			client.off('raw', async data => this.listener(data));
 		} else {
-			client.on('raw', this.lsitener);
+			client.on('raw', async data => this.listener(data));
 		}
 	},
 
