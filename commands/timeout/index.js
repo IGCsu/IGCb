@@ -13,7 +13,7 @@ module.exports = {
 	slashOptions : slashOptions,
 
 
-	init : async function(){
+	init : async function(path){
 		this.rulesCache = {};
 		try{
 			this.rules = await (await fetch(constants.SITE_LINK + '/rules?j=true')).json();
@@ -22,7 +22,7 @@ module.exports = {
 					this.rulesCache[rule] = this.rules[rule];
 			}
 		}catch(e){
-			this.active = false;
+			log.initText += log.warn(path + ': Site offline: Off generate suggestions');
 		}
 
 		return this;
