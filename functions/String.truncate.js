@@ -13,6 +13,10 @@ String.prototype.truncate = function(length, margin){
 		return this.slice(0, length - 1) + '…';
 	}
 
+	if(!margin){
+		return this;
+	}
+
 	let str = this;
 	let value = length - this.length;
 
