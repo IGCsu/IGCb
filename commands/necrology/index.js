@@ -101,8 +101,8 @@ module.exports = {
 		}
 
 		const time = this.getTimeMute(after.communicationDisabledUntilTimestamp);
-		const date = formatDate();
-		const text = date + ' ' + time + ' ' + member2name(after) + ' ' + after.user.id;
+		const date = new Date().toISO();
+		const text = date + ' ' + time + ' ' + after.toName() + ' ' + after.user.id;
 
 		let embed = new Discord.MessageEmbed()
 			.setTitle(reaction.emoji.success + ' Мут выдан на ' + time)

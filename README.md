@@ -25,6 +25,7 @@
 - `/init/sessionId.js` - определение ID сессии бота.
 - `/init/setActivity.js` - установка статуса бота.
 - `/init/startMessage.js` - отправка стартового сообщения.
+- `/init/protection.js` - требует подтверждение при попытке запуска на защищённом клиенте.
 
 <a name="commands"><h2>Модули бота</h2></a>
 Вся логика бота разбита на отдельные и независимые модули, каждый из которых может быть отключён.
@@ -166,7 +167,7 @@ module.exports = {
 	 * Если функция существует - то при инициализации будет добавлена контекстная-команда на сообщение.
 	 * @param {ContextMenuInteraction} int
 	 */
-	contextMesage: async function(int){ // not required
+	contextMessage: async function(int){ // not required
 		await this.call(int);
 	},
 

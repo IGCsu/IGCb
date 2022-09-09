@@ -18,7 +18,7 @@ global.toggleRole = (role, member, author) => {
 			? { val: 'remove', text: 'убрана у' }
 			: { val: 'add', text: 'выдана' };
 
-		member.roles[action.val](role, 'По требованию ' + member2name(author, true))
+		member.roles[action.val](role, 'По требованию ' + author.toName(true))
 			.then(() => resolve('Роль <@&' + role.id + '> ' + action.text + ' <@' + member.id + '>'))
 			.catch(error => {
 				console.error(error);

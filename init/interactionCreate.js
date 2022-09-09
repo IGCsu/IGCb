@@ -8,14 +8,12 @@ module.exports = async () => {
 
         if(!commands[name] || !commands[name].active) return;
 
-        int.action = getInteractionAction(int);
-
-        if(!int.action || !commands[name][int.action]) return;
+        if(!int.indexFunc || !commands[name][int.indexFunc]) return;
 
         try{
-            await commands[name][int.action](int);
+            await commands[name][int.indexFunc](int);
         }catch(e){
-            errorHandler(e, name, true);
+            e.handler(name, true);
         }
     });
     console.timeEnd('Event interactionCreate');

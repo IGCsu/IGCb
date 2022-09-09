@@ -16,10 +16,7 @@ module.exports = {
 
 
 	/**
-	 *
-	 *
-	 * @param {Message} msg
-	 * @param {Array}   params Параметры команды
+	 * @param {AutocompleteInteraction} int
 	 */
 	autocomplete : async function(int){
 		const timeStart = process.hrtime();
@@ -32,10 +29,11 @@ module.exports = {
 		let predict = finded.roles;
 
 		if(role){
-			predict.sort((a, b) => getStringSimilarityDiff(a.name, b.name, role));
+			const find = role.toLowerCase();
+			predict.sort((a, b) => b.name.similarity(find) - a.name.similarity(find));
 			if(create) choices[0] = {name : role, value : role};
 		} else {
-			choices[0] = {name: localize(int.locale, 'Show list of all Game Roles'), value:'showAll'};
+			choices[0] = {name: int.str('Show list of all Game Roles'), value:'showAll'};
 		}
 
 		for(let i = 0; i < predict.length && choices.length < 25; i++) choices[i + 1 * (create || !role)] = {name : predict[i].name, value : predict[i].id};
@@ -49,6 +47,9 @@ module.exports = {
 		}
 	},
 
+	/**
+	 * @param {CommandInteraction} int
+	 */
 	slash : async function(int){
 		const member = int.member;
 		const permission = this.permission(member)
@@ -67,7 +68,7 @@ module.exports = {
 			role = (await this.create(member, int.options.get('role').value, 45)).role
 			await int.reply({content: reaction.emoji.success + ' Роль <@&' + role.id + '> создана', allowed_mentions: constants.AM_NONE})
 			} else {
-			return await int.reply({content: reaction.emoji.error + ' ' + localize(int.locale, 'Role not found'), allowedMentions: constants.AM_NONE, ephemeral: true})
+			return await int.reply({content: reaction.emoji.error + ' ' + int.str('Role not found'), allowedMentions: constants.AM_NONE, ephemeral: true})
 			}
 		}
 
@@ -115,7 +116,7 @@ module.exports = {
 	/**
 	 * Создание роли
 	 *
-	 * @param {Message} msg
+	 * @param {GuildMember} member
 	 * @param {String}  name Название роли
 	 * @param {Number}  pos  Позиция роли
 	 */
@@ -127,7 +128,7 @@ module.exports = {
 			mentionable : true,
 			color : 5095913,
 			position : pos,
-			reason : 'По требованию ' + member2name(member, 1)
+			reason : 'По требованию ' + member.toName(true)
 		});
 		return { role : role , chk: true};
 	},

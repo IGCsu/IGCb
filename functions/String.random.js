@@ -3,10 +3,10 @@ const chars = 'abdehkmnpswxzABDEFGHKMNPQRSTWXZ123456789-';
 /**
  * Возвращает рандомную строку
  *
- * @param {Number} len Необходимая длина строки
- * @return {String}
+ * @param {number} len Необходимая длина строки
+ * @return {string}
  */
-global.getRandomString = (len) => {
+String.random = len => {
 	let str = '';
 
 	for(let i = 0; i < len; i++){
