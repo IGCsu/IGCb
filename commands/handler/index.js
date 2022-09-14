@@ -62,9 +62,12 @@ module.exports = {
 	 * @return {Boolean}
 	 */
 	siteStatusCheck: async function(){
-		const response = await fetch(constants.SITE_LINK, { redirect: 'manual' });
-
-		return this.siteStatus = response.status === 200;
+		try{
+			const response = await fetch(constants.SITE_LINK, { redirect: 'manual' });
+			return this.siteStatus = response.status === 200;
+		}catch(e){
+			return this.siteStatus = false;
+		}
 	},
 
 	/**
