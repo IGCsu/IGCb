@@ -13,16 +13,20 @@ String.prototype.truncate = function(length, margin){
 		return this.slice(0, length - 1) + '…';
 	}
 
+	if(!margin){
+		return this;
+	}
+
 	let str = this;
 	let value = length - this.length;
 
-	if(margin?.left && margin?.right) value = value / 2;
+	if(margin.left && margin.right) value = value / 2;
 
-	if(margin?.left){
+	if(margin.left){
 		str = margin.left[0].repeat(Math.ceil(value)) + str;
 	}
 
-	if(margin?.right){
+	if(margin.right){
 		str += margin.right[0].repeat(Math.floor(value));
 	}
 
