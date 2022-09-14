@@ -14,7 +14,7 @@ module.exports = () => {
          */
         AM_NONE: { parse: [] },
 
-        SITE_LINK: 'https://igc.su',
+        SITE_LINK: 'http://igc.su',
 
     };
 }
