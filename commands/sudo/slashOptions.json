@@ -51,7 +51,7 @@
 				"required": false,
 				"description": {
 					"ru": "Силовая пауза проигнорирует функцию паузы бота или модуля (Модуль будет выгружен вместо паузы)",
-					"en": "TODO",
+					"en": "Force pause ignores module's or bot's pause function (Module will be unloaded instead)",
 					"uk": "TODO"
 				}
 			}
@@ -61,8 +61,36 @@
 		"type": 1,
 		"description": {
 			"ru": "Исполнение кода",
+			"en": "Code execution",
+			"uk": "TODO"
+		}
+	},
+	"perms_migration": {
+		"type": 1,
+		"description": {
+			"ru": "Клонирование всех прав роли",
 			"en": "TODO",
 			"uk": "TODO"
+		},
+		"slashOptions":{
+			"reference":{
+				"type": 8,
+				"description": {
+					"ru": "Референсная роль",
+					"en": "TODO",
+					"uk": "TODO"
+				},
+				"required": true
+			},
+			"target":{
+				"type": 8,
+				"description": {
+					"ru": "Целевая роль",
+					"en": "TODO",
+					"uk": "TODO"
+				},
+				"required": true
+			}
 		}
 	}
 }

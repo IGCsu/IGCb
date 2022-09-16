@@ -1,6 +1,6 @@
 const slashOptions = require('./slashOptions.json');
 const { title, description } = require('./about.json');
-const { CommandInteraction, GuildMember, AutocompleteInteraction} = require('discord.js');
+const { CommandInteraction, GuildMember, AutocompleteInteraction, Role} = require('discord.js');
 
 module.exports = {
 
@@ -46,7 +46,28 @@ module.exports = {
 				}
 			}
 		}
+		if(int.options.getSubcommand() === 'perms_migration'){
+			const ref = int.options.getRole('reference').id;
+			const tar = int.options.getRole('target').id;
+			return int.reply({
+				content: `**__Это действие не может быть отменено!__**\n\nВы уверены что хотите перенести права из <@&${ref}> в <@&${tar}>?`,
+				components: [{
+					type: 1,
+					components:[{
+						type: 2,
+						style: 4,
+						label: 'Подтвердить',
+						customId: 'sudo|confirmMigration|' + ref + '|' + tar
+					}]
+				}],
+				ephemeral: true
+			})
+		}
 
+		await int.reply({content: 'In development', ephemeral: true})
+	},
+
+	button: async function(int){
 		await int.reply({content: 'In development', ephemeral: true})
 	},
 
@@ -73,6 +94,20 @@ module.exports = {
         if(!targetState) targetState = !commands[module].active;
 		commands[module].active = targetState;
 		if('switchPause' in commands[module]) await commands[module].switchPause(targetState);
+	},
+
+	/**
+	 *
+	 * @param reference {Role}
+	 * @param target	{Role}
+	 */
+	migrateRole2Role: async function(reference, target){
+		await target.setPermissions(reference.permissions);
+
+		for(channel of (await guild.channels.fetch())){
+			if(channel.permissionOverwrites.cache[reference.id])
+				await channel.permissionOverwrites.edit(target, channel.permissionOverwrites.cache[reference.id])
+		}
 	},
 
 	/**
