@@ -58,7 +58,6 @@ module.exports = {
 	 */
 	call : async function(int, member){
 
-		const name = member2name(member, true);
 		const user = new UserLevels(member, this.roles, this.rolesIDs);
 
 		if(!user.finded) return { error: 'Unknown User' };
@@ -86,7 +85,7 @@ module.exports = {
 		const content = await this.call(int, int.options.getMember('user') ?? int.member);
 
 		if(content.error)
-			return await int.reply({ content: reaction.emoji.error + ' ' + localize(int.locale, content.error), ephemeral: true });
+			return await int.reply({ content: reaction.emoji.error + ' ' + int.str(content.error), ephemeral: true });
 
 		await int.reply(content);
 	},
@@ -99,7 +98,7 @@ module.exports = {
 		const content = await this.call(int, int.targetMember);
 
 		if(content.error)
-			return await int.reply({ content: reaction.emoji.error + ' ' + localize(int.locale, content.error), ephemeral: true });
+			return await int.reply({ content: reaction.emoji.error + ' ' + int.str(content.error), ephemeral: true });
 
 		content.ephemeral = true;
 		await int.reply(content);

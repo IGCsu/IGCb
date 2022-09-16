@@ -26,9 +26,16 @@ module.exports = {
 	},
 
 	init : function(){
-		client.on('guildMemberAdd', member => this.silent(member));
-		client.on('userUpdate', (oldUser, newUser) => this.userUpdateListener(oldUser, newUser));
-		client.on('guildMemberUpdate', (oldUser, newUser) => this.guildMemberUpdateListener(oldUser, newUser));
+		client.on('guildMemberAdd', async member => await this.silent(member));
+		client.on('userUpdate', async (oldUser, newUser) => {
+			if(oldUser.username === newUser.username) return;
+			const member = await guild.members.fetch({ user : newUser });
+			if(member) await this.silent(member);
+		});
+		client.on('guildMemberUpdate', async (oldMember, newMember) => {
+			if(oldMember.toName() === newMember.toName()) return;
+			await this.silent(newMember);
+		});
 
 		return this;
 	},
@@ -47,8 +54,8 @@ module.exports = {
 	/**
 	 * Обработка
 	 *
-	 * @param {String}      nickname Указанный никнейм
-	 * @param {GuildMember} member   Объект пользователя
+	 * @param {string} nickname Указанный никнейм
+	 * @param {GuildMember} member Объект пользователя
 	 */
 	call : async function(nickname, member){
 		const fixed = this.fix(nickname, true);
@@ -57,8 +64,8 @@ module.exports = {
 			return { error : reaction.emoji.error + ' ' + fixed.text };
 
 		try{
-			const old = member2name(member);
-			await member.setNickname(fixed.name, 'По требованию ' + member2name(member, 1));
+			const old = member.toName();
+			await member.setNickname(fixed.name, 'По требованию ' + member.toName(true));
 			let response = { success : reaction.emoji.success + ' Никнейм изменён `' + old + '` => `' + fixed.name + '`' };
 			if(fixed.text.length) response.warning = reaction.emoji[fixed.status] + ' ' + fixed.text;
 			return response;
@@ -92,11 +99,11 @@ module.exports = {
 	 * Тихое обновление
 	 * Обновление никнейма пользователя без его участия
 	 *
-	 * @param  {GuildMember} member Объект пользователя
+	 * @param {GuildMember} member Объект пользователя
 	 * @return {String}
 	 */
 	silent : async function(member){
-		const name = member2name(member);
+		const name = member.toName();
 
 		let fixed = this.fix(name);
 		if(fixed.length > 30) fixed = fixed.substring(0, 30);

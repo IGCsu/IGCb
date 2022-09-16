@@ -13,7 +13,7 @@ module.exports = {
 	slashOptions : slashOptions,
 
 
-	init : async function(){
+	init : async function(path){
 		this.rulesCache = {};
 		try{
 			this.rules = await (await fetch(constants.SITE_LINK + '/rules?j=true')).json();
@@ -22,7 +22,7 @@ module.exports = {
 					this.rulesCache[rule] = this.rules[rule];
 			}
 		}catch(e){
-			this.active = false;
+			log.initText += log.warn(path + ': Site offline: Off generate suggestions');
 		}
 
 		return this;
@@ -40,7 +40,7 @@ module.exports = {
 	call : async function(int, member, string, reason){
 		if(!this.permission(int.member))
 			return int.reply({
-				content : reaction.emoji.error + ' ' + localize(int.locale, 'You do not have enough rights to change the roles of other users'),
+				content : reaction.emoji.error + ' ' + int.str('You do not have enough rights to change the roles of other users'),
 				ephemeral : true
 			});
 
@@ -50,9 +50,9 @@ module.exports = {
 			duration = ((time.groups.days ?? 0) * 86400000) + ((time.groups.hours ?? 0) * 3600000) + ((time.groups.minutes ?? 0) * 60000) + (time.groups.seconds ?? 0) * 1000;
 		} catch(e) {
 			console.log(e);
-			return int.reply({ content : localize(int.locale, 'Invalid duration provided'), ephemeral : true});
+			return int.reply({ content : int.str('Invalid duration provided'), ephemeral : true});
 		}
-		if(!duration || Math.floor(duration / 86400000) > 28) return int.reply({ content : localize(int.locale, 'Invalid duration provided'), ephemeral : true});
+		if(!duration || Math.floor(duration / 86400000) > 28) return int.reply({ content : int.str('Invalid duration provided'), ephemeral : true});
 		await member.timeout(duration, reason);
 		return { embeds: [
 			new Discord.MessageEmbed()
@@ -87,7 +87,7 @@ module.exports = {
 		if(!rawReason) return
 		let choices = [{ name: rawReason, value: rawReason }];
 		if(!this.rulesCache){
-			choices.push({ name: localize(int.locale, 'Failed to generate suggestions'), value:'SITE_OFFLINE' })
+			choices.push({ name: int.str('Failed to generate suggestions'), value:'SITE_OFFLINE' })
 			return await int.respond(choices);
 		}
 		let ruleReasons = [];

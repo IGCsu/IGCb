@@ -67,7 +67,8 @@ module.exports = {
 			finded.push(commands[name]);
 		}
 
-		finded.sort((a, b) => getStringSimilarityDiff(a.name, b.name, command));
+		const find = command.toLowerCase();
+		finded.sort((a, b) => b.name.similarity(find) - a.name.similarity(find));
 
 		const lang = int.locale.split('-')[0];
 

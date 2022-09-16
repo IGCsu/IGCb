@@ -170,8 +170,13 @@ module.exports = async () => {
 		}
 
 		const timeStart = process.hrtime();
-
-		let command = require('.' + path);
+		let command;
+		try {
+			command = require('.' + path);
+		} catch (e){
+			log.initText += log.warn('> ' + path + ': notFound')
+			continue;
+		}
 
 		if(command.active) command = await command.init(path);
 

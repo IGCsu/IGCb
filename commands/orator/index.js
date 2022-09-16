@@ -32,7 +32,7 @@ module.exports = {
 	call : async function(int, member){
 		if(!this.permission(int.member))
 			return int.reply({
-				content : reaction.emoji.error + ' ' + localize(int.locale, 'You do not have enough rights to change the roles of other users'),
+				content : reaction.emoji.error + ' ' + int.str('You do not have enough rights to change the roles of other users'),
 				ephemeral : true
 			});
 

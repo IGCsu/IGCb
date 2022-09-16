@@ -1,20 +1,28 @@
-const initConstants = require('./init/constants.js');
-const initCommands = require('./init/commands.js');
-const initLocales = require('./init/locales.js');
-const initFunctions = require('./init/functions.js');
-const initInteractionCreate = require('./init/interactionCreate.js');
-const initGuild = require('./init/guild.js');
-const initGlobalErrorHandler = require('./init/globalErrorHandler.js');
-const initSessionId = require('./init/sessionId.js');
-const initSetActivity = require('./init/setActivity.js');
-const initStartMessage = require('./init/startMessage.js');
+/**
+ * Массив файлов инициализации в порядке подключения.
+ *
+ * @type {function[]}
+ */
+const init = [
+	require('./init/protection.js'),
+	require('./init/constants.js'),
+	require('./init/guild.js'),
+	require('./init/locales.js'),
+	require('./init/functions.js'),
+	require('./init/globalErrorHandler.js'),
+	require('./init/sessionId.js'),
+	require('./init/commands.js'),
+	require('./init/setActivity.js'),
+	require('./init/interactionCreate.js'),
+	require('./init/startMessage.js'),
+];
 
 /**
  * Массив модулей разрешённых к подключению.
  * Если пустой - подключаются в естественном порядке. В ином случае, подключаются лишь указанные модули.
  *
  * Пример: "help"
- * @type {Array}
+ * @type {string[]}
  */
 global.debugAllowModules = [];
 
@@ -24,17 +32,7 @@ module.exports = async () => {
 
 	console.log('Start init.js');
 
-	initConstants();
-
-	await initGuild();
-	await initLocales();
-	await initFunctions();
-	await initGlobalErrorHandler();
-	await initSessionId();
-	await initCommands();
-	await initSetActivity();
-	await initInteractionCreate();
-	await initStartMessage();
+	for(const module of init) await module();
 
 	console.timeEnd('Client initialized in');
 	log.start('== Bot ready ==');

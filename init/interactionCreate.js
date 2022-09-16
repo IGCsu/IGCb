@@ -8,6 +8,7 @@ module.exports = async () => {
 
 		if(!commands[name]) return;
 
+
 		if(client.paused && name !== 'sudo') {
 			if (int.isAutocomplete()) return int.reply({choices: [{name: `Бот приостановлен`, value: 1}]});
 			return int.reply({content: reaction.emoji.error + ` Бот приостановлен`, ephemeral: true});
@@ -16,6 +17,13 @@ module.exports = async () => {
 		if(!commands[name].active) {
             if (int.isAutocomplete()) return int.reply({ choices: [{ name: `Модуль ${name} оффлайн`, value: 1 }] });
             return int.reply({content: reaction.emoji.error + ` Модуль ${name} оффлайн`, ephemeral: true});
+
+        if(!int.indexFunc || !commands[name][int.indexFunc]) return;
+
+        try{
+            await commands[name][int.indexFunc](int);
+        }catch(e){
+            e.handler(name, true);
         }
 
 		int.action = getInteractionAction(int);
