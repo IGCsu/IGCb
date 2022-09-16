@@ -1,6 +1,6 @@
 const slashOptions = require('./slashOptions.json');
 const { title, description } = require('./about.json');
-const { CommandInteraction, GuildMember, AutocompleteInteraction, Role} = require('discord.js');
+const { CommandInteraction, GuildMember, AutocompleteInteraction, ButtonInteraction, Role} = require('discord.js');
 
 module.exports = {
 
@@ -47,6 +47,7 @@ module.exports = {
 			}
 		}
 		if(int.options.getSubcommand() === 'perms_migration'){
+			if(!this.permission(int.member)) return int.reply({content: int.str('Missing access'), ephemeral: true});
 			const ref = int.options.getRole('reference').id;
 			const tar = int.options.getRole('target').id;
 			return int.reply({
@@ -67,7 +68,25 @@ module.exports = {
 		await int.reply({content: 'In development', ephemeral: true})
 	},
 
+	/**
+	 *
+	 * @param int {ButtonInteraction}
+	 * @return {Promise<void>}
+	 */
 	button: async function(int){
+		if(!this.permission(int.member)) return int.reply({content: int.str('Missing access'), ephemeral: true});
+		const cId = int.customId.split('|');
+		if(cId[1] === 'confirmMigration') {
+			const ref = await guild.roles.fetch(cId[2]);
+			const tar = await guild.roles.fetch(cId[3]);
+
+			int.deferReply().then(() =>
+
+			this.migrateRole2Role(ref, tar)
+				.then(() => {int.editReply({content: 'Миграция завершена'})})
+				.catch((e) => {int.editReply({content: 'Миграция не завершена\n' + e})}));
+			return
+		}
 		await int.reply({content: 'In development', ephemeral: true})
 	},
 
