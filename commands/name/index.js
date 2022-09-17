@@ -26,25 +26,17 @@ module.exports = {
 	},
 
 	init : function(){
-		client.on('guildMemberAdd', async member => await this.silent(member));
-		client.on('userUpdate', async (oldUser, newUser) => {
-			if(oldUser.username === newUser.username) return;
-			const member = await guild.members.fetch({ user : newUser });
-			if(member) await this.silent(member);
-		});
-		client.on('guildMemberUpdate', async (oldMember, newMember) => {
-			if(oldMember.toName() === newMember.toName()) return;
-			await this.silent(newMember);
-		});
-
+		client.on('guildMemberAdd', this.silent);
+		client.on('userUpdate', this.userUpdateListener);
+		client.on('guildMemberUpdate', this.guildMemberUpdateListener);
 		return this;
 	},
 
 	switchPause : async function(action){
 		if(!action) {
-			client.off('guildMemberAdd', member => this.silent(member));
-			client.off('userUpdate', (oldUser, newUser) => this.userUpdateListener(oldUser, newUser));
-			client.off('guildMemberUpdate', (oldUser, newUser) => this.guildMemberUpdateListener(oldUser, newUser));
+			client.off('guildMemberAdd', this.silent);
+			client.off('userUpdate', this.userUpdateListener);
+			client.off('guildMemberUpdate', this.guildMemberUpdateListener);
 		} else {
 			this.init();
 		}
@@ -102,7 +94,7 @@ module.exports = {
 	 * @param {GuildMember} member Объект пользователя
 	 * @return {String}
 	 */
-	silent : async function(member){
+	silent : async (member) => {
 		const name = member.toName();
 
 		let fixed = this.fix(name);

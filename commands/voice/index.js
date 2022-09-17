@@ -70,16 +70,16 @@ module.exports = {
 			if(p.type === 'member') p.delete();
 		});
 
-		client.on('voiceStateUpdate', async (before, after) => this.update(before, after));
+		client.on('voiceStateUpdate', this.update);
 
 		return this;
 	},
 
 	switchPause : async function(action){
 		if(!action) {
-			client.off('voiceStateUpdate', async (before, after) => this.update(before, after));
+			client.off('voiceStateUpdate', this.update);
 		} else {
-			client.on('voiceStateUpdate', async (before, after) => this.update(before, after));
+			client.on('voiceStateUpdate', this.update);
 		}
 	},
 
@@ -124,7 +124,7 @@ module.exports = {
 	 * @param {VoiceState} before Предыдущий канал
 	 * @param {VoiceState} after  Текущий канал
 	 */
-	update : async function(before, after){
+	update : async (before, after) => {
 		const state = after.channel ? after : before;
 		if(state.guild.id !== guild.id) return;
 

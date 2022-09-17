@@ -34,19 +34,19 @@ module.exports = {
 			return this;
 		}
 
-		client.on('guildMemberUpdate', (before, after) => this.update(before, after));
-		client.on('guildBanAdd', ban => this.ban(ban));
+		client.on('guildMemberUpdate', this.update);
+		client.on('guildBanAdd', this.ban);
 
 		return this;
 	},
 
 	switchPause : async function(action){
 		if(!action) {
-			client.off('guildMemberUpdate', (before, after) => this.update(before, after));
-			client.off('guildBanAdd', ban => this.ban(ban));
+			client.off('guildMemberUpdate', this.update);
+			client.off('guildBanAdd', this.ban);
 		} else {
-			client.on('guildMemberUpdate', (before, after) => this.update(before, after));
-			client.on('guildBanAdd', ban => this.ban(ban));
+			client.on('guildMemberUpdate', this.update);
+			client.on('guildBanAdd', this.ban);
 		}
 	},
 
@@ -57,7 +57,7 @@ module.exports = {
 	 *
 	 * @param {GuildBan} ban Объект бана
 	 */
-	ban : async function(ban){
+	ban : async (ban) => {
 		const text = 'BAN ' + ban.user.username + '#' + ban.user.discriminator + ' ' + ban.user.id;
 		let channel = 'channel';
 
@@ -89,7 +89,7 @@ module.exports = {
 	 * @param {GuildMember} before Юзер до обновления
 	 * @param {GuildMember} after  Юзер после обновления
 	 */
-	update : async function(before, after){
+	update : async (before, after) => {
 		if(before.communicationDisabledUntilTimestamp === after.communicationDisabledUntilTimestamp) return;
 		const advancedMuteData = await this.getAdvancedTimeoutData(after.user);
 		if(!after.communicationDisabledUntilTimestamp) {

@@ -46,16 +46,16 @@ module.exports = {
 		this.allChannels = allChannels;
 		this.allowedChannelsFunctions = allowedChannelsFunctions;
 
-		client.on('messageCreate', msg => this.call(msg));
+		client.on('messageCreate', this.call);
 
 		return this;
 	},
 
 	switchPause : async function(action){
 		if(!action) {
-			client.off('messageCreate', msg => this.call(msg));
+			client.off('messageCreate', this.call);
 		} else {
-			client.on('messageCreate', msg => this.call(msg));
+			client.on('messageCreate', this.call);
 		}
 	},
 
@@ -77,7 +77,7 @@ module.exports = {
 	 * Обработка сообщения, которое не является командой
 	 * @param {Message} msg Сообщение пользователя
 	 */
-	call: async function(msg){
+	call: async (msg) => {
 		if(msg.channel.type === 'DM') return;
 		if(msg.channel.guild.id !== guild.id) return;
 
