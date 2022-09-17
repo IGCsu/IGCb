@@ -38,7 +38,7 @@ module.exports = {
 
 	init : async function(path){
 
-		this.siteStatusCheck();
+		await this.siteStatusCheck();
 		if(!this.siteStatus) log.initText += log.error(path + ': Сайт недоступен');
 
 		const { functions, allChannels, allowedChannelsFunctions } = await initFunctions();
