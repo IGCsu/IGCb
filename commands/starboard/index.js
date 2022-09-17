@@ -32,16 +32,16 @@ module.exports = {
 			return this;
 		}
 
-		client.on('raw', this.listener);
+		client.on('raw', async data => this.listener(data));
 
 		return this;
 	},
 
 	switchPause : async function(action){
 		if(!action) {
-			client.off('raw', this.listener);
+			client.off('raw', async data => this.listener(data));
 		} else {
-			client.on('raw', this.listener);
+			client.on('raw', async data => this.listener(data));
 		}
 	},
 

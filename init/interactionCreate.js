@@ -15,9 +15,8 @@ module.exports = async () => {
 		}
 
 		if(!commands[name].active) {
-			if (int.isAutocomplete()) return int.reply({choices: [{name: `Модуль ${name} оффлайн`, value: 1}]});
-			return int.reply({content: reaction.emoji.error + ` Модуль ${name} оффлайн`, ephemeral: true});
-		}
+            if (int.isAutocomplete()) return int.reply({ choices: [{ name: `Модуль ${name} оффлайн`, value: 1 }] });
+            return int.reply({content: reaction.emoji.error + ` Модуль ${name} оффлайн`, ephemeral: true});
 
         if(!int.indexFunc || !commands[name][int.indexFunc]) return;
 
