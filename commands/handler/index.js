@@ -32,7 +32,7 @@ module.exports = {
 	/**
 	 * Массив модулей где есть обработчик сообщений.
 	 * Пополняется функцией "initMessageHandler()" при инициализации бота.
-	 * @type {Array}
+	 * @type {string[]}
 	 */
 	commands : [],
 
@@ -81,7 +81,7 @@ module.exports = {
 		if(msg.channel.type === 'DM') return;
 		if(msg.channel.guild.id !== guild.id) return;
 
-		for(let command in this.commands) this.commandMessage(this.commands[command], msg);
+		for(let command in this.commands) this.commandMessage(commands[command], msg);
 
 		const thread = msg.channel.isThread();
 		const channel = thread ? msg.channel.parentId : msg.channel.id;
