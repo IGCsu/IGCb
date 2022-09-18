@@ -132,6 +132,8 @@ class SlashOption {
 		let data = {
 			name: name,
 
+			type: this.type,
+
 			description: this.description.toString(),
 			description_localizations: this.description.toDiscord(),
 		};
