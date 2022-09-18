@@ -32,20 +32,7 @@ class BaseCommand {
 	 * Подсказка для слеш-команды. Содержит объект локализации.
 	 * @type {LangSingle}
 	 */
-	#description;
-
-	/**
-	 * Кэш модуля. Может использоваться для разных целей.
-	 */
-	#cache;
-
-	/**
-	 * Подсказка для слеш-команды. Содержит объект локализации.
-	 * @type {LangSingle}
-	 */
-	get description(){
-		return this.#description ?? this.title;
-	}
+	description;
 
 	/**
 	 * Опции для слеш-команды. Если слеш-команде не нужны опции, то может содержать undefined
