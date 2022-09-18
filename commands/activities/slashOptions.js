@@ -1,6 +1,6 @@
-const SlashOptions = require(DIR + '/BaseClasses/SlashOptions');
-const SlashOption = require(DIR + '/BaseClasses/SlashOption');
-const LangSingle = require(DIR + '/BaseClasses/LangSingle');
+const SlashOptions = require('../../BaseClasses/SlashOptions');
+const SlashOption = require('../../BaseClasses/SlashOption');
+const LangSingle = require('../../BaseClasses/LangSingle');
 
 module.exports = new SlashOptions({
 

@@ -1,6 +1,6 @@
-const SlashOptions = require(DIR + '/BaseClasses/SlashOptions');
-const BaseCommand = require(DIR + '/BaseClasses/BaseCommand');
-const LangSingle = require(DIR + '/BaseClasses/LangSingle');
+const SlashOptions = require('../../BaseClasses/SlashOptions');
+const BaseCommand = require('../../BaseClasses/BaseCommand');
+const LangSingle = require('../../BaseClasses/LangSingle');
 
 const fetch = require('node-fetch');
 

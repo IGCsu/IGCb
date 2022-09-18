@@ -1,5 +1,5 @@
-const SlashOptions = require(DIR + '/BaseClasses/SlashOptions');
-const BaseCommand = require(DIR + '/BaseClasses/BaseCommand');
+const SlashOptions = require('../BaseClasses/SlashOptions');
+const BaseCommand = require('../BaseClasses/BaseCommand');
 
 const fs = require('fs');
 const { REST } = require('@discordjs/rest');

@@ -14,13 +14,6 @@ global.DB = new (require('sync-mysql'))({
     charset: 'utf8mb4'
 });
 
-/**
- * Содержит путь к корню проекта
- * @type {string}
- * @constant
- */
-global.DIR = __dirname;
-
 client.on('ready', require('./init'));
 
 console.time('Client login');
