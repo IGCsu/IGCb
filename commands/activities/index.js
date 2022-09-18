@@ -1,6 +1,6 @@
-const SlashOptions = require('/BaseClasses/SlashOptions');
-const BaseCommand = require('/BaseClasses/BaseCommand');
-const LangSingle = require('/BaseClasses/LangSingle');
+const SlashOptions = require(DIR + '/BaseClasses/SlashOptions');
+const BaseCommand = require(DIR + '/BaseClasses/BaseCommand');
+const LangSingle = require(DIR + '/BaseClasses/LangSingle');
 
 const fetch = require('node-fetch');
 
@@ -12,7 +12,7 @@ class Activities extends BaseCommand {
 	/**
 	 * Кеш активностей
 	 */
-	#cache;
+	#cache = [];
 
 	/**
 	 * Временная метка последнего обновления кеша
@@ -98,7 +98,7 @@ class Activities extends BaseCommand {
 		if(this.#lastUpdate + 1000*60*60 < Date.now()){
 			await this.updateActivities();
 		}
-	};
+	}
 
 	/**
 	 * Обновление списка активностей

@@ -16,7 +16,7 @@
 class SlashOptions {
 
 	/** @type {Object.<string, SlashOption>} */
-	#list;
+	#list = {};
 
 	get list(){
 		return this.#list;
@@ -28,7 +28,7 @@ class SlashOptions {
 	 */
 	constructor(options){
 		for(const name in options){
-			if(typeof name != 'string' || name.toLowerCase().replace(/[^A-Z0-3_-]/) !== name)
+			if(typeof name != 'string' || name.toLowerCase().replace(/[^A-Z0-3_-]/gim) !== name)
 				throw new TypeError('No valid slash option name: ' + name);
 
 			if(name.length > 32)

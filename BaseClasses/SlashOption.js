@@ -1,5 +1,5 @@
-const LangSingle = require('LangSingle');
-const SlashOptions = require('SlashOptions');
+const LangSingle = require('./LangSingle');
+const SlashOptions = require('./SlashOptions');
 
 /**
  * Класс опции слеш комманд
