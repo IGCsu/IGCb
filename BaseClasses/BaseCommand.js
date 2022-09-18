@@ -35,6 +35,11 @@ class BaseCommand {
 	#description;
 
 	/**
+	 * Кэш модуля. Может использоваться для разных целей.
+	 */
+	#cache;
+
+	/**
 	 * Подсказка для слеш-команды. Содержит объект локализации.
 	 * @type {LangSingle}
 	 */
@@ -59,21 +64,21 @@ class BaseCommand {
 	constructor(path){
 		this.active = true;
 
-		return new Promise(resolve => {
-			resolve(this);
-		});
+		// return new Promise(resolve => {
+		// 	resolve(this);
+		// });
 	}
 
 	/**
-	 * Функция отключения модуля. Инвертирует действия функции инициализации, закрывая соединения, ощищая буферы и тп.
+	 * Функция отключения модуля. Инвертирует действия функции инициализации, закрывая соединения, очищая буферы и тп.
 	 * @return {Promise<this>}
 	 */
 	destroy(){
 		this.active = false;
 
-		return new Promise(resolve => {
-			resolve(this);
-		});
+		// return new Promise(resolve => {
+		// 	resolve(this);
+		// });
 	}
 
 	/**
