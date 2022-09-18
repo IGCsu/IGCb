@@ -18,10 +18,9 @@ module.exports = () => {
 
 		/**
 		 * Содержит функцию-заглушку.
-		 * @return {boolean}
 		 * @const
 		 */
-		DEFAULT_FUNC: () => true,
+		DEFAULT_FUNC: e => {},
 
     };
 }

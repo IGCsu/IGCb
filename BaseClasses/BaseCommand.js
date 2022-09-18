@@ -91,49 +91,49 @@ class BaseCommand {
 	 * Обработка слеш-команды
 	 * @param {CommandInteraction} int Команда пользователя
 	 */
-	slash = constants.DEFAULT_FUNC
+	slash = constants.DEFAULT_FUNC;
 
 	/**
 	 * Обработчик сообщений пользователя
 	 * @param {Message} msg Сообщение пользователя
 	 */
-	message = constants.DEFAULT_FUNC
+	message = constants.DEFAULT_FUNC;
 
 	/**
 	 * Обработка контекстной команды на пользователя
 	 * @param {UserContextMenuInteraction} int
 	 */
-	contextUser = constants.DEFAULT_FUNC
+	contextUser = constants.DEFAULT_FUNC;
 
 	/**
 	 * Обработка контекстной команды на сообщение
 	 * @param {MessageContextMenuInteraction} int
 	 */
-	contextMessage = constants.DEFAULT_FUNC
+	contextMessage = constants.DEFAULT_FUNC;
 
 	/**
 	 * Обработка подсказок при вводе
 	 * @param {AutocompleteInteraction} int
 	 */
-	autocomplete = constants.DEFAULT_FUNC
+	autocomplete = constants.DEFAULT_FUNC;
 
 	/**
 	 * Обработка нажатия на кнопку
 	 * @param {ButtonInteraction} int
 	 */
-	button = constants.DEFAULT_FUNC
+	button = constants.DEFAULT_FUNC;
 
 	/**
 	 * Обработка взаимодействия с селектором
 	 * @param {SelectMenuInteraction} int
 	 */
-	selectMenu = constants.DEFAULT_FUNC
+	selectMenu = constants.DEFAULT_FUNC;
 
 	/**
 	 * Обработка модалки
 	 * @param {ModalSubmitInteraction} int
 	 */
-	modal = constants.DEFAULT_FUNC
+	modal = constants.DEFAULT_FUNC;
 
 }
 
