@@ -16,5 +16,12 @@ module.exports = () => {
 
         SITE_LINK: 'http://igc.su',
 
+		/**
+		 * Содержит функцию-заглушку.
+		 * @return {boolean}
+		 * @const
+		 */
+		DEFAULT_FUNC: () => true,
+
     };
 }

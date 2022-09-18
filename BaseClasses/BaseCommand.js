@@ -1,10 +1,12 @@
+const LangSingle = require('LangSingle');
+const SlashOptions = require('SlashOptions');
+
 class BaseCommand {
 
 	/**
 	 * Содержит значение активности модуля. Используется для проверки другими модулями.
 	 * Вне зависимости от значения, будет подключен и инициализирован.
 	 * @type {boolean}
-	 * @private
 	 */
 	active = false;
 
@@ -22,22 +24,27 @@ class BaseCommand {
 
 	/**
 	 * Короткое обозначение модуля. Содержит объект локализации.
-	 * Обязательная локализация - русская.
-	 * Для обозначений языков, ключей объекта используются коды языков ISO 639-1
-	 * @type {Object.<string, string>}
+	 * @type {LangSingle}
 	 */
 	title;
 
 	/**
 	 * Подсказка для слеш-команды. Содержит объект локализации.
-	 * Обязательная локализация - русская.
-	 * Для обозначений языков, ключей объекта используются коды языков ISO 639-1
-	 * @type {Object.<string, string>}
+	 * @type {LangSingle}
 	 */
-	description = this.title;
+	#description;
 
 	/**
-	 * Опции для слеш-команды. Если слеш-команде не нужны опции, то может содержать underfund
+	 * Подсказка для слеш-команды. Содержит объект локализации.
+	 * @type {LangSingle}
+	 */
+	get description(){
+		return this.#description ?? this.title;
+	}
+
+	/**
+	 * Опции для слеш-команды. Если слеш-команде не нужны опции, то может содержать undefined
+	 * @type {SlashOptions}
 	 */
 	slashOptions;
 
@@ -75,55 +82,53 @@ class BaseCommand {
 	 */
 	call;
 
-
 	/**
 	 * Обработка слеш-команды
 	 * @param {CommandInteraction} int Команда пользователя
 	 */
-	slash : async function(int){
-		const content = await this.call(int, int.options.getMember('user') ?? int.member);
-
-		if(content.error)
-			return await int.reply({ content: reaction.emoji.error + ' ' + int.str(content.error), ephemeral: true });
-
-		await int.reply(content);
-	},
-
-	/**
-	 * Обработка контекстной команды
-	 * @param {UserContextMenuInteraction} int
-	 */
-	contextUser : async function(int){
-		const content = await this.call(int, int.targetMember);
-
-		if(content.error)
-			return await int.reply({ content: reaction.emoji.error + ' ' + int.str(content.error), ephemeral: true });
-
-		content.ephemeral = true;
-		await int.reply(content);
-	},
-
-
+	slash = constants.DEFAULT_FUNC
 
 	/**
 	 * Обработчик сообщений пользователя
-	 * Мониторинг всех сообщений для начисления опыта пользователям. Игнорируются сообщения бота и в некоторых каналах.
 	 * @param {Message} msg Сообщение пользователя
 	 */
-	message : async function(msg){
-		if(msg.author.bot) return;
-		const channel = msg.channel.isThread() ? msg.channel.parent : msg.channel;
-		if(this.noXPChannels.includes(channel.parentId)) return;
-		if(this.noXPChannels.includes(channel.id)) return;
+	message = constants.DEFAULT_FUNC
 
-		let user = new UserLevels(msg.member, this.roles, this.rolesIDs, true);
+	/**
+	 * Обработка контекстной команды на пользователя
+	 * @param {UserContextMenuInteraction} int
+	 */
+	contextUser = constants.DEFAULT_FUNC
 
-		user.userMessageСounting(msg)
-			.update()
-			.updateRole();
+	/**
+	 * Обработка контекстной команды на сообщение
+	 * @param {MessageContextMenuInteraction} int
+	 */
+	contextMessage = constants.DEFAULT_FUNC
 
-	},
+	/**
+	 * Обработка подсказок при вводе
+	 * @param {AutocompleteInteraction} int
+	 */
+	autocomplete = constants.DEFAULT_FUNC
 
+	/**
+	 * Обработка нажатия на кнопку
+	 * @param {ButtonInteraction} int
+	 */
+	button = constants.DEFAULT_FUNC
+
+	/**
+	 * Обработка взаимодействия с селектором
+	 * @param {SelectMenuInteraction} int
+	 */
+	selectMenu = constants.DEFAULT_FUNC
+
+	/**
+	 * Обработка модалки
+	 * @param {ModalSubmitInteraction} int
+	 */
+	modal = constants.DEFAULT_FUNC
 
 }
 
