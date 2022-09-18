@@ -72,55 +72,55 @@ class BaseCommand {
 	 * Исполняемый метод команды. Содержит базовую логику
 	 * @type {function}
 	 */
-	call;
+	call(e){ return 'DefaultFunction'; };
 
 	/**
 	 * Обработка слеш-команды
-	 * @param {CommandInteraction} int Команда пользователя
+	 * @param {CommandInteraction} e Команда пользователя
 	 */
-	slash = constants.DEFAULT_FUNC;
+	slash(e){ return 'DefaultFunction'; };
 
 	/**
 	 * Обработчик сообщений пользователя
-	 * @param {Message} msg Сообщение пользователя
+	 * @param {Message} e Сообщение пользователя
 	 */
-	message = constants.DEFAULT_FUNC;
+	message(e){ return 'DefaultFunction'; };
 
 	/**
 	 * Обработка контекстной команды на пользователя
-	 * @param {UserContextMenuInteraction} int
+	 * @param {UserContextMenuInteraction} e
 	 */
-	contextUser = constants.DEFAULT_FUNC;
+	contextUser(e){ return 'DefaultFunction'; };
 
 	/**
 	 * Обработка контекстной команды на сообщение
-	 * @param {MessageContextMenuInteraction} int
+	 * @param {MessageContextMenuInteraction} e
 	 */
-	contextMessage = constants.DEFAULT_FUNC;
+	contextMessage(e){ return 'DefaultFunction'; };
 
 	/**
 	 * Обработка подсказок при вводе
-	 * @param {AutocompleteInteraction} int
+	 * @param {AutocompleteInteraction} e
 	 */
-	autocomplete = constants.DEFAULT_FUNC;
+	autocomplete(e){ return 'DefaultFunction'; };
 
 	/**
 	 * Обработка нажатия на кнопку
-	 * @param {ButtonInteraction} int
+	 * @param {ButtonInteraction} e
 	 */
-	button = constants.DEFAULT_FUNC;
+	button(e){ return 'DefaultFunction'; };
 
 	/**
 	 * Обработка взаимодействия с селектором
-	 * @param {SelectMenuInteraction} int
+	 * @param {SelectMenuInteraction} e
 	 */
-	selectMenu = constants.DEFAULT_FUNC;
+	selectMenu(e){ return 'DefaultFunction'; };
 
 	/**
 	 * Обработка модалки
-	 * @param {ModalSubmitInteraction} int
+	 * @param {ModalSubmitInteraction} e
 	 */
-	modal = constants.DEFAULT_FUNC;
+	modal(e){ return 'DefaultFunction'; };
 
 }
 

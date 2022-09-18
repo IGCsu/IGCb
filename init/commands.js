@@ -78,13 +78,14 @@ const initMessageHandler = () => {
 	commands.handler.commands = messageCommands;
 }
 
-
 /**
  * Определяет модули бота
  */
 module.exports = async () => {
 
 	console.log('Loading commands:');
+
+	const DEFAULT_FUNC = constants.DEFAULT_FUNC.getSource();
 
 	const files = fs.readdirSync('./commands/');
 	for(const name of files){
@@ -99,21 +100,19 @@ module.exports = async () => {
 
 		const Command = require('.' + path);
 
+		/** @type {BaseCommand} */
 		commands[name] = await new Command(path);
 
-		console.log(commands[name]);
-		return;
-
 		if(commands[name].active){
-			if(commands[name].message !== constants.DEFAULT_FUNC) messageCommands.push(name);
-			if(commands[name].slash !== constants.DEFAULT_FUNC) addSlashCommand(commands[name]);
-			if(commands[name].contextUser !== constants.DEFAULT_FUNC) addContextUserCommand(commands[name]);
+			if(commands[name].message.getSource() !== DEFAULT_FUNC) messageCommands.push(name);
+			if(commands[name].slash.getSource() !== DEFAULT_FUNC) addSlashCommand(commands[name]);
+			if(commands[name].contextUser.getSource() !== DEFAULT_FUNC) addContextUserCommand(commands[name]);
 		}
 
 		log.initText += log.load('> ' + path, getTimePerformance(timeStart), commands[name].active);
 	}
 
-	if(!debugAllowModules.length) sendApplicationGuildCommands();
+	sendApplicationGuildCommands();
 
 	initMessageHandler();
 
