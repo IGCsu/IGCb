@@ -70,7 +70,7 @@ class Activities extends BaseCommand {
 
 	/** @param {CommandInteraction} int */
 	async slash(int){
-		this.call.then(res => {
+		this.call(int).then(res => {
 			int.reply({
 				content: 'Приглашение создано, нажмите на кнопку ниже чтобы присоединиться к ' + res.activity.name,
 				components: [{
