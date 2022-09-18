@@ -20,7 +20,7 @@ module.exports = () => {
 		 * Содержит функцию-заглушку.
 		 * @const
 		 */
-		DEFAULT_FUNC: e => {},
+		DEFAULT_FUNC: async function(e){},
 
     };
 }
