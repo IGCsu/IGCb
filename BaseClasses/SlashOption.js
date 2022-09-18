@@ -41,7 +41,7 @@ class SlashOption {
 	 * Варианты выбора.
 	 * Содержит в качестве ключа - вариант выбора.
 	 * В качестве значение - описание выбора, подсказку.
-	 * @type {Object.<string|number, SlashOption>}
+	 * @type {Object.<string|number, LangSingle>}
 	 */
 	choices;
 
@@ -94,7 +94,7 @@ class SlashOption {
 	 * @param {number} data.type Тип опции
 	 * @param {LangSingle} data.description Подсказка для опции
 	 * @param {boolean} [data.required=false] Определяет, обязательна ли эта опция
-	 * @param {Object.<string|number, SlashOption>} [data.choices] Варианты выбора
+	 * @param {Object.<string|number, LangSingle>} [data.choices] Варианты выбора
 	 * @param {SlashOptions} [data.options] Дополнительные опции для опции
 	 * @param {number[]} [data.channel_types] Типы каналов, доступные для выбора
 	 * @param {number} [data.min_value] Минимальное число
@@ -137,7 +137,7 @@ class SlashOption {
 		};
 
 		if(this.required) data.required = this.required;
-		if(this.choices) data.choices = this.choices;
+		if(this.choices) data.choices = this.getChoicesDiscord();
 		if(this.options) data.options = this.options.toDiscord();
 		if(this.channel_types) data.channel_types = this.channel_types;
 		if(this.min_value) data.min_value = this.min_value;
@@ -147,6 +147,24 @@ class SlashOption {
 		if(this.autocomplete) data.autocomplete = this.autocomplete;
 
 		return data;
+	}
+
+	/**
+	 * Возвращает селектор слеш-команды отформатированный для дискорда
+	 * @return {array}
+	 */
+	getChoicesDiscord(){
+		let choices = [];
+
+		for(let value in this.choices){
+			choices.push({
+				value: value,
+				name: this.choices[value].toString(),
+				name_localizations: this.choices[value].toDiscord()
+			});
+		}
+
+		return choices;
 	}
 
 }
