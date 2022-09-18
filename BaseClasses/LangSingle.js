@@ -33,7 +33,7 @@ class LangSingle {
 	 * @constructor
 	 */
 	constructor(langs){
-		if(langs.hasOwnProperty(super.DEFAULT))
+		if(!langs.hasOwnProperty(this.constructor.DEFAULT))
 			throw new TypeError('No required value');
 
 		for(const code in langs){
@@ -75,7 +75,7 @@ class LangSingle {
 	 * @return {string}
 	 */
 	toString(){
-		return this.#list[super.DEFAULT];
+		return this.#list[this.constructor.DEFAULT];
 	}
 
 	/**
@@ -86,8 +86,8 @@ class LangSingle {
 		let langs = {};
 
 		for(let code in this.#list){
-			if(super.DISCORD_LANG_POSTFIX.hasOwnProperty(code)){
-				for(const postfix of super.DISCORD_LANG_POSTFIX[code]){
+			if(this.constructor.DISCORD_LANG_POSTFIX.hasOwnProperty(code)){
+				for(const postfix of this.constructor.DISCORD_LANG_POSTFIX[code]){
 					langs[code + '-' + postfix] = this.#list[code];
 				}
 			}else{
