@@ -13,7 +13,7 @@ class Necrology extends BaseCommand {
 
 		this.category = 'Модерация'
 		this.name = 'necrology'
-		this.title = title
+		this.title = new LangSingle(title);
 
 		this.cache = {}
 

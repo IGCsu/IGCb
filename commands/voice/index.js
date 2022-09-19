@@ -13,7 +13,8 @@ class Voice extends BaseCommand{
 
 		this.category = 'Голосовые каналы'
 		this.name = 'voice'
-		this.title = title
+		this.title = new LangSingle(title);
+		this.description = new LangSingle(title);
 		this.slashOptions = slashOptions
 
 		this.permission = {

@@ -11,7 +11,7 @@ class Starboard extends BaseCommand{
 
 		this.category = 'Развлечения'
 		this.name = 'starboard'
-		this.title = title
+		this.title = new LangSingle(title);
 
 		this.starboardChannel = guild.channels.cache.get('938171284553101456')
 		this.starboardEmoji = '⭐'

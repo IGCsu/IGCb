@@ -14,8 +14,8 @@ class Roll extends BaseCommand{
 
 		this.category = 'Развлечения'
 		this.name = 'roll'
-		this.title = title
-		this.description = description
+		this.title = new LangSingle(title);
+		this.description = new LangSingle(description);
 		this.slashOptions = slashOptions
 
 

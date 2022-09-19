@@ -13,8 +13,8 @@ class Alive extends BaseCommand {
 
 		this.category = 'Роли'
 		this.name = 'alive';
-		this.title = title;
-		this.description = description;
+		this.title = new LangSingle(title);
+		this.description = new LangSingle(description);
 		this.slashOptions = slashOptions;
 
 		this.role = guild.roles.cache.get('648762974277992448');

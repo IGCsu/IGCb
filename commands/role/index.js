@@ -13,8 +13,8 @@ class Roles extends BaseCommand{
 
 		this.category = 'Роли'
 		this.name = 'role'
-		this.title = title
-		this.description = description
+		this.title = new LangSingle(title);
+		this.description = new LangSingle(description);
 		this.slashOptions = slashOptions
 
 		return new Promise(async resolve => {

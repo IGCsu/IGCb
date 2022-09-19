@@ -13,8 +13,8 @@ class NameFix extends BaseCommand{
 
 		this.category = 'Модерация'
 		this.name = 'namefix'
-		this.title = title
-		this.description = description
+		this.title = new LangSingle(title);
+		this.description = new LangSingle(description);
 		this.slashOptions = slashOptions
 
 	}

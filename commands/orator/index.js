@@ -13,8 +13,8 @@ class Orator extends BaseCommand {
 
 		this.category = 'Роли'
 		this.name = 'orator';
-		this.title = title;
-		this.description = description;
+		this.title = new LangSingle(title);
+		this.description = new LangSingle(description);
 		this.slashOptions = slashOptions;
 
 		this.role = guild.roles.cache.get('809040260582998016');

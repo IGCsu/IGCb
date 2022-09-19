@@ -33,7 +33,7 @@ const addSlashCommand = c => {
 		name: c.name,
 		description: c.description.toString(),
 		description_localizations: c.description.toDiscord(),
-		options: c.slashOptions.toDiscord()
+		options: c.slashOptions?.toDiscord()
 	});
 }
 

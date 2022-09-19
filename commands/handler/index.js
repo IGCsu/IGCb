@@ -14,7 +14,7 @@ class Handler extends BaseCommand{
 
 		this.category = 'Утилиты'
 		this.name = 'handler'
-		this.title = title
+		this.title = new LangSingle(title);
 
 		/**
 		 * Объект функций модуля

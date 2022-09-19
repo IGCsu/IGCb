@@ -13,8 +13,8 @@ class Ping extends BaseCommand{
 		this.category = 'Информация'
 
 		this.name = 'ping'
-		this.title = title
-		this.description = description
+		this.title = new LangSingle(title);
+		this.description = new LangSingle(description);
 
 		this.embed = new Discord.MessageEmbed().setDescription('Вычисление... ')
 

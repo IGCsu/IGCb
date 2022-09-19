@@ -15,7 +15,8 @@ class Name extends BaseCommand {
 
 		this.category = 'Инструменты'
 		this.name = 'name'
-		this.title = title
+		this.title = new LangSingle(title);
+		this.description = new LangSingle(title);
 		this.slashOptions = slashOptions
 
 		this.transliterateOptions = transliterateOptions

@@ -18,8 +18,8 @@ class Warns extends BaseCommand{
 
 		this.category = 'Модерация'
 		this.name = 'warn'
-		this.title = title
-		this.description = description
+		this.title = new LangSingle(title);
+		this.description = new LangSingle(description);
 		this.slashOptions = slashOptions
 
 		return new Promise(async resolve => {

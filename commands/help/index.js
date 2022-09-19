@@ -16,8 +16,8 @@ class Help extends BaseCommand {
 
 		this.category = 'Информация'
 		this.name = 'help'
-		this.title = title
-		this.description = description
+		this.title = new LangSingle(title);
+		this.description = new LangSingle(description);
 		this.slashOptions = slashOptions
 
 		this.applicationCommandOptionTypes = applicationCommandOptionTypes

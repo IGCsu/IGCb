@@ -16,8 +16,8 @@ class Levels extends BaseCommand{
 		this.category = 'Информация'
 
 		this.name = 'levels'
-		this.title = title
-		this.description = description
+		this.title = new LangSingle(title);
+		this.description = new LangSingle(description);
 		this.slashOptions = slashOptions
 
 		this.noXPChannels = noXPChannels

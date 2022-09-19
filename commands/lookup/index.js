@@ -14,8 +14,8 @@ class Lookup extends BaseCommand{
 
 		this.category = 'Информация'
 		this.name = 'lookup'
-		this.title = title
-		this.description = description
+		this.title = new LangSingle(title);
+		this.description = new LangSingle(description);
 		this.slashOptions = slashOptions
 
 		this.dateText = dateText

@@ -11,8 +11,8 @@ class Fag extends BaseCommand{
 
 		this.category = 'nsfw'
 		this.name = 'fag'
-		this.title = title
-		this.description = description
+		this.title = new LangSingle(title);
+		this.description = new LangSingle(description);
 
 		return new Promise(async resolve => {
 			resolve(this);
