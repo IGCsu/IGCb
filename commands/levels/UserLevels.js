@@ -94,7 +94,7 @@ class UserLevels {
 	 * После регистрации обновляются примитивные данные, но продвинутые теряют свою актуальность, потому очищаются.
 	 * @param {Message} msg Сообщение пользователя
 	 */
-	userMessageСounting(msg){
+	userMessageCounting(msg){
 		const timestamp = Math.floor(msg.createdTimestamp / 1000);
 
 		this.#primitiveData.messagesAll += 1;
