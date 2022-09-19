@@ -5,7 +5,7 @@ const LangSingle = require('../../BaseClasses/LangSingle');
 module.exports = new SlashOptions({
 
 	activity: new SlashOption({
-		type: 3,
+		type: SlashOption.types.STRING,
 		required: true,
 		autocomplete: true,
 		description: new LangSingle({
@@ -16,8 +16,8 @@ module.exports = new SlashOptions({
 	}),
 
 	channel: new SlashOption({
-		type: 7,
-		channel_types: [2],
+		type: SlashOption.types.CHANNEL,
+		channel_types: [SlashOption.channelTypes.GUILD_VOICE],
 		description: new LangSingle({
 			ru: 'Выберите голосовой канал',
 			en: 'Choose voice channel',
