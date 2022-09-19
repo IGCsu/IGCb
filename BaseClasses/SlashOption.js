@@ -19,7 +19,7 @@ const SlashOptions = require('./SlashOptions');
 class SlashOption {
 
 
-	static TYPES = {
+	static types = {
 		SUB_COMMAND: 		1,
 		SUB_COMMAND_GROUP: 	2,
 		STRING: 			3,
@@ -33,7 +33,7 @@ class SlashOption {
 		ATTACHMENT: 		11,
 	}
 
-	static CHANNEL_TYPES = {
+	static channelTypes = {
 		GUILD_TEXT:			 0,
 		DM:					 1,
 		GUILD_VOICE: 		 2,
