@@ -1,19 +1,28 @@
-const slashOptions = require('./slashOptions.json');
+const SlashOptions = require('../../BaseClasses/SlashOptions');
+const BaseCommand = require('../../BaseClasses/BaseCommand');
+const LangSingle = require('../../BaseClasses/LangSingle');
+const { CommandInteraction } = require('discord.js')
+
+const slashOptions = require('./slashOptions');
 const { title, description } = require('./about.json');
 
-module.exports = {
+class Roll extends BaseCommand{
 
-	active : true,
-	category : 'Развлечения',
+	constructor(path) {
+		super(path);
 
-	name : 'roll',
-	title : title,
-	description : description,
-	slashOptions : slashOptions,
 
-	init : async function(){
-		return this;
-	},
+		this.category = 'Развлечения'
+		this.name = 'roll'
+		this.title = title
+		this.description = description
+		this.slashOptions = slashOptions
+
+
+		return new Promise(async resolve => {
+			resolve(this);
+		});
+	}
 
 	/**
 	 * Возвращает случайное значение из указанного диапозона
@@ -21,20 +30,20 @@ module.exports = {
 	 * @param  {Number} max Максимальное значение (По умолчанию 100)
 	 * @return {Number}
 	 */
-	call : function(min, max){
+	call(min, max){
 
 		if(!min) min = 1;
 		if(!max) max = 100;
 
 		return Math.floor( Math.random() * (max - min + 1) ) + min;
-	},
+	}
 
 
 	/**
 	 * Обработка слеш-команды
 	 * @param {CommandInteraction} int Команда пользователя
 	 */
-	slash : async function(int){
+	async slash(int){
 		let min = int.options.getInteger('min');
 		let max = int.options.getInteger('max');
 
@@ -44,4 +53,6 @@ module.exports = {
 
 		await int.reply({ content : value.toString() });
 	}
-};
+}
+
+module.exports = Roll;
