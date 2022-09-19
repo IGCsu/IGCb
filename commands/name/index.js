@@ -1,33 +1,39 @@
+const SlashOptions = require('../../BaseClasses/SlashOptions');
+const BaseCommand = require('../../BaseClasses/BaseCommand');
+const LangSingle = require('../../BaseClasses/LangSingle');
+const { CommandInteraction, GuildMember, } = require('discord.js')
+
 const translit = require('transliteration');
-const slashOptions = require('./slashOptions.json');
+const slashOptions = require('./slashOptions');
 const { title } = require('./about.json');
 const transliterateOptions = require('./transliterateOptions.json');
 
-module.exports = {
+class Name extends BaseCommand {
 
-	active : true,
-	category : 'Инструменты',
+	constructor(path) {
+		super(path);
 
-	name : 'name',
-	title : title,
-	slashOptions : slashOptions,
+		this.category = 'Инструменты'
+		this.name = 'name'
+		this.title = title
+		this.slashOptions = slashOptions
 
-	transliterateOptions : transliterateOptions,
+		this.transliterateOptions = transliterateOptions
 
-	init : function(){
-		client.on('guildMemberAdd', async member => await this.silent(member));
-		client.on('userUpdate', async (oldUser, newUser) => {
-			if(oldUser.username === newUser.username) return;
-			const member = await guild.members.fetch({ user : newUser });
-			if(member) await this.silent(member);
+		return new Promise(async resolve => {
+			client.on('guildMemberAdd', async member => await this.silent(member));
+			client.on('userUpdate', async (oldUser, newUser) => {
+				if(oldUser.username === newUser.username) return;
+				const member = await guild.members.fetch({ user : newUser });
+				if(member) await this.silent(member);
+			});
+			client.on('guildMemberUpdate', async (oldMember, newMember) => {
+				if(oldMember.toName() === newMember.toName()) return;
+				await this.silent(newMember);
+			});
+			resolve(this);
 		});
-		client.on('guildMemberUpdate', async (oldMember, newMember) => {
-			if(oldMember.toName() === newMember.toName()) return;
-			await this.silent(newMember);
-		});
-
-		return this;
-	},
+	}
 
 
 	/**
@@ -35,8 +41,9 @@ module.exports = {
 	 *
 	 * @param {string} nickname Указанный никнейм
 	 * @param {GuildMember} member Объект пользователя
+	 * @return {Promise<Object>}
 	 */
-	call : async function(nickname, member){
+	async call(nickname, member){
 		const fixed = this.fix(nickname, true);
 
 		if(fixed.status === 'error')
@@ -51,15 +58,15 @@ module.exports = {
 		}catch(e){
 			return { error : reaction.emoji.error + ' Упс... Ошибка'};
 		}
-	},
+	}
 
 
 	/**
 	 * Обработка слеш-команды
 	 * @param {CommandInteraction} int Команда пользователя
 	 */
-	slash : async function(int){
-		response = await this.call(int.options.get('nick').value, int.member);
+	async slash(int){
+		let response = await this.call(int.options.get('nick').value, int.member);
 
 		if(response.error)
 			return int.reply({ content : response.error, ephemeral : true });
@@ -71,7 +78,7 @@ module.exports = {
 				content : response.warning,
 				ephemeral : true
 			});
-	},
+	}
 
 
 	/**
@@ -81,14 +88,14 @@ module.exports = {
 	 * @param {GuildMember} member Объект пользователя
 	 * @return {String}
 	 */
-	silent : async function(member){
+	async silent(member){
 		const name = member.toName();
 
 		let fixed = this.fix(name);
 		if(fixed.length > 30) fixed = fixed.substring(0, 30);
 		if(!fixed.length) fixed = 'Rename me please';
 
-		if(fixed == name) return { status : false };
+		if(fixed === name) return { status : false };
 
 		try{
 			await member.setNickname(fixed, 'По требованию Устава Сообщества').then(() => {}, () => {});
@@ -97,7 +104,7 @@ module.exports = {
 		}catch(e){
 			console.warn(e);
 		}
-	},
+	}
 
 
 	/**
@@ -105,9 +112,9 @@ module.exports = {
 	 *
 	 * @param  {String}  nickname Никнейм для фикса
 	 * @param  {Boolean} reason   Требуется ли указание результата
-	 * @return {String}
+	 * @return {{name: string, text: string, status: string}}
 	 */
-	fix : function(nickname, reason){
+	fix(nickname, reason){
 		let name = translit.transliterate(nickname, this.transliterateOptions);
 		name = name.replace(/`/gi, '\'');
 		name = name.replace(/[^а-яёa-z0-9'\[\]\(\)_\-\.\s]/gi, '');
@@ -118,7 +125,7 @@ module.exports = {
 		if(!reason) return name;
 
 		let text = '';
-		if(nickname != name) text = 'Из ника удалены недопустимые символы. ';
+		if(nickname !== name) text = 'Из ника удалены недопустимые символы. ';
 
 		if(!name.length)
 			return {
@@ -147,4 +154,6 @@ module.exports = {
 		return { text : text, status : 'success', name : name };
 	}
 
-};
+}
+
+module.exports = Name;
