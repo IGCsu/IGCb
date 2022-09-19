@@ -66,11 +66,13 @@ class Handler extends BaseCommand{
 	 * Проверяет статус сайта и возвращает результат
 	 * @return {Boolean}
 	 */
+
 	async siteStatusCheck(){
 		const response = await fetch(constants.SITE_LINK, { redirect: 'manual' });
 
 		return this.siteStatus = response.status === 200;
 	}
+
 
 	/**
 	 * Обработка сообщения, которое не является командой
