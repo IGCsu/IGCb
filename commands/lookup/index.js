@@ -1,32 +1,44 @@
-const slashOptions = require('./slashOptions.json');
+const SlashOptions = require('../../BaseClasses/SlashOptions');
+const BaseCommand = require('../../BaseClasses/BaseCommand');
+const LangSingle = require('../../BaseClasses/LangSingle');
+const { MessageEmbed, CommandInteraction, UserContextMenuInteraction } = require('discord.js')
+
+const slashOptions = require('./slashOptions');
 const { title, description } = require('./about.json');
 const dateText = require('./dateText.json');
 
-module.exports = {
+class Lookup extends BaseCommand{
 
-	active : true,
-	category : 'Информация',
+	constructor(path) {
+		super(path);
 
-	name : 'lookup',
-	title : title,
-	description : description,
-	slashOptions : slashOptions,
+		this.category = 'Информация'
+		this.name = 'lookup'
+		this.title = title
+		this.description = description
+		this.slashOptions = slashOptions
 
-	dateText : dateText,
+		this.dateText = dateText
 
-	init : function(){ return this; },
+		return new Promise(async resolve => {
+			resolve(this);
+		});
+	}
 
 	/**
 	 * Собирает всю инфу о пользователе, формирует эмбед и возвращает его
 	 *
 	 * @param {Number} id ID пользователя
+	 * @return {MessageEmbed}
 	 */
-	call : async function(id){
+	async call(id){
 		const user = await client.users.fetch(id);
 		let member = undefined;
+
 		try {
 			member = await guild.members.fetch(id);
-		} catch(e) { };
+		} catch(e) { }
+
 		const embed = new Discord.MessageEmbed();
 
 		const now = Date.now();
@@ -46,13 +58,13 @@ module.exports = {
 		embed.setDescription(text);
 
 		return embed;
-	},
+	}
 
 	/**
 	 * Обработка слеш-команды
 	 * @param {CommandInteraction} int Команда пользователя
 	 */
-	slash : async function(int){
+	async slash(int){
 		try{
 			const id = int.options.get('id').value;
 			const embed = await this.call(id.replace(/[^-_\w]/g, ' ').match(/[0-9]+/g)[0]);
@@ -61,9 +73,14 @@ module.exports = {
 			int.reply({ content : reaction.emoji.error + ' ' + int.str('User not found'), ephemeral : true });
 			console.log(e)
 		}
-	},
+	}
 
-	contextUser : async function(int){
+	/**
+	 *
+	 * @param {UserContextMenuInteraction} int
+	 * @return {Promise<void>}
+	 */
+	async contextUser(int){
 		try{
 			const id = int.targetId;
 			const embed = await this.call(id.replace(/[^-_\w]/g, ' ').match(/[0-9]+/g)[0]);
@@ -72,16 +89,16 @@ module.exports = {
 			int.reply({ content : reaction.emoji.error + ' ' + int.str('User not found'), ephemeral : true });
 			console.log(e)
 		}
-	},
+	}
 
 
 	/**
 	 * Получение разницы меж датами
 	 *
-	 * @return String
-	 * @param difference
+	 * @return {String}
+	 * @param {Number} difference
 	 */
-	getDateFromNow : function(difference){
+	getDateFromNow(difference){
 		difference = difference / 1000;
 
 		const minutes = Math.round( (difference/60) % 60 );
@@ -105,4 +122,6 @@ module.exports = {
 
 		return value;
 	}
-};
+}
+
+module.exports = Lookup;
