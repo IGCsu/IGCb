@@ -1,46 +1,52 @@
+const SlashOptions = require('../../BaseClasses/SlashOptions');
+const BaseCommand = require('../../BaseClasses/BaseCommand');
+const LangSingle = require('../../BaseClasses/LangSingle');
+const { GuildMember, GuildBan, User, MessageEmbed} = require('discord.js')
+
 const { title } = require('./about.json');
 const Warn = require('../warn/Warn');
 
-module.exports = {
+class Necrology extends BaseCommand {
 
-	active : true,
-	category : 'Модерация',
+	constructor(path) {
+		super(path);
 
-	name : 'necrology',
-	title : title,
+		this.category = 'Модерация'
+		this.name = 'necrology'
+		this.title = title
 
-	cache : {},
+		this.cache = {}
 
-	/**
-	* Инициализирует прослушку необходимых ивентов.
-	* Находит канал #некролог.
-	*
-	* @return {Object}
-	*/
-	init : async function(path){
-		this.channel = guild.channels.cache.get('500010381490782238');
-		this.debugChannel = guild.channels.cache.get('634466120119877653');
-		this.priveteLogs = guild.channels.cache.get('574997373219110922');
+		/**
+		* Инициализирует прослушку необходимых ивентов.
+		* Находит канал #некролог.
+		*
+		* @return {Promise<Object>}
+		*/
+		return new Promise(async resolve => {
+			this.channel = guild.channels.cache.get('500010381490782238');
+			this.debugChannel = guild.channels.cache.get('634466120119877653');
+			this.priveteLogs = guild.channels.cache.get('574997373219110922');
 
-		if(!this.channel){
-			log.initText += log.error(path + ': Отсутствует #некролог');
-			this.active = false;
-			return this;
-		}
+			if (!this.channel) {
+				log.initText += log.error(path + ': Отсутствует #некролог');
+				this.active = false;
+				return this;
+			}
 
-		if(!this.debugChannel){
-			log.initText += log.error(path + ': Отсутствует #канал-для-тестов');
-			this.active = false;
-			return this;
-		}
+			if (!this.debugChannel) {
+				log.initText += log.error(path + ': Отсутствует #канал-для-тестов');
+				this.active = false;
+				return this;
+			}
 
-		client.on('guildMemberUpdate', (before, after) => this.update(before, after));
-		client.on('guildBanAdd', ban => this.ban(ban));
+			client.on('guildMemberUpdate', (before, after) => this.update(before, after));
+			client.on('guildBanAdd', ban => this.ban(ban));
 
-		return this;
-	},
+			resolve(this);
+		});
 
-
+	}
 
 
 	/**
@@ -49,7 +55,7 @@ module.exports = {
 	 *
 	 * @param {GuildBan} ban Объект бана
 	 */
-	ban : async function(ban){
+	async ban(ban){
 		const text = 'BAN ' + ban.user.username + '#' + ban.user.discriminator + ' ' + ban.user.id;
 		let channel = 'channel';
 
@@ -69,7 +75,7 @@ module.exports = {
 
 		const msg = await this[channel].send({ embeds : [embed] });
 		const thread = await msg.startThread({ name : text });
-	},
+	}
 
 
 
@@ -81,7 +87,7 @@ module.exports = {
 	 * @param {GuildMember} before Юзер до обновления
 	 * @param {GuildMember} after  Юзер после обновления
 	 */
-	update : async function(before, after){
+	async update(before, after){
 		if(before.communicationDisabledUntilTimestamp === after.communicationDisabledUntilTimestamp) return;
 		const advancedMuteData = await this.getAdvancedTimeoutData(after.user);
 		if(!after.communicationDisabledUntilTimestamp) {
@@ -133,31 +139,37 @@ module.exports = {
 			author: advancedMuteData.author.id,
 			type: 'mute'
 		});
-	},
+	}
 
 	/**
 	* Функция получения данных из Аудит лога.
 	*
 	* @param {User} target Цель поиска
-	*
-	* @returns {User} author автор мута
-	* @returns {string} reason причина мута
+	* @return {Object<author: User, reason: string>}}
 	*/
-	getAdvancedTimeoutData : async function(target){
+	async getAdvancedTimeoutData(target){
 		const auditLogs = await guild.fetchAuditLogs({limit: 1, type: 24});
 		let result = { author : undefined, reason : undefined};
 
-		const entrie = auditLogs.entries.first();
-		if(!entrie) return result;
-		if(entrie.changes[0].key === 'communication_disabled_until' && entrie.target === target){
-			result.author = entrie.executor;
-			result.reason = entrie.reason;
+		const entry = auditLogs.entries.first();
+		if(!entry) return result;
+		if(entry.changes[0].key === 'communication_disabled_until' && entry.target === target){
+			result.author = entry.executor;
+			result.reason = entry.reason;
 		}
 
 		return result;
-	},
+	}
 
-	resolveAdvancedBanData : async function(ban, embed, channel){
+	/**
+	 * Функция получения данных из Аудит лога.
+	 *
+	 * @param {GuildBan} ban
+	 * @param {MessageEmbed} embed
+	 * @param {String} channel
+	 * @return {Object<embed: MessageEmbed, channel: string>}}
+	 */
+	async resolveAdvancedBanData(ban, embed, channel){
 		const auditLogs = await guild.fetchAuditLogs({ limit : 1, type : 22 });
 		const entre = auditLogs.entries.first();
 
@@ -176,9 +188,9 @@ module.exports = {
 			return {error: 'SYNC_ERROR'}
 		}
 		return {embed: embed, channel: channel};
-	},
+	}
 
-	getTimeMute : function(timestamp){
+	getTimeMute(timestamp){
 		const difference = (timestamp - Date.now()) / 1000;
 
 		const minutes = Math.round( (difference/60) % 60 );
@@ -191,6 +203,8 @@ module.exports = {
 		if(hours > 0) return hours + 'h';
 		if(minutes > 0) return minutes + 'm';
 		return difference + 's';
-	},
+	}
 
-};
+}
+
+module.exports = Necrology;
