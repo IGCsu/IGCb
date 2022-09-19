@@ -1,11 +1,7 @@
-const fetch = require('node-fetch');
-
 const slashOptions = require('./slashOptions.json');
 const { title, description } = require('./about.json');
 const noXPChannels = require('./noXPChannels.json');
 const UserLevels = require('./UserLevels');
-
-const { command } = require('../help');
 
 module.exports = {
 
@@ -119,7 +115,7 @@ module.exports = {
 
 		let user = new UserLevels(msg.member, this.roles, this.rolesIDs, true);
 
-		user.userMessageСounting(msg)
+		user.userMessageCounting(msg)
 			.update()
 			.updateRole();
 
