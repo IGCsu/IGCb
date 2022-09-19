@@ -1,40 +1,40 @@
+const SlashOptions = require('../../BaseClasses/SlashOptions');
+const BaseCommand = require('../../BaseClasses/BaseCommand');
+const LangSingle = require('../../BaseClasses/LangSingle');
+
 const { title } = require('./about.json');
 
-module.exports = {
+class Starboard extends BaseCommand{
 
-	active : true,
-	category : 'Развлечения',
+	constructor(path) {
+		super(path);
 
-	name : 'starboard',
-	title : title,
+		this.category = 'Развлечения'
+		this.name = 'starboard'
+		this.title = title
 
-	starboardChannel : guild.channels.cache.get('938171284553101456'),
-	starboardEmoji : '⭐',
-	defaultEmojiCount : 7,
+		this.starboardChannel = guild.channels.cache.get('938171284553101456')
+		this.starboardEmoji = '⭐'
+		this.defaultEmojiCount = 7
 
-	/**
-	* Инициализирует прослушку необходимых ивентов.
-	*
-	* @return {Object}
-	*/
-	init : async function(path){
 		if(!this.starboardChannel){
 			log.initText += log.error(path + ': Starboard канал не найден');
 			return this;
 		}
 
-		client.on('raw', async (data) => {
-			if(data.t !== 'MESSAGE_REACTION_ADD') return;
-			const reaction = data.d
-			if(reaction.emoji.name !== this.starboardEmoji) return;
-			const message = await ((await (client.channels.fetch(data.d.channel_id))).messages.fetch(data.d.message_id))
-			await this.call(message.reactions.cache.get(reaction.emoji.name), message);
+		return new Promise(async resolve => {
+			client.on('raw', async (data) => {
+				if(data.t !== 'MESSAGE_REACTION_ADD') return;
+				const reaction = data.d
+				if(reaction.emoji.name !== this.starboardEmoji) return;
+				const message = await ((await (client.channels.fetch(data.d.channel_id))).messages.fetch(data.d.message_id))
+				await this.call(message.reactions.cache.get(reaction.emoji.name), message);
+			});
+			resolve(this);
 		});
+	}
 
-		return this;
-	},
-
-	call : async function(reaction, message){
+	async call(reaction, message){
 		if(message.channel.nsfw) return;
 		if(message.channel === this.starboardChannel) return;
 		if(reaction.count < this.defaultEmojiCount) return;
@@ -81,5 +81,7 @@ module.exports = {
 		await this.starboardChannel.send({embeds: embeds});
 		await message.react(this.starboardEmoji);
 
-	},
-};
+	}
+}
+
+module.exports = Starboard;
