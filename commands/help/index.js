@@ -1,29 +1,33 @@
+const SlashOptions = require('../../BaseClasses/SlashOptions');
+const BaseCommand = require('../../BaseClasses/BaseCommand');
+const LangSingle = require('../../BaseClasses/LangSingle');
+
 const fs = require('fs');
-const slashOptions = require('./slashOptions.json');
+
+const slashOptions = require('./slashOptions');
 const { title, description } = require('./about.json');
 const applicationCommandOptionTypes = require('./applicationCommandOptionTypes.json');
 
-module.exports = {
+class Help extends BaseCommand {
 
-	active : true,
-	category : 'Информация',
+	constructor(path) {
+		super(path);
 
-	name : 'help',
-	title : title,
-	description : description,
-	slashOptions : slashOptions,
+		this.category = 'Информация'
+		this.name = 'help'
+		this.title = title
+		this.description = description
+		this.slashOptions = slashOptions
 
-	applicationCommandOptionTypes : applicationCommandOptionTypes,
-
-
-	/**
-	 * Список описаний для комманд
-	 * @type {Object}
-	 */
-	texts : {},
+		this.applicationCommandOptionTypes = applicationCommandOptionTypes
 
 
-	init : async function(path){
+		/**
+		 * Список описаний для комманд
+		 * @type {Object}
+		 */
+		this.texts = {}
+
 
 		const files = fs.readdirSync('./helpTexts/');
 		for(const file of files){
@@ -42,8 +46,10 @@ module.exports = {
 			log.initText += log.load(path + ' - ' + file, timePerf, true);
 		}
 
-		return this;
-	},
+		return new Promise(async resolve => {
+			resolve(this);
+		});
+	}
 
 
 	/**
@@ -51,7 +57,7 @@ module.exports = {
 	 *
 	 * @param {AutocompleteInteraction} int
 	 */
-	autocomplete : async function(int){
+	async autocomplete(int){
 		const timeStart = process.hrtime();
 		let choices = [];
 
@@ -90,8 +96,8 @@ module.exports = {
 			const timeEnd = process.hrtime(timeStart);
 			const timePerf = (timeEnd[0]*1000) + (timeEnd[1] / 1000000);
 			console.warn('Autocomplete Interaction Failed: ' + timePerf + 'ms' + '\n' + e)
-		};
-	},
+		}
+	}
 
 
 	/**
@@ -100,7 +106,7 @@ module.exports = {
 	 * @param  {Locale}                  lang Локализация пользователя
 	 * @return {InteractionReplyOptions}
 	 */
-	call : async function(lang){
+	async call(lang){
 
 		let help = {};
 
@@ -122,7 +128,7 @@ module.exports = {
 
 		return { embeds: [embed] };
 
-	},
+	}
 
 
 	/**
@@ -132,7 +138,7 @@ module.exports = {
 	 * @param  {String}                  name Название команды
 	 * @return {InteractionReplyOptions}
 	 */
-	command : async function(int, lang, name){
+	async command(int, lang, name){
 
 		if(!commands[name]) return 404;
 
@@ -179,7 +185,7 @@ module.exports = {
 			ephemeral: c.category === 'nsfw'
 		};
 
-	},
+	}
 
 
 	/**
@@ -189,7 +195,7 @@ module.exports = {
 	 * @param  {String} lang         Локализация юзера
 	 * @return {Array}
 	 */
-	getSlashOptions : function(slashOptions, i, lang){
+	getSlashOptions(slashOptions, i, lang){
 		let text = '';
 
 		for(let name in slashOptions){
@@ -209,14 +215,14 @@ module.exports = {
 
 		return text;
 
-	},
+	}
 
 
 	/**
 	 * Обработка слеш-команды
 	 * @param {CommandInteraction} int Команда пользователя
 	 */
-	slash : async function(int){
+	async slash(int){
 		const command = int.options.getString('command');
 		const lang = int.locale.split('-')[0];
 
@@ -226,14 +232,11 @@ module.exports = {
 			let content = reaction.emoji.error + ' Неизвестная ошибка';
 			if(options === 404) content = reaction.emoji.error + ' Модуль "' + command + '" не найден';
 			if(options === 403) content = reaction.emoji.error + ' Модуль "' + command + '" не доступен';
-			return await int.reply({
-				content: content,
-				ephemeral: true
-			});
+			return int.reply({ content: content, ephemeral: true });
 		}
 
 		await int.reply(options);
-	},
+	}
 
 
 	/**
@@ -242,8 +245,9 @@ module.exports = {
 	 * @param  {Locale} lang Локализация пользователя
 	 * @return {String}
 	 */
-	getCommand : (c, lang) => (reaction.emoji[ c.active ? 'black_circle' : 'error' ]) + ' `' + c.name + '` - ' + (c.title[lang] ?? c.title.ru),
-
+	getCommand(c, lang) {
+		return (reaction.emoji[c.active ? 'black_circle' : 'error']) + ' `' + c.name + '` - ' + (c.title[lang] ?? c.title.ru)
+	}
 
 
 	/**
@@ -251,6 +255,10 @@ module.exports = {
 	 *
 	 * @param {GuildMember} member
 	 */
-	permission : member => member.roles.cache.has('682317950568628398')
+	permission(member) {
+		return member.roles.cache.has('682317950568628398')
+	}
 
-};
+}
+
+module.exports = Help;
