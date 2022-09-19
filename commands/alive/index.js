@@ -1,18 +1,21 @@
-const slashOptions = require('./slashOptions.json');
+const SlashOptions = require('../../BaseClasses/SlashOptions');
+const BaseCommand = require('../../BaseClasses/BaseCommand');
+const LangSingle = require('../../BaseClasses/LangSingle');
+
+const slashOptions = require('./slashOptions');
 const { title, description } = require('./about.json');
 
-module.exports = {
+class Alive extends BaseCommand {
 
-	active : true,
-	category : 'Роли',
+	constructor(path){
+		super(path)
 
-	name : 'alive',
-	title : title,
-	description : description,
-	slashOptions : slashOptions,
+		this.category = 'Роли'
+		this.name = 'alive';
+		this.title = title;
+		this.description = description;
+		this.slashOptions = slashOptions;
 
-
-	init : function(path){
 		this.role = guild.roles.cache.get('648762974277992448');
 
 		if(!this.role){
@@ -20,8 +23,10 @@ module.exports = {
 			log.initText += log.error(path + ': Роль "alive" не найдена');
 		}
 
-		return this;
-	},
+		return new Promise(async resolve => {
+			resolve(this);
+		});
+	}
 
 
 	/**
@@ -30,7 +35,7 @@ module.exports = {
 	 * @param {CommandInteraction|UserContextMenuInteraction} int    Команда пользователя
 	 * @param {GuildMember|Number}                            member Объект или ID пользователя
 	 */
-	call : async function(int, member){
+	async call(int, member){
 		if(!this.permission(int.member))
 			return int.reply({
 				content : reaction.emoji.error + ' ' + int.str('You do not have enough rights to change the roles of other users'),
@@ -42,33 +47,35 @@ module.exports = {
 		}).catch(result => {
 			int.reply({ content : reaction.emoji.error + ' ' + result, ephemeral : true});
 		});
-	},
+	}
 
 
 	/**
 	 * Обработка слеш-команды
 	 * @param {CommandInteraction} int Команда пользователя
 	 */
-	slash : async function(int){
+	async slash(int){
 		this.call(int, int.options.get('user').value);
-	},
+	}
 
 	/**
 	 * Обработка контекстной команды
-	 * @param {UserContextMenuInteraction} ctx
+	 * @param {UserContextMenuInteraction} int
 	 */
-	contextUser : async function(int){
+	async contextUser(int){
 		this.call(int, int.targetMember);
-	},
+	}
 
 	/**
 	 * Проверка наличия роли Сенат или Привратник
 	 *
 	 * @param {GuildMember} member
 	 */
-	permission : member =>
-		member.roles.cache.has('613412133715312641') ||
+	permission(member){
+		return member.roles.cache.has('613412133715312641') ||
 		member.roles.cache.has('916999822693789718') ||
-		member.id == '500020124515041283'
+		member.id === '500020124515041283'}
 
-};
+}
+
+module.exports = Alive;
