@@ -20,7 +20,7 @@ module.exports = () => {
 		 * Содержит функцию-заглушку.
 		 * @const
 		 */
-		DEFAULT_FUNC: function(e){ return 'DefaultFunction'; },
+		DEFAULT_FUNC: function(e){ const s = 'DefaultFunction'; },
 
     };
 }

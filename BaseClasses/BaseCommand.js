@@ -72,55 +72,55 @@ class BaseCommand {
 	 * Исполняемый метод команды. Содержит базовую логику
 	 * @type {function}
 	 */
-	call(e){ return 'DefaultFunction'; };
+	call(e){ const s = 'DefaultFunction'; };
 
 	/**
 	 * Обработка слеш-команды
 	 * @param {CommandInteraction} e Команда пользователя
 	 */
-	slash(e){ return 'DefaultFunction'; };
+	slash(e){ const s = 'DefaultFunction'; };
 
 	/**
 	 * Обработчик сообщений пользователя
 	 * @param {Message} e Сообщение пользователя
 	 */
-	message(e){ return 'DefaultFunction'; };
+	message(e){ const s = 'DefaultFunction'; };
 
 	/**
 	 * Обработка контекстной команды на пользователя
 	 * @param {UserContextMenuInteraction} e
 	 */
-	contextUser(e){ return 'DefaultFunction'; };
+	contextUser(e){ const s = 'DefaultFunction'; };
 
 	/**
 	 * Обработка контекстной команды на сообщение
 	 * @param {MessageContextMenuInteraction} e
 	 */
-	contextMessage(e){ return 'DefaultFunction'; };
+	contextMessage(e){ const s = 'DefaultFunction'; };
 
 	/**
 	 * Обработка подсказок при вводе
 	 * @param {AutocompleteInteraction} e
 	 */
-	autocomplete(e){ return 'DefaultFunction'; };
+	autocomplete(e){ const s = 'DefaultFunction'; };
 
 	/**
 	 * Обработка нажатия на кнопку
 	 * @param {ButtonInteraction} e
 	 */
-	button(e){ return 'DefaultFunction'; };
+	button(e){ const s = 'DefaultFunction'; };
 
 	/**
 	 * Обработка взаимодействия с селектором
 	 * @param {SelectMenuInteraction} e
 	 */
-	selectMenu(e){ return 'DefaultFunction'; };
+	selectMenu(e){ const s = 'DefaultFunction'; };
 
 	/**
 	 * Обработка модалки
 	 * @param {ModalSubmitInteraction} e
 	 */
-	modal(e){ return 'DefaultFunction'; };
+	modal(e){ const s = 'DefaultFunction'; };
 
 }
 
