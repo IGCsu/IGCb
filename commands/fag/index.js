@@ -1,33 +1,40 @@
+const SlashOptions = require('../../BaseClasses/SlashOptions');
+const BaseCommand = require('../../BaseClasses/BaseCommand');
+const LangSingle = require('../../BaseClasses/LangSingle');
+
 const { title, description } = require('./about.json');
 
-module.exports = {
+class Fag extends BaseCommand{
 
-	active: true,
-	category: 'nsfw',
+	constructor(path) {
+		super(path);
 
-	name: 'fag',
-	title: title,
-	description: description,
+		this.category = 'nsfw'
+		this.name = 'fag'
+		this.title = title
+		this.description = description
 
-
-	init: function () { return this; },
+		return new Promise(async resolve => {
+			resolve(this);
+		});
+	}
 
 	/**
 	 * Оправляет заданное сообщение с задержкой в 2 секунды
 	 * @param {CommandInteraction} int
 	 * @param {String}             string
 	 */
-	out: async function(int, string){
+	async out(int, string){
 		await int.channel.sendTyping();
 		await sleep(2000);
 		await int.editReply({ content: string });
-	},
+	}
 
 	/**
 	 * Пингует случайного пользователя
 	 * @param {CommandInteraction} int
 	 */
-	call: async function(int){
+	async call(int){
 
 		await int.reply({ content: 'Игогооооооо!' });
 
@@ -39,13 +46,15 @@ module.exports = {
 		await int.followUp({
 		 	content: '<@' + list.random() + '>!'
 		})
-	},
+	}
 
 	/**
 	 * Функция обработки slash-команды.
 	 * @param {CommandInteraction} int
 	 */
-	slash: async function(int){
+	async slash(int){
 		await this.call(int);
 	}
 }
+
+module.exports = Fag;
