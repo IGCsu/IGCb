@@ -1,77 +1,82 @@
+const SlashOptions = require('../../BaseClasses/SlashOptions');
+const BaseCommand = require('../../BaseClasses/BaseCommand');
+const LangSingle = require('../../BaseClasses/LangSingle');
+
 const fetch = require('node-fetch');
 const { title } = require('./about.json');
 
 const initFunctions = require('./initFunctions');
 
-module.exports = {
+class Handler extends BaseCommand{
 
-	active : true,
-	category : 'Утилиты',
+	constructor(path) {
+		super(path);
 
-	name : 'handler',
-	title : title,
+		this.category = 'Утилиты'
+		this.name = 'handler'
+		this.title = title
 
-	/**
-	 * Объект функций модуля
-	 * @type {Object}
-	 */
-	functions : {},
+		/**
+		 * Объект функций модуля
+		 * @type {Object}
+		 */
+		this.functions = {}
 
-	/**
-	 * Массив функций, вызываемых при сообщении в любом канале
-	 * @type {Object}
-	 */
-	allChannels : {},
+		/**
+		 * Массив функций, вызываемых при сообщении в любом канале
+		 * @type {Object}
+		 */
+		this.allChannels = {}
 
-	/**
-	 * Объект каналов и категориий, содержашие объекты функций
-	 * @type {Object}
-	 */
-	allowedChannelsFunctions : {},
+		/**
+		 * Объект каналов и категориий, содержашие объекты функций
+		 * @type {Object}
+		 */
+		this.allowedChannelsFunctions = {}
 
-	/**
-	 * Массив модулей где есть обработчик сообщений.
-	 * Пополняется функцией "initMessageHandler()" при инициализации бота.
-	 * @type {Array}
-	 */
-	commands : [],
+		/**
+		 * Массив модулей где есть обработчик сообщений.
+		 * Пополняется функцией "initMessageHandler()" при инициализации бота.
+		 * @type {Array}
+		 */
+		this.commands = []
 
-	init : async function(path){
+		return new Promise(async resolve => {
+			await this.siteStatusCheck();
+			if(!this.siteStatus) log.initText += log.error(path + ': Сайт недоступен');
 
-		await this.siteStatusCheck();
-		if(!this.siteStatus) log.initText += log.error(path + ': Сайт недоступен');
+			const { functions, allChannels, allowedChannelsFunctions } = await initFunctions();
+			this.functions = functions;
+			this.allChannels = allChannels;
+			this.allowedChannelsFunctions = allowedChannelsFunctions;
 
-		const { functions, allChannels, allowedChannelsFunctions } = await initFunctions();
-		this.functions = functions;
-		this.allChannels = allChannels;
-		this.allowedChannelsFunctions = allowedChannelsFunctions;
+			client.on('messageCreate', async msg => {
+				if(msg.channel.type === 'DM') return;
+				if(msg.channel.guild.id !== guild.id) return;
 
-		client.on('messageCreate', async msg => {
-			if(msg.channel.type === 'DM') return;
-			if(msg.channel.guild.id !== guild.id) return;
+				await this.call(msg);
+			});
 
-			await this.call(msg);
+			resolve(this);
 		});
-
-		return this;
-	},
+	}
 
 
 	/**
 	 * Проверяет статус сайта и возвращает результат
 	 * @return {Boolean}
 	 */
-	siteStatusCheck: async function(){
+	async siteStatusCheck(){
 		const response = await fetch(constants.SITE_LINK, { redirect: 'manual' });
 
 		return this.siteStatus = response.status === 200;
-	},
+	}
 
 	/**
 	 * Обработка сообщения, которое не является командой
 	 * @param {Message} msg Сообщение пользователя
 	 */
-	call: async function(msg){
+	async call(msg){
 		for(let command of this.commands) this.commandMessage(commands[command], msg);
 
 		const thread = msg.channel.isThread();
@@ -86,7 +91,7 @@ module.exports = {
 
 		this.callFunctions(functions, msg);
 
-	},
+	}
 
 	/**
 	 * Обработка сообщения сторонним модулем.
@@ -94,14 +99,14 @@ module.exports = {
 	 * @param {Object}  command Объект модуля
 	 * @param {Message} msg Сообщение пользователя
 	 */
-	commandMessage: async function(command, msg){
+	async commandMessage(command, msg){
 		try{
 			if(command.active) await command.message(msg);
 		}catch(e){
 			const active = e.handler(command.name, false);
 			if(!active) delete this.commands[command.name];
 		}
-	},
+	}
 
 	/**
 	 * Добавляет к списку functions, функции которые необходимо вызвать.
@@ -110,22 +115,22 @@ module.exports = {
 	 * @param {String}  id        ID канала или категории
 	 * @param {Boolean} thread    Является ли канал тредом, в котором написано сообщение
 	 */
-	addAllowedChannelsFunctions: async function(functions, id, thread){
+	async addAllowedChannelsFunctions(functions, id, thread){
 		if(!this.allowedChannelsFunctions[id]) return;
 
 		for(let name in this.allowedChannelsFunctions[id]){
 			if(!thread || this.allowedChannelsFunctions[id][name]) functions.add(name);
 		}
-	},
+	}
 
 	/**
 	 * Добавляет к списку functions, функции которые необходимо вызвать.
 	 * Добавляет общие функции, не зависящие от канала.
 	 * @param {Set} functions Список функций, которые необходимо вызвать
 	 */
-	addAllChannelsFunctions: async function(functions){
+	async addAllChannelsFunctions(functions){
 		for(let name in this.allChannels) functions.add(name);
-	},
+	}
 
 	/**
 	 * Вызов функций.
@@ -133,7 +138,7 @@ module.exports = {
 	 * @param {Set}     functions Список функций, которые необходимо вызвать
 	 * @param {Message} msg       Сообщение пользователя
 	 */
-	callFunctions: async function(functions, msg){
+	async callFunctions(functions, msg){
 		for(let name of functions){
 
 			try{
@@ -144,19 +149,20 @@ module.exports = {
 			}
 
 		}
-	},
+	}
 
 	/**
 	 * Отключение функции.
 	 * Перебирает объект разрешённых каналов в поиске удаляемой функции и удаляет её.
 	 * @param {String} name Название функции
 	 */
-	shutdownFunction: async function(name){
+	async shutdownFunction(name){
 		this.functions[name].active = false;
 		if(this.allChannels[name]) delete this.allChannels[name];
 		for(let id in this.allowedChannelsFunctions){
 			if(this.allowedChannelsFunctions[id][name]) delete this.allowedChannelsFunctions[id][name];
 		}
-	},
+	}
+}
 
-};
+module.exports = Handler;
