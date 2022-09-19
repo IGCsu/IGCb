@@ -52,3 +52,5 @@ class NameFix extends BaseCommand{
 		await ctx.reply(options);
 	}
 }
+
+module.exports = NameFix;
