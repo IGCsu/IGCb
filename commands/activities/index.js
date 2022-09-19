@@ -1,6 +1,7 @@
 const SlashOptions = require('../../BaseClasses/SlashOptions');
 const BaseCommand = require('../../BaseClasses/BaseCommand');
 const LangSingle = require('../../BaseClasses/LangSingle');
+const { AutocompleteInteraction, CommandInteraction} = require('discord.js')
 
 const fetch = require('node-fetch');
 

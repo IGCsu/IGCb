@@ -1,6 +1,7 @@
 const SlashOptions = require('../../BaseClasses/SlashOptions');
 const BaseCommand = require('../../BaseClasses/BaseCommand');
 const LangSingle = require('../../BaseClasses/LangSingle');
+const { CommandInteraction, GuildMember, UserContextMenuInteraction } = require('discord.js')
 
 const slashOptions = require('./slashOptions');
 const { title, description } = require('./about.json');
