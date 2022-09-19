@@ -1,33 +1,37 @@
-const slashOptions = require('./slashOptions.json');
+const SlashOptions = require('../../BaseClasses/SlashOptions');
+const BaseCommand = require('../../BaseClasses/BaseCommand');
+const LangSingle = require('../../BaseClasses/LangSingle');
+
+const slashOptions = require('./slashOptions');
 const { title, description } = require('./about.json');
 const noXPChannels = require('./noXPChannels.json');
 const UserLevels = require('./UserLevels');
 
-module.exports = {
+class Levels extends BaseCommand{
 
-	active : true,
-	category : 'Информация',
+	constructor(path) {
+		super(path);
 
-	name : 'levels',
-	title : title,
-	description : description,
-	slashOptions : slashOptions,
+		this.category = 'Информация'
 
-	noXPChannels : noXPChannels,
+		this.name = 'levels'
+		this.title = title
+		this.description = description
+		this.slashOptions = slashOptions
 
-	/**
-	* Массив уровней
-	* @type {Array}
-	*/
-	roles : [],
+		this.noXPChannels = noXPChannels
 
-	/**
-	* Массив ID ролей уровней. Используется для поиска.
-	* @type {Array}
-	*/
-	rolesIDs : [],
+		/**
+		* Массив уровней
+		* @type {Array}
+		*/
+		this.roles = []
 
-	init : async function(path){
+		/**
+		* Массив ID ролей уровней. Используется для поиска.
+		* @type {Array}
+		*/
+		this.rolesIDs = []
 
 		this.roles = DB.query('SELECT * FROM levels_roles');
 		this.roles.sort((a, b) => b.value - a.value);
@@ -40,9 +44,11 @@ module.exports = {
 			this.rolesIDs.push(this.roles[r].id);
 		}
 
-		return this;
+		return new Promise(async resolve => {
+			resolve(this);
+		});
 
-	},
+	}
 
 
 	/**
@@ -52,7 +58,7 @@ module.exports = {
 	 * @param  {GuildMember}                                   member Объект пользователя
 	 * @return {InteractionReplyOptions}
 	 */
-	call : async function(int, member){
+	async call(int, member){
 
 		const user = new UserLevels(member, this.roles, this.rolesIDs);
 
@@ -70,27 +76,27 @@ module.exports = {
 			]}],
 		};
 
-	},
+	}
 
 
 	/**
 	 * Обработка слеш-команды
 	 * @param {CommandInteraction} int Команда пользователя
 	 */
-	slash : async function(int){
+	async slash(int){
 		const content = await this.call(int, int.options.getMember('user') ?? int.member);
 
 		if(content.error)
 			return await int.reply({ content: reaction.emoji.error + ' ' + int.str(content.error), ephemeral: true });
 
 		await int.reply(content);
-	},
+	}
 
 	/**
 	 * Обработка контекстной команды
 	 * @param {UserContextMenuInteraction} int
 	 */
-	contextUser : async function(int){
+	async contextUser(int){
 		const content = await this.call(int, int.targetMember);
 
 		if(content.error)
@@ -98,7 +104,7 @@ module.exports = {
 
 		content.ephemeral = true;
 		await int.reply(content);
-	},
+	}
 
 
 
@@ -107,7 +113,7 @@ module.exports = {
 	 * Мониторинг всех сообщений для начисления опыта пользователям. Игнорируются сообщения бота и в некоторых каналах.
 	 * @param {Message} msg Сообщение пользователя
 	 */
-	message : async function(msg){
+	async message(msg){
 		if(msg.author.bot) return;
 		const channel = msg.channel.isThread() ? msg.channel.parent : msg.channel;
 		if(this.noXPChannels.includes(channel.parentId)) return;
@@ -119,6 +125,8 @@ module.exports = {
 			.update()
 			.updateRole();
 
-	},
+	}
 
-};
+}
+
+module.exports = Levels;
