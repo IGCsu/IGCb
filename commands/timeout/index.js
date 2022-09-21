@@ -76,10 +76,15 @@ class Timeout extends BaseCommand{
 	 */
 	async slash(int){
 		let msg = '';
-		if (int.options.getString('reason') === 'SITE_OFFLINE')
-			msg = { contnet: 'Этот вариант не предусмотрен для выбора как причина мута, а всего лишь информирует о том, что бот не смог получить список всех правил.\nВпредь пожалуйста больше не выбирайте данный пункт', ephemeral: true }
+		let reason = int.options.getString('reason');
+
+		if (reason === 'EMPTY_QUERY') reason = '';
+
+		if (reason === 'SITE_OFFLINE')
+			msg = { content: 'Этот вариант не предусмотрен для выбора как причина мута, а всего лишь информирует о том, что бот не смог получить список всех правил.\nВпредь пожалуйста больше не выбирайте данный пункт', ephemeral: true }
+
 		if (msg === '')
-			msg = await this.call(int, int.options.getMember('user'), int.options.getString('duration'), int.options.getString('reason') ?? '');
+			msg = await this.call(int, int.options.getMember('user'), int.options.getString('duration'), reason ?? '');
 		
 		await int.reply(msg);
 	}
@@ -91,9 +96,11 @@ class Timeout extends BaseCommand{
 	 */
 	async autocomplete(int){
 		const rawReason = int.options.getFocused();
-		if(!rawReason) return
-		let choices = [{ name: rawReason, value: rawReason }];
-		if(!this.rulesCache){
+		let choices = [{ name: int.str('An empty query is given'), value: 'EMPTY_QUERY' }];
+		if(rawReason)
+			choices = [{ name: rawReason, value: rawReason }];
+		console.log(this.rulesCache)
+		if(Object.keys(this.rulesCache).length === 0){
 			choices.push({ name: int.str('Failed to generate suggestions'), value:'SITE_OFFLINE' })
 			return await int.respond(choices);
 		}

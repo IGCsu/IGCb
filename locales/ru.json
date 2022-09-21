@@ -28,5 +28,6 @@
 	"You are not connected to a voice channel and did not specify a channel" : "Вы не подключены к голосовому каналу и не указали канал",
 	"Failed to generate suggestions": "Не удалось сгенерировать подсказки",
 	"Mentions were suppressed because too little time had passed since last mentions": "Упоминания были подавлены, т.к. с момента предыдущих прошло слишком мало времени",
-	"Missing access": "Отказанно в доступе"
+	"Missing access": "Отказанно в доступе",
+	"An empty query is given": "Введён пустой запрос"
 }	 
