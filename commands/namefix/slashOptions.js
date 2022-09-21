@@ -8,9 +8,9 @@ module.exports = new SlashOptions({
 		type: SlashOption.types.USER,
 		required: true,
 		description: new LangSingle({
-			ru: "Пользователь у которого будет исправлен ник",
-			en: "The user whose nickname will be corrected",
-			uk: "Користувач чиє ім\"я буде виправленно"
+			ru: 'Пользователь у которого будет исправлен ник',
+			en: 'The user whose nickname will be corrected',
+			uk: 'Користувач чиє ім\"я буде виправленно'
 		})
 	})
 });

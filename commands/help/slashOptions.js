@@ -10,9 +10,9 @@ module.exports = new SlashOptions({
 		required: false,
 		autocomplete: true,
 		description: new LangSingle({
-			ru: "Название модуля",
-			en: "Module name",
-			uk: "Назва модуля"
+			ru: 'Название модуля',
+			en: 'Module name',
+			uk: 'Назва модуля'
 		})
 	})
 });

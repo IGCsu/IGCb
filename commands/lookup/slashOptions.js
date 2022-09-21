@@ -8,9 +8,9 @@ module.exports = new SlashOptions({
 		type: SlashOption.types.STRING,
 		required: true,
 		description: new LangSingle({
-			ru: "ID юзера или приглашения",
-			en: "User or invite ID",
-			uk: "ID користувача/запрошення"
+			ru: 'ID юзера или приглашения',
+			en: 'User or invite ID',
+			uk: 'ID користувача/запрошення'
 		})
 	})
 

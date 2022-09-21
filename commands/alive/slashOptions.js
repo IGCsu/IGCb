@@ -8,9 +8,9 @@ module.exports = new SlashOptions({
 		type: SlashOption.types.USER,
 		required: true,
 		description: new LangSingle({
-			ru: "Участник Сообщества у которого будет переключена роль alive",
-			en: "Community member whose alive role will be switched",
-			uk: "Користувач спільноти у якого буде змінюватися роль alive"
+			ru: 'Участник Сообщества у которого будет переключена роль alive',
+			en: 'Community member whose alive role will be switched',
+			uk: 'Користувач спільноти у якого буде змінюватися роль alive'
 		})
 	})
 
