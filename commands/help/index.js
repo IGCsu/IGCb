@@ -153,17 +153,17 @@ class Help extends BaseCommand {
 
 		let slash = 'Неприменимо';
 		if(c.slash){
-			slash = '`/' + name + '` - ' + (c.description ? (c.description[lang] ?? c.description.ru) : (c.title[lang] ?? c.title.ru));
+			slash = '`/' + name + '` - ' + (c.description ? c.description.get(lang): c.title.get(lang));
 			if(c.slashOptions) slash += this.getSlashOptions(c.slashOptions, 1, lang);
 		}
 
 		let contextUser = 'Неприменимо';
 		if(c.contextUser){
-			contextUser = '`#' + name + '` - ' + (c.description ? (c.description[lang] ?? c.description.ru) : (c.title[lang] ?? c.title.ru));
+			contextUser = '`#' + name + '` - ' + (c.description ? c.description.get(lang) : c.title.get(lang));
 		}
 
 		let embed = new Discord.MessageEmbed()
-			.setTitle(c.title[lang] ?? c.title.ru)
+			.setTitle(c.title.get(lang))
 			.setColor('BLURPLE')
 			.setAuthor({ name : name })
 			.addField('Статус', status)
@@ -191,7 +191,7 @@ class Help extends BaseCommand {
 
 	/**
 	 * Возвращает опции слеш-команды
-	 * @param  {Object} slashOptions Объект опций слеш-команды
+	 * @param  {SlashOptions} slashOptions Объект опций слеш-команды
 	 * @param  {Number} i            Текущий отступ
 	 * @param  {String} lang         Локализация юзера
 	 * @return {Array}
@@ -199,17 +199,17 @@ class Help extends BaseCommand {
 	getSlashOptions(slashOptions, i, lang){
 		let text = '';
 
-		for(let name in slashOptions){
+		for(let name in slashOptions.list){
 
-			const type = this.applicationCommandOptionTypes[slashOptions[name].type];
+			const type = this.applicationCommandOptionTypes[slashOptions.list[name].type];
 
 			text += '\n' + ('- '.repeat(i)) + '`' + name + '` - ';
-			text += slashOptions[name].description[lang] ?? slashOptions[name].description.ru;
+			text += slashOptions.list[name].description.get(lang);
 			text += ' *[' + type.code + ']*';
-			if(slashOptions[name].required) text += ' *(Req*)';
+			if(slashOptions.list[name].required) text += ' *(Req*)';
 
-			if(slashOptions[name].slashOptions){
-				text += this.getSlashOptions(slashOptions[name].slashOptions, i + 1, lang);
+			if(slashOptions.list[name].slashOptions){
+				text += this.getSlashOptions(slashOptions.list[name].slashOptions, i + 1, lang);
 			}
 
 		}
@@ -247,7 +247,7 @@ class Help extends BaseCommand {
 	 * @return {String}
 	 */
 	getCommand(c, lang) {
-		return (reaction.emoji[c.active ? 'black_circle' : 'error']) + ' `' + c.name + '` - ' + (c.title[lang] ?? c.title.ru)
+		return (reaction.emoji[c.active ? 'black_circle' : 'error']) + ' `' + c.name + '` - ' + (c.title.get(lang))
 	}
 
 

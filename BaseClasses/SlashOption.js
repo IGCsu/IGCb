@@ -125,7 +125,7 @@ class SlashOption {
 	 * @param {LangSingle} data.description Подсказка для опции
 	 * @param {boolean} [data.required=false] Определяет, обязательна ли эта опция
 	 * @param {Object.<string|number, LangSingle>} [data.choices] Варианты выбора
-	 * @param {SlashOptions} [data.options] Дополнительные опции для опции
+	 * @param {SlashOptions} [data.slashOptions] Дополнительные опции для опции
 	 * @param {number[]} [data.channel_types] Типы каналов, доступные для выбора
 	 * @param {number} [data.min_value] Минимальное число
 	 * @param {number} [data.max_value] Максимальное число
@@ -145,7 +145,7 @@ class SlashOption {
 		this.description = data.description;
 		this.required = data.required;
 		this.choices = data.choices;
-		this.options = data.options;
+		this.options = data.slashOptions;
 		this.channel_types = data.channel_types;
 		this.min_value = data.min_value;
 		this.max_value = data.max_value;
