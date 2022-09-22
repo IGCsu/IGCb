@@ -151,14 +151,16 @@ class Help extends BaseCommand {
 			? reaction.emoji.success + ' Активен'
 			: reaction.emoji.error + ' Не активен';
 
+		const DEFAULT_FUNC = constants.DEFAULT_FUNC.getSource();
+
 		let slash = 'Неприменимо';
-		if(c.slash){
+		if(c.slash.getSource() !== DEFAULT_FUNC){
 			slash = '`/' + name + '` - ' + (c.description ? c.description.get(lang): c.title.get(lang));
 			if(c.slashOptions) slash += this.getSlashOptions(c.slashOptions, 1, lang);
 		}
 
 		let contextUser = 'Неприменимо';
-		if(c.contextUser){
+		if(c.contextUser.getSource() !== DEFAULT_FUNC){
 			contextUser = '`#' + name + '` - ' + (c.description ? c.description.get(lang) : c.title.get(lang));
 		}
 
