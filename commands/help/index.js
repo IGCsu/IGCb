@@ -60,7 +60,7 @@ class Help extends BaseCommand {
 	 */
 	async autocomplete(int){
 		const timeStart = process.hrtime();
-		let choices = [];
+
 
 		const perm = this.permission(int.member);
 
@@ -74,22 +74,7 @@ class Help extends BaseCommand {
 			finded.push(commands[name]);
 		}
 
-		const find = command.toLowerCase();
-		finded.sort((a, b) => b.name.similarity(find) - a.name.similarity(find));
-
-		const lang = int.locale.split('-')[0];
-
-		let maxLength = 0;
-
-		for(let command of finded){
-			if(command.name.length > maxLength) maxLength = command.name.length;
-		}
-
-		for(let command of finded){
-			if(choices.length > 25) break;
-
-			choices.push({ name: command.name, value: command.name });
-		}
+		const choices = finded.toSortedChoices(command);
 
 		try{
 			await int.respond(choices);

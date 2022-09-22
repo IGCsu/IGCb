@@ -94,7 +94,7 @@ class Activities extends BaseCommand {
 
 	/** @param {AutocompleteInteraction} int */
 	async autocomplete(int){
-		await int.respond(this.#cache);
+		await int.respond(this.#cache.toSortedChoices(int.options.getFocused()));
 
 		if(this.#lastUpdate + 1000*60*60 < Date.now()){
 			await this.updateActivities();
