@@ -66,19 +66,16 @@ class Help extends BaseCommand {
 		const perm = this.permission(int.member);
 
 		const command = int.options.getFocused();
-		let finded = new AutocompleteChoices();
+		let choices = new AutocompleteChoices();
 
 		for(let name in commands){
 			if(commands[name].category === 'nsfw' && !perm) continue;
 			if(command && name.indexOf(command) === -1) continue;
-
-			finded.push(commands[name]);
+			choices.push({name: name, value: name.toLowerCase()});
 		}
 
-		const choices = finded.sort(command);
-
 		try{
-			await int.respond(choices);
+			await int.respond(choices.sort(command));
 		} catch(e){
 			const timeEnd = process.hrtime(timeStart);
 			const timePerf = (timeEnd[0]*1000) + (timeEnd[1] / 1000000);

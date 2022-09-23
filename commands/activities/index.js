@@ -112,7 +112,7 @@ class Activities extends BaseCommand {
 			data = await (await fetch('https://derpystuff.gitlab.io/webstorage/discord/activities/ids.json')).json();
 		}catch(e){}
 
-		this.#cache = [];
+		this.#cache = new AutocompleteChoices();
 		this.#lastUpdate = Date.now();
 
 		for(const key in data){

@@ -1,7 +1,7 @@
 class AutocompleteChoices extends Array {
 
 	constructor() {
-		super(arguments);
+		super();
 	}
 
 	/**
@@ -10,18 +10,17 @@ class AutocompleteChoices extends Array {
 	 * @return {[{name: String, value: String}]|[null]}
 	 */
 	sort(query){
+		query = query.toLowerCase();
 		let choices = [];
 		for(let value of this.values()){
+			if(query && value.name.toLowerCase().indexOf(query) === -1) continue;
 			choices.push(value);
 		}
 		if(!query) return choices;
-
-		query = query.toLowerCase();
 
 		choices.sort((a, b) => b.name.similarity(query) - a.name.similarity(query));
 
 		return choices.slice(0,24);
 	}
-
 }
 module.exports = AutocompleteChoices
