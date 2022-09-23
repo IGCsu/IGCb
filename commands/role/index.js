@@ -1,4 +1,5 @@
 const SlashOptions = require('../../BaseClasses/SlashOptions');
+const AutocompleteChoices = require('../../BaseClasses/AutocompleteChoices');
 const BaseCommand = require('../../BaseClasses/BaseCommand');
 const LangSingle = require('../../BaseClasses/LangSingle');
 const { GuildMember, AutocompleteInteraction, CommandInteraction, Role} = require('discord.js')
@@ -27,25 +28,23 @@ class Roles extends BaseCommand{
 	 */
 	async autocomplete(int){
 		const timeStart = process.hrtime();
-		let choices = [];
+		let choices = new AutocompleteChoices();
 
 		const role = int.options.getFocused();
 		const create = int.options.getBoolean('create');
 
 		let finded = this.has(guild.roles, role);
 
-		let predict = [];
 		for(let entry of finded.roles){
-			predict.push({name: entry.name, value: entry.id})
+			choices.push({name: entry.name, value: entry.id})
 		}
 
 		if(role){
-			choices = predict.toSortedChoices(role);
+			choices = choices.sort(role);
 			if(create) choices.unshift({name : role, value : role});
 		} else {
 			choices.unshift({name: int.str('Show list of all Game Roles'), value:'showAll'});
 		}
-		console.log(choices)
 		try{
 			await int.respond(choices.slice(0, 24));
 		} catch(e){

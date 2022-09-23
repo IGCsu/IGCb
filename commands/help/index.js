@@ -1,4 +1,5 @@
 const SlashOptions = require('../../BaseClasses/SlashOptions');
+const AutocompleteChoices = require('../../BaseClasses/AutocompleteChoices');
 const BaseCommand = require('../../BaseClasses/BaseCommand');
 const LangSingle = require('../../BaseClasses/LangSingle');
 const { AutocompleteInteraction, CommandInteraction, InteractionReplyOptions, GuildMember } = require('discord.js')
@@ -65,7 +66,7 @@ class Help extends BaseCommand {
 		const perm = this.permission(int.member);
 
 		const command = int.options.getFocused();
-		let finded = [];
+		let finded = new AutocompleteChoices();
 
 		for(let name in commands){
 			if(commands[name].category === 'nsfw' && !perm) continue;
@@ -74,7 +75,7 @@ class Help extends BaseCommand {
 			finded.push(commands[name]);
 		}
 
-		const choices = finded.toSortedChoices(command);
+		const choices = finded.sort(command);
 
 		try{
 			await int.respond(choices);
