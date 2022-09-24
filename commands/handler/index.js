@@ -9,37 +9,37 @@ const initFunctions = require('./initFunctions');
 
 class Handler extends BaseCommand{
 
+	/**
+	 * Объект функций модуля
+	 * @type {Object}
+	 */
+	functions = {};
+
+	/**
+	 * Массив функций, вызываемых при сообщении в любом канале
+	 * @type {Object}
+	 */
+	allChannels = {};
+
+	/**
+	 * Объект каналов и категориий, содержашие объекты функций
+	 * @type {Object}
+	 */
+	allowedChannelsFunctions = {};
+
+	/**
+	 * Массив модулей где есть обработчик сообщений.
+	 * Пополняется функцией "initMessageHandler()" при инициализации бота.
+	 * @type {Array}
+	 */
+	commands = [];
+
 	constructor(path) {
 		super(path);
 
-		this.category = 'Утилиты'
-		this.name = 'handler'
-		this.title = new LangSingle(title);
-
-		/**
-		 * Объект функций модуля
-		 * @type {Object}
-		 */
-		this.functions = {}
-
-		/**
-		 * Массив функций, вызываемых при сообщении в любом канале
-		 * @type {Object}
-		 */
-		this.allChannels = {}
-
-		/**
-		 * Объект каналов и категориий, содержашие объекты функций
-		 * @type {Object}
-		 */
-		this.allowedChannelsFunctions = {}
-
-		/**
-		 * Массив модулей где есть обработчик сообщений.
-		 * Пополняется функцией "initMessageHandler()" при инициализации бота.
-		 * @type {Array}
-		 */
-		this.commands = []
+		this.category = 'Утилиты';
+		this.name = 'handler';
+		this.title = this.description = new LangSingle(title);
 
 		return new Promise(async resolve => {
 			await this.siteStatusCheck();
