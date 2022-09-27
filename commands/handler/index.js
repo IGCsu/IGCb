@@ -68,12 +68,9 @@ class Handler extends BaseCommand{
 	 */
 
 	async siteStatusCheck(){
-		try{
-			const response = await fetch(constants.SITE_LINK, { redirect: 'manual' });
-			return this.siteStatus = response.status === 200;
-		}catch(e){
-			return this.siteStatus = false;
-		}
+		const response = await fetch(constants.SITE_LINK, { redirect: 'manual' });
+
+		return this.siteStatus = response.status === 200;
 	}
 
 
