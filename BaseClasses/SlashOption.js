@@ -79,7 +79,7 @@ class SlashOption {
 	 * Дополнительные опции для опции. Используется для более сложных опций.
 	 * @type {SlashOptions}
 	 */
-	options;
+	slashOptions;
 
 	/**
 	 * Типы каналов, доступные для выбора. Нужны, когда нужно выбрать канал
@@ -145,7 +145,7 @@ class SlashOption {
 		this.description = data.description;
 		this.required = data.required;
 		this.choices = data.choices;
-		this.options = data.slashOptions;
+		this.slashOptions = data.slashOptions;
 		this.channel_types = data.channel_types;
 		this.min_value = data.min_value;
 		this.max_value = data.max_value;
@@ -170,7 +170,7 @@ class SlashOption {
 
 		if(this.required) data.required = this.required;
 		if(this.choices) data.choices = this.getChoicesDiscord();
-		if(this.options) data.options = this.options.toDiscord();
+		if(this.slashOptions) data.options = this.slashOptions.toDiscord();
 		if(this.channel_types) data.channel_types = this.channel_types;
 		if(this.min_value) data.min_value = this.min_value;
 		if(this.max_value) data.max_value = this.max_value;
