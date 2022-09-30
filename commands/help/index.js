@@ -155,13 +155,13 @@ class Help extends BaseCommand {
 
 		let slash = 'Неприменимо';
 		if(c.slash.getSource() !== DEFAULT_FUNC){
-			slash = '`/' + name + '` - ' + (c.description ? c.description.get(lang): c.title.get(lang));
+			slash = '`/' + name + '` - ' + c.description.get(lang);
 			if(c.slashOptions) slash += this.getSlashOptions(c.slashOptions, 1, lang);
 		}
 
 		let contextUser = 'Неприменимо';
 		if(c.contextUser.getSource() !== DEFAULT_FUNC){
-			contextUser = '`#' + name + '` - ' + (c.description ? c.description.get(lang) : c.title.get(lang));
+			contextUser = '`#' + name + '` - ' + c.description.get(lang);
 		}
 
 		let embed = new Discord.MessageEmbed()
