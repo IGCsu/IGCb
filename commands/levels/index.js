@@ -10,6 +10,24 @@ const UserLevels = require('./UserLevels');
 
 class Levels extends BaseCommand{
 
+	/**
+	 * Массив ID каналов, в которых сообщения не засчитываются
+	 * @type {string[]}
+	 */
+	noXPChannels = noXPChannels;
+
+	/**
+	 * Массив уровней
+	 * @type {Object[]}
+	 */
+	roles = [];
+
+	/**
+	 * Массив ID ролей уровней. Используется для поиска.
+	 * @type {string[]}
+	 */
+	rolesIDs = [];
+
 	constructor(path) {
 		super(path);
 
@@ -19,20 +37,6 @@ class Levels extends BaseCommand{
 		this.title = new LangSingle(title);
 		this.description = new LangSingle(description);
 		this.slashOptions = slashOptions
-
-		this.noXPChannels = noXPChannels
-
-		/**
-		* Массив уровней
-		* @type {Array}
-		*/
-		this.roles = []
-
-		/**
-		* Массив ID ролей уровней. Используется для поиска.
-		* @type {Array}
-		*/
-		this.rolesIDs = []
 
 		this.roles = DB.query('SELECT * FROM levels_roles');
 		this.roles.sort((a, b) => b.value - a.value);
@@ -57,7 +61,7 @@ class Levels extends BaseCommand{
 	 * Выдаёт статистику по пользовтаелю и ссылку на страницу
 	 * @param  {CommandInteraction|UserContextMenuInteraction} int    Команда пользователя
 	 * @param  {GuildMember}                                   member Объект пользователя
-	 * @return {InteractionReplyOptions}
+	 * @return {InteractionReplyOptions|Object}
 	 */
 	async call(int, member){
 
@@ -73,7 +77,7 @@ class Levels extends BaseCommand{
 			embeds : [embed],
 			components: [{type:1, components: [
 				{ type: 2, style: 5, url: constants.SITE_LINK + '/levels', label: 'Таблица' , disabled: status},
-				{ type: 2, style: 5, url: constants.SITE_LINK + '/levels?id=' + user.id, label: 'Статистика пользователя' , disabled: status}
+				{ type: 2, style: 5, url: constants.SITE_LINK + '/levels?id=' + user.member.id, label: 'Статистика пользователя' , disabled: status}
 			]}],
 		};
 

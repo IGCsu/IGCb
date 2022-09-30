@@ -38,11 +38,11 @@ class UserLevels {
 
 	/**
 	 * Получение пользователя из БД.
-	 * @param  {GuildMember} member
-	 * @param  {Array}       roles    Массив уровней
-	 * @param  {Array}       rolesIDs Массив ID ролей уровней.
-	 * @param  {Boolean}     create   Если true - пользователь будет создан в базе, если не будет найден
-	 * @return {Object}               Объект пользователя
+	 * @param {GuildMember} member
+	 * @param {Object[]} roles Массив уровней
+	 * @param {string[]} rolesIDs Массив ID ролей уровней.
+	 * @param {boolean} [create=false] Если true - пользователь будет создан в базе, если не будет найден
+	 * @return {Object} Объект пользователя
 	 */
 	constructor(member, roles, rolesIDs, create){
 
