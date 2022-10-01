@@ -5,10 +5,10 @@ global.reaction = {
 	 * @type {Object}
 	 */
 	emoji: {
-		success: '<:done:905609029282304051>',
-		error: '<:error:905609067106553886>',
+		success: '<:success:1025283513873858590>',
+		error: '<:error:1025283603455803392>',
 		warning: '<:warning:872900968705065070>',
-		loading: '<a:loading:905609086257754152>',
+		loading: '<a:loading:1025283637937184828>',
 		black_circle: '⚫',
 
 		banhammer: '<:banhammer:509629411029680149>',
