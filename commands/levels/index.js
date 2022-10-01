@@ -8,6 +8,8 @@ const {
 	InteractionReplyOptions
 } = require('discord.js');
 
+const RoleLevel = require('../../Models/RoleLevel');
+
 const slashOptions = require('./slashOptions');
 const { title, description } = require('./about.json');
 const noXPChannels = require('./noXPChannels.json');
@@ -43,18 +45,20 @@ class Levels extends BaseCommand {
 		this.description = new LangSingle(description);
 		this.slashOptions = slashOptions;
 
-		this.roles = DB.query('SELECT * FROM levels_roles');
-		this.roles.sort((a, b) => b.value - a.value);
-		this.rolesIDs = [];
-
-		for (let r = 0; r < this.roles.length; r++) {
-			this.roles[r].pos = r;
-			this.roles[r].cache = guild.roles.cache.get(this.roles[r].id);
-			if (this.roles[r].id === '648762974277992448') continue;
-			this.rolesIDs.push(this.roles[r].id);
-		}
-
 		return new Promise(async resolve => {
+
+			/** @type {RoleLevel[]} */
+			this.roles = await RoleLevel.findAll();
+			this.roles.sort((a, b) => b.value - a.value);
+			this.rolesIDs = [];
+
+			for (let r = 0; r < this.roles.length; r++) {
+				this.roles[r].pos = r;
+				this.roles[r].cache = guild.roles.cache.get(this.roles[r].id);
+				if (this.roles[r].id === '648762974277992448') continue;
+				this.rolesIDs.push(this.roles[r].id);
+			}
+
 			resolve(this);
 		});
 
@@ -63,7 +67,7 @@ class Levels extends BaseCommand {
 
 	/**
 	 * Обработка команды
-	 * Выдаёт статистику по пользовтаелю и ссылку на страницу
+	 * Выдаёт статистику по пользователю и ссылку на страницу
 	 * @param  {CommandInteraction|UserContextMenuInteraction} int Команда
 	 *   пользователя
 	 * @param {GuildMember} member Объект пользователя
@@ -71,7 +75,7 @@ class Levels extends BaseCommand {
 	 */
 	async call (int, member) {
 
-		const user = new UserLevels(member, this.roles, this.rolesIDs);
+		const user = await new UserLevels(member, this.roles, this.rolesIDs);
 
 		if (!user.finded) return { error: 'Unknown User' };
 
@@ -157,7 +161,8 @@ class Levels extends BaseCommand {
 		if (this.noXPChannels.includes(channel.parentId)) return;
 		if (this.noXPChannels.includes(channel.id)) return;
 
-		let user = new UserLevels(msg.member, this.roles, this.rolesIDs, true);
+		let user = await new UserLevels(
+			msg.member, this.roles, this.rolesIDs, true);
 
 		user.userMessageCounting(msg)
 			.update()

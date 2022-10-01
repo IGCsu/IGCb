@@ -8,6 +8,8 @@ const {
 	VoiceChannel
 } = require('discord.js');
 
+const User = require('../../Models/User');
+
 const slashOptions = require('./slashOptions');
 const { title, sorryMessage } = require('./about.json');
 
@@ -100,7 +102,15 @@ class Voice extends BaseCommand {
 	async slash (int) {
 		if (int.options.getSubcommand() === 'auto-sync') {
 			await int.deferReply({ ephemeral: true });
-			DB.query(`UPDATE users SET mode = "${int.options.getString('mode')}" WHERE id = ${int.user.id};`)[0];
+
+			await User.update({
+				mode: int.options.getString('mode')
+			}, {
+				where: {
+					id: int.user.id
+				}
+			});
+
 			await int.editReply({
 				content: reaction.emoji.success + ' ' + int.str('Settings changed'),
 				ephemeral: true
@@ -193,7 +203,7 @@ class Voice extends BaseCommand {
 	async create (data) {
 		let preset;
 		try {
-			preset = DB.query(`SELECT * FROM users WHERE id = '${data.member.id}';`)[0];
+			preset = User.findByPk(data.member.id);
 		} catch (e) {
 			console.log('DB error occurred:\n' + e);
 		}
@@ -224,7 +234,7 @@ class Voice extends BaseCommand {
 			CONNECT: false
 		});
 		setTimeout(() => {
-			this.channelCreate.permissionOverwrites.delete(data.member)
+			this.channelCreate.permissionOverwrites.delete(data.member);
 		}, 60000);
 		return channel;
 	}
@@ -280,23 +290,19 @@ class Voice extends BaseCommand {
 	 * @param {VoiceState} voice
 	 */
 	async upload (voice) {
-		let voice_data = JSON.stringify({
+		const [user] = await User.findOrBuild({
+			where: { id: voice.member.user.id }
+		}, {
+			last_channel_id: voice.channelId
+		});
+
+		user.voice_data = JSON.stringify({
 			name: voice.channel.name,
 			bitrate: voice.channel.bitrate,
 			userLimit: voice.channel.userLimit
 		});
-		if (DB.query(
-			`SELECT * FROM users WHERE id = ${voice.member.user.id};`)[0]) {
-			DB.query(
-				`UPDATE users SET voice_data = ? WHERE id = ${voice.member.user.id};`,
-				[voice_data]
-			)[0];
-		} else {
-			DB.query(
-				`INSERT INTO users VALUES (?, ?, ?, ?);`,
-				[voice.member.user.id, 0, voice.channelId, voice_data]
-			)[0];
-		}
+
+		await user.save();
 	}
 
 	/**
@@ -304,13 +310,12 @@ class Voice extends BaseCommand {
 	 * @param {VoiceState} voice
 	 */
 	async sync (voice) {
-		let voiceConfiguration = JSON.parse((
-			DB.query(`SELECT * FROM users WHERE id = ${voice.member.user.id};`)[0]
-		).voice_data);
+		const user = await User.findByPk(voice.member.user.id);
+
+		const voiceConfiguration = JSON.parse(user.voice_data);
 		if (!voiceConfiguration) return 'There is no data entry in the database associated with you. Use `/upload` to fix it.';
 
-		if (voiceConfiguration.bitrate >
-			voice.guild.maximumBitrate) {
+		if (voiceConfiguration.bitrate > voice.guild.maximumBitrate) {
 			voiceConfiguration.bitrate = voice.guild.maximumBitrate;
 		}
 

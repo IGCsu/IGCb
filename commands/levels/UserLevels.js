@@ -1,3 +1,5 @@
+const UserLevel = require('../../Models/UserLevel');
+
 class UserLevels {
 
 	/**
@@ -43,7 +45,7 @@ class UserLevels {
 	 * @param {string[]} rolesIDs Массив ID ролей уровней.
 	 * @param {boolean} [create=false] Если true - пользователь будет создан в
 	 *   базе, если не будет найден
-	 * @return {Object} Объект пользователя
+	 * @return {Promise} Объект пользователя
 	 */
 	constructor (member, roles, rolesIDs, create) {
 
@@ -51,29 +53,33 @@ class UserLevels {
 		this.#roles = roles;
 		this.#rolesIDs = rolesIDs;
 
-		const users = DB.query('SELECT * FROM levels WHERE id = ?', [
-			this.member.id
-		]);
+		return new Promise(async resolve => {
 
-		if (users[0]) {
-			this.finded = true;
-			this.#primitiveData = {
-				messagesLegit: users[0].messagesLegit,
-				messagesAll: users[0].messagesAll,
-				activity: users[0].activity,
-				symbols: users[0].symbols,
-				last: users[0].last
-			};
-		} else if (create) {
-			DB.query('INSERT INTO levels (`id`) VALUES (?)', [this.member.id]);
-			this.#primitiveData = {
-				messagesLegit: 0,
-				messagesAll: 0,
-				activity: 1,
-				symbols: 0,
-				last: 0
-			};
-		}
+			/** @type {UserLevel} */
+			const user = await UserLevel.findByPk(this.member.id);
+
+			if (user) {
+				this.finded = true;
+				this.#primitiveData = {
+					messagesLegit: user.messagesLegit,
+					messagesAll: user.messagesAll,
+					activity: user.activity,
+					symbols: user.symbols,
+					last: user.last
+				};
+			} else if (create) {
+				await UserLevel.create({ id: this.member.id });
+				this.#primitiveData = {
+					messagesLegit: 0,
+					messagesAll: 0,
+					activity: 1,
+					symbols: 0,
+					last: 0
+				};
+			}
+
+			resolve(this);
+		});
 
 	};
 
@@ -81,16 +87,16 @@ class UserLevels {
 	 * Обновляет данные пользователя в базе данных
 	 */
 	update () {
-		DB.query(
-			'UPDATE levels SET messagesAll = ?, messagesLegit = ?, symbols = ?, last = ? WHERE id = ?',
-			[
-				this.#primitiveData.messagesAll,
-				this.#primitiveData.messagesLegit,
-				this.#primitiveData.symbols,
-				this.#primitiveData.last,
-				this.member.id
-			]
-		);
+		UserLevel.update({
+			messagesAll: this.#primitiveData.messagesAll,
+			messagesLegit: this.#primitiveData.messagesLegit,
+			symbols: this.#primitiveData.symbols,
+			last: this.#primitiveData.last
+		}, {
+			where: {
+				id: this.member.id
+			}
+		}).then(r => {});
 
 		return this;
 	};

@@ -5,6 +5,7 @@
  */
 const init = [
 	require('./init/protection.js'),
+	require('./init/sequelize.js'),
 	require('./init/constants.js'),
 	require('./init/guild.js'),
 	require('./init/locales.js'),
