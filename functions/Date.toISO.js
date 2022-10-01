@@ -4,7 +4,7 @@
  * @param {boolean} [time=false]
  * @return {string}
  */
-Date.prototype.toISO = function(time){
+Date.prototype.toISO = function (time) {
 	let str = '';
 
 	str += this.getFullYear();
@@ -17,7 +17,7 @@ Date.prototype.toISO = function(time){
 	str += d < 10 ? '-0' : '-';
 	str += d;
 
-	if(time){
+	if (time) {
 		let h = this.getHours();
 		str += h < 10 ? ' 0' : ' ';
 		str += h;
@@ -28,4 +28,4 @@ Date.prototype.toISO = function(time){
 	}
 
 	return str;
-}
+};

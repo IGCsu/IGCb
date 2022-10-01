@@ -14,25 +14,25 @@ module.exports = {
 		'595198087643922445': false // #новости
 	},
 
-	init: async function(){
+	init: async function () {
 		return this;
 	},
 
 	regex: /^\*\*([^\n]+)\*\*\s*\n/i,
 
-	call: async function(msg){
+	call: async function (msg) {
 		const match = msg.content.match(this.regex);
 		let title = '';
 
-		if(match){
+		if (match) {
 			title += match[1];
-		}else{
+		} else {
 			const name = msg.member.toName();
 			const time = new Date(msg.createdTimestamp).toISO();
 			title += name + ' ' + time;
 		}
 
-		msg.startThread({ name : title });
+		msg.startThread({ name: title });
 	}
 
-}
+};

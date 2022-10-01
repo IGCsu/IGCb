@@ -7,19 +7,21 @@
  * @return {Promise} Сообщение результата или ошибки
  */
 global.toggleRole = (role, member, author) => {
-	return new Promise(function(resolve, reject){
-		if(!(member instanceof Discord.GuildMember)){
+	return new Promise(function (resolve, reject) {
+		if (!(member instanceof Discord.GuildMember)) {
 			member = guild.members.cache.get(member);
 		}
 
-		if(!member) return reject('Пользователь не найден');
+		if (!member) return reject('Пользователь не найден');
 
 		const action = member.roles.cache.has(role.id)
 			? { val: 'remove', text: 'убрана у' }
 			: { val: 'add', text: 'выдана' };
 
 		member.roles[action.val](role, 'По требованию ' + author.toName(true))
-			.then(() => resolve('Роль <@&' + role.id + '> ' + action.text + ' <@' + member.id + '>'))
+			.then(() => resolve(
+				'Роль <@&' + role.id + '> ' + action.text + ' <@' + member.id + '>'
+			))
 			.catch(error => {
 				console.error(error);
 				reject('Неизвестная ошибка');

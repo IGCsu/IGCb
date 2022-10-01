@@ -23,6 +23,6 @@ module.exports = new SlashOptions({
 			en: 'Choose voice channel',
 			uk: 'Оберіть голосовий канал'
 		})
-	}),
+	})
 
 });

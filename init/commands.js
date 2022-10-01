@@ -35,7 +35,7 @@ const addSlashCommand = c => {
 		description_localizations: c.description.toDiscord(),
 		options: c.slashOptions?.toDiscord()
 	});
-}
+};
 
 /**
  * Добавляет в массив контекстную команду
@@ -46,7 +46,7 @@ const addContextUserCommand = c => {
 		name: c.name,
 		type: 2
 	});
-}
+};
 
 /**
  * Возвращает разницу во времени в ms
@@ -55,8 +55,8 @@ const addContextUserCommand = c => {
  */
 const getTimePerformance = timeStart => {
 	const timeEnd = process.hrtime(timeStart);
-	return (timeEnd[0]*1000) + (timeEnd[1] / 1000000);
-}
+	return (timeEnd[0] * 1000) + (timeEnd[1] / 1000000);
+};
 
 /**
  * Отправляет запрос к API с добавлением контекстных и слеш команд
@@ -67,16 +67,16 @@ const sendApplicationGuildCommands = () => {
 	new REST({ version: '9' }).setToken(process.env.TOKEN).put(route, {
 		body: applicationCommands
 	});
-}
+};
 
 /**
  * Добавляет к модулю "handler" массив модулей с обработкой сообщений
  */
 const initMessageHandler = () => {
-	if(!commands.handler?.active) return;
+	if (!commands.handler?.active) return;
 
 	commands.handler.commands = messageCommands;
-}
+};
 
 /**
  * Определяет модули бота
@@ -88,10 +88,10 @@ module.exports = async () => {
 	const DEFAULT_FUNC = constants.DEFAULT_FUNC.getSource();
 
 	const files = fs.readdirSync('./commands/');
-	for(const name of files){
+	for (const name of files) {
 
 		const path = './commands/' + name + '/index.js';
-		if(debugAllowModules.length && debugAllowModules.indexOf(name) === -1){
+		if (debugAllowModules.length && debugAllowModules.indexOf(name) === -1) {
 			log.initText += log.warn('> ' + path + ': debug');
 			continue;
 		}
@@ -103,13 +103,21 @@ module.exports = async () => {
 		/** @type {BaseCommand} */
 		commands[name] = await new Command(path);
 
-		if(commands[name].active){
-			if(commands[name].message.getSource() !== DEFAULT_FUNC) messageCommands.push(name);
-			if(commands[name].slash.getSource() !== DEFAULT_FUNC) addSlashCommand(commands[name]);
-			if(commands[name].contextUser.getSource() !== DEFAULT_FUNC) addContextUserCommand(commands[name]);
+		if (commands[name].active) {
+			if (commands[name].message.getSource() !== DEFAULT_FUNC) {
+				messageCommands.push(name);
+			}
+			if (commands[name].slash.getSource() !== DEFAULT_FUNC) {
+				addSlashCommand(commands[name]);
+			}
+			if (commands[name].contextUser.getSource() !== DEFAULT_FUNC) {
+				addContextUserCommand(commands[name]);
+			}
 		}
 
-		log.initText += log.load('> ' + path, getTimePerformance(timeStart), commands[name].active);
+		log.initText += log.load(
+			'> ' + path, getTimePerformance(timeStart), commands[name].active
+		);
 	}
 
 	sendApplicationGuildCommands();

@@ -4,13 +4,13 @@ const LangSingle = require('../../BaseClasses/LangSingle');
 
 const { title, description } = require('./about.json');
 
-class Fag extends BaseCommand{
+class Fag extends BaseCommand {
 
-	constructor(path) {
+	constructor (path) {
 		super(path);
 
-		this.category = 'nsfw'
-		this.name = 'fag'
+		this.category = 'nsfw';
+		this.name = 'fag';
 		this.title = new LangSingle(title);
 		this.description = new LangSingle(description);
 
@@ -22,9 +22,10 @@ class Fag extends BaseCommand{
 	/**
 	 * Оправляет заданное сообщение с задержкой в 2 секунды
 	 * @param {CommandInteraction} int
-	 * @param {String}             string
+	 * @param {string} string
+	 * @return {Promise<void>}
 	 */
-	async out(int, string){
+	async out (int, string) {
 		await int.channel.sendTyping();
 		await sleep(2000);
 		await int.editReply({ content: string });
@@ -34,25 +35,27 @@ class Fag extends BaseCommand{
 	 * Пингует случайного пользователя
 	 * @param {CommandInteraction} int
 	 */
-	async call(int){
-
+	async call (int) {
 		await int.reply({ content: 'Игогооооооо!' });
 
-		const list = await int.guild.members.fetch({cache: false})
-		list.filter(memb => {return memb.roles.highest.id === '575721274693910528' && memb.presence.status !== 'offline'})
+		const list = await int.guild.members.fetch({ cache: false });
+		list.filter(m => {
+			return m.roles.highest.id === '575721274693910528' &&
+				m.presence.status !== 'offline';
+		});
 
 		await this.out(int, 'Думаю...');
 		await this.out(int, 'А пониеб-то у нас:');
 		await int.followUp({
-		 	content: '<@' + list.random() + '>!'
-		})
+			content: '<@' + list.random() + '>!'
+		});
 	}
 
 	/**
 	 * Функция обработки slash-команды.
 	 * @param {CommandInteraction} int
 	 */
-	async slash(int){
+	async slash (int) {
 		await this.call(int);
 	}
 }

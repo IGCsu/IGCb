@@ -2,5 +2,5 @@
  * Установка статуса бота
  */
 module.exports = async () => {
-    await client.user.setActivity('/help', { type: 'LISTENING' });
-}
+	await client.user.setActivity('/help', { type: 'LISTENING' });
+};

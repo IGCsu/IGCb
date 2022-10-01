@@ -13,7 +13,7 @@ module.exports = {
 		'500300930466709515': false // #предложения
 	},
 
-	init: async function(){
+	init: async function () {
 		return this;
 	},
 
@@ -21,7 +21,7 @@ module.exports = {
 		try {
 			await msg.react(reaction.emoji.Sg3);
 			await msg.react(reaction.emoji.Sg0);
-		}catch(e){}
+		} catch (e) {}
 	}
 
-}
+};
