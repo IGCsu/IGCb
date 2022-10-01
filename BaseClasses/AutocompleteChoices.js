@@ -1,26 +1,27 @@
 class AutocompleteChoices extends Array {
 
-	constructor() {
+	constructor () {
 		super();
 	}
 
 	/**
-	 *
-	 * @param {String} query query target
-	 * @return {[{name: String, value: String}]|[null]}
+	 * Сортирует массив по соответствию переданной строке
+	 * @param {string} str
+	 * @return {Object[]}
 	 */
-	sort(query){
-		query = query.toLowerCase();
+	sort (str) {
+		str = str.toLowerCase();
 		let choices = [];
-		for(let value of this.values()){
-			if(query && value.name.toLowerCase().indexOf(query) === -1) continue;
+		for (let value of this.values()) {
+			if (str && value.name.toLowerCase().indexOf(str) === -1) continue;
 			choices.push(value);
 		}
-		if(!query) return choices;
+		if (!str) return choices;
 
-		choices.sort((a, b) => b.name.similarity(query) - a.name.similarity(query));
+		choices.sort((a, b) => b.name.similarity(str) - a.name.similarity(str));
 
-		return choices.slice(0,24);
+		return choices.slice(0, 24);
 	}
 }
-module.exports = AutocompleteChoices
+
+module.exports = AutocompleteChoices;
