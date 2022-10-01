@@ -7,7 +7,7 @@ const { title } = require('./about.json');
 
 const initFunctions = require('./initFunctions');
 
-class Handler extends BaseCommand{
+class Handler extends BaseCommand {
 
 	/**
 	 * Объект функций модуля
@@ -34,7 +34,7 @@ class Handler extends BaseCommand{
 	 */
 	commands = [];
 
-	constructor(path) {
+	constructor (path) {
 		super(path);
 
 		this.category = 'Утилиты';
@@ -43,16 +43,24 @@ class Handler extends BaseCommand{
 
 		return new Promise(async resolve => {
 			await this.siteStatusCheck();
-			if(!this.siteStatus) log.initText += log.error(path + ': Сайт недоступен');
 
-			const { functions, allChannels, allowedChannelsFunctions } = await initFunctions();
+			if (!this.siteStatus) {
+				log.initText += log.error(path + ': Сайт недоступен');
+			}
+
+			const {
+				functions,
+				allChannels,
+				allowedChannelsFunctions
+			} = await initFunctions();
+
 			this.functions = functions;
 			this.allChannels = allChannels;
 			this.allowedChannelsFunctions = allowedChannelsFunctions;
 
 			client.on('messageCreate', async msg => {
-				if(msg.channel.type === 'DM') return;
-				if(msg.channel.guild.id !== guild.id) return;
+				if (msg.channel.type === 'DM') return;
+				if (msg.channel.guild.id !== guild.id) return;
 
 				await this.call(msg);
 			});
@@ -67,11 +75,13 @@ class Handler extends BaseCommand{
 	 * @return {Boolean}
 	 */
 
-	async siteStatusCheck(){
-		try{
-			const response = await fetch(constants.SITE_LINK, { redirect: 'manual' });
+	async siteStatusCheck () {
+		try {
+			const response = await fetch(constants.SITE_LINK, {
+				redirect: 'manual'
+			});
 			return this.siteStatus = response.status === 200;
-		}catch(e){
+		} catch (e) {
 			return this.siteStatus = false;
 		}
 	}
@@ -81,12 +91,16 @@ class Handler extends BaseCommand{
 	 * Обработка сообщения, которое не является командой
 	 * @param {Message} msg Сообщение пользователя
 	 */
-	async call(msg){
-		for(let command of this.commands) this.commandMessage(commands[command], msg);
+	async call (msg) {
+		for (let command of this.commands) {
+			this.commandMessage(commands[command], msg);
+		}
 
 		const thread = msg.channel.isThread();
 		const channel = thread ? msg.channel.parentId : msg.channel.id;
-		const category = thread ? msg.channel.parent.parentId : msg.channel.parentId;
+		const category = thread
+			? msg.channel.parent.parentId
+			: msg.channel.parentId;
 
 		let functions = new Set();
 
@@ -104,12 +118,12 @@ class Handler extends BaseCommand{
 	 * @param {Object}  command Объект модуля
 	 * @param {Message} msg Сообщение пользователя
 	 */
-	async commandMessage(command, msg){
-		try{
-			if(command.active) await command.message(msg);
-		}catch(e){
+	async commandMessage (command, msg) {
+		try {
+			if (command.active) await command.message(msg);
+		} catch (e) {
 			const active = e.handler(command.name, false);
-			if(!active) delete this.commands[command.name];
+			if (!active) delete this.commands[command.name];
 		}
 	}
 
@@ -118,13 +132,16 @@ class Handler extends BaseCommand{
 	 * Выборка из функций каналов или категорий, а так же проверка на тред.
 	 * @param {Set}     functions Список функций, которые необходимо вызвать
 	 * @param {String}  id        ID канала или категории
-	 * @param {Boolean} thread    Является ли канал тредом, в котором написано сообщение
+	 * @param {Boolean} thread    Является ли канал тредом, в котором написано
+	 *   сообщение
 	 */
-	async addAllowedChannelsFunctions(functions, id, thread){
-		if(!this.allowedChannelsFunctions[id]) return;
+	async addAllowedChannelsFunctions (functions, id, thread) {
+		if (!this.allowedChannelsFunctions[id]) return;
 
-		for(let name in this.allowedChannelsFunctions[id]){
-			if(!thread || this.allowedChannelsFunctions[id][name]) functions.add(name);
+		for (let name in this.allowedChannelsFunctions[id]) {
+			if (!thread || this.allowedChannelsFunctions[id][name]) {
+				functions.add(name);
+			}
 		}
 	}
 
@@ -133,8 +150,10 @@ class Handler extends BaseCommand{
 	 * Добавляет общие функции, не зависящие от канала.
 	 * @param {Set} functions Список функций, которые необходимо вызвать
 	 */
-	async addAllChannelsFunctions(functions){
-		for(let name in this.allChannels) functions.add(name);
+	async addAllChannelsFunctions (functions) {
+		for (let name in this.allChannels) {
+			functions.add(name);
+		}
 	}
 
 	/**
@@ -143,14 +162,14 @@ class Handler extends BaseCommand{
 	 * @param {Set}     functions Список функций, которые необходимо вызвать
 	 * @param {Message} msg       Сообщение пользователя
 	 */
-	async callFunctions(functions, msg){
-		for(let name of functions){
+	async callFunctions (functions, msg) {
+		for (let name of functions) {
 
-			try{
+			try {
 				await this.functions[name].call(msg);
-			}catch(e){
+			} catch (e) {
 				const active = e.handler('handler/func/' + name, false);
-				if(!active) await this.shutdownFunction(name);
+				if (!active) await this.shutdownFunction(name);
 			}
 
 		}
@@ -158,14 +177,17 @@ class Handler extends BaseCommand{
 
 	/**
 	 * Отключение функции.
-	 * Перебирает объект разрешённых каналов в поиске удаляемой функции и удаляет её.
+	 * Перебирает объект разрешённых каналов в поиске удаляемой функции и удаляет
+	 * её.
 	 * @param {String} name Название функции
 	 */
-	async shutdownFunction(name){
+	async shutdownFunction (name) {
 		this.functions[name].active = false;
-		if(this.allChannels[name]) delete this.allChannels[name];
-		for(let id in this.allowedChannelsFunctions){
-			if(this.allowedChannelsFunctions[id][name]) delete this.allowedChannelsFunctions[id][name];
+		if (this.allChannels[name]) delete this.allChannels[name];
+		for (let id in this.allowedChannelsFunctions) {
+			if (this.allowedChannelsFunctions[id][name]) {
+				delete this.allowedChannelsFunctions[id][name];
+			}
 		}
 	}
 }

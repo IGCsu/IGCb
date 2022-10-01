@@ -4,9 +4,11 @@ const SlashOptions = require('./SlashOptions');
 /**
  * Класс опции слеш комманд
  *
- * Структура опций основана на требуемой в документации API discord, однако содержит небольшие изменения:
+ * Структура опций основана на требуемой в документации API discord, однако
+ * содержит небольшие изменения:
  * * Объект не должен содержать "name" - оно содержится в ключе объекта.
- * * Объект не должен содержать "name_localizations" - локализация названий недопустима.
+ * * Объект не должен содержать "name_localizations" - локализация названий
+ * недопустима.
  * * Изменён "description". Он содержит стандартный объект локализации.
  *   Заменяет стандартный "description" и "description_localizations".
  * * Изменён "choices". Он содержит объект вариантов.
@@ -20,33 +22,33 @@ class SlashOption {
 
 
 	static types = {
-		SUB_COMMAND:        1,
-		SUB_COMMAND_GROUP:  2,
-		STRING:             3,
-		INTEGER:            4,
-		BOOLEAN:            5,
-		USER:               6,
-		CHANNEL:            7,
-		ROLE:               8,
-		MENTIONABLE:        9,
-		NUMBER:             10,
-		ATTACHMENT:         11,
-	}
+		SUB_COMMAND: 1,
+		SUB_COMMAND_GROUP: 2,
+		STRING: 3,
+		INTEGER: 4,
+		BOOLEAN: 5,
+		USER: 6,
+		CHANNEL: 7,
+		ROLE: 8,
+		MENTIONABLE: 9,
+		NUMBER: 10,
+		ATTACHMENT: 11
+	};
 
 	static channelTypes = {
-		GUILD_TEXT:          0,
-		DM:                  1,
-		GUILD_VOICE:         2,
-		GROUP_DM:            3,
-		GUILD_CATEGORY:      4,
-		GUILD_ANNOUNCEMENT:  5,
+		GUILD_TEXT: 0,
+		DM: 1,
+		GUILD_VOICE: 2,
+		GROUP_DM: 3,
+		GUILD_CATEGORY: 4,
+		GUILD_ANNOUNCEMENT: 5,
 		ANNOUNCEMENT_THREAD: 10,
-		PUBLIC_THREAD:       11,
-		PRIVATE_THREAD:      12,
-		GUILD_STAGE_VOICE:   13,
-		GUILD_DIRECTORY:     14,
-		GUILD_FORUM:         15,
-	}
+		PUBLIC_THREAD: 11,
+		PRIVATE_THREAD: 12,
+		GUILD_STAGE_VOICE: 13,
+		GUILD_DIRECTORY: 14,
+		GUILD_FORUM: 15
+	};
 
 	/**
 	 * Тип опции.
@@ -123,7 +125,8 @@ class SlashOption {
 	 * @param {Object} data
 	 * @param {number} data.type Тип опции
 	 * @param {LangSingle} data.description Подсказка для опции
-	 * @param {boolean} [data.required=false] Определяет, обязательна ли эта опция
+	 * @param {boolean} [data.required=false] Определяет, обязательна ли эта
+	 *   опция
 	 * @param {Object.<string|number, LangSingle>} [data.choices] Варианты выбора
 	 * @param {SlashOptions} [data.slashOptions] Дополнительные опции для опции
 	 * @param {number[]} [data.channel_types] Типы каналов, доступные для выбора
@@ -131,15 +134,18 @@ class SlashOption {
 	 * @param {number} [data.max_value] Максимальное число
 	 * @param {number} [data.min_length] Минимальная длина строки (0-6000)
 	 * @param {number} [data.max_length] Максимальная длина строки (1-6000)
-	 * @param {boolean} [data.autocomplete] Определяет, должно ли появляться подсказки-дополнения при вводе
+	 * @param {boolean} [data.autocomplete] Определяет, должно ли появляться
+	 *   подсказки-дополнения при вводе
 	 */
-	constructor(data){
+	constructor (data) {
 
-		if(data.min_length > 6000 || data.min_length < 0)
+		if (data.min_length > 6000 || data.min_length < 0) {
 			throw new RangeError('Min length not valid');
+		}
 
-		if(data.max_length > 6000 || data.max_length < 1)
+		if (data.max_length > 6000 || data.max_length < 1) {
 			throw new RangeError('Min length not valid');
+		}
 
 		this.type = data.type;
 		this.description = data.description;
@@ -158,25 +164,25 @@ class SlashOption {
 	/**
 	 * Возвращает объект слеш-команды для дискорда
 	 */
-	toDiscord(name){
+	toDiscord (name) {
 		let data = {
 			name: name,
 
 			type: this.type,
 
 			description: this.description.toString(),
-			description_localizations: this.description.toDiscord(),
+			description_localizations: this.description.toDiscord()
 		};
 
-		if(this.required) data.required = this.required;
-		if(this.choices) data.choices = this.getChoicesDiscord();
-		if(this.slashOptions) data.options = this.slashOptions.toDiscord();
-		if(this.channel_types) data.channel_types = this.channel_types;
-		if(this.min_value) data.min_value = this.min_value;
-		if(this.max_value) data.max_value = this.max_value;
-		if(this.min_length) data.min_length = this.min_length;
-		if(this.max_length) data.max_length = this.max_length;
-		if(this.autocomplete) data.autocomplete = this.autocomplete;
+		if (this.required) data.required = this.required;
+		if (this.choices) data.choices = this.getChoicesDiscord();
+		if (this.slashOptions) data.options = this.slashOptions.toDiscord();
+		if (this.channel_types) data.channel_types = this.channel_types;
+		if (this.min_value) data.min_value = this.min_value;
+		if (this.max_value) data.max_value = this.max_value;
+		if (this.min_length) data.min_length = this.min_length;
+		if (this.max_length) data.max_length = this.max_length;
+		if (this.autocomplete) data.autocomplete = this.autocomplete;
 
 		return data;
 	}
@@ -185,10 +191,10 @@ class SlashOption {
 	 * Возвращает селектор слеш-команды отформатированный для дискорда
 	 * @return {array}
 	 */
-	getChoicesDiscord(){
+	getChoicesDiscord () {
 		let choices = [];
 
-		for(let value in this.choices){
+		for (let value in this.choices) {
 			choices.push({
 				value: value,
 				name: this.choices[value].toString(),

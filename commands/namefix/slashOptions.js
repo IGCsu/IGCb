@@ -13,4 +13,5 @@ module.exports = new SlashOptions({
 			uk: 'Користувач чиє ім\"я буде виправленно'
 		})
 	})
+
 });

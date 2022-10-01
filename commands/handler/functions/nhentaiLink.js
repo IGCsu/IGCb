@@ -13,18 +13,19 @@ module.exports = {
 		'681790010550255617': true // #nsfw
 	},
 
-	init: async function(){
+	init: async function () {
 		return this;
 	},
 
 	regex: /^[0-9]{2,}$/,
 
-	call: async function(msg){
-		if(!this.regex.test(msg.content)) return;
-		if(msg.author.bot) return;
+	call: async function (msg) {
+		if (!this.regex.test(msg.content)) return;
+		if (msg.author.bot) return;
 
 		await msg.channel.send({
-			content: msg.author.toString() + ': https://nhentai.net/g/' + msg.content + '/',
+			content: msg.author.toString() + ': https://nhentai.net/g/' +
+				msg.content + '/',
 			allowedMentions: constants.AM_NONE,
 			reply: {
 				messageReference: msg.reference?.messageId,
@@ -33,4 +34,4 @@ module.exports = {
 		});
 	}
 
-}
+};

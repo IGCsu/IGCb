@@ -1,4 +1,4 @@
-const {MessageEmbed} = require("discord.js");
+const { MessageEmbed } = require('discord.js');
 
 class EmbedBuilder {
 
@@ -7,11 +7,12 @@ class EmbedBuilder {
 	 * @param {boolean} [ephemeral=false]
 	 * @return {Object<InteractionReplyOptions>}
 	 */
-	static noPermissions(ephemeral){
-		if(!ephemeral) ephemeral = false;
+	static noPermissions (ephemeral) {
+		if (!ephemeral) ephemeral = false;
 
 		const embed = new MessageEmbed({
-			title: reaction.emoji.error + 'У вас недостаточно прав для совершения этого действия',
+			title: reaction.emoji.error +
+				'У вас недостаточно прав для совершения этого действия',
 			color: reaction.color.error
 		});
 
@@ -23,8 +24,8 @@ class EmbedBuilder {
 	 * @param {boolean} [ephemeral=false]
 	 * @return {Object<InteractionReplyOptions>}
 	 */
-	static noSuchWarn(ephemeral){
-		if(!ephemeral) ephemeral = false;
+	static noSuchWarn (ephemeral) {
+		if (!ephemeral) ephemeral = false;
 
 		const embed = new MessageEmbed({
 			title: reaction.emoji.error + ' Такого варна не существует',
@@ -39,8 +40,8 @@ class EmbedBuilder {
 	 * @param {boolean} [ephemeral=false]
 	 * @return {Object<InteractionReplyOptions>}
 	 */
-	static noWarns(ephemeral){
-		if(!ephemeral) ephemeral = false;
+	static noWarns (ephemeral) {
+		if (!ephemeral) ephemeral = false;
 
 		const embed = new MessageEmbed({
 			title: 'У этого пользователя отсутствуют варны',
@@ -57,12 +58,13 @@ class EmbedBuilder {
 	 * @param {boolean} [ephemeral=false]
 	 * @return {Object<InteractionReplyOptions>}
 	 */
-	static async newWarn(int, warn, ephemeral){
-		if(!ephemeral) ephemeral = false;
+	static async newWarn (int, warn, ephemeral) {
+		if (!ephemeral) ephemeral = false;
 		const target = await warn.getTarget();
 
 		const embed = new MessageEmbed({
-			title: `${reaction.emoji.success} | Варн выдан: ${warn.id} | ${target.tag} | ${warn.reason}`,
+			title: reaction.emoji.success + ' | Варн выдан: ' + warn.id + ' | ' +
+				target.tag + ' | ' + warn.reason,
 			color: reaction.color.success
 		});
 
@@ -76,9 +78,10 @@ class EmbedBuilder {
 	 * @param {boolean} [ephemeral=false]
 	 * @return {Object<InteractionReplyOptions>}
 	 */
-	static async editWarn(int, warn, ephemeral){
+	static async editWarn (int, warn, ephemeral) {
 		const embed = new MessageEmbed({
-			title: `${reaction.emoji.success} | Причина варна номер ${warn.id} была изменина на: ${warn.reason}`,
+			title: reaction.emoji.success + ' | Причина варна номер ' + warn.id +
+				' была изменена на: ' + warn.reason,
 			color: reaction.color.success
 		});
 
@@ -92,12 +95,13 @@ class EmbedBuilder {
 	 * @param {boolean} [ephemeral=false]
 	 * @return {Object<InteractionReplyOptions>}
 	 */
-	static async removeWarn(int, warn, ephemeral){
-		if(!ephemeral) ephemeral = false;
+	static async removeWarn (int, warn, ephemeral) {
+		if (!ephemeral) ephemeral = false;
 		const target = await warn.getTarget();
 
 		const embed = new MessageEmbed({
-			title: `${reaction.emoji.success} | Варн номер ${warn.id} был снят с пользователя ${target.tag}`,
+			title: reaction.emoji.success + ' | Варн номер ' + warn.id +
+				' был снят с пользователя ' + target.tag,
 			color: reaction.color.success
 		});
 
@@ -110,19 +114,20 @@ class EmbedBuilder {
 	 * @param {Warn} warn
 	 * @return {Object<InteractionReplyOptions>}
 	 */
-	static async showWarn(int, warn){
+	static async showWarn (int, warn) {
 
 		const target = await warn.getTarget();
 		const author = await warn.getAuthor();
 
 		const embed = new MessageEmbed({
-			title: 'Варн' + (warn.flags.removed ? ' (Снят)': ''),
-			color: (warn.flags.removed ? 0x808080 : reaction.color.warning)
+			title: 'Варн' + (warn.flags.removed ? ' (Снят)' : ''),
+			color: warn.flags.removed ? 0x808080 : reaction.color.warning
 		});
 
 		embed.addField('Пользователь', target.tag);
-		if(warn.reason)
+		if (warn.reason) {
 			embed.addField('Причина', warn.reason);
+		}
 		embed.addField('Тип', warn.type);
 
 		embed.setAuthor({ name: author.tag, iconURL: author.avatarURL() });
@@ -141,7 +146,8 @@ class EmbedBuilder {
 			{
 				type: 2,
 				style: warn.flags.removed ? 3 : 4,
-				custom_id: 'warn|' + (warn.flags.removed ? 'embedAddWarn|' : 'embedRemoveWarn|') + warn.id,
+				custom_id: 'warn|' +
+					(warn.flags.removed ? 'embedAddWarn|' : 'embedRemoveWarn|') + warn.id,
 				label: warn.flags.removed ? 'Вернуть варн' : 'Снять варн'
 			}
 		]);
@@ -153,7 +159,7 @@ class EmbedBuilder {
 	 * @param {WarnPagination} pagination
 	 * @return {Object<InteractionReplyOptions>}
 	 */
-	static async paginationWarns(int, pagination){
+	static async paginationWarns (int, pagination) {
 		const embed = new MessageEmbed({
 			title: 'Список варнов',
 			color: reaction.color.warning
@@ -161,9 +167,9 @@ class EmbedBuilder {
 
 		let description = '';
 
-		if(!pagination.list.length) return;
+		if (!pagination.list.length) return;
 
-		for(let warn of pagination.list){
+		for (let warn of pagination.list) {
 			description += warn.toString() + '\n';
 		}
 
@@ -172,23 +178,28 @@ class EmbedBuilder {
 		embed.setTimestamp(int.createdTimestamp);
 		embed.setThumbnail(pagination.target.avatarURL());
 
-		embed.setFooter({ text: 'Страница: ' + pagination.pageNumber + '/' + pagination.pageLast + ' | Всего: ' + pagination.count + ' варнов'} );
+		embed.setFooter({
+			text: 'Страница: ' + pagination.pageNumber + '/' + pagination.pageLast +
+				' | Всего: ' + pagination.count + ' варнов'
+		});
 
 		return this.#getReplyOptions(embed, false, [
 			{
 				type: 2,
 				style: 1,
-				custom_id: `warn|embedPage|${pagination.target.id}|${pagination.pageNumber - 1}`,
+				custom_id: 'warn|embedPage|' + pagination.target.id + '|' +
+					(pagination.pageNumber - 1),
 				label: 'Предыдущая',
 				disabled: pagination.pageNumber === 1
 			},
 			{
 				type: 2,
 				style: 1,
-				custom_id: `warn|embedPage|${pagination.target.id}|${pagination.pageNumber + 1}`,
+				custom_id: 'warn|embedPage|' + pagination.target.id + '|' +
+					(pagination.pageNumber + 1),
 				label: 'Следующая',
 				disabled: pagination.pageNumber >= pagination.pageLast
-			},
+			}
 		]);
 
 	}
@@ -200,17 +211,14 @@ class EmbedBuilder {
 	 * @param {Object<ActionRow>} [buttons]
 	 * @return {Object<InteractionReplyOptions>}
 	 */
-	static #getReplyOptions(embed, ephemeral, buttons){
+	static #getReplyOptions (embed, ephemeral, buttons) {
 		let result = {
 			embeds: [embed],
 			ephemeral: ephemeral
 		};
 
-		if(buttons){
-			result.components = [{
-				type: 1,
-				components: buttons
-			}];
+		if (buttons) {
+			result.components = [{ type: 1, components: buttons }];
 		}
 
 		return result;

@@ -1,7 +1,7 @@
 const SlashOptions = require('../../BaseClasses/SlashOptions');
 const BaseCommand = require('../../BaseClasses/BaseCommand');
 const LangSingle = require('../../BaseClasses/LangSingle');
-const { AutocompleteInteraction, CommandInteraction} = require('discord.js')
+const { AutocompleteInteraction, CommandInteraction } = require('discord.js');
 
 const fetch = require('node-fetch');
 
@@ -21,11 +21,17 @@ class Activities extends BaseCommand {
 	#lastUpdate;
 
 	/**
+	 * Ссылка на json со всеми Activities
+	 * @type {string}
+	 */
+	LINK = 'https://derpystuff.gitlab.io/webstorage/discord/activities/ids.json';
+
+	/**
 	 * @param {string} path Путь к файлу
 	 * @return {Promise<this>}
 	 * @constructor
 	 */
-	constructor(path){
+	constructor (path) {
 		super(path);
 
 		this.category = 'Голосовые каналы';
@@ -48,13 +54,14 @@ class Activities extends BaseCommand {
 	 * @param {CommandInteraction} int Команда пользователя
 	 * @return {Promise<{activity: Object, invite: Object}>}
 	 */
-	async call(int){
-		const channel = int.options.get('channel')?.value ?? int.member.voice.channelId;
+	async call (int) {
+		const channel = int.options.get('channel')?.value ??
+			int.member.voice.channelId;
 		const activityId = int.options.get('activity').value;
 
 		const activity = this.#cache.find(a => a.value === activityId);
 
-		if(!channel) throw 'You are not connected to a voice channel and did not specify a channel';
+		if (!channel) throw 'You are not connected to a voice channel and did not specify a channel';
 
 		const invite = await client.api.channels(channel).invites.post({
 			data: {
@@ -65,25 +72,30 @@ class Activities extends BaseCommand {
 
 		return {
 			activity: activity,
-			invite: invite,
+			invite: invite
 		};
 	}
 
 	/** @param {CommandInteraction} int */
-	async slash(int){
+	async slash (int) {
 		this.call(int).then(res => {
 			int.reply({
-				content: 'Приглашение создано, нажмите на кнопку ниже чтобы присоединиться к ' + res.activity.name,
-				components: [{
-					type: 1,
-					components: [{
-						type: 2,
-						style: 5,
-						url: 'https://discord.gg/' + res.invite.code,
-						label: 'Присоединиться'
-					}]
-				}]
-			})
+				content: 'Приглашение создано, нажмите на кнопку ниже чтобы присоединиться к ' +
+					res.activity.name,
+				components: [
+					{
+						type: 1,
+						components: [
+							{
+								type: 2,
+								style: 5,
+								url: 'https://discord.gg/' + res.invite.code,
+								label: 'Присоединиться'
+							}
+						]
+					}
+				]
+			});
 		}).catch(error => {
 			int.reply({
 				content: reaction.emoji.error + ' ' + int.str(error),
@@ -93,10 +105,10 @@ class Activities extends BaseCommand {
 	};
 
 	/** @param {AutocompleteInteraction} int */
-	async autocomplete(int){
+	async autocomplete (int) {
 		await int.respond(this.#cache);
 
-		if(this.#lastUpdate + 1000*60*60 < Date.now()){
+		if (this.#lastUpdate + 1000 * 60 * 60 < Date.now()) {
 			await this.updateActivities();
 		}
 	}
@@ -104,17 +116,17 @@ class Activities extends BaseCommand {
 	/**
 	 * Обновление списка активностей
 	 */
-	async updateActivities(){
+	async updateActivities () {
 		let data = [];
 
-		try{
-			data = await (await fetch('https://derpystuff.gitlab.io/webstorage/discord/activities/ids.json')).json();
-		}catch(e){}
+		try {
+			data = await (await fetch(this.LINK)).json();
+		} catch (e) {}
 
 		this.#cache = [];
 		this.#lastUpdate = Date.now();
 
-		for(const key in data){
+		for (const key in data) {
 			this.#cache.push({
 				name: key,
 				value: data[key]

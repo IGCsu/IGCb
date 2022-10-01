@@ -82,4 +82,5 @@ module.exports = new SlashOptions({
 			uk: 'Дати права на управління каналоми'
 		})
 	})
+
 });

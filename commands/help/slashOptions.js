@@ -4,7 +4,6 @@ const LangSingle = require('../../BaseClasses/LangSingle');
 
 module.exports = new SlashOptions({
 
-
 	command: new SlashOption({
 		type: SlashOption.types.STRING,
 		required: false,
@@ -15,4 +14,5 @@ module.exports = new SlashOptions({
 			uk: 'Назва модуля'
 		})
 	})
+
 });

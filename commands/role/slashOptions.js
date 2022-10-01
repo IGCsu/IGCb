@@ -34,4 +34,5 @@ module.exports = new SlashOptions({
 			uk: 'Створити роль, якщо вона відсутня?'
 		})
 	})
+
 });

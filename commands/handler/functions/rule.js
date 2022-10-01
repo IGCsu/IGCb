@@ -13,23 +13,25 @@ module.exports = {
 	allChannels: true,
 	allowedChannels: {},
 
-	init: async function(){
-		try{
-			this.rules = await (await fetch(constants.SITE_LINK + '/rules?j=true')).json();
-		}catch(e){
+	init: async function () {
+		try {
+			this.rules = await (await fetch(
+				constants.SITE_LINK + '/rules?j=true'
+			)).json();
+		} catch (e) {
 			this.active = false;
 		}
 
 		return this;
 	},
 
-	call: async function(msg){
-		if(msg.content.length < 2) return;
+	call: async function (msg) {
+		if (msg.content.length < 2) return;
 
 		msg.content = msg.content.replace('а', 'a');
 		msg.content = msg.content.replace(/^r\.?/, '');
 
-		if(!this.rules[msg.content]) return;
+		if (!this.rules[msg.content]) return;
 
 		await msg.channel.send({
 			content: constants.SITE_LINK + '/rules?f=' + msg.content,
@@ -37,4 +39,4 @@ module.exports = {
 		});
 	}
 
-}
+};

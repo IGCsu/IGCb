@@ -9,14 +9,16 @@ let data = {
 
 /**
  * Возвращает функции-обработчики сообщений пользователя
- * @return {Object} functions                Объект функций модуля
- * @return {Object} allChannels              Объект названий функций, вызываемых при сообщении в любом канале
- * @return {Object} allowedChannelsFunctions Объект каналов и категориий, содержашие объекты функций
+ * @return {Object} functions Объект функций модуля
+ * @return {Object} allChannels Объект названий функций, вызываемых при
+ *   сообщении в любом канале
+ * @return {Object} allowedChannelsFunctions Объект каналов и категориий,
+ *   содержашие объекты функций
  */
 module.exports = async () => {
 
 	const files = fs.readdirSync(dir);
-	for(const file of files){
+	for (const file of files) {
 
 		const timeStart = process.hrtime();
 
@@ -24,17 +26,19 @@ module.exports = async () => {
 
 		let func = require('./functions/' + file);
 
-		if(func.active) data.functions[name] = await func.init();
+		if (func.active) data.functions[name] = await func.init();
 
-		if(func.active){
-			if(func.allChannels){
+		if (func.active) {
+			if (func.allChannels) {
 
 				data.allChannels[name] = true;
 
-			}else{
+			} else {
 
-				for(let id in func.allowedChannels){
-					if(!data.allowedChannelsFunctions[id]) data.allowedChannelsFunctions[id] = {};
+				for (let id in func.allowedChannels) {
+					if (!data.allowedChannelsFunctions[id]) {
+						data.allowedChannelsFunctions[id] = {};
+					}
 					data.allowedChannelsFunctions[id][name] = func.allowedChannels[id];
 				}
 
@@ -42,7 +46,7 @@ module.exports = async () => {
 		}
 
 		const timeEnd = process.hrtime(timeStart);
-		const pref = (timeEnd[0]*1000) + (timeEnd[1] / 1000000);
+		const pref = (timeEnd[0] * 1000) + (timeEnd[1] / 1000000);
 
 		log.initText += log.load(dir + file, pref, func.active);
 

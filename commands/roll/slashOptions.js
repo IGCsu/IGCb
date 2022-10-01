@@ -23,4 +23,5 @@ module.exports = new SlashOptions({
 			uk: 'Максимальне значення (За замовчуванням 100)'
 		})
 	})
+
 });
