@@ -1,7 +1,13 @@
 const SlashOptions = require('../../BaseClasses/SlashOptions');
 const BaseCommand = require('../../BaseClasses/BaseCommand');
 const LangSingle = require('../../BaseClasses/LangSingle');
-const { CommandInteraction, UserContextMenuInteraction, GuildMember, ButtonInteraction, ModalSubmitInteraction} = require('discord.js');
+const {
+	CommandInteraction,
+	UserContextMenuInteraction,
+	GuildMember,
+	ButtonInteraction,
+	ModalSubmitInteraction
+} = require('discord.js');
 
 const slashOptions = require('./slashOptions');
 const { title, description } = require('./about.json');
@@ -11,16 +17,16 @@ const EmbedBuilder = require('./EmbedBuilder');
 const ModalBuilder = require('./ModalBuilder');
 
 
-class Warns extends BaseCommand{
+class Warns extends BaseCommand {
 
-	constructor(path) {
+	constructor (path) {
 		super(path);
 
-		this.category = 'Модерация'
-		this.name = 'warn'
+		this.category = 'Модерация';
+		this.name = 'warn';
 		this.title = new LangSingle(title);
 		this.description = new LangSingle(description);
-		this.slashOptions = slashOptions
+		this.slashOptions = slashOptions;
 
 		return new Promise(async resolve => {
 			resolve(this);
@@ -31,22 +37,25 @@ class Warns extends BaseCommand{
 	 * Обработка слеш-команды
 	 * @param {CommandInteraction} int
 	 */
-	async slash(int){
+	async slash (int) {
 
 		const subcommand = int.options.getSubcommand();
 
-		if(subcommand === 'add'){
-			if(!this.permission(int.member))
+		if (subcommand === 'add') {
+			if (!this.permission(int.member)) {
 				return int.reply(EmbedBuilder.noPermissions(true));
+			}
 
-			return int.showModal(ModalBuilder.newWarn(int, int.options.getUser('user').id))
+			return int.showModal(
+				ModalBuilder.newWarn(int, int.options.getUser('user').id)
+			);
 		}
 
 		const subcommandGroup = int.options.getSubcommandGroup();
 
-		if(subcommandGroup === 'get'){
+		if (subcommandGroup === 'get') {
 
-			if(subcommand === 'direct'){
+			if (subcommand === 'direct') {
 				const warn = Warn.get(int.options.getInteger('id'));
 
 				const msg = warn
@@ -56,7 +65,7 @@ class Warns extends BaseCommand{
 				return int.reply(msg);
 			}
 
-			if(subcommand === 'last'){
+			if (subcommand === 'last') {
 				const target = int.options.getUser('user', false);
 
 				const warn = Warn.last(target?.id);
@@ -68,14 +77,14 @@ class Warns extends BaseCommand{
 				return int.reply(msg);
 			}
 
-			if(subcommand === 'list'){
+			if (subcommand === 'list') {
 				const target = int.options.getUser('user');
 				const ephemeral = int.options.getBoolean('ephemeral', false);
 
 				let msg = await Warn.pagination(target).getEmbed(int);
 
-				if(!msg) msg = EmbedBuilder.noWarns();
-				msg.ephemeral = ephemeral
+				if (!msg) msg = EmbedBuilder.noWarns();
+				msg.ephemeral = ephemeral;
 
 				return int.reply(msg);
 			}
@@ -91,43 +100,46 @@ class Warns extends BaseCommand{
 	 * Обработка контекстной команды на пользователе
 	 * @param {UserContextMenuInteraction} int
 	 */
-	async contextUser(int){
-		if(!this.permission(int.member))
+	async contextUser (int) {
+		if (!this.permission(int.member)) {
 			return int.reply(EmbedBuilder.noPermissions(true));
+		}
 
-		return int.showModal(ModalBuilder.newWarn(int, int.targetUser.id))
+		return int.showModal(ModalBuilder.newWarn(int, int.targetUser.id));
 	}
 
 	/**
 	 * Обработка нажатия на кнопку
 	 * @param {ButtonInteraction} int
 	 */
-	async button(int){
+	async button (int) {
 		const data = int.customId.split('|');
 
-		if(data[1] === 'embedEditReason'){
-			if(!this.permission(int.member))
+		if (data[1] === 'embedEditReason') {
+			if (!this.permission(int.member)) {
 				return int.reply(EmbedBuilder.noPermissions(true));
+			}
 
 			const warn = Warn.get(data[2]);
 			return int.showModal(ModalBuilder.editWarn(int, warn));
 		}
 
-		if(data[1] === 'embedPage'){
+		if (data[1] === 'embedPage') {
 			let page = data[3];
 			const target = client.users.cache.get(data[2]);
 
 			const msg = await Warn.pagination(target, page).getEmbed(int);
-			if(!msg) {
+			if (!msg) {
 				return int.update(msg);
 			} else {
-				return int.reply(EmbedBuilder.noSuchWarn(true))
+				return int.reply(EmbedBuilder.noSuchWarn(true));
 			}
 		}
 
-		if(data[1] === 'embedRemoveWarn'){
-			if(!this.permission(int.member))
+		if (data[1] === 'embedRemoveWarn') {
+			if (!this.permission(int.member)) {
 				return int.reply(EmbedBuilder.noPermissions(true));
+			}
 
 			const warn = Warn.get(data[2]);
 			warn.flags = { removed: true };
@@ -138,9 +150,10 @@ class Warns extends BaseCommand{
 			return int.followUp(await EmbedBuilder.removeWarn(int, warn, true));
 		}
 
-		if(data[1] === 'embedAddWarn'){
-			if(!this.permission(int.member))
+		if (data[1] === 'embedAddWarn') {
+			if (!this.permission(int.member)) {
 				return int.reply(EmbedBuilder.noPermissions(true));
+			}
 
 			const warn = Warn.get(data[2]);
 			warn.flags = { removed: false };
@@ -161,11 +174,11 @@ class Warns extends BaseCommand{
 	 * Обработка модалки
 	 * @param {ModalSubmitInteraction} int
 	 */
-	async modal(int){
+	async modal (int) {
 		const data = int.customId.split('|');
 		const reason = int.fields.getField('reason').value;
 
-		if(data[1] === 'NewWarnModal'){
+		if (data[1] === 'NewWarnModal') {
 			const warn = new Warn({
 				target: data[2],
 				reason: reason,
@@ -176,8 +189,7 @@ class Warns extends BaseCommand{
 			return int.reply(await EmbedBuilder.newWarn(int, warn));
 		}
 
-		if(data[1] === 'EditWarnModal'){
-
+		if (data[1] === 'EditWarnModal') {
 			const warn = Warn.get(data[2]);
 			warn.reason = reason;
 			warn.save();
@@ -198,11 +210,12 @@ class Warns extends BaseCommand{
 	 *
 	 * @param {GuildMember} member
 	 */
-	permission(member) {
+	permission (member) {
 		return member.roles.cache.has('916999822693789718') ||
 			member.roles.cache.has('613412133715312641') ||
-			member.id === '500020124515041283'
+			member.id === '500020124515041283';
 	}
+
 }
 
 module.exports = Warns;

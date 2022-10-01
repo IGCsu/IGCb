@@ -13,7 +13,8 @@ class LangSingle {
 	static DEFAULT = 'ru';
 
 	/**
-	 * В локализации Дискорда, некоторые языки имеют дополнительные коды, которые добавляются при конвертировании
+	 * В локализации Дискорда, некоторые языки имеют дополнительные коды, которые
+	 * добавляются при конвертировании
 	 * @type {Object.<string, string[]>}
 	 * @const
 	 */
@@ -22,7 +23,7 @@ class LangSingle {
 		es: ['ES'],
 		pt: ['BR'],
 		sv: ['SE'],
-		zh: ['CN', 'TW'],
+		zh: ['CN', 'TW']
 	};
 
 	/**
@@ -32,18 +33,21 @@ class LangSingle {
 	 * @param {Object.<string, string>} langs
 	 * @constructor
 	 */
-	constructor(langs){
-		if(!langs.hasOwnProperty(this.constructor.DEFAULT))
+	constructor (langs) {
+		if (!langs.hasOwnProperty(this.constructor.DEFAULT)) {
 			throw new TypeError('No required value');
+		}
 
-		for(const code in langs){
-			if(typeof code !== 'string' || code.length !== 2)
+		for (const code in langs) {
+			if (typeof code !== 'string' || code.length !== 2) {
 				throw new TypeError('Incorrect lang code: ' + code);
+			}
 
 			langs[code] = langs[code].trim();
 
-			if(typeof langs[code] !== 'string' || langs[code].length === 0 )
+			if (typeof langs[code] !== 'string' || langs[code].length === 0) {
 				throw new TypeError('Incorrect text: ' + langs[code]);
+			}
 
 			this.#list[code] = langs[code];
 		}
@@ -55,7 +59,7 @@ class LangSingle {
 	 * @param {string} code Код локализации ISO 639-1
 	 * @return {string}
 	 */
-	get(code){
+	get (code) {
 		return this.has(code)
 			? this.#list[code]
 			: this.toString();
@@ -66,7 +70,7 @@ class LangSingle {
 	 * @param {string} code Код локализации ISO 639-1
 	 * @return {boolean}
 	 */
-	has(code){
+	has (code) {
 		return this.#list.hasOwnProperty(code);
 	}
 
@@ -74,7 +78,7 @@ class LangSingle {
 	 * Возвращает значение по умолчанию
 	 * @return {string}
 	 */
-	toString(){
+	toString () {
 		return this.#list[this.constructor.DEFAULT];
 	}
 
@@ -82,15 +86,15 @@ class LangSingle {
 	 * Возвращает объект локализации для Дискорда.
 	 * @return {Object.<string, string>}
 	 */
-	toDiscord(){
+	toDiscord () {
 		let langs = {};
 
-		for(let code in this.#list){
-			if(this.constructor.DISCORD_LANG_POSTFIX.hasOwnProperty(code)){
-				for(const postfix of this.constructor.DISCORD_LANG_POSTFIX[code]){
+		for (let code in this.#list) {
+			if (this.constructor.DISCORD_LANG_POSTFIX.hasOwnProperty(code)) {
+				for (const postfix of this.constructor.DISCORD_LANG_POSTFIX[code]) {
 					langs[code + '-' + postfix] = this.#list[code];
 				}
-			}else{
+			} else {
 				langs[code] = this.#list[code];
 			}
 		}

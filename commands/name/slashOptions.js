@@ -13,4 +13,5 @@ module.exports = new SlashOptions({
 			uk: 'Введіть будь-який бажаний нікнейм'
 		})
 	})
+
 });

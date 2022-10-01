@@ -48,7 +48,7 @@ const f = {
 		Crimson: '\x1b[48m'
 	}
 
-}
+};
 
 const getCurrentTimeString = () => new Date().toTimeString().replace(/ .*/, '');
 
@@ -60,7 +60,7 @@ const getCurrentTimeString = () => new Date().toTimeString().replace(/ .*/, '');
 const logText = text => {
 	console.log(text);
 	return '\n' + text;
-}
+};
 
 global.log = {
 
@@ -78,7 +78,7 @@ global.log = {
 	 * @returns {String}
 	 */
 	load: (path, perf, result) => {
-		const status = result ? f.fg.Green + 'active': f.fg.Red + 'inactive';
+		const status = result ? f.fg.Green + 'active' : f.fg.Red + 'inactive';
 		return logText(path + ': ' + perf.toFixed(3) + 'ms ' + status + f.Reset);
 	},
 
@@ -111,12 +111,12 @@ global.log = {
 	 * @returns {String}
 	 */
 	info: (user, action, target) => {
-		const actionColor = action == 'create' ? f.fg.Green
-			: action == 'delete' ? f.fg.Red: f.fg.Cyan;
+		const actionColor = action === 'create' ? f.fg.Green
+			: action === 'delete' ? f.fg.Red : f.fg.Cyan;
 
 		return logText(
-			f.fg.Cyan + getCurrentTimeString() + f.Reset + ' ' +  user +
-			actionColor + ' ' + action + f.Reset  + ' ' + target
+			f.fg.Cyan + getCurrentTimeString() + f.Reset + ' ' + user +
+			actionColor + ' ' + action + f.Reset + ' ' + target
 		);
 	}
 

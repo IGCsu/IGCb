@@ -11,14 +11,19 @@
  * @return {String}
  */
 global.num2str = (n, tf) => {
-  n = n % 100;
+	n = n % 100;
 
-  if(n > 19) n = n % 10;
+	if (n > 19) n = n % 10;
 
-  switch(n){
-    case 1: return(tf[0]);
-    case 2: case 3: case 4: return(tf[1]);
-    default: return(tf[2]);
-  }
+	switch (n) {
+		case 1:
+			return (tf[0]);
+		case 2:
+		case 3:
+		case 4:
+			return (tf[1]);
+		default:
+			return (tf[2]);
+	}
 
-}
+};

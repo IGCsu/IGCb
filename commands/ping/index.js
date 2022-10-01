@@ -1,22 +1,22 @@
 const SlashOptions = require('../../BaseClasses/SlashOptions');
 const BaseCommand = require('../../BaseClasses/BaseCommand');
 const LangSingle = require('../../BaseClasses/LangSingle');
-const { GuildMember, GuildBan, User, MessageEmbed} = require('discord.js')
+const { GuildMember, GuildBan, User, MessageEmbed } = require('discord.js');
 
 const { title, description } = require('./about.json');
 
-class Ping extends BaseCommand{
+class Ping extends BaseCommand {
 
-	constructor(path) {
+	constructor (path) {
 		super(path);
 
-		this.category = 'Информация'
+		this.category = 'Информация';
 
-		this.name = 'ping'
+		this.name = 'ping';
 		this.title = new LangSingle(title);
 		this.description = new LangSingle(description);
 
-		this.embed = new Discord.MessageEmbed().setDescription('Вычисление... ')
+		this.embed = new Discord.MessageEmbed().setDescription('Вычисление... ');
 
 		return new Promise(async resolve => {
 			resolve(this);
@@ -27,9 +27,9 @@ class Ping extends BaseCommand{
 	 * Обработка команды
 	 * Вычисляет пинг и время жизни бота и отправляет
 	 * @param {CommandInteraction} int Команда пользователя
-	 * @param {Message}            m   Сообщение бота
+	 * @param {Message} m Сообщение бота
 	 */
-	async call(int, m){
+	async call (int, m) {
 		const ping = (m.createdTimestamp - int.createdTimestamp) / 2;
 		const lang = int.locale.split('-')[0];
 
@@ -43,17 +43,19 @@ class Ping extends BaseCommand{
 
 		const embed = new Discord.MessageEmbed()
 			.setTitle('Pong!')
-			.setDescription(`\`${ping}ms\` Uptime: ${uptime.join(':')}\n ${this.description[lang] ?? this.description.ru}`);
+			.setDescription(
+				`\`${ping}ms\` Uptime: ${uptime.join(':')}\n ${this.description}`
+			);
 
-		await m.edit({ embeds : [embed] });
+		await m.edit({ embeds: [embed] });
 	}
 
 	/**
 	 * Обработка слеш-команды
 	 * @param {CommandInteraction} int Команда пользователя
 	 */
-	async slash(int){
-		const m = await int.reply({ embeds : [this.embed], fetchReply: true });
+	async slash (int) {
+		const m = await int.reply({ embeds: [this.embed], fetchReply: true });
 		await this.call(int, m);
 	}
 }

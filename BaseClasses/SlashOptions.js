@@ -1,9 +1,11 @@
 /**
  * Класс опций слеш комманд
  *
- * Структура опций основана на требуемой в документации API discord, однако содержит небольшие изменения:
+ * Структура опций основана на требуемой в документации API discord, однако
+ * содержит небольшие изменения:
  * * Объект не должен содержать "name" - оно содержится в ключе объекта.
- * * Объект не должен содержать "name_localizations" - локализация названий недопустима.
+ * * Объект не должен содержать "name_localizations" - локализация названий
+ * недопустима.
  * * Изменён "description". Он содержит стандартный объект локализации.
  *   Заменяет стандартный "description" и "description_localizations".
  * * Изменён "choices". Он содержит объект вариантов.
@@ -18,7 +20,7 @@ class SlashOptions {
 	/** @type {Object.<string, SlashOption>} */
 	#list = {};
 
-	get list(){
+	get list () {
 		return this.#list;
 	}
 
@@ -26,15 +28,21 @@ class SlashOptions {
 	 * @param {Object.<string, SlashOption>} options
 	 * @constructor
 	 */
-	constructor(options){
-		for(const name in options){
-			if(typeof name != 'string' || name.toLowerCase().replace(/[^A-Z0-3_-]/gim) !== name)
+	constructor (options) {
+		for (const name in options) {
+			if (
+				typeof name != 'string' ||
+				name.toLowerCase().replace(/[^A-Z0-3_-]/gim) !== name
+			) {
 				throw new TypeError('No valid slash option name: ' + name);
+			}
 
-			if(name.length > 32)
+			if (name.length > 32) {
 				throw new RangeError(
-					'The slash option name "' + name + '" exceeds the allowed length: ' + name.length + ' characters'
+					'The slash option name "' + name + '" exceeds the allowed length: ' +
+					name.length + ' characters'
 				);
+			}
 
 			this.#list[name] = options[name];
 		}
@@ -44,10 +52,10 @@ class SlashOptions {
 	 * Возвращает объект слеш-команд для дискорда
 	 * @return {Object[]}
 	 */
-	toDiscord(){
+	toDiscord () {
 		let options = [];
 
-		for(let name in this.#list){
+		for (let name in this.#list) {
 			options.push(this.#list[name].toDiscord(name));
 		}
 
