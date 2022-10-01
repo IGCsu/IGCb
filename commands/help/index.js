@@ -1,4 +1,5 @@
 const SlashOptions = require('../../BaseClasses/SlashOptions');
+const AutocompleteChoices = require('../../BaseClasses/AutocompleteChoices');
 const BaseCommand = require('../../BaseClasses/BaseCommand');
 const LangSingle = require('../../BaseClasses/LangSingle');
 const {
@@ -65,38 +66,24 @@ class Help extends BaseCommand {
 	 */
 	async autocomplete (int) {
 		const timeStart = process.hrtime();
-		let choices = [];
+
 
 		const perm = this.permission(int.member);
 
 		const command = int.options.getFocused();
-		let finded = [];
+		let choices = new AutocompleteChoices();
 
-		for (let name in commands) {
-			if (commands[name].category === 'nsfw' && !perm) continue;
-			if (command && name.indexOf(command) === -1) continue;
 
-			finded.push(commands[name]);
+		for(let name in commands){
+			if(commands[name].category === 'nsfw' && !perm) continue;
+			if(command && name.indexOf(command) === -1) continue;
+			choices.push({name: name, value: name.toLowerCase()});
 		}
 
-		const find = command.toLowerCase();
-		finded.sort((a, b) => b.name.similarity(find) - a.name.similarity(find));
+		try{
+			await int.respond(choices.sort(command));
+		} catch(e){
 
-		let maxLength = 0;
-
-		for (let command of finded) {
-			if (command.name.length > maxLength) maxLength = command.name.length;
-		}
-
-		for (let command of finded) {
-			if (choices.length > 25) break;
-
-			choices.push({ name: command.name, value: command.name });
-		}
-
-		try {
-			await int.respond(choices);
-		} catch (e) {
 			const timeEnd = process.hrtime(timeStart);
 			const timePerf = (timeEnd[0] * 1000) + (timeEnd[1] / 1000000);
 			console.warn(

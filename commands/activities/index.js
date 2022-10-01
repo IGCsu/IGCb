@@ -1,4 +1,5 @@
 const SlashOptions = require('../../BaseClasses/SlashOptions');
+const AutocompleteChoices = require('../../BaseClasses/AutocompleteChoices');
 const BaseCommand = require('../../BaseClasses/BaseCommand');
 const LangSingle = require('../../BaseClasses/LangSingle');
 const { AutocompleteInteraction, CommandInteraction } = require('discord.js');
@@ -13,7 +14,7 @@ class Activities extends BaseCommand {
 	/**
 	 * Кеш активностей
 	 */
-	#cache = [];
+	#cache = new AutocompleteChoices();
 
 	/**
 	 * Временная метка последнего обновления кеша
@@ -105,8 +106,9 @@ class Activities extends BaseCommand {
 	};
 
 	/** @param {AutocompleteInteraction} int */
-	async autocomplete (int) {
-		await int.respond(this.#cache);
+	async autocomplete(int){
+		await int.respond(this.#cache.sort(int.options.getFocused()));
+
 
 		if (this.#lastUpdate + 1000 * 60 * 60 < Date.now()) {
 			await this.updateActivities();
@@ -123,7 +125,7 @@ class Activities extends BaseCommand {
 			data = await (await fetch(this.LINK)).json();
 		} catch (e) {}
 
-		this.#cache = [];
+		this.#cache = new AutocompleteChoices();
 		this.#lastUpdate = Date.now();
 
 		for (const key in data) {

@@ -1,4 +1,5 @@
 const SlashOptions = require('../../BaseClasses/SlashOptions');
+const AutocompleteChoices = require('../../BaseClasses/AutocompleteChoices');
 const BaseCommand = require('../../BaseClasses/BaseCommand');
 const LangSingle = require('../../BaseClasses/LangSingle');
 const {
@@ -32,37 +33,27 @@ class Roles extends BaseCommand {
 	 */
 	async autocomplete (int) {
 		const timeStart = process.hrtime();
-		let choices = [];
+		let choices = new AutocompleteChoices();
 
 		const role = int.options.getFocused();
 		const create = int.options.getBoolean('create');
 
-		let finded = await this.has(guild.roles, role);
-		let predict = finded.roles;
+		let finded = this.has(guild.roles, role);
 
-		if (role) {
-			const find = role.toLowerCase();
-			predict.sort((a, b) => {
-				return b.name.similarity(find) - a.name.similarity(find);
-			});
-			if (create) choices[0] = { name: role, value: role };
+		for(let entry of finded.roles){
+			choices.push({name: entry.name, value: entry.id})
+		}
+
+		if(role){
+			choices = choices.sort(role);
+			if(create) choices.unshift({name : role, value : role});
 		} else {
-			choices[0] = {
-				name: int.str('Show list of all Game Roles'),
-				value: 'showAll'
-			};
+			choices.unshift({name: int.str('Show list of all Game Roles'), value:'showAll'});
 		}
+		try{
+			await int.respond(choices.slice(0, 24));
+		} catch(e){
 
-		for (let i = 0; i < predict.length && choices.length < 25; i++) {
-			choices[i + 1 * (create || !role)] = {
-				name: predict[i].name,
-				value: predict[i].id
-			};
-		}
-
-		try {
-			await int.respond(choices);
-		} catch (e) {
 			const timeEnd = process.hrtime(timeStart);
 			const timePerf = (timeEnd[0] * 1000) + (timeEnd[1] / 1000000);
 			console.warn(
