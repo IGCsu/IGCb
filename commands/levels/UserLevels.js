@@ -38,37 +38,40 @@ class UserLevels {
 
 	/**
 	 * Получение пользователя из БД.
-	 * @param  {GuildMember} member
-	 * @param  {Array}       roles    Массив уровней
-	 * @param  {Array}       rolesIDs Массив ID ролей уровней.
-	 * @param  {Boolean}     create   Если true - пользователь будет создан в базе, если не будет найден
-	 * @return {Object}               Объект пользователя
+	 * @param {GuildMember} member
+	 * @param {Object[]} roles Массив уровней
+	 * @param {string[]} rolesIDs Массив ID ролей уровней.
+	 * @param {boolean} [create=false] Если true - пользователь будет создан в
+	 *   базе, если не будет найден
+	 * @return {Object} Объект пользователя
 	 */
-	constructor(member, roles, rolesIDs, create){
+	constructor (member, roles, rolesIDs, create) {
 
 		this.member = member;
 		this.#roles = roles;
 		this.#rolesIDs = rolesIDs;
 
-		const users = DB.query('SELECT * FROM levels WHERE id = ?', [this.member.id]);
+		const users = DB.query('SELECT * FROM levels WHERE id = ?', [
+			this.member.id
+		]);
 
-		if(users[0]){
+		if (users[0]) {
 			this.finded = true;
 			this.#primitiveData = {
-				messagesLegit : users[0].messagesLegit,
-				messagesAll : users[0].messagesAll,
-				activity : users[0].activity,
-				symbols : users[0].symbols,
-				last : users[0].last
+				messagesLegit: users[0].messagesLegit,
+				messagesAll: users[0].messagesAll,
+				activity: users[0].activity,
+				symbols: users[0].symbols,
+				last: users[0].last
 			};
-		}else if(create){
+		} else if (create) {
 			DB.query('INSERT INTO levels (`id`) VALUES (?)', [this.member.id]);
 			this.#primitiveData = {
-				messagesLegit : 0,
-				messagesAll : 0,
-				activity : 1,
-				symbols : 0,
-				last : 0
+				messagesLegit: 0,
+				messagesAll: 0,
+				activity: 1,
+				symbols: 0,
+				last: 0
 			};
 		}
 
@@ -77,30 +80,34 @@ class UserLevels {
 	/**
 	 * Обновляет данные пользователя в базе данных
 	 */
-	update(){
-		DB.query('UPDATE levels SET messagesAll = ?, messagesLegit = ?, symbols = ?, last = ? WHERE id = ?', [
-			this.#primitiveData.messagesAll,
-			this.#primitiveData.messagesLegit,
-			this.#primitiveData.symbols,
-			this.#primitiveData.last,
-			this.member.id
-		]);
+	update () {
+		DB.query(
+			'UPDATE levels SET messagesAll = ?, messagesLegit = ?, symbols = ?, last = ? WHERE id = ?',
+			[
+				this.#primitiveData.messagesAll,
+				this.#primitiveData.messagesLegit,
+				this.#primitiveData.symbols,
+				this.#primitiveData.last,
+				this.member.id
+			]
+		);
 
 		return this;
 	};
 
 	/**
 	 * Регистрирует новое сообщение пользователя.
-	 * После регистрации обновляются примитивные данные, но продвинутые теряют свою актуальность, потому очищаются.
+	 * После регистрации обновляются примитивные данные, но продвинутые теряют
+	 * свою актуальность, потому очищаются.
 	 * @param {Message} msg Сообщение пользователя
 	 */
-	userMessageСounting(msg){
+	userMessageCounting (msg) {
 		const timestamp = Math.floor(msg.createdTimestamp / 1000);
 
 		this.#primitiveData.messagesAll += 1;
 		this.#primitiveData.symbols += msg.content.length;
 
-		if(this.#primitiveData.last + 60 <= timestamp){
+		if (this.#primitiveData.last + 60 <= timestamp) {
 			this.#primitiveData.last = timestamp;
 			this.#primitiveData.messagesLegit += 1;
 		}
@@ -114,25 +121,27 @@ class UserLevels {
 	/**
 	 * Обновляет роль пользователя в дискорде, если требуется
 	 */
-	updateRole(){
-		if(this.member.id === '256114365894230018') return;
+	updateRole () {
+		if (this.member.id === '256114365894230018') return;
 
 		const role = this.getRole();
 
-		if(this.member.roles.cache.has(role.id)) return;
+		if (this.member.roles.cache.has(role.id)) return;
 
-		if(role.id !== '648762974277992448')
+		if (role.id !== '648762974277992448') {
 			this.member.roles.add(role.cache, 'По причине изменения уровня');
+		}
 
-		this.member.roles.cache.filter(r => this.#rolesIDs.includes(r.id)).each(r => {
-			if(r.id !== role.id) this.member.roles.remove(r, 'По причине изменения уровня');
-		});
+		this.member.roles.cache
+			.filter(r => this.#rolesIDs.includes(r.id))
+			.each(r => {
+				if (r.id !== role.id) {
+					this.member.roles.remove(r, 'По причине изменения уровня');
+				}
+			});
 
 		return this;
 	};
-
-
-
 
 
 	/**
@@ -145,7 +154,7 @@ class UserLevels {
 	 * Возвращает количество всех сообщений пользователя
 	 * @return {Number}
 	 */
-	getMessagesAll(user){
+	getMessagesAll () {
 		return this.#primitiveData.messagesAll;
 	};
 
@@ -153,15 +162,16 @@ class UserLevels {
 	 * Возвращает количество только засчитанных сообщений пользователя
 	 * @return {Number}
 	 */
-	getMessagesLegit(user){
+	getMessagesLegit () {
 		return this.#primitiveData.messagesLegit;
 	};
 
 	/**
-	 * Возвращает количество старых сообщений пользователя, которые не учувствуют в подсчёте
+	 * Возвращает количество старых сообщений пользователя, которые не учувствуют
+	 * в подсчёте
 	 * @return {Number}
 	 */
-	getMessagesOld(user){
+	getMessagesOld () {
 		return this.#primitiveData.messagesOld;
 	};
 
@@ -169,7 +179,7 @@ class UserLevels {
 	 * Возвращает количество всех символов пользователя
 	 * @return {Number}
 	 */
-	getSymbols(user){
+	getSymbols () {
 		return this.#primitiveData.symbols;
 	};
 
@@ -177,12 +187,9 @@ class UserLevels {
 	 * Возвращает количество активных дней пользователя за последние 30 суток
 	 * @return {Number}
 	 */
-	getActivity(user){
+	getActivity () {
 		return this.#primitiveData.activity;
 	};
-
-
-
 
 
 	/**
@@ -195,13 +202,15 @@ class UserLevels {
 	 * Возвращает процент оверпоста
 	 * @return {Number}
 	 */
-	getOverpost(){
-		if(this.#advancedData.overpost) return this.#advancedData.overpost;
+	getOverpost () {
+		if (this.#advancedData.overpost) return this.#advancedData.overpost;
 
 		const messagesAll = this.getMessagesAll();
 		const messagesLegit = this.getMessagesLegit();
 
-		const overpost = Math.round( (messagesAll - messagesLegit) / messagesLegit * 1000) / 10;
+		const overpost = Math.round(
+			(messagesAll - messagesLegit) / messagesLegit * 1000
+		) / 10;
 
 		return this.#advancedData.overpost = isNaN(overpost) ? 0 : overpost;
 	};
@@ -210,13 +219,13 @@ class UserLevels {
 	 * Возвращает среднее количество символов в сообщениях
 	 * @return {Number}
 	 */
-	getSymbolsAvg(){
-		if(this.#advancedData.symbolsAvg) return this.#advancedData.symbolsAvg;
+	getSymbolsAvg () {
+		if (this.#advancedData.symbolsAvg) return this.#advancedData.symbolsAvg;
 
 		const messagesAll = this.getMessagesAll();
 		const symbols = this.getSymbols();
 
-		const symbolsAvg = Math.round( (symbols / messagesAll) * 10) / 10;
+		const symbolsAvg = Math.round((symbols / messagesAll) * 10) / 10;
 
 		return this.#advancedData.symbolsAvg = isNaN(symbolsAvg) ? 0 : symbolsAvg;
 	};
@@ -225,20 +234,21 @@ class UserLevels {
 	 * Возвращает процент активности
 	 * @return {Number}
 	 */
-	getActivityPer(){
-		if(this.#advancedData.activityPer) return this.#advancedData.activityPer;
+	getActivityPer () {
+		if (this.#advancedData.activityPer) return this.#advancedData.activityPer;
 
 		const activity = this.getActivity();
 
-		return this.#advancedData.activityPer = Math.round( activity / 30 * 1000 ) / 10;
+		return this.#advancedData.activityPer = Math.round(activity / 30 * 1000) /
+			10;
 	};
 
 	/**
 	 * Возвращает опыт
 	 * @return {Number}
 	 */
-	getExp(){
-		if(this.#advancedData.exp) return this.#advancedData.exp;
+	getExp () {
+		if (this.#advancedData.exp) return this.#advancedData.exp;
 
 		const messagesLegit = this.getMessagesLegit();
 		const symbolsAvg = this.getSymbolsAvg();
@@ -253,8 +263,8 @@ class UserLevels {
 	 * Возвращает количество оштрафованного опыта пользователя
 	 * @return {Number}
 	 */
-	getExpFine(){
-		if(this.#advancedData.expFine) return this.#advancedData.expFine;
+	getExpFine () {
+		if (this.#advancedData.expFine) return this.#advancedData.expFine;
 
 		const activityPer = this.getActivityPer();
 		const exp = this.getExp();
@@ -268,48 +278,49 @@ class UserLevels {
 	 * Возвращает роль пользователя
 	 * @return {Object}
 	 */
-	getRole(){
-		if(this.#advancedData.role) return this.#advancedData.role;
+	getRole () {
+		if (this.#advancedData.role) return this.#advancedData.role;
 
 		const exp = this.getExp();
 
-		for(const role of this.#roles)
-			if(role.value <= exp) return this.#advancedData.role = role;
+		for (const role of this.#roles) {
+			if (role.value <= exp) return this.#advancedData.role = role;
+		}
 	};
 
 	/**
-	 * Возвращает следующую роль пользователя. Возвращает true - если следующей роли нет
+	 * Возвращает следующую роль пользователя. Возвращает true - если следующей
+	 * роли нет
 	 * @return {Object}
 	 */
-	getNextRole(){
-		if(this.#advancedData.nextRole) return this.#advancedData.nextRole;
+	getNextRole () {
+		if (this.#advancedData.nextRole) return this.#advancedData.nextRole;
 
-		const exp = this.getExp();
 		const role = this.getRole();
 
 		return this.#advancedData.nextRole = this.#roles[role.pos - 1] ?? true;
 	};
 
 	/**
-	 * Возвращает прогресс до следующей роли. Возвращает true - если следующей роли нет
+	 * Возвращает прогресс до следующей роли. Возвращает true - если следующей
+	 * роли нет
 	 * @return {Number}
 	 */
-	getNextRoleProgress(user){
-		if(this.#advancedData.nextRoleProgress) return this.#advancedData.nextRoleProgress;
+	getNextRoleProgress () {
+		if (this.#advancedData.nextRoleProgress) return this.#advancedData.nextRoleProgress;
 
 		const exp = this.getExp();
 		const role = this.getRole();
 		const nextRole = this.getNextRole();
 
-		if(nextRole == true) return true;
+		if (nextRole === true) return true;
 
-		const nextRoleProgress = Math.round( ( (exp - role.value) / (nextRole.value - role.value) ) * 1000) / 10;
+		const nextRoleProgress = Math.round(
+			((exp - role.value) / (nextRole.value - role.value)) * 1000
+		) / 10;
 
 		return this.#advancedData.nextRoleProgress = nextRoleProgress;
 	};
-
-
-
 
 
 	/**
@@ -322,8 +333,8 @@ class UserLevels {
 	 * Генерирует эмбед с данными пользователя
 	 * @return {MessageEmbed}
 	 */
-	getEmbed(){
-		if(this.#embed) return this.#embed;
+	getEmbed () {
+		if (this.#embed) return this.#embed;
 
 		this.#embed = new Discord.MessageEmbed();
 
@@ -346,27 +357,33 @@ class UserLevels {
 	/**
 	 * Добавляет к эмбеду статистику сообщений
 	 */
-	addMessages(){
+	addMessages () {
 		const messagesAll = this.getMessagesAll().toLocaleString();
 		const messagesLegit = this.getMessagesLegit().toLocaleString();
 
-		this.#embed.addField('Cообщения:', messagesAll + ' (Из них учитываются: ' + messagesLegit + ')');
+		this.#embed.addField(
+			'Cообщения:',
+			messagesAll + ' (Из них учитываются: ' + messagesLegit + ')'
+		);
 	};
 
 	/**
 	 * Добавляет к эмбеду статистику символов
 	 */
-	addSymbols(){
+	addSymbols () {
 		const symbols = this.getSymbols().toLocaleString();
 		const symbolsAvg = this.getSymbolsAvg().toLocaleString();
 
-		this.#embed.addField('Cимволы:', symbols + ' (AVG ' + symbolsAvg + ')');
+		this.#embed.addField(
+			'Cимволы:',
+			symbols + ' (AVG ' + symbolsAvg + ')'
+		);
 	};
 
 	/**
 	 * Добавляет к эмбеду показатель оверпоста
 	 */
-	addOverpost(){
+	addOverpost () {
 		const overpost = this.getOverpost();
 
 		this.#embed.addField('Оверпост:', overpost + '%');
@@ -375,38 +392,44 @@ class UserLevels {
 	/**
 	 * Добавляет к эмбеду показатель активности
 	 */
-	addActivity(){
+	addActivity () {
 		const activity = this.getActivity();
 		const activityPer = this.getActivityPer();
 
-		if(activityPer == 100) return;
+		if (activityPer === 100) return;
 
-		this.#embed.addField('Активность за последние 30 дней:', activityPer + '% (' + activity + '/' + '30)');
+		this.#embed.addField(
+			'Активность за последние 30 дней:',
+			activityPer + '% (' + activity + '/' + '30)'
+		);
 	};
 
 	/**
 	 * Добавляет к эмбеду количество опыта
 	 */
-	addExp(){
+	addExp () {
 		const exp = this.getExp().toLocaleString();
 		const activityPer = this.getActivityPer();
 		const expFine = this.getExpFine();
 
 		let text = exp;
-		if(expFine) text += ' (Вычтено из за неактивности: ' + expFine.toLocaleString() + ')';
+		if (expFine) {
+			text += ' (Вычтено из за неактивности: ' + expFine.toLocaleString() + ')';
+		}
 
-		this.#embed.addField('Опыт:', text, activityPer == 100);
+		this.#embed.addField('Опыт:', text, activityPer === 100);
 	};
 
 	/**
 	 * Добавляет к эмбеду следующую роль и прогресс до неё, если есть
 	 */
-	addNextRole(){
+	addNextRole () {
 		const role = this.getRole();
 		const nextRole = this.getNextRole();
 		const nextRoleProgress = this.getNextRoleProgress();
 
-		let text = nextRole === true ? '🎉' : nextRole.cache.toString() + ' ' + nextRoleProgress + '%';
+		let text = nextRole === true ? '🎉'
+			: nextRole.cache.toString() + ' ' + nextRoleProgress + '%';
 
 		this.#embed.addField('Прогресс:', role.cache.toString() + ' -> ' + text);
 	};
@@ -414,13 +437,12 @@ class UserLevels {
 	/**
 	 * Устанавливает у эмбеда цвет текущей роли пользователя
 	 */
-	setColor(){
+	setColor () {
 		const role = this.getRole();
 
 		this.#embed.setColor(role.cache.color);
 	};
 
-
 }
 
-module.exports = UserLevels
+module.exports = UserLevels;

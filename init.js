@@ -14,12 +14,13 @@ const init = [
 	require('./init/commands.js'),
 	require('./init/setActivity.js'),
 	require('./init/interactionCreate.js'),
-	require('./init/startMessage.js'),
+	require('./init/startMessage.js')
 ];
 
 /**
  * Массив модулей разрешённых к подключению.
- * Если пустой - подключаются в естественном порядке. В ином случае, подключаются лишь указанные модули.
+ * Если пустой - подключаются в естественном порядке. В ином случае,
+ * подключаются лишь указанные модули.
  *
  * Пример: "help"
  * @type {string[]}
@@ -32,7 +33,9 @@ module.exports = async () => {
 
 	console.log('Start init.js');
 
-	for(const module of init) await module();
+	for (const module of init) {
+		await module();
+	}
 
 	console.timeEnd('Client initialized in');
 	log.start('== Bot ready ==');

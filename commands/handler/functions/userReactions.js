@@ -13,7 +13,7 @@ module.exports = {
 		'572472723624951839': false // #ивенты
 	},
 
-	init: async function(){
+	init: async function () {
 		return this;
 	},
 
@@ -22,17 +22,17 @@ module.exports = {
 		local: /<:[^:]+:([0-9]+)>/i
 	},
 
-	call: async function(msg){
-			const emojis = msg.content.match(this.regex.global);
-			if(!emojis) return;
+	call: async function (msg) {
+		const emojis = msg.content.match(this.regex.global);
+		if (!emojis) return;
 
-		try{
+		try {
 			emojis.forEach(emoji => {
 				emoji = emoji.match(this.regex.local)[1];
 				emoji = msg.guild.emojis.cache.get(emoji);
-				if(emoji) msg.react(emoji);
+				if (emoji) msg.react(emoji);
 			});
-		}catch(e){}
+		} catch (e) {}
 	}
 
-}
+};

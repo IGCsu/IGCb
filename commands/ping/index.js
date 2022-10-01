@@ -1,28 +1,35 @@
+const SlashOptions = require('../../BaseClasses/SlashOptions');
+const BaseCommand = require('../../BaseClasses/BaseCommand');
+const LangSingle = require('../../BaseClasses/LangSingle');
+const { GuildMember, GuildBan, User, MessageEmbed } = require('discord.js');
+
 const { title, description } = require('./about.json');
 
-module.exports = {
+class Ping extends BaseCommand {
 
-	active : true,
-	category : 'Информация',
+	constructor (path) {
+		super(path);
 
-	name : 'ping',
-	title : title,
-	description : description,
+		this.category = 'Информация';
 
+		this.name = 'ping';
+		this.title = new LangSingle(title);
+		this.description = new LangSingle(description);
 
-	init : function(){ return this; },
+		this.embed = new Discord.MessageEmbed().setDescription('Вычисление... ');
 
-
-	embed : new Discord.MessageEmbed().setDescription('вычисление... '),
-
+		return new Promise(async resolve => {
+			resolve(this);
+		});
+	}
 
 	/**
 	 * Обработка команды
 	 * Вычисляет пинг и время жизни бота и отправляет
 	 * @param {CommandInteraction} int Команда пользователя
-	 * @param {Message}            m   Сообщение бота
+	 * @param {Message} m Сообщение бота
 	 */
-	call : async function(int, m){
+	async call (int, m) {
 		const ping = (m.createdTimestamp - int.createdTimestamp) / 2;
 		const lang = int.locale.split('-')[0];
 
@@ -36,18 +43,21 @@ module.exports = {
 
 		const embed = new Discord.MessageEmbed()
 			.setTitle('Pong!')
-			.setDescription(`\`${ping}ms\` Uptime: ${uptime.join(':')}\n ${this.description[lang] ?? this.description.ru}`);
+			.setDescription(
+				`\`${ping}ms\` Uptime: ${uptime.join(':')}\n ${this.description}`
+			);
 
-		await m.edit({ embeds : [embed] });
-	},
+		await m.edit({ embeds: [embed] });
+	}
 
 	/**
 	 * Обработка слеш-команды
 	 * @param {CommandInteraction} int Команда пользователя
 	 */
-	slash : async function(int){
-		const m = await int.reply({ embeds : [this.embed], fetchReply: true });
+	async slash (int) {
+		const m = await int.reply({ embeds: [this.embed], fetchReply: true });
 		await this.call(int, m);
-	},
+	}
+}
 
-};
+module.exports = Ping;
