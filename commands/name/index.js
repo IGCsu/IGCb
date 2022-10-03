@@ -101,8 +101,8 @@ class Name extends BaseCommand {
 	 * @param {ModalSubmitInteraction} int Команда пользователя
 	 */
 	async modal (int) {
-		const name = int.fields.getTextInputValue('nick')
-			? int.fields.getTextInputValue('nick') !== ''
+		const name = int.fields.getTextInputValue('nick') !== ''
+			? int.fields.getTextInputValue('nick')
 			: int.member.user.username
 		let response = await this.call(name, int);
 
