@@ -28,6 +28,11 @@
 	"You are not connected to a voice channel and did not specify a channel" : "Ви не підключені до голосового каналу і не вказали канал",
 	"Failed to generate suggestions": "Не вдалося згенерувати підказки",
 	"Mentions were suppressed because too little time had passed since last mentions": "Згадки були придушені, тому що з моменту попередніх пройшло занадто мало часу",
-	"An empty query is given": "Введено порожній запит"
+	"An empty query is given": "Введено порожній запит",
+	"Nickname changing": "Зміна нікнейму",
+	"Nickname": "Нікнейм",
+	"Enter any nickname you want": "Введіть будь-який бажаний нікнейм",
+	"Nickname changed": "Нікнейм змінено",
+	"Nickname changing failed": "Зміна нікнейму не вдалося"
 	
 }	 

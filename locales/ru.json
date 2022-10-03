@@ -29,5 +29,10 @@
 	"Failed to generate suggestions": "Не удалось сгенерировать подсказки",
 	"Mentions were suppressed because too little time had passed since last mentions": "Упоминания были подавлены, т.к. с момента предыдущих прошло слишком мало времени",
 	"Missing access": "Отказанно в доступе",
-	"An empty query is given": "Введён пустой запрос"
+	"An empty query is given": "Введён пустой запрос",
+	"Nickname changing": "Изменение никнейма",
+	"Nickname": "Никнейм",
+	"Enter any nickname you want": "Введите любой желаемый никнейм",
+	"Nickname changed": "Никнейм изменён",
+	"Nickname changing failed": "Изменение никнейма не удалось"
 }	 

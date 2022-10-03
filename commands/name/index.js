@@ -1,10 +1,8 @@
-const SlashOptions = require('../../BaseClasses/SlashOptions');
 const BaseCommand = require('../../BaseClasses/BaseCommand');
 const LangSingle = require('../../BaseClasses/LangSingle');
-const { CommandInteraction, GuildMember } = require('discord.js');
+const { CommandInteraction, GuildMember, ModalSubmitInteraction } = require('discord.js');
 
 const translit = require('transliteration');
-const slashOptions = require('./slashOptions');
 const { title } = require('./about.json');
 const transliterateOptions = require('./transliterateOptions.json');
 
@@ -18,7 +16,6 @@ class Name extends BaseCommand {
 		this.category = 'Инструменты';
 		this.name = 'name';
 		this.title = this.description = new LangSingle(title);
-		this.slashOptions = slashOptions;
 
 		return new Promise(async resolve => {
 			client.on('guildMemberAdd', async member => this.silent(member));
@@ -40,11 +37,12 @@ class Name extends BaseCommand {
 	 * Обработка
 	 *
 	 * @param {string} nickname Указанный никнейм
-	 * @param {GuildMember} member Объект пользователя
+	 * @param {ModalSubmitInteraction} int Объект пользователя
 	 * @return {Promise<Object>}
 	 */
-	async call (nickname, member) {
+	async call (nickname, int) {
 		const fixed = this.fix(nickname, true);
+		const member = int.member;
 
 		if (fixed.status === 'error') {
 			return { error: reaction.emoji.error + ' ' + fixed.text };
@@ -56,7 +54,7 @@ class Name extends BaseCommand {
 				fixed.name, 'По требованию ' + member.toName(true)
 			);
 			let response = {
-				success: reaction.emoji.success + ' Никнейм изменён `' + old +
+				success: reaction.emoji.success + ' ' + int.str('Nickname changed') + ' `' + old +
 					'` => `' + fixed.name + '`'
 			};
 			if (fixed.text.length) {
@@ -64,7 +62,8 @@ class Name extends BaseCommand {
 			}
 			return response;
 		} catch (e) {
-			return { error: reaction.emoji.error + ' Упс... Ошибка' };
+			console.log(e)
+			return { error: reaction.emoji.error + ' ' + int.str('Nickname changing failed') };
 		}
 	}
 
@@ -74,7 +73,38 @@ class Name extends BaseCommand {
 	 * @param {CommandInteraction} int Команда пользователя
 	 */
 	async slash (int) {
-		let response = await this.call(int.options.get('nick').value, int.member);
+		await int.showModal({ title: int.str('Nickname changing'),
+			customId: `name|${int.user.id}`,
+			components: [
+				{
+					type: 1,
+					components: [
+						{
+							type: 4,
+							customId: 'nick',
+							required: false,
+							label: int.str('Nickname'),
+							style: 1,
+							maxLength: 30,
+							minLength: 3,
+							placeholder: int.str('Enter any nickname you want'),
+							value: int.member.nickname
+						}
+					]
+				}
+			]
+		})
+	}
+
+	/**
+	 * Обработка слеш-команды
+	 * @param {ModalSubmitInteraction} int Команда пользователя
+	 */
+	async modal (int) {
+		const name = int.fields.getTextInputValue('nick')
+			? int.fields.getTextInputValue('nick') !== ''
+			: int.member.user.username
+		let response = await this.call(name, int);
 
 		if (response.error) {
 			return int.reply({ content: response.error, ephemeral: true });
@@ -89,7 +119,6 @@ class Name extends BaseCommand {
 			});
 		}
 	}
-
 
 	/**
 	 * Тихое обновление
