@@ -1,6 +1,6 @@
 module.exports = {
 
-	active: true,
+	active: false,
 
 	title: {
 		ru: 'Исправление нерабочей ссылки',
