@@ -15,7 +15,7 @@ module.exports = {
 	},
 
 	init: async function () {
-		this.alive =  await guild.roles.fetch('648762974277992448')
+		this.alive = await guild.roles.fetch('648762974277992448')
 		return this;
 	},
 
