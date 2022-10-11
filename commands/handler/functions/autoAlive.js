@@ -11,23 +11,22 @@ module.exports = {
 	allChannels: false,
 
 	allowedChannels: {
-		'648775464545943602': false, // #welcome
+		'648775464545943602': false // #welcome
 	},
 
 	init: async function () {
-		this.alive = await guild.roles.fetch('648762974277992448')
+		this.role = await guild.roles.fetch('648762974277992448');
 		return this;
 	},
 
-	match: '<@&920737134942490625>',
-
 	call: async function (msg) {
-		if (msg.content.indexOf(this.match) !== -1 && !msg.member.roles.cache.has(this.alive)) {
-			msg.member.roles.add(this.alive, 'Частичный снос буфера')
-				.then(msg.reply({ content: reaction.emoji.success + ' Доступ к сообществу выдан' }))
-				.catch((e) => {
-					msg.reply({ content: reaction.emoji.error + ' Произошла ошибка при выдачи доступа к сообществу' })
+		if (!msg.member.user.bot && !msg.member.roles.cache.has(this.role.id)) {
+			toggleRole(this.role, msg.member, msg.member).then(result => {
+				msg.reply({
+					content: reaction.emoji.success + ' ' + result,
+					allowedMentions: constants.AM_NONE
 				});
+			});
 		}
 	}
 
