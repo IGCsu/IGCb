@@ -22,7 +22,7 @@ module.exports = {
 	match: '<@&920737134942490625>',
 
 	call: async function (msg) {
-		if (msg.content.indexOf(this.match) && !msg.member.roles.cache.has(this.alive)) {
+		if (msg.content.indexOf(this.match) !== -1 && !msg.member.roles.cache.has(this.alive)) {
 			msg.member.roles.add(this.alive, 'Частичный снос буфера')
 				.then(msg.reply({ content: reaction.emoji.success + ' Доступ к сообществу выдан' }))
 				.catch((e) => {
