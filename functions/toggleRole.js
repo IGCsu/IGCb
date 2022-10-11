@@ -3,7 +3,7 @@
  *
  * @param {Role} role Роль
  * @param {GuildMember|Number} member Объект или ID пользователя
- * @param {GuildMember} author Объект автора вызова функции
+ * @param {GuildMember} [author=member] Объект автора вызова функции
  * @return {Promise} Сообщение результата или ошибки
  */
 global.toggleRole = (role, member, author) => {
@@ -13,6 +13,8 @@ global.toggleRole = (role, member, author) => {
 		}
 
 		if (!member) return reject('Пользователь не найден');
+
+		if (!author) author = member;
 
 		const action = member.roles.cache.has(role.id)
 			? { val: 'remove', text: 'убрана у' }
