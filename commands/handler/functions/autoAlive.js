@@ -21,7 +21,7 @@ module.exports = {
 
 	call: async function (msg) {
 		if (!msg.member.user.bot && !msg.member.roles.cache.has(this.role.id)) {
-			toggleRole(this.role, msg.member, msg.member).then(result => {
+			toggleRole(this.role, msg.member).then(result => {
 				msg.reply({
 					content: reaction.emoji.success + ' ' + result,
 					allowedMentions: constants.AM_NONE
