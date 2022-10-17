@@ -1,6 +1,7 @@
 const SlashOptions = require('../../BaseClasses/SlashOptions');
 const BaseCommand = require('../../BaseClasses/BaseCommand');
 const LangSingle = require('../../BaseClasses/LangSingle');
+const { Message, MessageReaction} = require('discord.js');
 
 const { title } = require('./about.json');
 
@@ -13,9 +14,9 @@ class Starboard extends BaseCommand {
 		this.name = 'starboard';
 		this.title = this.description = new LangSingle(title);
 
-		this.starboardChannel = guild.channels.cache.get('938171284553101456');
+		this.starboardChannel = guild.channels.cache.get('634466120119877653');
 		this.starboardEmoji = '⭐';
-		this.defaultEmojiCount = 7;
+		this.defaultEmojiCount = 1;
 
 		if (!this.starboardChannel) {
 			log.initText += log.error(path + ': Starboard канал не найден');
@@ -54,72 +55,72 @@ class Starboard extends BaseCommand {
 		});
 	}
 
+	/**
+	 *
+	 * @param {MessageReaction} reaction
+	 * @param {Message} message
+	 * @return {Promise<void>}
+	 */
 	async call (reaction, message) {
 		if (message.channel.nsfw) return;
 		if (message.channel === this.starboardChannel) return;
 		if (reaction.count < this.defaultEmojiCount) return;
-
 		const users = await message.reactions.cache.get(
 			this.starboardEmoji
 		).users.fetch();
-
+		if (users.get(message.author.id) && reaction.count === 1)
+			await message.channel.send({
+					content: '<@' + message.author.id + '> Поздровляю. Ачивка "Самоотсос" получена!',
+					files: ['https://cdn.discordapp.com/attachments/874248759041753098/1031679544085717022/unknown.png']
+				})
+		if (reaction.count < this.defaultEmojiCount) return;
 		if (users.get(client.user.id)) return;
 
-		let replyMessage;
-
 		if (message.reference?.messageId) {
-			replyMessage = await message.channel.messages
-				.fetch(message.reference.messageId);
-			replyMessage = await this.createMessage(replyMessage);
+			let reference = await message.channel.messages.fetch(message.reference.messageId);
+			await this.createMessage(reference, true);
 		}
 
-		await this.createMessage(replyMessage, true, replyMessage);
+		await this.createMessage(message);
 
 		await message.react(this.starboardEmoji);
 	}
 
 	/**
 	 * Создаёт сообщение из под вебхука на основе другого
-	 * @param {Message} original
-	 * @param {Boolean} [button=false]
-	 * @param {Message} [reply]
+	 * @param {Message} message
+	 * @param {Boolean} [reference]
 	 * @return {Promise<Message>}
 	 */
-	async createMessage (original, button, reply) {
+	async createMessage (message, reference) {
 		let atts = [];
-		original.attachments.forEach(att => atts.push(att.proxyURL));
+		message.attachments.forEach(att => atts.push(att.proxyURL));
 
 		const payload = {
-			avatarURL: original.member?.avatarURL() ?? original.author.avatarURL(),
-			username: original.member?.displayName ?? original.author.username,
+			avatarURL: message.member?.avatarURL() ?? message.author.avatarURL(),
+			username: message.member?.displayName ?? message.author.username,
 			allowedMentions: constants.AM_NONE
 		};
 
-		if (original.content) payload.content = original.content;
-		if (original.attachments) payload.files = atts;
-		if (original.embeds) payload.embeds = original.embeds;
+		if (message.content) payload.content = message.content;
+		if (message.attachments) payload.files = atts;
+		if (message.embeds) payload.embeds = message.embeds;
 
-		// Как неожиданно выяснилось, вебхук не может сделать ответ. Грустно.
-		// if (reply) {
-		// 	payload.reply = {
-		// 		messageReference: reply,
-		// 		failIfNotExists: false
-		// 	};
-		// }
-
-		if (button) {
+		if (!reference) {
 			payload.components = [
 				{
 					type: 1, components: [
 						{
 							type: 2,
 							style: 5,
-							url: original.url,
-							label: 'Перейти к оригиналу'
+							url: message.url,
+							label: 'Оригинал в #' + message.channel.name
 						}
 					]
 				}
 			];
+		} else {
+			if (payload.content) payload.content = '>>> ' + payload.content.replace('> ', '').replace('>>> ', '')
 		}
 
 		return await this.webhook.send(payload);
