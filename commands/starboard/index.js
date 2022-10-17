@@ -65,33 +65,66 @@ class Starboard extends BaseCommand {
 
 		if (users.get(client.user.id)) return;
 
+		let replyMessage;
+
+		if (message.reference?.messageId) {
+			replyMessage = await message.channel.messages
+				.fetch(message.reference.messageId);
+			replyMessage = await this.createMessage(replyMessage);
+		}
+
+		await this.createMessage(replyMessage, true, replyMessage);
+
+		await message.react(this.starboardEmoji);
+	}
+
+	/**
+	 * Создаёт сообщение из под вебхука на основе другого
+	 * @param {Message} original
+	 * @param {Boolean} [button=false]
+	 * @param {Message} [reply]
+	 * @return {Promise<Message>}
+	 */
+	async createMessage (original, button, reply) {
 		let atts = [];
-		message.attachments.forEach(att => atts.push(att.proxyURL));
+		original.attachments.forEach(att => atts.push(att.proxyURL));
 
 		const payload = {
-			avatarURL: message.member?.avatarURL() ?? message.author.avatarURL(),
-			username: message.member?.displayName ?? message.author.username,
-			allowedMentions: constants.AM_NONE,
-			components: [
+			avatarURL: original.member?.avatarURL() ?? original.author.avatarURL(),
+			username: original.member?.displayName ?? original.author.username,
+			allowedMentions: constants.AM_NONE
+		};
+
+		if (original.content) payload.content = original.content;
+		if (original.attachments) payload.files = atts;
+		if (original.embeds) payload.embeds = original.embeds;
+
+		// Как неожиданно выяснилось, вебхук не может сделать ответ. Грустно.
+		// if (reply) {
+		// 	payload.reply = {
+		// 		messageReference: reply,
+		// 		failIfNotExists: false
+		// 	};
+		// }
+
+		if (button) {
+			payload.components = [
 				{
 					type: 1, components: [
 						{
 							type: 2,
 							style: 5,
-							url: message.url,
+							url: original.url,
 							label: 'Перейти к оригиналу'
 						}
 					]
 				}
-			]
-		};
-		if (message.content) payload.content = message.content;
-		if (message.attachments) payload.files = atts;
-		if (message.embeds) payload.embeds = message.embeds;
+			];
+		}
 
-		await message.react(this.starboardEmoji);
-		await this.webhook.send(payload);
+		return await this.webhook.send(payload);
 	}
+
 }
 
 module.exports = Starboard;
