@@ -29,23 +29,26 @@ class Starboard extends BaseCommand {
 					webhook.name === this.name
 					&& webhook.owner.id === client.user.id
 				)
-			).first()
+			).first();
 
 			if (!this.webhook) {
 				this.webhook = await this.starboardChannel.createWebhook(this.name, {
 					reason: 'Из за отсутсвия в канале необходимого вебхука'
-				})
+				});
 			}
 
-			client.on('raw', async (data) => {
+			client.on('raw', async data => {
 				if (data.t !== 'MESSAGE_REACTION_ADD') return;
-				const reaction = data.d;
-				if (reaction.emoji.name !== this.starboardEmoji) return;
+				if (data.d.emoji.name !== this.starboardEmoji) return;
+
 				const message = await ((await (client.channels.fetch(
 					data.d.channel_id
 				))).messages.fetch(data.d.message_id));
+
 				await this.call(
-					message.reactions.cache.get(reaction.emoji.name), message);
+					message.reactions.cache.get(data.d.emoji.name),
+					message
+				);
 			});
 			resolve(this);
 		});
@@ -55,37 +58,39 @@ class Starboard extends BaseCommand {
 		if (message.channel.nsfw) return;
 		if (message.channel === this.starboardChannel) return;
 		if (reaction.count < this.defaultEmojiCount) return;
+
 		const users = await message.reactions.cache.get(
 			this.starboardEmoji
 		).users.fetch();
+
 		if (users.get(client.user.id)) return;
 
-		const atts = []
-		message.attachments.forEach (att => { atts.push( att.proxyURL ) });
+		let atts = [];
+		message.attachments.forEach(att => atts.push(att.proxyURL));
 
 		const payload = {
 			avatarURL: message.member?.avatarURL() ?? message.author.avatarURL(),
 			username: message.member?.displayName ?? message.author.username,
 			allowedMentions: constants.AM_NONE,
-			components: [{ type: 1, components: [
+			components: [
 				{
-					type:2,
-					style: 5,
-					url: message.url,
-					label: 'Перейти к оригиналу'
+					type: 1, components: [
+						{
+							type: 2,
+							style: 5,
+							url: message.url,
+							label: 'Перейти к оригиналу'
+						}
+					]
 				}
-				]}]
+			]
 		};
-		if(message.content)
-			payload['content'] = message.content;
-		if(message.attachments)
-			payload['files'] = atts;
-		if(message.embeds)
-			payload['embeds'] = message.embeds;
+		if (message.content) payload.content = message.content;
+		if (message.attachments) payload.files = atts;
+		if (message.embeds) payload.embeds = message.embeds;
 
 		await message.react(this.starboardEmoji);
 		await this.webhook.send(payload);
-
 	}
 }
 
