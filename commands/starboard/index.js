@@ -14,9 +14,9 @@ class Starboard extends BaseCommand {
 		this.name = 'starboard';
 		this.title = this.description = new LangSingle(title);
 
-		this.starboardChannel = guild.channels.cache.get('634466120119877653');
+		this.starboardChannel = guild.channels.cache.get('938171284553101456');
 		this.starboardEmoji = '⭐';
-		this.defaultEmojiCount = 1;
+		this.defaultEmojiCount = 7;
 
 		if (!this.starboardChannel) {
 			log.initText += log.error(path + ': Starboard канал не найден');
