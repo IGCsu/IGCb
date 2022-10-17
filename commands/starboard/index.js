@@ -23,6 +23,20 @@ class Starboard extends BaseCommand {
 		}
 
 		return new Promise(async resolve => {
+
+			this.webhook = (await this.starboardChannel.fetchWebhooks()).filter(
+				webhook => (
+					webhook.name === this.name
+					&& webhook.owner.id === client.user.id
+				)
+			).first()
+
+			if (!this.webhook) {
+				this.webhook = await this.starboardChannel.createWebhook(this.name, {
+					reason: 'Из за отсутсвия в канале необходимого вебхука'
+				})
+			}
+
 			client.on('raw', async (data) => {
 				if (data.t !== 'MESSAGE_REACTION_ADD') return;
 				const reaction = data.d;
@@ -45,63 +59,32 @@ class Starboard extends BaseCommand {
 			this.starboardEmoji
 		).users.fetch();
 		if (users.get(client.user.id)) return;
-		const embed = new Discord.MessageEmbed()
-			.setAuthor({
-				name: message.member?.displayName ?? message.author.username,
-				iconURL: message.member?.avatarURL() ?? message.author.avatarURL()
-			})
-			.setDescription(message.content)
-			.setColor(16755763)
-			.setURL(message.url)
-			.addField('Оригинал', `[#${message.channel.name}](${message.url})`)
-			.setTimestamp();
 
-		if (message.reference?.messageId) {
-			const replyMessage = (await message.channel.messages.fetch(
-				message.reference?.messageId
-			));
-			embed.addField(
-				'В ответ на:',
-				`<@${replyMessage.author.id}>: ` + replyMessage.content
-			);
-		}
+		const atts = []
+		message.attachments.forEach (att => { atts.push( att.proxyURL ) });
 
-		let embeds = [];
-		if (message.attachments.size) {
-			embed.setImage(message.attachments.at(0).url)
-				.setURL('https://google.com/');
-			for (let i = 1; (i < 4) && (i < message.attachments.size); i++) {
-				embeds.push(new Discord.MessageEmbed().setImage(
-					message.attachments.at(i).url).setURL('https://google.com/'));
-			}
-		} else {
-			const img = message.content
-				.match(/https?:\/\/((media)|(cdn))\.discordapp\.((net)|(com))\/\S+/igm);
-			if (img) {
-				embed.setImage(img[0]).setURL('https://google.com/');
-				if (
-					!img[0].endsWith('mp4') &&
-					!img[0].endsWith('mov') &&
-					!img[0].endsWith('webp')
-				) {
-					embed.setDescription(message.content.replace(img[0], ''));
+		const payload = {
+			avatarURL: message.member?.avatarURL() ?? message.author.avatarURL(),
+			username: message.member?.displayName ?? message.author.username,
+			allowedMentions: constants.AM_NONE,
+			components: [{ type: 1, components: [
+				{
+					type:2,
+					style: 5,
+					url: message.url,
+					label: 'Перейти к оригиналу'
 				}
-				for (let i = 1; i < 4 && i < img.length; i++) {
-					embeds.push(new Discord.MessageEmbed().setImage(img[i])
-						.setURL('https://google.com/'));
-					if (!(img[i].endsWith('mp4') || img[i].endsWith('mov') ||
-						img[i].endsWith('webp'))) {
-						embed.setDescription(
-							embed.description.replace(img[i], '')
-						);
-					}
-				}
+				]}]
+		};
+		if(message.content)
+			payload['content'] = message.content;
+		if(message.attachments)
+			payload['files'] = atts;
+		if(message.embeds)
+			payload['embeds'] = message.embeds;
 
-			}
-		}
-		embeds.unshift(embed);
-		await this.starboardChannel.send({ embeds: embeds });
 		await message.react(this.starboardEmoji);
+		await this.webhook.send(payload);
 
 	}
 }
