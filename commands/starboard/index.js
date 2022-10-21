@@ -1,7 +1,7 @@
 const SlashOptions = require('../../BaseClasses/SlashOptions');
 const BaseCommand = require('../../BaseClasses/BaseCommand');
 const LangSingle = require('../../BaseClasses/LangSingle');
-const { Message, MessageReaction} = require('discord.js');
+const { Message, MessageReaction } = require('discord.js');
 
 const { title } = require('./about.json');
 
@@ -65,19 +65,16 @@ class Starboard extends BaseCommand {
 		if (message.channel.nsfw) return;
 		if (message.channel === this.starboardChannel) return;
 		if (reaction.count < this.defaultEmojiCount) return;
+
 		const users = await message.reactions.cache.get(
 			this.starboardEmoji
 		).users.fetch();
-		if (users.get(message.author.id) && reaction.count === 1)
-			await message.channel.send({
-					content: '<@' + message.author.id + '> Поздровляю. Ачивка "Самоотсос" получена!',
-					files: ['https://cdn.discordapp.com/attachments/874248759041753098/1031679544085717022/unknown.png']
-				})
-		if (reaction.count < this.defaultEmojiCount) return;
+
 		if (users.get(client.user.id)) return;
 
 		if (message.reference?.messageId) {
-			let reference = await message.channel.messages.fetch(message.reference.messageId);
+			let reference = await message.channel.messages
+				.fetch(message.reference.messageId);
 			await this.createMessage(reference, true);
 		}
 
@@ -119,8 +116,8 @@ class Starboard extends BaseCommand {
 					]
 				}
 			];
-		} else {
-			if (payload.content) payload.content = '>>> ' + payload.content.replace('> ', '').replace('>>> ', '')
+		} else if (payload.content) {
+			payload.content = '>>> ' + payload.content;
 		}
 
 		return await this.webhook.send(payload);
