@@ -1,6 +1,7 @@
 const SlashOptions = require('../../BaseClasses/SlashOptions');
 const BaseCommand = require('../../BaseClasses/BaseCommand');
 const LangSingle = require('../../BaseClasses/LangSingle');
+const { Message, MessageReaction } = require('discord.js');
 
 const { title } = require('./about.json');
 
@@ -54,6 +55,12 @@ class Starboard extends BaseCommand {
 		});
 	}
 
+	/**
+	 *
+	 * @param {MessageReaction} reaction
+	 * @param {Message} message
+	 * @return {Promise<void>}
+	 */
 	async call (reaction, message) {
 		if (message.channel.nsfw) return;
 		if (message.channel === this.starboardChannel) return;
@@ -65,33 +72,57 @@ class Starboard extends BaseCommand {
 
 		if (users.get(client.user.id)) return;
 
+		if (message.reference?.messageId) {
+			let reference = await message.channel.messages
+				.fetch(message.reference.messageId);
+			await this.createMessage(reference, true);
+		}
+
+		await this.createMessage(message);
+
+		await message.react(this.starboardEmoji);
+	}
+
+	/**
+	 * Создаёт сообщение из под вебхука на основе другого
+	 * @param {Message} message
+	 * @param {Boolean} [reference]
+	 * @return {Promise<Message>}
+	 */
+	async createMessage (message, reference) {
 		let atts = [];
 		message.attachments.forEach(att => atts.push(att.proxyURL));
 
 		const payload = {
 			avatarURL: message.member?.avatarURL() ?? message.author.avatarURL(),
 			username: message.member?.displayName ?? message.author.username,
-			allowedMentions: constants.AM_NONE,
-			components: [
+			allowedMentions: constants.AM_NONE
+		};
+
+		if (message.content) payload.content = message.content;
+		if (message.attachments) payload.files = atts;
+		if (message.embeds) payload.embeds = message.embeds;
+
+		if (!reference) {
+			payload.components = [
 				{
 					type: 1, components: [
 						{
 							type: 2,
 							style: 5,
 							url: message.url,
-							label: 'Перейти к оригиналу'
+							label: 'Оригинал в #' + message.channel.name
 						}
 					]
 				}
-			]
-		};
-		if (message.content) payload.content = message.content;
-		if (message.attachments) payload.files = atts;
-		if (message.embeds) payload.embeds = message.embeds;
+			];
+		} else if (payload.content) {
+			payload.content = '>>> ' + payload.content;
+		}
 
-		await message.react(this.starboardEmoji);
-		await this.webhook.send(payload);
+		return await this.webhook.send(payload);
 	}
+
 }
 
 module.exports = Starboard;
