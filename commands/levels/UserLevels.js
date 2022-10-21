@@ -244,17 +244,31 @@ class UserLevels {
 	};
 
 	/**
+	 * Возвращает опыт без учёта штрафа
+	 * @return {Number}
+	 */
+	getExpFull () {
+		if (this.#advancedData.expFull) return this.#advancedData.expFull;
+
+		const messagesLegit = this.getMessagesLegit();
+		const symbolsAvg = this.getSymbolsAvg();
+
+		const expFull = Math.round(messagesLegit * symbolsAvg);
+
+		return this.#advancedData.expFull = isNaN(expFull) ? 0 : expFull;
+	};
+
+	/**
 	 * Возвращает опыт
 	 * @return {Number}
 	 */
 	getExp () {
 		if (this.#advancedData.exp) return this.#advancedData.exp;
 
-		const messagesLegit = this.getMessagesLegit();
-		const symbolsAvg = this.getSymbolsAvg();
+		const expFull = this.getExpFull();
 		const activityPer = this.getActivityPer();
 
-		const exp = Math.round(messagesLegit * symbolsAvg / 100 * activityPer);
+		const exp = Math.round(expFull / 100 * activityPer);
 
 		return this.#advancedData.exp = isNaN(exp) ? 0 : exp;
 	};
@@ -266,10 +280,10 @@ class UserLevels {
 	getExpFine () {
 		if (this.#advancedData.expFine) return this.#advancedData.expFine;
 
-		const activityPer = this.getActivityPer();
+		const expFull = this.getExpFull();
 		const exp = this.getExp();
 
-		const expFine = Math.round(100 / activityPer * exp - exp);
+		const expFine = expFull - exp;
 
 		return this.#advancedData.expFine = isNaN(expFine) ? 0 : expFine;
 	};
