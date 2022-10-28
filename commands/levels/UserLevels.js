@@ -353,17 +353,20 @@ class UserLevels {
 		this.#embed = new Discord.MessageEmbed();
 
 		this.#embed.setTitle('Статистика пользователя');
-		this.#embed.setThumbnail(this.member.user.avatarURL({ dynamic: true }));
-		this.#embed.setDescription(this.member.toString());
+		//this.#embed.setThumbnail(this.member.user.avatarURL({ dynamic: true }));
+		//this.#embed.setDescription(this.member.toString());
 
 		this.addMessages();
-		this.addSymbols();
 		this.addOverpost();
+		this.addSymbols();
 		this.addActivity();
-		this.addExp();
-		this.addNextRole();
+		//this.addExp();
+		//this.addNextRole();
 
 		this.setColor();
+
+		this.addImage();
+		this.addFooter();
 
 		return this.#embed;
 	};
@@ -375,10 +378,18 @@ class UserLevels {
 		const messagesAll = this.getMessagesAll().toLocaleString();
 		const messagesLegit = this.getMessagesLegit().toLocaleString();
 
-		this.#embed.addField(
-			'Cообщения:',
-			messagesAll + ' (Из них учитываются: ' + messagesLegit + ')'
-		);
+		this.#embed.addFields([
+			{
+				name: 'Cообщения:',
+				value: messagesAll,
+				inline: true
+			},
+			{
+				name: 'Из них учитываются:',
+				value: messagesLegit,
+				inline: true
+			},
+		]);
 	};
 
 	/**
@@ -388,10 +399,18 @@ class UserLevels {
 		const symbols = this.getSymbols().toLocaleString();
 		const symbolsAvg = this.getSymbolsAvg().toLocaleString();
 
-		this.#embed.addField(
-			'Cимволы:',
-			symbols + ' (AVG ' + symbolsAvg + ')'
-		);
+		this.#embed.addFields([
+			{
+				name: 'Cимволы:',
+				value: symbols,
+				inline: true
+			},
+			{
+				name: 'AVG:',
+				value: symbolsAvg,
+				inline: true
+			},
+		]);
 	};
 
 	/**
@@ -400,7 +419,7 @@ class UserLevels {
 	addOverpost () {
 		const overpost = this.getOverpost();
 
-		this.#embed.addField('Оверпост:', overpost + '%');
+		this.#embed.addField('Оверпост:', overpost + '%', true);
 	};
 
 	/**
@@ -410,11 +429,12 @@ class UserLevels {
 		const activity = this.getActivity();
 		const activityPer = this.getActivityPer();
 
-		if (activityPer === 100) return;
+		//if (activityPer === 100) return;
 
 		this.#embed.addField(
-			'Активность за последние 30 дней:',
-			activityPer + '% (' + activity + '/' + '30)'
+			'Активность*:',
+			activityPer + '% (' + activity + '/' + '30)',
+			true
 		);
 	};
 
@@ -455,6 +475,14 @@ class UserLevels {
 		const role = this.getRole();
 
 		this.#embed.setColor(role.cache.color);
+	};
+
+	addImage () {
+		this.#embed.setImage('attachment://user_card.png')
+	};
+
+	addFooter () {
+		this.#embed.setFooter('*Астивность за последние 30 дней')
 	};
 
 }

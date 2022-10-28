@@ -12,6 +12,7 @@ const slashOptions = require('./slashOptions');
 const { title, description } = require('./about.json');
 const noXPChannels = require('./noXPChannels.json');
 const UserLevels = require('./UserLevels');
+const UserLevelCard = require('./UserLevelCard');
 
 class Levels extends BaseCommand {
 
@@ -64,8 +65,7 @@ class Levels extends BaseCommand {
 	/**
 	 * Обработка команды
 	 * Выдаёт статистику по пользовтаелю и ссылку на страницу
-	 * @param  {CommandInteraction|UserContextMenuInteraction} int Команда
-	 *   пользователя
+	 * @param  {CommandInteraction|UserContextMenuInteraction} int Команда пользователя
 	 * @param {GuildMember} member Объект пользователя
 	 * @return {InteractionReplyOptions|Object}
 	 */
@@ -75,12 +75,11 @@ class Levels extends BaseCommand {
 
 		if (!user.finded) return { error: 'Unknown User' };
 
-		const embed = user.getEmbed();
-
 		const status = !commands.handler && !commands.handler.siteStatus;
 
 		return {
-			embeds: [embed],
+			embeds: [user.getEmbed()],
+			files: [await (new UserLevelCard(user)).generate()],
 			components: [
 				{
 					type: 1, components: [
