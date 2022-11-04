@@ -9,7 +9,7 @@ module.exports = new SlashOptions({
 		description: new LangSingle({
 			ru: 'Группа подкоманд для получения информации о варнах',
 			en: 'Subcommand group for getting info about warns',
-			uk: 'TODO'
+			uk: 'Група підкоманд для отримання інформації про Варни'
 		}),
 		slashOptions: new SlashOptions({
 			direct: new SlashOption({
@@ -17,15 +17,15 @@ module.exports = new SlashOptions({
 				description: new LangSingle({
 					ru: 'Получения информации о варнах через ID',
 					en: 'Getting information about warns via ID',
-					uk: 'TODO'
+					uk: 'Отримання інформації про Варни через ID'
 				}),
 				slashOptions: new SlashOptions({
 					id: new SlashOption({
 						type: 4,
 						description: new LangSingle({
-							ru: 'ID необходимомого варна',
+							ru: 'ID необходимого варна',
 							en: 'Warn ID',
-							uk: 'TODO'
+							uk: 'ID необхідного варна'
 						}),
 						required: true
 					})
@@ -36,7 +36,7 @@ module.exports = new SlashOptions({
 				description: new LangSingle({
 					ru: 'Получения информации о последнем варне',
 					en: 'Getting information about last warn',
-					uk: 'TODO'
+					uk: 'Отримання інформації про останній Варні'
 				}),
 				slashOptions: new SlashOptions({
 					user: new SlashOption({
@@ -44,7 +44,7 @@ module.exports = new SlashOptions({
 						description: new LangSingle({
 							ru: 'Пользователь последний варн которого требуется (Общий последний варн если оставить пустым)',
 							en: 'User whose last warn is required (General last warn if empty)',
-							uk: 'TODO'
+							uk: 'Користувач останній варн якого потрібно (загальний останній варн якщо залишити порожнім)'
 						}),
 						required: false
 					})
@@ -55,7 +55,7 @@ module.exports = new SlashOptions({
 				description: new LangSingle({
 					ru: 'Листаемый список всех варнов пользователя',
 					en: 'A scrollable list of all warps of the user',
-					uk: 'TODO'
+					uk: 'Лістаемий список всіх варнов користувача'
 				}),
 				slashOptions: new SlashOptions({
 					user: new SlashOption({
@@ -63,7 +63,7 @@ module.exports = new SlashOptions({
 						description: new LangSingle({
 							ru: 'Пользователь список варнов которого требуется',
 							en: 'A user whose list of warns is required',
-							uk: 'TODO'
+							uk: 'Користувач список варнов якого потрібно'
 						}),
 						required: true
 					}),
@@ -72,7 +72,7 @@ module.exports = new SlashOptions({
 						description: new LangSingle({
 							ru: 'Скрыть сообщение для остальных?',
 							en: 'Hide the message for others?',
-							uk: 'TODO'
+							uk: 'Приховати повідомлення для інших?'
 						}),
 						required: false
 					})
@@ -83,7 +83,7 @@ module.exports = new SlashOptions({
 				description: new LangSingle({
 					ru: 'Поиск варнов',
 					en: 'Warns search',
-					uk: 'TODO'
+					uk: 'Пошук варнов'
 				}),
 				slashOptions: new SlashOptions({
 					string: new SlashOption({
@@ -91,7 +91,7 @@ module.exports = new SlashOptions({
 						description: new LangSingle({
 							ru: 'Любая информация которая может быть связана с варном (Никнеймы не поддерживаются. Используйте ID)',
 							en: 'Any information that can be associated with a warn (Nicknames are not supported. Use IDs instead)',
-							uk: 'TODO'
+							uk: 'Будь-яка інформація яка може бути пов\'язана з варном (нікнейми не підтримуються. Використовуйте ID)'
 						}),
 						required: true,
 						autocomplete: true
@@ -105,7 +105,7 @@ module.exports = new SlashOptions({
 		description: new LangSingle({
 			ru: 'Подкоманда для добавления нового варна',
 			en: 'Subcommand for adding a new warn',
-			uk: 'TODO'
+			uk: 'Підкоманда для додавання нового варна'
 		}),
 		slashOptions: new SlashOptions({
 			user: new SlashOption({
@@ -113,7 +113,7 @@ module.exports = new SlashOptions({
 				description: new LangSingle({
 					ru: 'Пользователь которому требуется выдать варн',
 					en: 'A user who needs to be given a warn',
-					uk: 'TODO'
+					uk: 'Користувач якому потрібно видати варн'
 				}),
 				required: true
 			})
@@ -125,7 +125,7 @@ module.exports = new SlashOptions({
 		description: new LangSingle({
 			ru: 'Группа подкоманд для удаления варнов',
 			en: 'Subcommand group for removing warns',
-			uk: 'TODO'
+			uk: 'Група підкоманд для видалення варнів'
 		}),
 		slashOptions: new SlashOptions({
 			direct: new SlashOption({
@@ -133,7 +133,7 @@ module.exports = new SlashOptions({
 				description: new LangSingle({
 					ru: 'Удаление варна через ID',
 					en: 'Removing warn via ID',
-					uk: 'TODO'
+					uk: 'Видалення варна через ID'
 				}),
 				slashOptions: new SlashOptions({
 					id: new SlashOption({
@@ -141,7 +141,7 @@ module.exports = new SlashOptions({
 						description: new LangSingle({
 							ru: 'ID необходимомого варна',
 							en: 'Warn ID',
-							uk: 'TODO'
+							uk: 'ID необхідного варна'
 						}),
 						required: true
 					})
@@ -152,7 +152,7 @@ module.exports = new SlashOptions({
 				description: new LangSingle({
 					ru: 'Удаление последнего варна',
 					en: 'Removes last warn',
-					uk: 'TODO'
+					uk: 'Видалення останнього варна'
 				}),
 				slashOptions: new SlashOptions({
 					user: new SlashOption({
@@ -160,7 +160,7 @@ module.exports = new SlashOptions({
 						description: new LangSingle({
 							ru: 'Пользователь последний варн которого требуется (Общий последний варн если оставить пустым)',
 							en: 'User whose last warn is required (General last warn if empty)',
-							uk: 'TODO'
+							uk: 'Користувач останній варн якого потрібно (загальний останній варн якщо залишити порожнім)'
 						}),
 						required: false
 					})
