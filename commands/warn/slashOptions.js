@@ -8,7 +8,7 @@ module.exports = new SlashOptions({
 		type: 2,
 		description: new LangSingle({
 			ru: 'Группа подкоманд для получения информации о варнах',
-			en: 'TODO',
+			en: 'Subcommand group for getting info about warns',
 			uk: 'TODO'
 		}),
 		slashOptions: new SlashOptions({
