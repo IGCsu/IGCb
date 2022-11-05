@@ -99,8 +99,10 @@ class Handler extends BaseCommand {
 		const thread = msg.channel.isThread();
 		const channel = thread ? msg.channel.parentId : msg.channel.id;
 		const category = thread
-			? msg.channel.parent.parentId
-			: msg.channel.parentId;
+			? msg.channel.parent?.parentId
+			: msg.channel?.parentId;
+
+		if(!channel || !category) return;
 
 		let functions = new Set();
 
