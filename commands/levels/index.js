@@ -154,8 +154,10 @@ class Levels extends BaseCommand {
 	async message (msg) {
 		if (msg.author.bot) return;
 		const channel = msg.channel.isThread() ? msg.channel.parent : msg.channel;
-		if (this.noXPChannels.includes(channel.parentId)) return;
-		if (this.noXPChannels.includes(channel.id)) return;
+		if (channel) {
+			if (this.noXPChannels.includes(channel.parentId)) return;
+			if (this.noXPChannels.includes(channel.id)) return;
+		}
 
 		let user = new UserLevels(msg.member, this.roles, this.rolesIDs, true);
 
