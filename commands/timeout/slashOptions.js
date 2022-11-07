@@ -19,7 +19,7 @@ module.exports = new SlashOptions({
 		required: true,
 		description: new LangSingle({
 			ru: 'Продолжительность таймаута. Формат времени: (1d6h30m5s)',
-			en: 'Timeout duartion. Time format: (1d6h30m5s)',
+			en: 'Timeout duration. Time format: (1d6h30m5s)',
 			uk: 'Тривалість таймауту. Формат часу: (1d6h30m5s)'
 		})
 	}),

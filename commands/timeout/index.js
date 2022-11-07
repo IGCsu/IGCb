@@ -134,16 +134,20 @@ class Timeout extends BaseCommand {
 	 */
 	async autocomplete (int) {
 		const rawReason = int.options.getFocused();
+
 		let choices = [
 			{
 				name: int.str('An empty query is given'),
 				value: 'EMPTY_QUERY'
 			}
 		];
+
 		if (rawReason) {
 			choices = [{ name: rawReason, value: rawReason }];
+		} else {
+			return await int.respond(choices);
 		}
-		console.log(this.rulesCache);
+
 		if (Object.keys(this.rulesCache).length === 0) {
 			choices.push({
 				name: int.str('Failed to generate suggestions'),
