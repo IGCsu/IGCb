@@ -25,7 +25,7 @@ Error.prototype.handler = async function (module, shutdown) {
 		? '<@' + process.env.DEVELOPER + '> '
 		: '<@&920407448697860106> ';
 
-	await channel.send({ content: /* mention + */ text + '```' + this.stack + '```' });
+	await channel.send({ content: mention + text + '```' + this.stack + '```' });
 
 	lastError = this.stack;
 
