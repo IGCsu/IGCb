@@ -248,10 +248,10 @@ module.exports = {
 <a name="env"><h2>.env</h2></a>
 ```dotenv
 # Конфигурация для подключения к MySQL базе данных
-CLEARDB_DATABASE=<database>
-CLEARDB_PASSWORD=<password>
-CLEARDB_HOST=<host>
-CLEARDB_USER=<user>
+DB_DATABASE=<database>
+DB_PASSWORD=<password>
+DB_HOST=<host>
+DB_USER=<user>
 
 # ID разработчика. Отображается в стартовом сообщении и пингуется в случае ошибки
 DEVELOPER=<UserID>
