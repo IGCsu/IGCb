@@ -37,6 +37,9 @@ class Levels extends BaseCommand {
 		super(path);
 
 		this.category = 'Информация';
+		
+		// TODO: Модулю пизда: отвалилась БД
+		this.active = false;
 
 		this.name = 'levels';
 		this.title = new LangSingle(title);
