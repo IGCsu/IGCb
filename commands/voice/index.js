@@ -100,8 +100,7 @@ class Voice extends BaseCommand {
 	async slash (int) {
 		if (int.options.getSubcommand() === 'auto-sync') {
 			await int.deferReply({ ephemeral: true });
-			// TODO: Что тут сука за говно-код? Никогда не раскоментируем
-// 			DB.query(`UPDATE users SET mode = "${int.options.getString('mode')}" WHERE id = ${int.user.id};`)[0];
+			DB.query(`UPDATE users SET mode = "${int.options.getString('mode')}" WHERE id = ${int.user.id};`)[0];
 			await int.editReply({
 				content: reaction.emoji.success + ' ' + int.str('Settings changed'),
 				ephemeral: true
@@ -281,24 +280,23 @@ class Voice extends BaseCommand {
 	 * @param {VoiceState} voice
 	 */
 	async upload (voice) {
-// 		let voice_data = JSON.stringify({
-// 			name: voice.channel.name,
-// 			bitrate: voice.channel.bitrate,
-// 			userLimit: voice.channel.userLimit
-// 		});
-		// TODO: Отвратительнейший запрос
-// 		if (DB.query(
-// 			`SELECT * FROM users WHERE id = ${voice.member.user.id};`)[0]) {
-// 			DB.query(
-// 				`UPDATE users SET voice_data = ? WHERE id = ${voice.member.user.id};`,
-// 				[voice_data]
-// 			)[0];
-// 		} else {
-// 			DB.query(
-// 				`INSERT INTO users VALUES (?, ?, ?, ?);`,
-// 				[voice.member.user.id, 0, voice.channelId, voice_data]
-// 			)[0];
-// 		}
+		let voice_data = JSON.stringify({
+			name: voice.channel.name,
+			bitrate: voice.channel.bitrate,
+			userLimit: voice.channel.userLimit
+		});
+		if (DB.query(
+			`SELECT * FROM users WHERE id = ${voice.member.user.id};`)[0]) {
+			DB.query(
+				`UPDATE users SET voice_data = ? WHERE id = ${voice.member.user.id};`,
+				[voice_data]
+			)[0];
+		} else {
+			DB.query(
+				`INSERT INTO users VALUES (?, ?, ?, ?);`,
+				[voice.member.user.id, 0, voice.channelId, voice_data]
+			)[0];
+		}
 	}
 
 	/**
@@ -306,11 +304,10 @@ class Voice extends BaseCommand {
 	 * @param {VoiceState} voice
 	 */
 	async sync (voice) {
-// 		let voiceConfiguration = JSON.parse((
-// 			DB.query(`SELECT * FROM users WHERE id = ${voice.member.user.id};`)[0]
-// 		).voice_data);
-// 		if (!voiceConfiguration) 
-			return 'There is no data entry in the database associated with you. Use `/upload` to fix it.';
+		let voiceConfiguration = JSON.parse((
+			DB.query(`SELECT * FROM users WHERE id = ${voice.member.user.id};`)[0]
+		).voice_data);
+		if (!voiceConfiguration) return 'There is no data entry in the database associated with you. Use `/upload` to fix it.';
 
 		if (voiceConfiguration.bitrate >
 			voice.guild.maximumBitrate) {
