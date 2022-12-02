@@ -196,26 +196,27 @@ class Warn {
 	 */
 	save () {
 
-		if (this.#id) {
-			DB.query(
-				'UPDATE warns SET reason = ?, flags = ? WHERE id = ?',
-				[this.reason, this.flagsRaw, this.#id]
-			);
-		} else {
-			DB.query(
-				'INSERT INTO warns (type, target, reason, author, reference, date, flags) VALUES (?, ?, ?, ?, ?, ?, ?)',
-				[
-					this.#type,
-					this.#targetId,
-					this.reason,
-					this.#authorId,
-					null,
-					this.#date,
-					this.flagsRaw
-				]
-			);
-			this.#id = DB.query('SELECT MAX(id) as max FROM warns')[0].max;
-		}
+		// TODO: Не, не сохраняет модель в базу. Базы нет
+// 		if (this.#id) {
+// 			DB.query(
+// 				'UPDATE warns SET reason = ?, flags = ? WHERE id = ?',
+// 				[this.reason, this.flagsRaw, this.#id]
+// 			);
+// 		} else {
+// 			DB.query(
+// 				'INSERT INTO warns (type, target, reason, author, reference, date, flags) VALUES (?, ?, ?, ?, ?, ?, ?)',
+// 				[
+// 					this.#type,
+// 					this.#targetId,
+// 					this.reason,
+// 					this.#authorId,
+// 					null,
+// 					this.#date,
+// 					this.flagsRaw
+// 				]
+// 			);
+// 			this.#id = DB.query('SELECT MAX(id) as max FROM warns')[0].max;
+// 		}
 
 		return this;
 	}
@@ -260,8 +261,9 @@ class Warn {
 	 * @return {Warn}
 	 */
 	static get (id) {
-		const data = DB.query('SELECT * FROM warns WHERE id = ?', [id]);
-		if (!data[0]) return undefined;
+// 		const data = DB.query('SELECT * FROM warns WHERE id = ?', [id]);
+// 		if (!data[0]) return undefined;
+		return undefined;
 
 		return new this(data[0]);
 	}
@@ -273,11 +275,12 @@ class Warn {
 	 * @return {Warn}
 	 */
 	static last (target) {
-		const query = target
-			? `SELECT * FROM warns WHERE id = (SELECT MAX(id) FROM warns WHERE target = ${target})`
-			: `SELECT * FROM warns WHERE id = (SELECT MAX(id) FROM warns)`;
-		const data = DB.query(query);
-		if (!data[0]) return undefined;
+// 		const query = target
+// 			? `SELECT * FROM warns WHERE id = (SELECT MAX(id) FROM warns WHERE target = ${target})`
+// 			: `SELECT * FROM warns WHERE id = (SELECT MAX(id) FROM warns)`;
+// 		const data = DB.query(query);
+// 		if (!data[0]) return undefined;
+		return undefined;
 
 		return new this(data[0]);
 	}
@@ -289,10 +292,11 @@ class Warn {
 	 * @return {Warn[]}
 	 */
 	static all (target) {
-		const query = target
-			? `SELECT * FROM warns WHERE NOT flags & 4 AND target = ${target}`
-			: `SELECT * FROM warns WHERE NOT flags & 4`;
-		const data = DB.query(query);
+// 		const query = target
+// 			? `SELECT * FROM warns WHERE NOT flags & 4 AND target = ${target}`
+// 			: `SELECT * FROM warns WHERE NOT flags & 4`;
+// 		const data = DB.query(query);
+		return [];
 
 		let warns = [];
 		for (let i = data.length; i >= 0; i--) {
