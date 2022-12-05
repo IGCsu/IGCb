@@ -465,7 +465,7 @@ class UserLevels {
 		let text = nextRole === true ? '🎉'
 			: nextRole.cache.toString() + ' ' + nextRoleProgress + '%';
 
-		this.#embed.addField('Прогресс:', role.cache.toString() + ' -> ' + text);
+		this.#embed.addFields([{ name: 'Прогресс:', value: role.cache.toString() + ' -> ' + text }]);
 	};
 
 	/**
@@ -482,7 +482,7 @@ class UserLevels {
 	};
 
 	addFooter () {
-		this.#embed.setFooter('*Астивность за последние 30 дней')
+		this.#embed.setFooter('*Активность за последние 30 дней')
 	};
 
 }
