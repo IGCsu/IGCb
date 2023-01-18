@@ -15,7 +15,7 @@ module.exports = async () => {
 		try {
 			await commands[name][int.indexFunc](int);
 		} catch (e) {
-			e.handler(name, true);
+			e.handler(name, true, int);
 		}
 	});
 	console.timeEnd('Event interactionCreate');

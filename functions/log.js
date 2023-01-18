@@ -126,6 +126,30 @@ global.log = {
 };
 
 /**
+ * @param {array} options
+ * @return {string}
+ */
+const prepareOptions = options => {
+	let text = '';
+
+	for (const option of options) {
+		text += option.name;
+
+		if (option.value) {
+			text += ':' + f.fg.Cyan + '"' + option.value + '"' + f.Reset;
+		}
+
+		text += ' ';
+
+		if (option.options) {
+			text += prepareOptions(option.options);
+		}
+	}
+
+	return text;
+};
+
+/**
  * Инициализирует логгер для интерации
  * Создаёт функцию log для экземпляра Interaction
  *
@@ -141,11 +165,11 @@ global.initLog = (int, name) => {
 	if (int.isContextMenu()) prefix += '#';
 
 	/**
-	 * Логгирует текст
+	 * Логгирует данные
 	 * @example int.log('string', data);
 	 *
 	 * @param {string} str
-	 * @param {any}      [data]
+	 * @param {any} [data]
 	 */
 	int.log = (str, data) => {
 		let json = data ? '\n' + JSON.stringify(data) : '';
@@ -157,13 +181,27 @@ global.initLog = (int, name) => {
 		);
 	};
 
+	/**
+	 * Логгирует ошибку
+	 * @example int.log('string', data);
+	 *
+	 * @param {string} str
+	 * @param {any} [data]
+	 */
+	int.error = (str, data) => {
+		let json = data ? '\n' + JSON.stringify(data) : '';
+
+		return logText(
+			f.fg.Red + getCurrentTimestamp() + f.Reset + ' ' +
+			int.member.user.id + f.fg.Red + prefix + name +
+			' \n' + str + json + f.Reset
+		);
+	};
+
 	let args = '';
 
-	if (int?.options?.data) {
-		for (const option of int.options.data) {
-			args += option.name + ':' + f.fg.Cyan + '"' + option.value + '" ' +
-				f.Reset;
-		}
+	if (int.options) {
+		args += prepareOptions(int.options.data);
 	}
 
 	int.log(args);
