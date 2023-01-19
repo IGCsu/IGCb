@@ -50,7 +50,10 @@ const f = {
 
 };
 
-const getCurrentTimeString = () => new Date().toTimeString().replace(/ .*/, '');
+const getCurrentTimestamp = () => new Date()
+	.toISOString()
+	.replace(/\..*/, '')
+	.replace('T', ' ');
 
 /**
  * Отправка текста в консоль и возвращение текста с новой строки
@@ -115,9 +118,91 @@ global.log = {
 			: action === 'delete' ? f.fg.Red : f.fg.Cyan;
 
 		return logText(
-			f.fg.Cyan + getCurrentTimeString() + f.Reset + ' ' + user +
+			f.fg.Cyan + getCurrentTimestamp() + f.Reset + ' ' + user +
 			actionColor + ' ' + action + f.Reset + ' ' + target
 		);
 	}
 
+};
+
+/**
+ * @param {array} options
+ * @return {string}
+ */
+const prepareOptions = options => {
+	let text = '';
+
+	for (const option of options) {
+		text += option.name;
+
+		if (option.value) {
+			text += ':' + f.fg.Cyan + '"' + option.value + '"' + f.Reset;
+		}
+
+		text += ' ';
+
+		if (option.options) {
+			text += prepareOptions(option.options);
+		}
+	}
+
+	return text;
+};
+
+/**
+ * Инициализирует логгер для интерации
+ * Создаёт функцию log для экземпляра Interaction
+ *
+ * @example int.log('string', data);
+ * @param {Object} int
+ * @param {string} name Название команды
+ */
+global.initLog = (int, name) => {
+
+	let prefix = ' ' + int.indexFunc + ' ';
+
+	if (int.isCommand()) prefix += '/';
+	if (int.isContextMenu()) prefix += '#';
+
+	/**
+	 * Логгирует данные
+	 * @example int.log('string', data);
+	 *
+	 * @param {string} str
+	 * @param {any} [data]
+	 */
+	int.log = (str, data) => {
+		let json = data ? '\n' + JSON.stringify(data) : '';
+
+		return logText(
+			f.fg.Cyan + getCurrentTimestamp() + f.Reset + ' ' +
+			int.member.user.id + f.fg.Cyan + prefix + name +
+			f.Reset + ' ' + str + json
+		);
+	};
+
+	/**
+	 * Логгирует ошибку
+	 * @example int.log('string', data);
+	 *
+	 * @param {string} str
+	 * @param {any} [data]
+	 */
+	int.error = (str, data) => {
+		let json = data ? '\n' + JSON.stringify(data) : '';
+
+		return logText(
+			f.fg.Red + getCurrentTimestamp() + f.Reset + ' ' +
+			int.member.user.id + f.fg.Red + prefix + name +
+			' \n' + str + json + f.Reset
+		);
+	};
+
+	let args = '';
+
+	if (int.options) {
+		args += prepareOptions(int.options.data);
+	}
+
+	int.log(args);
 };
