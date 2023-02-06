@@ -66,6 +66,7 @@ class Roles extends BaseCommand {
 	 * @param {CommandInteraction} int
 	 */
 	async slash (int) {
+		console.time('1')
 		const member = int.member;
 		const permission = this.permission(member);
 
@@ -79,7 +80,8 @@ class Roles extends BaseCommand {
 		if (members) {
 			members = members.replace(/[^-_\w]/g, ' ').match(/[0-9]+/g);
 		}
-
+		console.timeEnd('1')
+		console.time('2')
 		if (!role) {
 			if (permission && create) {
 				role = (await this.create(
@@ -99,8 +101,8 @@ class Roles extends BaseCommand {
 				});
 			}
 		}
-
-
+		console.timeEnd('2')
+		console.time('3')
 		if (!members || !permission) {
 			toggleRole(role, member, int.member).then(result => {
 				int.reply({
@@ -115,10 +117,10 @@ class Roles extends BaseCommand {
 			});
 		} else {
 			if (!int.replied) {
-				await int.reply({
+				int.reply({
 					content: 'Запускаю выдачу ролей',
 					allowedMentions: constants.AM_NONE
-				});
+				}).catch(e => {console.log(e)});
 			}
 
 			members.forEach(user => {
@@ -136,6 +138,7 @@ class Roles extends BaseCommand {
 				});
 			});
 		}
+		console.timeEnd('3')
 	}
 
 	/**

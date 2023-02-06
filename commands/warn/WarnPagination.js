@@ -56,12 +56,12 @@ class WarnPagination {
 		const skip = this.pageCount * (this.pageNumber - 1);
 
 		const query = target
-			? `FROM warns WHERE target = ${this.target.id} AND NOT flags & 4`
+			? `FROM warns WHERE target = ? AND NOT flags & 4`
 			: `FROM warns WHERE NOT flags & 4`;
-		this.count = DB.query('SELECT COUNT(*) AS count ' + query)[0].count;
+		this.count = DB.query('SELECT COUNT(*) AS count ' + query, target ? [this.target.id] : undefined)[0].count;
 		const data = DB.query(
 			'SELECT * ' + query + ' ORDER BY id DESC LIMIT ?, ?',
-			[skip, this.pageCount]
+			target ? [this.target.id, skip, this.pageCount] : [skip, this.pageCount]
 		);
 
 		for (const row of data) {

@@ -100,7 +100,7 @@ class Voice extends BaseCommand {
 	async slash (int) {
 		if (int.options.getSubcommand() === 'auto-sync') {
 			await int.deferReply({ ephemeral: true });
-			DB.query(`UPDATE users SET mode = "${int.options.getString('mode')}" WHERE id = ${int.user.id};`)[0];
+			DB.query(`UPDATE users SET mode = ? WHERE id = ?;`, [int.options.getString('mode'), int.user.id])[0];
 			await int.editReply({
 				content: reaction.emoji.success + ' ' + int.str('Settings changed'),
 				ephemeral: true
@@ -193,7 +193,7 @@ class Voice extends BaseCommand {
 	async create (data) {
 		let preset;
 		try {
-			preset = DB.query(`SELECT * FROM users WHERE id = '${data.member.id}';`)[0];
+			preset = DB.query(`SELECT * FROM users WHERE id = ?;`, [data.member.id])[0];
 		} catch (e) {
 			console.log('DB error occurred:\n' + e);
 		}
@@ -286,10 +286,10 @@ class Voice extends BaseCommand {
 			userLimit: voice.channel.userLimit
 		});
 		if (DB.query(
-			`SELECT * FROM users WHERE id = ${voice.member.user.id};`)[0]) {
+			`SELECT * FROM users WHERE id = ?;`, [voice.member.user.id])[0]) {
 			DB.query(
-				`UPDATE users SET voice_data = ? WHERE id = ${voice.member.user.id};`,
-				[voice_data]
+				`UPDATE users SET voice_data = ? WHERE id = ?;`,
+				[voice_data, voice.member.user.id]
 			)[0];
 		} else {
 			DB.query(
@@ -305,7 +305,7 @@ class Voice extends BaseCommand {
 	 */
 	async sync (voice) {
 		let voiceConfiguration = JSON.parse((
-			DB.query(`SELECT * FROM users WHERE id = ${voice.member.user.id};`)[0]
+			DB.query(`SELECT * FROM users WHERE id = ?;`, [voice.member.user.id])[0]
 		).voice_data);
 		if (!voiceConfiguration) return 'There is no data entry in the database associated with you. Use `/upload` to fix it.';
 
