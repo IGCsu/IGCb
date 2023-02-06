@@ -25,7 +25,7 @@ const init = [
  * Пример: "help"
  * @type {string[]}
  */
-global.debugAllowModules = ['levels', 'handler'];
+global.debugAllowModules = [];
 
 module.exports = async () => {
 
