@@ -17,7 +17,7 @@ module.exports = {
 	},
 
 	init: async function () {
-		this.role = await guild.roles.fetch(this.ROLE_ID);
+		this.role = await guild.roles.fetch(ROLE_ID);
 		return this;
 	},
 
