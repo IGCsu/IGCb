@@ -1,7 +1,7 @@
-const MONITORING_BOT_ID = '464272403766444044';
-const COOLDOWN_UP = 4*3600*1000;
 module.exports = {
-
+	ROLE_ID: '1107382381700206672',
+	MONITORING_BOT_ID: '464272403766444044',
+	COOLDOWN_UP: 4*3600*1000,
 	active: true,
 
 	title: {
@@ -17,7 +17,7 @@ module.exports = {
 	},
 
 	init: async function () {
-		this.role = await guild.roles.fetch('1107382381700206672');
+		this.role = await guild.roles.fetch(this.ROLE_ID);
 		return this;
 	},
 
@@ -32,11 +32,11 @@ module.exports = {
 			embed = msgUpdated.embeds[0];
 
 			if(embed) break;
-		}
+		};
 
 		if(!embed || !embed.description.includes('Успешный Up!')) return;
 
-		await sleep(COOLDOWN_UP)
-		await msg.channel.send(this.role.toString())
+		await sleep(COOLDOWN_UP);
+		await msg.channel.send(this.role.toString());
 	}
 };
