@@ -10,7 +10,7 @@ module.exports = {
 		uk: 'Автоматичне згадування людей, що готові просувати сервер'
 	},
 
-	allChannels: true,
+	allChannels: false,
 
 	allowedChannels: {
 		'610371610620198922': false // #рандом
