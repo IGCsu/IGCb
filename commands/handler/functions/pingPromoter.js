@@ -1,7 +1,9 @@
 module.exports = {
+	
 	ROLE_ID: '1107382381700206672',
 	MONITORING_BOT_ID: '464272403766444044',
 	COOLDOWN_UP: 4*3600*1000,
+
 	active: true,
 
 	title: {
