@@ -19,12 +19,12 @@ module.exports = {
 	},
 
 	init: async function () {
-		this.role = await guild.roles.fetch(ROLE_ID);
+		this.role = await guild.roles.fetch(this.ROLE_ID);
 		return this;
 	},
 
 	call: async function (msg) {
-		if(msg.member.user.id !== MONITORING_BOT_ID) return;
+		if(msg.member.user.id !== this.MONITORING_BOT_ID) return;
 
 		let embed;
 		for(let i = 0; i < 3; i++){
@@ -38,7 +38,7 @@ module.exports = {
 
 		if(!embed || !embed.description.includes('Успешный Up!')) return;
 
-		await sleep(COOLDOWN_UP);
+		await sleep(this.COOLDOWN_UP);
 		await msg.channel.send(this.role.toString());
 	}
 };
