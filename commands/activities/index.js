@@ -44,7 +44,9 @@ class Activities extends BaseCommand {
 		this.slashOptions = slashOptions;
 
 		return new Promise(async resolve => {
-			await this.updateActivities();
+			// Ждем ответа тысячу лет. Оффаем модуль, ибо активити уже давно переехали в интерфейс дискорда
+			// await this.updateActivities();
+			this.active = false;
 
 			resolve(this);
 		});

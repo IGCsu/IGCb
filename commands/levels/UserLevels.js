@@ -194,7 +194,9 @@ class UserLevels {
 	 * @return {Number}
 	 */
 	getActivity () {
-		return this.#primitiveData.activity;
+		return 30;
+		// @TODO: Сломался подсчет активности у юзеров. Пока костыль, чтобы левелинг работал
+		// return this.#primitiveData.activity;
 	};
 
 

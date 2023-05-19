@@ -10,10 +10,12 @@ module.exports = async () => {
 
 		if (!int.indexFunc || !commands[name][int.indexFunc]) return;
 
+		initLog(int, name);
+
 		try {
 			await commands[name][int.indexFunc](int);
 		} catch (e) {
-			e.handler(name, true);
+			e.handler(name, true, int);
 		}
 	});
 	console.timeEnd('Event interactionCreate');
