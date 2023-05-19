@@ -3,6 +3,7 @@ const BaseCommand = require('../../BaseClasses/BaseCommand');
 const LangSingle = require('../../BaseClasses/LangSingle');
 const { CommandInteraction } = require('discord.js');
 const { title, description } = require('./about.json');
+const LinkToVideo = 'https://cdn.discordapp.com/attachments/840321892136255528/1042826882174955550/outputcompress-video-online.com.mp4';
 
 class Knight extends BaseCommand {
 
@@ -21,7 +22,7 @@ class Knight extends BaseCommand {
 	}
 
 	async call (int) {
-		await int.reply({ content: 'https://cdn.discordapp.com/attachments/840321892136255528/1042826882174955550/outputcompress-video-online.com.mp4' });
+		await int.reply({ content: LinkToVideo });
 	}
 
 	/**
