@@ -176,7 +176,7 @@ global.initLog = (int, name) => {
 
 		return logText(
 			f.fg.Cyan + getCurrentTimestamp() + f.Reset + ' ' +
-			int.member.user.id + f.fg.Cyan + prefix + name +
+			(int.id ?? int.member.user.id) + f.fg.Cyan + prefix + name +
 			f.Reset + ' ' + str + json
 		);
 	};
@@ -193,7 +193,7 @@ global.initLog = (int, name) => {
 
 		return logText(
 			f.fg.Red + getCurrentTimestamp() + f.Reset + ' ' +
-			int.member.user.id + f.fg.Red + prefix + name +
+			(int.id ?? int.member.user.id) + f.fg.Red + prefix + name +
 			' \n' + str + json + f.Reset
 		);
 	};
