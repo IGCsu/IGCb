@@ -29,9 +29,11 @@ module.exports = {
 		console.log('Бот обнаружил сообщение от мониторинга');
 
 		let embed;
+
+		console.log('Бот начал процедуру проверки соообщения');
 		for(let i = 0; i < 3; i++){
 
-			console.log('Бот начал процедуру проверки соообщения с ID');
+			console.log('Проверка номер', i)
 
 			await sleep(1000);
 
@@ -44,13 +46,14 @@ module.exports = {
 				break;
 			};
 
+			
 		};
 
 		if(!embed || !embed.description.includes('Успешный Up!')){
 			console.log('Эмбид из данного сообщения не является условием запуска таймера');
 			
 			return;
-		} 
+		};
 
 		console.log('Таймер запущен');
 
