@@ -154,15 +154,15 @@ const prepareOptions = options => {
  * Создаёт функцию log для экземпляра Interaction
  *
  * @example int.log('string', data);
- * @param {Object} int
+ * @param {Object} int or msg
  * @param {string} name Название команды
  */
 global.initLog = (int, name) => {
 
 	let prefix = ' ' + int.indexFunc + ' ';
 
-	if (int.isCommand()) prefix += '/';
-	if (int.isContextMenu()) prefix += '#';
+	if (int.isCommand && int.isCommand()) prefix += '/';
+	if (int.isContextMenu && int.isContextMenu()) prefix += '#';
 
 	/**
 	 * Логгирует данные

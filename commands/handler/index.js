@@ -62,6 +62,8 @@ class Handler extends BaseCommand {
 				if (msg.channel.type === 'DM') return;
 				if (msg.channel.guild.id !== guild.id) return;
 
+				msg.indexFunc = 'handler';
+
 				await this.call(msg);
 			});
 
@@ -168,6 +170,7 @@ class Handler extends BaseCommand {
 		for (let name of functions) {
 
 			try {
+				initLog(msg, name);
 				await this.functions[name].call(msg);
 			} catch (e) {
 				const active = e.handler('handler/func/' + name, false);
