@@ -19,26 +19,44 @@ module.exports = {
 	},
 
 	init: async function () {
-		this.role = await guild.roles.fetch(ROLE_ID);
+		this.role = await guild.roles.fetch(this.ROLE_ID);
 		return this;
 	},
 
 	call: async function (msg) {
-		if(msg.member.user.id !== MONITORING_BOT_ID) return;
+		
+		if(msg.member.user.id !== this.MONITORING_BOT_ID) return;
+		console.log('Бот обнаружил сообщение от мониторинга');
 
 		let embed;
 		for(let i = 0; i < 3; i++){
+
+			console.log('Бот начал процедуру проверки соообщения с ID');
+
 			await sleep(1000);
 
 			const msgUpdated = await msg.channel.messages.fetch(msg.id);
 			embed = msgUpdated.embeds[0];
 
-			if(embed) break;
+			if(embed) {
+				console.log('Бот нашел эмбид. (ID сообщения = ' + msg.id + ')');
+				
+				break;
+			};
+
 		};
 
-		if(!embed || !embed.description.includes('Успешный Up!')) return;
+		if(!embed || !embed.description.includes('Успешный Up!')){
+			console.log('Эмбид из данного сообщения не является условием запуска таймера');
+			
+			return;
+		} 
 
-		await sleep(COOLDOWN_UP);
+		console.log('Таймер запущен');
+
+		await sleep(this.COOLDOWN_UP);
+		console.log('Таймер прошел');
+
 		await msg.channel.send(this.role.toString());
 	}
 };
