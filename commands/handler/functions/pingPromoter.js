@@ -26,14 +26,13 @@ module.exports = {
 	call: async function (msg) {
 		
 		if(msg.member.user.id !== this.MONITORING_BOT_ID) return;
-		console.log('Бот обнаружил сообщение от мониторинга');
+		msg.log('Start pingPromoter');
 
 		let embed;
 
-		console.log('Бот начал процедуру проверки соообщения');
 		for(let i = 0; i < 3; i++){
 
-			console.log('Проверка номер', i)
+			msg.log('Fetch updated message. Try ' + i)
 
 			await sleep(1000);
 
@@ -41,7 +40,7 @@ module.exports = {
 			embed = msgUpdated.embeds[0];
 
 			if(embed) {
-				console.log('Бот нашел эмбид. (ID сообщения = ' + msg.id + ')');
+				msg.log('Embed found.');
 				
 				break;
 			};
@@ -50,15 +49,15 @@ module.exports = {
 		};
 
 		if(!embed || !embed.description.includes('Успешный Up!')){
-			console.log('Эмбид из данного сообщения не является условием запуска таймера');
+			msg.log('Embed is invalid.');
 			
 			return;
 		};
 
-		console.log('Таймер запущен');
+		msg.log('CD started.');
 
 		await sleep(this.COOLDOWN_UP);
-		console.log('Таймер прошел');
+		msg.log('CD finished.');
 
 		await msg.channel.send(this.role.toString());
 	}
