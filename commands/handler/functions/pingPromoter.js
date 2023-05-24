@@ -25,6 +25,7 @@ module.exports = {
 
 	call: async function (msg) {
 			
+			
 		if(msg.member.user.id !== this.MONITORING_BOT_ID) return;
 		msg.log('Start pingPromoter');
 
@@ -32,7 +33,7 @@ module.exports = {
 
 		for(let i = 0; i < 3; i++){
 
-			msg.log('Fetch updated message. Try ' + i)
+			msg.log('Fetch updated message. Try ' + i + '.')
 
 			await sleep(1000);
 
@@ -41,17 +42,23 @@ module.exports = {
 
 			if(embed) {
 				msg.log('Embed found.');
-				
 				break;
 			};
 
-			
 		};
 
-		if(!embed || !embed.description.includes('Успешный Up!') || embed === null){
-			msg.log('Embed is invalid.', embed.description);
-			
+		if(!embed.description || !embed.description.includes('Успешный Up!')){
+
+			msg.log('Embed is invalid.');
+
+			if(embed.description === null) {
+				msg.log('Description of this embed is empty.');
+				return;
+			};
+
+			msg.log('Description of this embed: ' + embed.description + '.');
 			return;
+			
 		};
 
 		msg.log('CD started.');
@@ -60,5 +67,6 @@ module.exports = {
 		msg.log('CD finished.');
 
 		await msg.channel.send(this.role.toString());
+
 	}
 };
