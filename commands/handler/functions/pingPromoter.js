@@ -24,21 +24,42 @@ module.exports = {
 	},
 
 	call: async function (msg) {
+		
 		if(msg.member.user.id !== this.MONITORING_BOT_ID) return;
+		initLog(msg, 'pingPromoter');
 
 		let embed;
-		for(let i = 0; i < 3; i++){
+
+		for(let i = 0; i < 3; i++) {
+
+			msg.log('Fetch updated message. Try ' + i)
+
 			await sleep(1000);
 
 			const msgUpdated = await msg.channel.messages.fetch(msg.id);
 			embed = msgUpdated.embeds[0];
 
-			if(embed) break;
+			if(embed) {
+				msg.log('Embed found');
+				break;
+			};
+
 		};
 
-		if(!embed || !embed.description.includes('Успешный Up!')) return;
+		if(!embed?.description?.includes('Успешный Up!')) {
+
+			msg.log('Embed is invalid. Description: ' + embed.description);
+			return;
+			
+		};
+
+		msg.log('CD started');
 
 		await sleep(this.COOLDOWN_UP);
+		msg.log('CD finished');
+
 		await msg.channel.send(this.role.toString());
+
 	}
+
 };
