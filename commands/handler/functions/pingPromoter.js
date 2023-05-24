@@ -1,8 +1,8 @@
 module.exports = {
 	
-	ROLE_ID: '1107382381700206672',
+	ROLE_ID: '776934711783587841',
 	MONITORING_BOT_ID: '464272403766444044',
-	COOLDOWN_UP: 4*3600*1000,
+	COOLDOWN_UP: 4*1000,
 
 	active: true,
 
@@ -15,7 +15,7 @@ module.exports = {
 	allChannels: false,
 
 	allowedChannels: {
-		'610371610620198922': false // #рандом
+		'949790593251414027': false // #рандом
 	},
 
 	init: async function () {
@@ -24,7 +24,7 @@ module.exports = {
 	},
 
 	call: async function (msg) {
-		
+			
 		if(msg.member.user.id !== this.MONITORING_BOT_ID) return;
 		msg.log('Start pingPromoter');
 
@@ -48,7 +48,9 @@ module.exports = {
 			
 		};
 
-		if(!embed || !embed.description.includes('Успешный Up!')){
+		msg.log(embed.description)
+
+		if(!embed.des || !embed.description.includes('Успешный Up!') || embed === null){
 			msg.log('Embed is invalid.');
 			
 			return;
