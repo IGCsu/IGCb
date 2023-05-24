@@ -49,7 +49,7 @@ module.exports = {
 		};
 
 		if(!embed || !embed.description.includes('Успешный Up!') || embed === null){
-			msg.log('Embed is invalid.');
+			msg.log('Embed is invalid.', embed.description);
 			
 			return;
 		};
