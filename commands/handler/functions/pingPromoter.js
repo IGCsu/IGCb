@@ -48,8 +48,6 @@ module.exports = {
 			
 		};
 
-		msg.log(embed.description)
-
 		if(!embed.des || !embed.description.includes('Успешный Up!') || embed === null){
 			msg.log('Embed is invalid.');
 			
