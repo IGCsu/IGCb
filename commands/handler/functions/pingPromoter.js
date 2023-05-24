@@ -1,8 +1,8 @@
 module.exports = {
 	
-	ROLE_ID: '776934711783587841',
+	ROLE_ID: '1107382381700206672',
 	MONITORING_BOT_ID: '464272403766444044',
-	COOLDOWN_UP: 4*1000,
+	COOLDOWN_UP: 4*3600*1000,
 
 	active: true,
 
@@ -15,7 +15,7 @@ module.exports = {
 	allChannels: false,
 
 	allowedChannels: {
-		'949790593251414027': false // #рандом
+		'610371610620198922': false // #рандом
 	},
 
 	init: async function () {
