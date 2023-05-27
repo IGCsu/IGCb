@@ -2,6 +2,7 @@ module.exports = {
 	
 	ROLE_ID: '1107382381700206672',
 	MONITORING_BOT_ID: '464272403766444044',
+	COMMAND_ID: '</up:891377101494681660>',
 	COOLDOWN_UP: 4*3600*1000,
 
 	active: true,
@@ -25,11 +26,10 @@ module.exports = {
 
 	call: async function (msg) {
 
-		let embed;
-
 		if(msg.member.user.id !== this.MONITORING_BOT_ID) return;
 		initLog(msg, 'pingPromoter');
 
+		let embed;
 		for(let i = 0; i < 3; i++) {
 
 			msg.log('Fetch updated message. Try ' + i)
@@ -55,7 +55,7 @@ module.exports = {
 		await sleep(this.COOLDOWN_UP);
 		msg.log('CD finished');
 
-		await msg.channel.send(this.role.toString() + '</up:891377101494681660>');
+		await msg.channel.send(this.role.toString() + this.COMMAND_ID);
 
 	}
 
