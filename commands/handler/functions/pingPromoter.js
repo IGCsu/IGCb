@@ -24,11 +24,11 @@ module.exports = {
 	},
 
 	call: async function (msg) {
-		
-		if(msg.member.user.id !== this.MONITORING_BOT_ID) return;
-		initLog(msg, 'pingPromoter');
 
 		let embed;
+
+		if(msg.member.user.id !== this.MONITORING_BOT_ID) return;
+		initLog(msg, 'pingPromoter');
 
 		for(let i = 0; i < 3; i++) {
 
@@ -47,18 +47,15 @@ module.exports = {
 		};
 
 		if(!embed?.description?.includes('Успешный Up!')) {
-
 			msg.log('Embed is invalid. Description: ' + embed.description);
 			return;
-			
 		};
 
 		msg.log('CD started');
-
 		await sleep(this.COOLDOWN_UP);
 		msg.log('CD finished');
 
-		await msg.channel.send(this.role.toString());
+		await msg.channel.send(this.role.toString() + '</up:891377101494681660>');
 
 	}
 
