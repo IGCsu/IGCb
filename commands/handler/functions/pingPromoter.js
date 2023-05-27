@@ -2,6 +2,7 @@ module.exports = {
 	
 	ROLE_ID: '1107382381700206672',
 	MONITORING_BOT_ID: '464272403766444044',
+	COMMAND_ID: '</up:891377101494681660>',
 	COOLDOWN_UP: 4*3600*1000,
 
 	active: true,
@@ -24,21 +25,38 @@ module.exports = {
 	},
 
 	call: async function (msg) {
+
 		if(msg.member.user.id !== this.MONITORING_BOT_ID) return;
+		initLog(msg, 'pingPromoter');
 
 		let embed;
-		for(let i = 0; i < 3; i++){
+		for(let i = 0; i < 3; i++) {
+
+			msg.log('Fetch updated message. Try ' + i)
+
 			await sleep(1000);
 
 			const msgUpdated = await msg.channel.messages.fetch(msg.id);
 			embed = msgUpdated.embeds[0];
 
-			if(embed) break;
+			if(embed) {
+				msg.log('Embed found');
+				break;
+			};
+
 		};
 
-		if(!embed || !embed.description.includes('Успешный Up!')) return;
+		if(!embed?.description?.includes('Успешный Up!')) {
+			msg.log('Embed is invalid. Description: ' + embed.description);
+			return;
+		};
 
+		msg.log('CD started');
 		await sleep(this.COOLDOWN_UP);
-		await msg.channel.send(this.role.toString());
+		msg.log('CD finished');
+
+		await msg.channel.send(this.role.toString() + this.COMMAND_ID);
+
 	}
+
 };
