@@ -55,7 +55,7 @@ module.exports = {
 		await sleep(this.COOLDOWN_UP);
 		msg.log('CD finished');
 
-		await msg.channel.send(this.role.toString() + this.COMMAND_ID);
+		await msg.channel.send(this.role.toString() + ' ' + this.COMMAND_ID);
 
 	}
 
