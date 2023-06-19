@@ -21,7 +21,7 @@ class Warns extends BaseCommand {
 
 	constructor (path) {
 		super(path);
-
+		this.active = false
 		this.category = 'Модерация';
 		this.name = 'warn';
 		this.title = new LangSingle(title);

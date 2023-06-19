@@ -36,6 +36,9 @@ class Levels extends BaseCommand {
 	constructor (path) {
 		super(path);
 
+		this.active = false;
+		return;
+
 		this.category = 'Информация';
 
 		this.name = 'levels';

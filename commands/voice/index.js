@@ -51,7 +51,8 @@ class Voice extends BaseCommand {
 							this.channelCreate.members.forEach(memb => {
 								memb.voice.setChannel(channel)
 									.catch(reason => console.warn(reason));
-								memb.send(sorryMessage['ru']).catch();
+								memb.send(sorryMessage['ru'])
+									.catch(reason => console.warn(reason));
 							});
 						}
 					}
