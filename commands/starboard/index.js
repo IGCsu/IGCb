@@ -64,7 +64,7 @@ class Starboard extends BaseCommand {
 	async call (reaction, message) {
 		if (message.channel.nsfw) return;
 		if (message.channel === this.starboardChannel) return;
-		if (reaction.count < this.defaultEmojiCount) return;
+		if (reaction.count !== this.defaultEmojiCount) return;
 
 		const users = await message.reactions.cache.get(
 			this.starboardEmoji
@@ -78,9 +78,16 @@ class Starboard extends BaseCommand {
 			await this.createMessage(reference, true);
 		}
 
-		await this.createMessage(message);
-
-		await message.react(this.starboardEmoji);
+		message.react(this.starboardEmoji)
+			.then(react => {
+				this.createMessage(react.message);
+			})
+			.catch(error => {
+				message.reply(
+					`Похоже <@${message.author.id}> добавил бота в чёрный список.\n` +
+					`Отправка сообщения в <#${this.starboardChannel.id}> невозможна.`
+				)
+			});
 	}
 
 	/**
@@ -90,9 +97,6 @@ class Starboard extends BaseCommand {
 	 * @return {Promise<Message>}
 	 */
 	async createMessage (message, reference) {
-		let atts = [];
-		message.attachments.forEach(att => atts.push(att.proxyURL));
-
 		const payload = {
 			avatarURL: message.member?.avatarURL() ?? message.author.avatarURL(),
 			username: message.member?.displayName ?? message.author.username,
@@ -100,7 +104,11 @@ class Starboard extends BaseCommand {
 		};
 
 		if (message.content) payload.content = message.content;
-		if (message.attachments) payload.files = atts;
+		if (message.attachments) {
+			let atts = [];
+			message.attachments.forEach(att => atts.push(att.proxyURL ?? att.url));
+			payload.files = atts;
+		}
 		if (message.embeds) payload.embeds = message.embeds;
 
 		if (!reference) {
