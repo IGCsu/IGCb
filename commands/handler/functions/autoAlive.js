@@ -16,7 +16,15 @@ module.exports = {
 
 	init: async function () {
 		this.role = await guild.roles.fetch('648762974277992448');
+		client.on('guildMemberAdd', member => this.addRole(member))
+
 		return this;
+	},
+
+	addRole: async function (member) {
+		if (!member.user.bot && !member.roles.cache.has(this.role.id)) {
+			toggleRole(this.role, member);
+		}
 	},
 
 	call: async function (msg) {

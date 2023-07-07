@@ -143,13 +143,13 @@ class Necrology extends BaseCommand {
 			messageId: msg.id
 		};
 
-		if (advancedMuteData?.author)
-			Warn.create({
-				target: after.user.id,
-				reason: advancedMuteData?.reason,
-				author: advancedMuteData.author.id,
-				type: 'mute'
-			});
+		// if (advancedMuteData?.author)
+		// 	Warn.create({
+		// 		target: after.user.id,
+		// 		reason: advancedMuteData?.reason,
+		// 		author: advancedMuteData.author.id,
+		// 		type: 'mute'
+		// 	});
 	}
 
 	/**
