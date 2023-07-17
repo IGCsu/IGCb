@@ -81,16 +81,22 @@ class UserLevels {
 	 * Обновляет данные пользователя в базе данных
 	 */
 	update () {
-		DB.query(
-			'UPDATE levels SET messagesAll = ?, messagesLegit = ?, symbols = ?, last = ? WHERE id = ?',
-			[
-				this.#primitiveData.messagesAll,
-				this.#primitiveData.messagesLegit,
-				this.#primitiveData.symbols,
-				this.#primitiveData.last,
-				this.member.id
-			]
-		);
+		// TODO: Модулю настала пизда, очень много флудит коннектами к БД. 
+		//  Надо сделать кеширование левелов и регулярную синхронизацию с БД. 
+		//  Пушто создание коннекта после каждого сообщения юзера - кладет БД.
+		//  На похуй будем ловить ошибки от базы, хуй с ней, если скипнем одно-два сообщения юзера
+		try {
+			DB.query(
+				'UPDATE levels SET messagesAll = ?, messagesLegit = ?, symbols = ?, last = ? WHERE id = ?',
+				[
+					this.#primitiveData.messagesAll,
+					this.#primitiveData.messagesLegit,
+					this.#primitiveData.symbols,
+					this.#primitiveData.last,
+					this.member.id
+				]
+			);
+		} catch (e) {}
 
 		return this;
 	};
@@ -188,7 +194,9 @@ class UserLevels {
 	 * @return {Number}
 	 */
 	getActivity () {
-		return this.#primitiveData.activity;
+		return 30;
+		// @TODO: Сломался подсчет активности у юзеров. Пока костыль, чтобы левелинг работал
+		// return this.#primitiveData.activity;
 	};
 
 
