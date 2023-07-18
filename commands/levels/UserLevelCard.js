@@ -208,7 +208,7 @@ class UserLevelCard {
 		context.closePath();
 		context.clip();
 
-		const {body} = await request(this.userLevel.member.displayAvatarURL({format: 'png'}));
+		const {body} = await request(this.userLevel.member.displayAvatarURL({format: 'png', size: 4096}));
 		const avatar = new Canvas.Image();
 		avatar.src = Buffer.from(await body.arrayBuffer());
 		context.drawImage(
