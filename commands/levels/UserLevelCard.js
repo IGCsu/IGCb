@@ -41,7 +41,7 @@ Canvas.registerFont('./commands/levels/fonts/Inter/static/Inter-Bold.ttf', {fami
 
 const applyText = (canvas, text, targetFontSize = 70, yOffset) => {
 	const context = canvas.getContext('2d');
-	let fontSize = targetFontSize * Math.log(RESOLUTION.CARD_HEIGHT / 360);
+	let fontSize = targetFontSize * Math.cbrt(RESOLUTION.CARD_HEIGHT / 360);
 	do {
 		context.font = `Bold ${fontSize -= 10}px Inter`;
 	} while (context.measureText(text).width > RESOLUTION.CARD_WIDTH - (STYLE.BORDER_SIZE * 2));
