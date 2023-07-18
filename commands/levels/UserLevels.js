@@ -375,7 +375,7 @@ class UserLevels {
 		this.addImage();
 		this.addFooter();
 
-		//this.setColor();
+		this.setColor();
 
 		return this.#embed;
 	};
@@ -481,9 +481,9 @@ class UserLevels {
 	 * Устанавливает у эмбеда цвет текущей роли пользователя
 	 */
 	setColor () {
-		const role = this.getRole();
+		//const role = this.getRole();
 
-		this.#embed.setColor(role.cache.color);
+		this.#embed.setColor("#2b2d31"); //role.cache.color
 	};
 
 	addImage () {
