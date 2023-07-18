@@ -2,9 +2,11 @@ const Canvas = require('canvas');
 const { MessageAttachment } = require('discord.js');
 const { request } = require('undici');
 
+const WIDTH = 432
+
 const RESOLUTION = {
-	CARD_WIDTH: 432,
-	CARD_HEIGHT: 164
+	CARD_WIDTH: WIDTH,
+	CARD_HEIGHT: Math.round(WIDTH / 2.6389)
 }
 
 const STYLE = {
@@ -37,9 +39,9 @@ const y1 = y0;
 
 Canvas.registerFont('./commands/levels/fonts/Inter/static/Inter-Bold.ttf', {family: 'Inter', weight: 'Bold'});
 
-const applyText = (canvas, text, targetFontSize = 70, yOffset) => {
+const applyText = (canvas, text, targetFontSize = RESOLUTION.CARD_HEIGHT/5.14, yOffset) => {
 	const context = canvas.getContext('2d');
-	let fontSize = targetFontSize;
+	let fontSize = targetFontSize * (RESOLUTION.CARD_HEIGHT / 360);
 	do {
 		context.font = `Bold ${fontSize -= 10}px Inter`;
 	} while (context.measureText(text).width > RESOLUTION.CARD_WIDTH - (STYLE.BORDER_SIZE * 2));
