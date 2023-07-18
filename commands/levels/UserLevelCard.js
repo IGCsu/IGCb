@@ -57,11 +57,13 @@ class UserLevelCard {
 	generateBackground(canvas, context) {
 		// Bordered background
 		context.fillStyle = COLOURS.DARK_GRAY;
+		context.beginPath();
 		context.roundRect(0, 0, STYLE.CARD_WIDTH, STYLE.CARD_HEIGHT, STYLE.ROUNDING);
 		context.fill()
 
 		// Main background
 		context.fillStyle = COLOURS.BLACK;
+		context.beginPath();
 		context.roundRect(
 			STYLE.BORDER_SIZE,
 			STYLE.BORDER_SIZE,
@@ -75,6 +77,7 @@ class UserLevelCard {
 	generateProgressbar(canvas, context) {
 		// Progress bar background
 		context.fillStyle = COLOURS.DARK_GRAY;
+		context.beginPath();
 		context.roundRect(
 			x0,
 			y0,
@@ -92,6 +95,7 @@ class UserLevelCard {
 					? this.userLevel.getRole()?.value
 					: this.userLevel.getNextRole()?.value
 			)
+			context.beginPath();
 			context.roundRect(
 				x0,
 				y0,
@@ -118,6 +122,7 @@ class UserLevelCard {
 				.cache.color.toString(16));
 
 		context.fillStyle = grad;
+		context.beginPath();
 		context.roundRect(
 			x0,
 			y0,
