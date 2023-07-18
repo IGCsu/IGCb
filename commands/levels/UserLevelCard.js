@@ -3,8 +3,8 @@ const { MessageAttachment } = require('discord.js');
 const { request } = require('undici');
 
 const RESOLUTION = {
-	CARD_WIDTH: 428,
-	CARD_HEIGHT: 162
+	CARD_WIDTH: 432,
+	CARD_HEIGHT: 164
 }
 
 const STYLE = {
@@ -42,7 +42,7 @@ const applyText = (canvas, text, targetFontSize = 70, yOffset) => {
 	let fontSize = targetFontSize;
 	do {
 		context.font = `Bold ${fontSize -= 10}px Inter`;
-	} while (context.measureText(text).width > RESOLUTION.CARD_WIDTH - 80);
+	} while (context.measureText(text).width > RESOLUTION.CARD_WIDTH - (STYLE.BORDER_SIZE * 2));
 
 	return {font: context.font, fontSize: fontSize};
 };
