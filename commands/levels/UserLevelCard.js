@@ -105,7 +105,7 @@ class UserLevelCard {
 		// Progress bar main
 		const grad = context.createLinearGradient(x0, y0, x1, y1);
 		const exp1 = this.userLevel.getRole().cache.color.toString(16).length === 5
-		const exp2 = (this.userLevel.getNextRole() ?? this.userLevel.getRole())?.cache.color.toString(16).length === 5
+		const exp2 = (this.userLevel.getNextRole()?.cache ?? this.userLevel.getRole()?.cache).color.toString(16).length === 5
 		grad.addColorStop(0.5, '#' + (exp1 ? '0' : '') + this.userLevel.getRole().cache.color.toString(16));
 		grad.addColorStop(
 			0.9,
