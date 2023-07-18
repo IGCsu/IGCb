@@ -375,7 +375,7 @@ class UserLevels {
 		this.addImage();
 		this.addFooter();
 
-		this.setColor();
+		//this.setColor();
 
 		return this.#embed;
 	};
