@@ -372,7 +372,7 @@ class UserLevels {
 		this.addOverpost();
 		this.addSymbols();
 		this.addActivity();
-		//this.addImage();
+		this.addImage();
 		this.addFooter();
 
 		this.setColor();
@@ -487,7 +487,7 @@ class UserLevels {
 	};
 
 	addImage () {
-		this.#embed.setImage('attachment://user_card.png');
+		this.#embed.setImage('https://cdn.discordapp.com/attachments/1039311543894020156/1130793726428586055/GpL91Zm.png');
 	};
 
 	addFooter () {
