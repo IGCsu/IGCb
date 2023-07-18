@@ -39,7 +39,7 @@ const applyText = (canvas, text, targetFontSize = 70, yOffset) => {
 	let fontSize = targetFontSize;
 	do {
 		context.font = `Bold ${fontSize -= 10}px Inter`;
-	} while (context.measureText(text).width > canvas.width - 80);
+	} while (context.measureText(text).width > STYLE.CARD_WIDTH - 80);
 
 	return {font: context.font, fontSize: fontSize};
 };
@@ -57,17 +57,19 @@ class UserLevelCard {
 	generateBackground(canvas, context) {
 		// Bordered background
 		context.fillStyle = COLOURS.DARK_GRAY;
-		context.roundRect(0, 0, canvas.width, canvas.height, STYLE.ROUNDING);
+		context.roundRect(0, 0, STYLE.CARD_WIDTH, STYLE.CARD_HEIGHT, STYLE.ROUNDING);
+		context.fill()
 
 		// Main background
 		context.fillStyle = COLOURS.BLACK;
 		context.roundRect(
 			STYLE.BORDER_SIZE,
 			STYLE.BORDER_SIZE,
-			canvas.width - STYLE.BORDER_SIZE * 2,
-			canvas.height - STYLE.BORDER_SIZE * 2,
+			STYLE.CARD_WIDTH - STYLE.BORDER_SIZE * 2,
+			STYLE.CARD_HEIGHT - STYLE.BORDER_SIZE * 2,
 			STYLE.ROUNDING
 		);
+		context.fill()
 	}
 
 	generateProgressbar(canvas, context) {
@@ -76,10 +78,11 @@ class UserLevelCard {
 		context.roundRect(
 			x0,
 			y0,
-			canvas.width - STYLE.AVATAR_SHIFT * 2 - STYLE.BORDER_SIZE * 3 - STYLE.AVATAR_SIZE,
+			STYLE.CARD_WIDTH - STYLE.AVATAR_SHIFT * 2 - STYLE.BORDER_SIZE * 3 - STYLE.AVATAR_SIZE,
 			STYLE.PROGRESSBAR_HEIGHT,
 			STYLE.ROUNDING
 		);
+		context.fill()
 
 		// Fine progress bar
 		if(this.userLevel.getExpFine()) {
@@ -92,7 +95,7 @@ class UserLevelCard {
 			context.roundRect(
 				x0,
 				y0,
-				(canvas.width - STYLE.AVATAR_SHIFT * 2 - STYLE.BORDER_SIZE * 3 - STYLE.AVATAR_SIZE) * (
+				(STYLE.CARD_WIDTH - STYLE.AVATAR_SHIFT * 2 - STYLE.BORDER_SIZE * 3 - STYLE.AVATAR_SIZE) * (
 					nextAmount < this.userLevel.getExpFull()
 						? 1
 						: this.userLevel.getExpFull()/nextAmount
@@ -100,6 +103,7 @@ class UserLevelCard {
 				STYLE.PROGRESSBAR_HEIGHT,
 				STYLE.ROUNDING
 			);
+			context.fill()
 		}
 
 		// Progress bar main
@@ -117,11 +121,12 @@ class UserLevelCard {
 		context.roundRect(
 			x0,
 			y0,
-			(canvas.width - STYLE.AVATAR_SHIFT * 2 - STYLE.BORDER_SIZE * 3 - STYLE.AVATAR_SIZE)
+			(STYLE.CARD_WIDTH - STYLE.AVATAR_SHIFT * 2 - STYLE.BORDER_SIZE * 3 - STYLE.AVATAR_SIZE)
 			* (this.userLevel.getNextRole() === true ? 100 : this.userLevel.getNextRoleProgress()) / 100,
 			STYLE.PROGRESSBAR_HEIGHT,
 			STYLE.ROUNDING
 		);
+		context.fill()
 	}
 
 	generateUsername(canvas, context) {
@@ -151,7 +156,7 @@ class UserLevelCard {
 		context.fillStyle = COLOURS.WHITE;
 		context.fillText(
 			`${this.userLevel.getExpFull().toLocaleString()}`,
-			x0 + (canvas.width - STYLE.AVATAR_SHIFT * 2 - STYLE.BORDER_SIZE * 3 - STYLE.AVATAR_SIZE - context.measureText(
+			x0 + (STYLE.CARD_WIDTH - STYLE.AVATAR_SHIFT * 2 - STYLE.BORDER_SIZE * 3 - STYLE.AVATAR_SIZE - context.measureText(
 				this.userLevel.getNextRole() === true
 					? this.userLevel.getRole()?.value?.toLocaleString()
 					: this.userLevel.getNextRole()?.value?.toLocaleString()).width * (this.userLevel.getExpFine() ? 2 : 1))/2,
@@ -164,7 +169,7 @@ class UserLevelCard {
 			context.fillStyle = COLOURS.WHITE;
 			context.fillText(
 				`${'-' + this.userLevel.getExpFine().toLocaleString()}`,
-				x0 + (canvas.width - STYLE.AVATAR_SHIFT * 2 - STYLE.BORDER_SIZE * 3 - STYLE.AVATAR_SIZE) / 2,
+				x0 + (STYLE.CARD_WIDTH - STYLE.AVATAR_SHIFT * 2 - STYLE.BORDER_SIZE * 3 - STYLE.AVATAR_SIZE) / 2,
 				y0 - txt.fontSize / 2);
 		}
 
@@ -179,7 +184,7 @@ class UserLevelCard {
 			`${this.userLevel.getNextRole() === true
 				? '🎉'
 				: this.userLevel.getNextRole()?.value?.toLocaleString()}`,
-			x0 + canvas.width - STYLE.AVATAR_SHIFT * 2 - STYLE.BORDER_SIZE * 3 - STYLE.AVATAR_SIZE - context.measureText(
+			x0 + STYLE.CARD_WIDTH - STYLE.AVATAR_SHIFT * 2 - STYLE.BORDER_SIZE * 3 - STYLE.AVATAR_SIZE - context.measureText(
 				this.userLevel.getNextRole() === true
 					? '🎉'
 					: this.userLevel.getNextRole()?.value?.toLocaleString()).width,
