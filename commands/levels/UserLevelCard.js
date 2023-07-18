@@ -1,5 +1,4 @@
 const Canvas = require('canvas');
-const fetch = require('node-fetch')
 const { MessageAttachment } = require('discord.js');
 const { request } = require('undici');
 

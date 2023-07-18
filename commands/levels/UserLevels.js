@@ -1,4 +1,4 @@
-const { UserLevelCard } = require('./UserLevelCard');
+const UserLevelCard = require('./UserLevelCard');
 
 class UserLevels {
 
