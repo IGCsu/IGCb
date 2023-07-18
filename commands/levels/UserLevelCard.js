@@ -3,8 +3,8 @@ const { MessageAttachment } = require('discord.js');
 const { request } = require('undici');
 
 const RESOLUTION = {
-	CARD_WIDTH: 950,
-	CARD_HEIGHT: 360
+	CARD_WIDTH: 428,
+	CARD_HEIGHT: 162
 }
 
 const STYLE = {
@@ -18,7 +18,7 @@ const STYLE = {
 
 const COLOURS = {
 	BLACK: '#18191c',
-	DARK_GRAY: '#292b2f',
+	DARK_GRAY: '#2b2d31',
 	RED: '#ff3737',
 	WHITE: '#ffffff'
 
