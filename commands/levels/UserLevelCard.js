@@ -2,15 +2,18 @@ const Canvas = require('canvas');
 const { MessageAttachment } = require('discord.js');
 const { request } = require('undici');
 
-const STYLE = {
+const RESOLUTION = {
 	CARD_WIDTH: 950,
-	CARD_HEIGHT: 360,
-	AVATAR_SHIFT: 40,
-	AVATAR_SIZE: 200,
-	ROUNDING: 25,
-	BORDER_SIZE: 40,
-	PROGRESSBAR_HEIGHT: 30,
-	PROGRESSBAR_SHIFT: 30
+	CARD_HEIGHT: 360
+}
+
+const STYLE = {
+	AVATAR_SHIFT: RESOLUTION.CARD_WIDTH / 23.75,
+	AVATAR_SIZE: RESOLUTION.CARD_WIDTH / 4.75,
+	ROUNDING: RESOLUTION.CARD_WIDTH / 38,
+	BORDER_SIZE: RESOLUTION.CARD_WIDTH / 23.75,
+	PROGRESSBAR_HEIGHT: RESOLUTION.CARD_WIDTH / 31.67,
+	PROGRESSBAR_SHIFT: RESOLUTION.CARD_WIDTH / 31.67
 }
 
 const COLOURS = {
@@ -29,7 +32,7 @@ const y0 =
 	- STYLE.PROGRESSBAR_HEIGHT
 	- STYLE.PROGRESSBAR_SHIFT;
 
-const x1 = STYLE.CARD_WIDTH - STYLE.AVATAR_SHIFT + STYLE.BORDER_SIZE;
+const x1 = RESOLUTION.CARD_WIDTH - STYLE.AVATAR_SHIFT + STYLE.BORDER_SIZE;
 const y1 = y0;
 
 Canvas.registerFont('./commands/levels/fonts/Inter/static/Inter-Bold.ttf', {family: 'Inter', weight: 'Bold'});
@@ -39,7 +42,7 @@ const applyText = (canvas, text, targetFontSize = 70, yOffset) => {
 	let fontSize = targetFontSize;
 	do {
 		context.font = `Bold ${fontSize -= 10}px Inter`;
-	} while (context.measureText(text).width > STYLE.CARD_WIDTH - 80);
+	} while (context.measureText(text).width > RESOLUTION.CARD_WIDTH - 80);
 
 	return {font: context.font, fontSize: fontSize};
 };
@@ -58,7 +61,7 @@ class UserLevelCard {
 		// Bordered background
 		context.fillStyle = COLOURS.DARK_GRAY;
 		context.beginPath();
-		context.roundRect(0, 0, STYLE.CARD_WIDTH, STYLE.CARD_HEIGHT, STYLE.ROUNDING);
+		context.roundRect(0, 0, RESOLUTION.CARD_WIDTH, RESOLUTION.CARD_HEIGHT, STYLE.ROUNDING);
 		context.fill()
 
 		// Main background
@@ -67,8 +70,8 @@ class UserLevelCard {
 		context.roundRect(
 			STYLE.BORDER_SIZE,
 			STYLE.BORDER_SIZE,
-			STYLE.CARD_WIDTH - STYLE.BORDER_SIZE * 2,
-			STYLE.CARD_HEIGHT - STYLE.BORDER_SIZE * 2,
+			RESOLUTION.CARD_WIDTH - STYLE.BORDER_SIZE * 2,
+			RESOLUTION.CARD_HEIGHT - STYLE.BORDER_SIZE * 2,
 			STYLE.ROUNDING
 		);
 		context.fill()
@@ -81,7 +84,7 @@ class UserLevelCard {
 		context.roundRect(
 			x0,
 			y0,
-			STYLE.CARD_WIDTH - STYLE.AVATAR_SHIFT * 2 - STYLE.BORDER_SIZE * 3 - STYLE.AVATAR_SIZE,
+			RESOLUTION.CARD_WIDTH - STYLE.AVATAR_SHIFT * 2 - STYLE.BORDER_SIZE * 3 - STYLE.AVATAR_SIZE,
 			STYLE.PROGRESSBAR_HEIGHT,
 			STYLE.ROUNDING
 		);
@@ -99,7 +102,7 @@ class UserLevelCard {
 			context.roundRect(
 				x0,
 				y0,
-				(STYLE.CARD_WIDTH - STYLE.AVATAR_SHIFT * 2 - STYLE.BORDER_SIZE * 3 - STYLE.AVATAR_SIZE) * (
+				(RESOLUTION.CARD_WIDTH - STYLE.AVATAR_SHIFT * 2 - STYLE.BORDER_SIZE * 3 - STYLE.AVATAR_SIZE) * (
 					nextAmount < this.userLevel.getExpFull()
 						? 1
 						: this.userLevel.getExpFull()/nextAmount
@@ -126,7 +129,7 @@ class UserLevelCard {
 		context.roundRect(
 			x0,
 			y0,
-			(STYLE.CARD_WIDTH - STYLE.AVATAR_SHIFT * 2 - STYLE.BORDER_SIZE * 3 - STYLE.AVATAR_SIZE)
+			(RESOLUTION.CARD_WIDTH - STYLE.AVATAR_SHIFT * 2 - STYLE.BORDER_SIZE * 3 - STYLE.AVATAR_SIZE)
 			* (this.userLevel.getNextRole() === true ? 100 : this.userLevel.getNextRoleProgress()) / 100,
 			STYLE.PROGRESSBAR_HEIGHT,
 			STYLE.ROUNDING
@@ -161,7 +164,7 @@ class UserLevelCard {
 		context.fillStyle = COLOURS.WHITE;
 		context.fillText(
 			`${this.userLevel.getExpFull().toLocaleString()}`,
-			x0 + (STYLE.CARD_WIDTH - STYLE.AVATAR_SHIFT * 2 - STYLE.BORDER_SIZE * 3 - STYLE.AVATAR_SIZE - context.measureText(
+			x0 + (RESOLUTION.CARD_WIDTH - STYLE.AVATAR_SHIFT * 2 - STYLE.BORDER_SIZE * 3 - STYLE.AVATAR_SIZE - context.measureText(
 				this.userLevel.getNextRole() === true
 					? this.userLevel.getRole()?.value?.toLocaleString()
 					: this.userLevel.getNextRole()?.value?.toLocaleString()).width * (this.userLevel.getExpFine() ? 2 : 1))/2,
@@ -174,7 +177,7 @@ class UserLevelCard {
 			context.fillStyle = COLOURS.WHITE;
 			context.fillText(
 				`${'-' + this.userLevel.getExpFine().toLocaleString()}`,
-				x0 + (STYLE.CARD_WIDTH - STYLE.AVATAR_SHIFT * 2 - STYLE.BORDER_SIZE * 3 - STYLE.AVATAR_SIZE) / 2,
+				x0 + (RESOLUTION.CARD_WIDTH - STYLE.AVATAR_SHIFT * 2 - STYLE.BORDER_SIZE * 3 - STYLE.AVATAR_SIZE) / 2,
 				y0 - txt.fontSize / 2);
 		}
 
@@ -189,7 +192,7 @@ class UserLevelCard {
 			`${this.userLevel.getNextRole() === true
 				? '🎉'
 				: this.userLevel.getNextRole()?.value?.toLocaleString()}`,
-			x0 + STYLE.CARD_WIDTH - STYLE.AVATAR_SHIFT * 2 - STYLE.BORDER_SIZE * 3 - STYLE.AVATAR_SIZE - context.measureText(
+			x0 + RESOLUTION.CARD_WIDTH - STYLE.AVATAR_SHIFT * 2 - STYLE.BORDER_SIZE * 3 - STYLE.AVATAR_SIZE - context.measureText(
 				this.userLevel.getNextRole() === true
 					? '🎉'
 					: this.userLevel.getNextRole()?.value?.toLocaleString()).width,
@@ -221,7 +224,7 @@ class UserLevelCard {
 	}
 
 	async generate() {
-		const canvas = Canvas.createCanvas(STYLE.CARD_WIDTH, STYLE.CARD_HEIGHT);
+		const canvas = Canvas.createCanvas(RESOLUTION.CARD_WIDTH, RESOLUTION.CARD_HEIGHT);
 		const context = canvas.getContext('2d');
 
 		this.generateBackground(canvas, context);
@@ -229,6 +232,8 @@ class UserLevelCard {
 		this.generateUsername(canvas, context)
 		this.generateExpValues(canvas, context)
 		await this.generateAvatar(canvas, context)
+
+		canvas.toBuffer('image/png')
 
 		return new MessageAttachment(canvas.toBuffer('image/png'), `${this.userLevel.getExp()}.png`);
 	}
