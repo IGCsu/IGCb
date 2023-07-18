@@ -1,9 +1,39 @@
 const Canvas = require('canvas');
 const fetch = require('node-fetch')
-const {MessageAttachment} = require('discord.js');
-const {request} = require('undici');
+const { MessageAttachment } = require('discord.js');
+const { request } = require('undici');
 
-Canvas.registerFont('./commands/levels/fonts/Inter/static/Inter-Bold.ttf', {family: 'Inter', weight: 'Bold'})
+const STYLE = {
+	CARD_WIDTH: 950,
+	CARD_HEIGHT: 360,
+	AVATAR_SHIFT: 40,
+	AVATAR_SIZE: 200,
+	ROUNDING: 25,
+	BORDER_SIZE: 40,
+	PROGRESSBAR_HEIGHT: 30,
+	PROGRESSBAR_SHIFT: 30
+}
+
+const COLOURS = {
+	BLACK: '#18191c',
+	DARK_GRAY: '#292b2f',
+	RED: '#ff3737',
+	WHITE: '#ffffff'
+
+}
+
+const x0 = STYLE.BORDER_SIZE + STYLE.AVATAR_SHIFT * 2 + STYLE.AVATAR_SIZE ;
+const y0 =
+	STYLE.AVATAR_SHIFT
+	+ STYLE.BORDER_SIZE
+	+ STYLE.AVATAR_SIZE
+	- STYLE.PROGRESSBAR_HEIGHT
+	- STYLE.PROGRESSBAR_SHIFT;
+
+const x1 = STYLE.CARD_WIDTH - STYLE.AVATAR_SHIFT + STYLE.BORDER_SIZE;
+const y1 = y0;
+
+Canvas.registerFont('./commands/levels/fonts/Inter/static/Inter-Bold.ttf', {family: 'Inter', weight: 'Bold'});
 
 const applyText = (canvas, text, targetFontSize = 70, yOffset) => {
 	const context = canvas.getContext('2d');
@@ -19,134 +49,110 @@ class UserLevelCard {
 
 	/**
 	 *
-	 * @type {{ avatarShift: number, rounding: number, avatarSize: number, borderSize: number,
-	 * 		progressbarHeight: number, progressbarShift: number }}
-	 */
-	#style = {
-		avatarShift: 40,
-		avatarSize: 200,
-		rounding: 25,
-		borderSize: 40,
-		progressbarHeight: 30,
-		progressbarShift: 30
-	}
-
-	/**
-	 *
 	 * @param {UserLevels} userLevel класс представляющий информацию об уровне пользоватля
 	 */
 	constructor(userLevel) {
 		this.userLevel = userLevel;
 	}
 
-	async generate() {
-		const canvas = Canvas.createCanvas(950, 360);
-		const context = canvas.getContext('2d');
-
+	generateBackground(canvas, context) {
 		// Bordered background
-		context.fillStyle = '#292b2f';
-		context.roundRect(0, 0, canvas.width, canvas.height, this.#style.rounding).fill();
+		context.fillStyle = COLOURS.DARK_GRAY;
+		context.roundRect(0, 0, canvas.width, canvas.height, STYLE.ROUNDING);
 
 		// Main background
-		context.fillStyle = '#18191c';
+		context.fillStyle = COLOURS.BLACK;
 		context.roundRect(
-			this.#style.borderSize,
-			this.#style.borderSize,
-			canvas.width - this.#style.borderSize * 2,
-			canvas.height - this.#style.borderSize * 2,
-			this.#style.rounding
-		).fill();
+			STYLE.BORDER_SIZE,
+			STYLE.BORDER_SIZE,
+			canvas.width - STYLE.BORDER_SIZE * 2,
+			canvas.height - STYLE.BORDER_SIZE * 2,
+			STYLE.ROUNDING
+		);
+	}
 
-		const x0 = this.#style.borderSize + this.#style.avatarShift * 2 + this.#style.avatarSize ;
-		const y0 =
-			this.#style.avatarShift
-			+ this.#style.borderSize
-			+ this.#style.avatarSize
-			- this.#style.progressbarHeight
-			- this.#style.progressbarShift;
-
-		const x1 = canvas.width - this.#style.avatarShift + this.#style.borderSize;
-		const y1 = y0;
-
+	generateProgressbar(canvas, context) {
 		// Progress bar background
-		context.fillStyle = '#292b2f';
+		context.fillStyle = COLOURS.DARK_GRAY;
 		context.roundRect(
 			x0,
 			y0,
-			canvas.width - this.#style.avatarShift * 2 - this.#style.borderSize * 3 - this.#style.avatarSize,
-			this.#style.progressbarHeight,
-			this.#style.rounding
-		).fill();
+			canvas.width - STYLE.AVATAR_SHIFT * 2 - STYLE.BORDER_SIZE * 3 - STYLE.AVATAR_SIZE,
+			STYLE.PROGRESSBAR_HEIGHT,
+			STYLE.ROUNDING
+		);
 
 		// Fine progress bar
 		if(this.userLevel.getExpFine()) {
-
-			context.fillStyle = '#ff3737';
-			const nextAmount =
-				(this.userLevel.getNextRole() === true
+			context.fillStyle = COLOURS.RED;
+			const nextAmount = (
+				this.userLevel.getNextRole() === true
 					? this.userLevel.getRole()?.value
-					: this.userLevel.getNextRole()?.value)
+					: this.userLevel.getNextRole()?.value
+			)
 			context.roundRect(
 				x0,
 				y0,
-				(canvas.width - this.#style.avatarShift * 2 - this.#style.borderSize * 3 - this.#style.avatarSize) * (
+				(canvas.width - STYLE.AVATAR_SHIFT * 2 - STYLE.BORDER_SIZE * 3 - STYLE.AVATAR_SIZE) * (
 					nextAmount < this.userLevel.getExpFull()
 						? 1
-						: this.userLevel.getExpFull()/nextAmount),
-				this.#style.progressbarHeight,
-				this.#style.rounding
-			).fill();
+						: this.userLevel.getExpFull()/nextAmount
+				),
+				STYLE.PROGRESSBAR_HEIGHT,
+				STYLE.ROUNDING
+			);
 		}
 
 		// Progress bar main
-		const grad = context.createLinearGradient(x0,y0,x1,y1);
+		const grad = context.createLinearGradient(x0, y0, x1, y1);
 		const exp1 = this.userLevel.getRole().cache.color.toString(16).length === 5
-		const exp2 = (this.userLevel.getNextRole()?.cache ?? this.userLevel.getRole()?.cache).color.toString(16).length === 5
+		const exp2 = (this.userLevel.getNextRole() ?? this.userLevel.getRole())?.cache.color.toString(16).length === 5
 		grad.addColorStop(0.5, '#' + (exp1 ? '0' : '') + this.userLevel.getRole().cache.color.toString(16));
-		grad.addColorStop(0.9, '#' + (exp2 ? '0' : '') + (
-			this.userLevel.getNextRole() === true
-				? this.userLevel.getRole()
-				: this.userLevel.getNextRole()
-			).cache.color.toString(16));
+		grad.addColorStop(
+			0.9,
+			'#' + (exp2 ? '0' : '')
+			+ (this.userLevel.getNextRole() === true ? this.userLevel.getRole(): this.userLevel.getNextRole())
+				.cache.color.toString(16));
 
 		context.fillStyle = grad;
 		context.roundRect(
 			x0,
 			y0,
-			(canvas.width - this.#style.avatarShift * 2 - this.#style.borderSize * 3 - this.#style.avatarSize)
-				* (this.userLevel.getNextRole() === true
-					? 100
-					: this.userLevel.getNextRoleProgress()) / 100,
-			this.#style.progressbarHeight,
-			this.#style.rounding
-		).fill();
+			(canvas.width - STYLE.AVATAR_SHIFT * 2 - STYLE.BORDER_SIZE * 3 - STYLE.AVATAR_SIZE)
+			* (this.userLevel.getNextRole() === true ? 100 : this.userLevel.getNextRoleProgress()) / 100,
+			STYLE.PROGRESSBAR_HEIGHT,
+			STYLE.ROUNDING
+		);
+	}
 
-
+	generateUsername(canvas, context) {
 		// Username
 		let txt = applyText(canvas, `${this.userLevel.member.displayName}`);
 		context.font = txt.font
 		context.fillStyle = this.userLevel.member.displayHexColor;
 		context.fillText(
 			`${this.userLevel.member.displayName}`,
-			this.#style.borderSize + this.#style.avatarShift * 2 + this.#style.avatarSize,
-			this.#style.borderSize + this.#style.avatarShift + txt.fontSize);
+			STYLE.BORDER_SIZE + STYLE.AVATAR_SHIFT * 2 + STYLE.AVATAR_SIZE,
+			STYLE.BORDER_SIZE + STYLE.AVATAR_SHIFT + txt.fontSize);
+	}
 
+	generateExpValues(canvas, context) {
 		// Previous role value
-		txt = applyText(canvas, `${this.userLevel.getRole().value.toLocaleString()}`, 40);
+		let txt = applyText(canvas, `${this.userLevel.getRole().value.toLocaleString()}`, 40);
 		context.font = txt.font
-		context.fillStyle = '#ffffff';
+		context.fillStyle = COLOURS.WHITE;
 		context.fillText(
 			`${this.userLevel.getRole().value.toLocaleString()}`,
 			x0,
-			y0 + this.#style.progressbarHeight + txt.fontSize);
+			y0 + STYLE.PROGRESSBAR_HEIGHT + txt.fontSize);
 
 		// Current exp
 		txt = applyText(canvas, `${this.userLevel.getExpFull().toLocaleString()}`, 50);
 		context.font = txt.font
-		context.fillStyle = '#ffffff';
+		context.fillStyle = COLOURS.WHITE;
 		context.fillText(
 			`${this.userLevel.getExpFull().toLocaleString()}`,
-			x0 + (canvas.width - this.#style.avatarShift * 2 - this.#style.borderSize * 3 - this.#style.avatarSize - context.measureText(
+			x0 + (canvas.width - STYLE.AVATAR_SHIFT * 2 - STYLE.BORDER_SIZE * 3 - STYLE.AVATAR_SIZE - context.measureText(
 				this.userLevel.getNextRole() === true
 					? this.userLevel.getRole()?.value?.toLocaleString()
 					: this.userLevel.getNextRole()?.value?.toLocaleString()).width * (this.userLevel.getExpFine() ? 2 : 1))/2,
@@ -156,36 +162,38 @@ class UserLevelCard {
 		if (this.userLevel.getExpFine()) {
 			txt = applyText(canvas, `${'-' + this.userLevel.getExpFine().toLocaleString()}`, 50);
 			context.font = txt.font
-			context.fillStyle = '#ff3737';
+			context.fillStyle = COLOURS.WHITE;
 			context.fillText(
 				`${'-' + this.userLevel.getExpFine().toLocaleString()}`,
-				x0 + (canvas.width - this.#style.avatarShift * 2 - this.#style.borderSize * 3 - this.#style.avatarSize) / 2,
+				x0 + (canvas.width - STYLE.AVATAR_SHIFT * 2 - STYLE.BORDER_SIZE * 3 - STYLE.AVATAR_SIZE) / 2,
 				y0 - txt.fontSize / 2);
 		}
 
 		// Next role value
 		txt = applyText(canvas, `${
-			this.userLevel.getNextRole() === true 
-			? '🎉'
-			: this.userLevel.getNextRole()?.value?.toLocaleString()}`, 40);
+			this.userLevel.getNextRole() === true
+				? '🎉'
+				: this.userLevel.getNextRole()?.value?.toLocaleString()}`, 40);
 		context.font = txt.font
-		context.fillStyle = '#ffffff';
+		context.fillStyle = COLOURS.WHITE;
 		context.fillText(
 			`${this.userLevel.getNextRole() === true
 				? '🎉'
 				: this.userLevel.getNextRole()?.value?.toLocaleString()}`,
-			x0 + canvas.width - this.#style.avatarShift * 2 - this.#style.borderSize * 3 - this.#style.avatarSize - context.measureText(
+			x0 + canvas.width - STYLE.AVATAR_SHIFT * 2 - STYLE.BORDER_SIZE * 3 - STYLE.AVATAR_SIZE - context.measureText(
 				this.userLevel.getNextRole() === true
-				? '🎉'
-				: this.userLevel.getNextRole()?.value?.toLocaleString()).width,
-			y0 + this.#style.progressbarHeight + txt.fontSize);
+					? '🎉'
+					: this.userLevel.getNextRole()?.value?.toLocaleString()).width,
+			y0 + STYLE.PROGRESSBAR_HEIGHT + txt.fontSize);
+	}
 
+	async generateAvatar(canvas, context) {
 		// Avatar
 		context.beginPath();
 		context.arc(
-			this.#style.avatarShift + this.#style.borderSize + this.#style.avatarSize / 2,
-			this.#style.avatarShift + this.#style.borderSize + this.#style.avatarSize / 2,
-			this.#style.avatarSize / 2,
+			STYLE.AVATAR_SHIFT + STYLE.BORDER_SIZE + STYLE.AVATAR_SIZE / 2,
+			STYLE.AVATAR_SHIFT + STYLE.BORDER_SIZE + STYLE.AVATAR_SIZE / 2,
+			STYLE.AVATAR_SIZE / 2,
 			0, Math.PI * 2, true
 		);
 		context.closePath();
@@ -196,13 +204,24 @@ class UserLevelCard {
 		avatar.src = Buffer.from(await body.arrayBuffer());
 		context.drawImage(
 			avatar,
-			this.#style.avatarShift + this.#style.borderSize,
-			this.#style.avatarShift + this.#style.borderSize,
-			this.#style.avatarSize,
-			this.#style.avatarSize
+			STYLE.AVATAR_SHIFT + STYLE.BORDER_SIZE,
+			STYLE.AVATAR_SHIFT + STYLE.BORDER_SIZE,
+			STYLE.AVATAR_SIZE,
+			STYLE.AVATAR_SIZE
 		);
+	}
 
-		return new MessageAttachment(canvas.toBuffer('image/png'), 'user_card.png');
+	async generate() {
+		const canvas = Canvas.createCanvas(STYLE.CARD_WIDTH, STYLE.CARD_HEIGHT);
+		const context = canvas.getContext('2d');
+
+		this.generateBackground(canvas, context);
+		this.generateProgressbar(canvas, context)
+		this.generateUsername(canvas, context)
+		this.generateExpValues(canvas, context)
+		await this.generateAvatar(canvas, context)
+
+		return new MessageAttachment(canvas.toBuffer('image/png'), `${this.userLevel.getExp()}.png`);
 	}
 
 }

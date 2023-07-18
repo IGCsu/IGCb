@@ -1,3 +1,5 @@
+const { UserLevelCard } = require('./UserLevelCard');
+
 class UserLevels {
 
 	/**
@@ -344,6 +346,10 @@ class UserLevels {
 		return this.#advancedData.nextRoleProgress = nextRoleProgress;
 	};
 
+	getLevelCard () {
+		return new UserLevelCard(this);
+	}
+
 
 	/**
 	 * ***************************************************************************
@@ -361,20 +367,15 @@ class UserLevels {
 		this.#embed = new Discord.MessageEmbed();
 
 		this.#embed.setTitle('Статистика пользователя');
-		//this.#embed.setThumbnail(this.member.user.avatarURL({ dynamic: true }));
-		//this.#embed.setDescription(this.member.toString());
 
 		this.addMessages();
 		this.addOverpost();
 		this.addSymbols();
 		this.addActivity();
-		//this.addExp();
-		//this.addNextRole();
+		//this.addImage();
+		this.addFooter();
 
 		this.setColor();
-
-		this.addImage();
-		this.addFooter();
 
 		return this.#embed;
 	};
@@ -486,11 +487,11 @@ class UserLevels {
 	};
 
 	addImage () {
-		this.#embed.setImage('attachment://user_card.png')
+		this.#embed.setImage('attachment://user_card.png');
 	};
 
 	addFooter () {
-		this.#embed.setFooter('*Активность за последние 30 дней')
+		this.#embed.setFooter('*Активность за последние 30 дней');
 	};
 
 }

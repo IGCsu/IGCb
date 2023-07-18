@@ -12,7 +12,6 @@ const slashOptions = require('./slashOptions');
 const { title, description } = require('./about.json');
 const noXPChannels = require('./noXPChannels.json');
 const UserLevels = require('./UserLevels');
-const UserLevelCard = require('./UserLevelCard');
 
 class Levels extends BaseCommand {
 
@@ -79,7 +78,7 @@ class Levels extends BaseCommand {
 
 		return {
 			embeds: [user.getEmbed()],
-			files: [await (new UserLevelCard(user)).generate()],
+			files: [await user.getLevelCard().generate()],
 			components: [
 				{
 					type: 1, components: [
