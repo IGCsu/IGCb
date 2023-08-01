@@ -4,17 +4,17 @@
  * @type {function[]}
  */
 const init = [
-	require('./init/protection.js'),
-	require('./init/constants.js'),
-	require('./init/guild.js'),
-	require('./init/locales.js'),
-	require('./init/functions.js'),
-	require('./init/globalErrorHandler.js'),
-	require('./init/sessionId.js'),
-	require('./init/commands.js'),
-	require('./init/setActivity.js'),
-	require('./init/interactionCreate.js'),
-	require('./init/startMessage.js')
+	require('./old/init/protection.js'),
+	require('./old/init/constants.js'),
+	require('./old/init/guild.js'),
+	require('./old/init/locales.js'),
+	require('./old/init/functions.js'),
+	require('./old/init/globalErrorHandler.js'),
+	require('./old/init/sessionId.js'),
+	require('./old/init/commands.js'),
+	require('./old/init/setActivity.js'),
+	require('./old/init/interactionCreate.js'),
+	require('./old/init/startMessage.js')
 ];
 
 /**
