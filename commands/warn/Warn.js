@@ -194,15 +194,15 @@ class Warn {
 	/**
 	 * Сохраняет модель в базу данных
 	 */
-	save () {
+	async save () {
 
 		if (this.#id) {
-			DB.query(
+			await DB.query(
 				'UPDATE warns SET reason = ?, flags = ? WHERE id = ?',
 				[this.reason, this.flagsRaw, this.#id]
 			);
 		} else {
-			DB.query(
+			await DB.query(
 				'INSERT INTO warns (type, target, reason, author, reference, date, flags) VALUES (?, ?, ?, ?, ?, ?, ?)',
 				[
 					this.#type,
@@ -214,7 +214,7 @@ class Warn {
 					this.flagsRaw
 				]
 			);
-			this.#id = DB.query('SELECT MAX(id) as max FROM warns')[0].max;
+			this.#id = await DB.query('SELECT MAX(id) as max FROM warns')[0].max;
 		}
 
 		return this;
@@ -259,8 +259,8 @@ class Warn {
 	 * @param {number|string} id
 	 * @return {Warn}
 	 */
-	static get (id) {
-		const data = DB.query('SELECT * FROM warns WHERE id = ?', [id]);
+	static async get (id) {
+		const data = await DB.query('SELECT * FROM warns WHERE id = ?', [id]);
 		if (!data[0]) return undefined;
 
 		return new this(data[0]);
@@ -272,11 +272,11 @@ class Warn {
 	 * @param {Snowflake|string} [target] ID пользователя
 	 * @return {Warn}
 	 */
-	static last (target) {
+	static async last (target) {
 		const query = target
 			? `SELECT * FROM warns WHERE id = (SELECT MAX(id) FROM warns WHERE target = ${target})`
 			: `SELECT * FROM warns WHERE id = (SELECT MAX(id) FROM warns)`;
-		const data = DB.query(query);
+		const data = await DB.query(query);
 		if (!data[0]) return undefined;
 
 		return new this(data[0]);
@@ -288,11 +288,11 @@ class Warn {
 	 * @param {Snowflake|string} [target] ID пользователя
 	 * @return {Warn[]}
 	 */
-	static all (target) {
+	static async all (target) {
 		const query = target
 			? `SELECT * FROM warns WHERE NOT flags & 4 AND target = ${target}`
 			: `SELECT * FROM warns WHERE NOT flags & 4`;
-		const data = DB.query(query);
+		const data = await DB.query(query);
 
 		let warns = [];
 		for (let i = data.length; i >= 0; i--) {

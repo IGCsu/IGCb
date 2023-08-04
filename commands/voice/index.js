@@ -100,7 +100,7 @@ class Voice extends BaseCommand {
 	async slash (int) {
 		if (int.options.getSubcommand() === 'auto-sync') {
 			await int.deferReply({ ephemeral: true });
-			DB.query(`UPDATE users SET mode = "${int.options.getString('mode')}" WHERE id = ${int.user.id};`)[0];
+			await DB.query(`UPDATE users SET mode = "${int.options.getString('mode')}" WHERE id = ${int.user.id};`)[0];
 			await int.editReply({
 				content: reaction.emoji.success + ' ' + int.str('Settings changed'),
 				ephemeral: true
@@ -171,14 +171,14 @@ class Voice extends BaseCommand {
 
 		if (state.member.user.bot) return; // проверка на бота
 
-		if (channel.after.id === this.channelCreate.id) this.create(after);
+		if (channel.after.id === this.channelCreate.id) await this.create(after);
 
 		if (!before.channel || channel.before.id === this.channelCreate.id ||
 			before.channel.members.filter(m => !m.user.bot).size) {
 			return;
 		}
 
-		this.delete(before.channel, user);
+		await this.delete(before.channel, user);
 	}
 
 
@@ -193,7 +193,7 @@ class Voice extends BaseCommand {
 	async create (data) {
 		let preset;
 		try {
-			preset = DB.query(`SELECT * FROM users WHERE id = '${data.member.id}';`)[0];
+			preset = await DB.query(`SELECT * FROM users WHERE id = '${data.member.id}';`)[0];
 		} catch (e) {
 			console.log('DB error occurred:\n' + e);
 		}
@@ -220,7 +220,7 @@ class Voice extends BaseCommand {
 		await channel.permissionOverwrites.create(data.member, this.permission);
 
 		data.setChannel(channel).catch(reason => channel.delete());
-		this.channelCreate.permissionOverwrites.create(data.member, {
+		await this.channelCreate.permissionOverwrites.create(data.member, {
 			CONNECT: false
 		});
 		setTimeout(() => {
@@ -285,14 +285,14 @@ class Voice extends BaseCommand {
 			bitrate: voice.channel.bitrate,
 			userLimit: voice.channel.userLimit
 		});
-		if (DB.query(
+		if (await DB.query(
 			`SELECT * FROM users WHERE id = ${voice.member.user.id};`)[0]) {
-			DB.query(
+			await DB.query(
 				`UPDATE users SET voice_data = ? WHERE id = ${voice.member.user.id};`,
 				[voice_data]
 			)[0];
 		} else {
-			DB.query(
+			await DB.query(
 				`INSERT INTO users VALUES (?, ?, ?, ?);`,
 				[voice.member.user.id, 0, voice.channelId, voice_data]
 			)[0];
@@ -305,7 +305,7 @@ class Voice extends BaseCommand {
 	 */
 	async sync (voice) {
 		let voiceConfiguration = JSON.parse((
-			DB.query(`SELECT * FROM users WHERE id = ${voice.member.user.id};`)[0]
+			await DB.query(`SELECT * FROM users WHERE id = ${voice.member.user.id};`)[0]
 		).voice_data);
 		if (!voiceConfiguration) return 'There is no data entry in the database associated with you. Use `/upload` to fix it.';
 

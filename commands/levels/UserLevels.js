@@ -1,4 +1,5 @@
-const UserLevelCard = require('./UserLevelCard');
+const UserLevelCard = require('./UserLevelCard/UserLevelCard');
+const UserLevelCards = require('./UserLevelCard/UserLevelCard');
 
 class UserLevels {
 
@@ -53,42 +54,46 @@ class UserLevels {
 		this.#roles = roles;
 		this.#rolesIDs = rolesIDs;
 
-		const users = DB.query('SELECT * FROM levels WHERE id = ?', [
-			this.member.id
-		]);
+		return new Promise(async resolve => {
+			const users = await DB.query('SELECT * FROM levels WHERE id = ?', [
+				this.member.id
+			]);
 
-		if (users[0]) {
-			this.finded = true;
-			this.#primitiveData = {
-				messagesLegit: users[0].messagesLegit,
-				messagesAll: users[0].messagesAll,
-				activity: users[0].activity,
-				symbols: users[0].symbols,
-				last: users[0].last
-			};
-		} else if (create) {
-			DB.query('INSERT INTO levels (`id`) VALUES (?)', [this.member.id]);
-			this.#primitiveData = {
-				messagesLegit: 0,
-				messagesAll: 0,
-				activity: 1,
-				symbols: 0,
-				last: 0
-			};
-		}
 
+			if (users[0]) {
+				this.finded = true;
+				this.#primitiveData = {
+					messagesLegit: users[0].messagesLegit,
+					messagesAll: users[0].messagesAll,
+					activity: users[0].activity,
+					symbols: users[0].symbols,
+					last: users[0].last
+				};
+			} else if (create) {
+				await DB.query('INSERT INTO levels (`id`) VALUES (?)', [this.member.id]);
+				this.#primitiveData = {
+					messagesLegit: 0,
+					messagesAll: 0,
+					activity: 1,
+					symbols: 0,
+					last: 0
+				};
+			}
+
+			resolve(this);
+		});
 	};
 
 	/**
 	 * Обновляет данные пользователя в базе данных
 	 */
-	update () {
+	async update () {
 		// TODO: Модулю настала пизда, очень много флудит коннектами к БД. 
 		//  Надо сделать кеширование левелов и регулярную синхронизацию с БД. 
 		//  Пушто создание коннекта после каждого сообщения юзера - кладет БД.
 		//  На похуй будем ловить ошибки от базы, хуй с ней, если скипнем одно-два сообщения юзера
 		try {
-			DB.query(
+			await DB.query(
 				'UPDATE levels SET messagesAll = ?, messagesLegit = ?, symbols = ?, last = ? WHERE id = ?',
 				[
 					this.#primitiveData.messagesAll,
@@ -325,6 +330,15 @@ class UserLevels {
 		return this.#advancedData.nextRole = this.#roles[role.pos - 1] ?? true;
 	};
 
+	getNextRoleColor () {
+		const nextRole = this.getNextRole() === true
+		  ? this.getRole()
+		  : this.getNextRole()
+
+
+		return dec2hex(nextRole.cache.color);
+	};
+
 	/**
 	 * Возвращает прогресс до следующей роли. Возвращает true - если следующей
 	 * роли нет
@@ -345,10 +359,6 @@ class UserLevels {
 
 		return this.#advancedData.nextRoleProgress = nextRoleProgress;
 	};
-
-	getLevelCard () {
-		return new UserLevelCard(this);
-	}
 
 
 	/**
