@@ -1,6 +1,9 @@
 const CanvasElement = require('./CanvasElement');
 const { ALIGNMENT, COLOURS, SCALE } = require('../renderingConstants');
 
+/**
+ * Класс репрезентации любого элемента текста
+ */
 class TextBox extends CanvasElement {
 	constructor(
 	  canvas, x=0, y=0, w=1, h=1,
