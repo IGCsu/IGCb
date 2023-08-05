@@ -97,7 +97,72 @@ class UserLevelCards {
 		  ALIGNMENT.TOP_LEFT, COLOURS.DARK_GRAY, STYLE.PROGRESSBAR_ROUNDING
 		);
 
-		this.lvlLabel = new Label(this.canvas, 0, 0, 1, 1, ALIGNMENT.TOP_RIGHT, COLOURS.BLACK, STYLE.ROUNDING/2);
+		this.lvlLabel = new Label(this.canvas, 0, 0, 1, 1, ALIGNMENT.TOP_RIGHT, COLOURS.BLACK, STYLE.ROUNDING / 2);
+
+		this.msgAll = new Label(
+		  this.canvas, 0, 0, 1, 1,
+		  ALIGNMENT.TOP_RIGHT, COLOURS.DARK_GRAY, STYLE.ROUNDING / 4
+		);
+		this.msgAll.faceShift *= 1.5;
+		this.msgAll
+		  .setIcon(new Icon(this.canvas, undefined,0, 0, 40, 40))
+		  .setSecondaryText(new TextBox(this.canvas, 0, 0, 1, 1));
+		this.msgAll.secondaryText.color = COLOURS.GRAY;
+		this.msgAll.secondaryText.changeText('Всего', 150, STYLE.LABEL_STATS_SECONDARY_FONT_SIZE);
+
+		this.msgAvg = new Label(
+		  this.canvas, 0, 0, 1, 1,
+		  ALIGNMENT.TOP_RIGHT, COLOURS.DARK_GRAY, STYLE.ROUNDING / 4
+		);
+		this.msgAvg.faceShift *= 1.5;
+		this.msgAvg
+		  .setIcon(new Icon(this.canvas, undefined,0, 0, 40, 40))
+		  .setSecondaryText(new TextBox(this.canvas, 0, 0, 1, 1));
+		this.msgAvg.secondaryText.color = COLOURS.GRAY;
+		this.msgAvg.secondaryText.changeText('Учтено', 150, STYLE.LABEL_STATS_SECONDARY_FONT_SIZE);
+
+		this.symAll = new Label(
+		  this.canvas, 0, 0, 1, 1,
+		  ALIGNMENT.TOP_RIGHT, COLOURS.DARK_GRAY, STYLE.ROUNDING / 4
+		);
+		this.symAll.faceShift *= 1.5;
+		this.symAll
+		  .setIcon(new Icon(this.canvas, undefined,0, 0, 40, 40))
+		  .setSecondaryText(new TextBox(this.canvas, 0, 0, 1, 1));
+		this.symAll.secondaryText.color = COLOURS.GRAY;
+		this.symAll.secondaryText.changeText('Всего', 150, STYLE.LABEL_STATS_SECONDARY_FONT_SIZE);
+
+		this.symAvg = new Label(
+		  this.canvas, 0, 0, 1, 1,
+		  ALIGNMENT.TOP_RIGHT, COLOURS.DARK_GRAY, STYLE.ROUNDING / 4
+		);
+		this.symAvg.faceShift *= 1.5;
+		this.symAvg
+		  .setIcon(new Icon(this.canvas, undefined,0, 0, 40, 40))
+		  .setSecondaryText(new TextBox(this.canvas, 0, 0, 1, 1));
+		this.symAvg.secondaryText.color = COLOURS.GRAY;
+		this.symAvg.secondaryText.changeText('Среднее', 150, STYLE.LABEL_STATS_SECONDARY_FONT_SIZE);
+
+		this.overpost = new Label(
+		  this.canvas, 0, 0, 1, 1,
+		  ALIGNMENT.TOP_RIGHT, COLOURS.DARK_GRAY, STYLE.ROUNDING / 4
+		);
+		this.overpost.faceShift *= 1.5;
+		this.overpost
+		  .setIcon(new Icon(this.canvas, undefined,0, 0, 40, 40))
+		  .setSecondaryText(new TextBox(this.canvas, 0, 0, 1, 1));
+		this.overpost.secondaryText.color = COLOURS.GRAY;
+		this.overpost.secondaryText.changeText('Овепост', 150, STYLE.LABEL_STATS_SECONDARY_FONT_SIZE);
+
+		this.activity = new Label(
+		  this.canvas, 0, 0, 1, 1,
+		  ALIGNMENT.TOP_RIGHT, COLOURS.DARK_GRAY, STYLE.ROUNDING / 4
+		);
+		this.activity.faceShift *= 1.5;
+		this.activity
+		  .setIcon(new Icon(this.canvas, undefined,0, 0, 40, 40))
+		  .setSecondaryText(new TextBox(this.canvas, 0, 0, 1, 1));
+		this.activity.secondaryText.color = COLOURS.GRAY;
 	}
 
 	generateProgressbar(userLevel) {
@@ -217,7 +282,7 @@ class UserLevelCards {
 		  ]
 		this.lvlLabel.icon.useOriginalAspect();
 
-		this.lvlLabel.primaryText.changeText(userLevel.getRole().cache.name, 150, 31)
+		this.lvlLabel.primaryText.changeText(userLevel.getRole().cache.name, 150, STYLE.LABEL_ROLE_FONT_SIZE)
 
 		this.lvlLabel.reposElements();
 		this.lvlLabel.move(-this.lvlLabel.h);
@@ -229,7 +294,143 @@ class UserLevelCards {
 		this.lvlLabel.draw();
 	}
 
-	async generate(userLevel) {
+	generateStats(userLevel) {
+		this.generateMsgAll(userLevel);
+		this.generateMsgAvg(userLevel);
+		this.generateSymAll(userLevel);
+		this.generateSymAvg(userLevel);
+		this.generateOverpost(userLevel);
+		this.generateActivity(userLevel);
+	}
+
+	generateMsgAll(userLevel) {
+
+		this.msgAll.icon.asset = UserLevelCards.assets['messages'];
+		this.msgAll.icon.useOriginalAspect();
+
+
+		this.msgAll.primaryText.changeText(
+		  userLevel.getMessagesAll()
+			.toLocaleString().replaceAll(' ', '.'), 150, STYLE.LABEL_STATS_PRIMARY_FONT_SIZE
+		);
+
+
+		this.msgAll.reposElements();
+		this.msgAll.alignment = ALIGNMENT.BOTTOM_LEFT;
+		this.msgAll
+		  .moveToObject(this.progressbar.currLvlTxt)
+		  .move(0, this.msgAll.h + STYLE.STATS_GRID_SHIFT);
+
+		this.msgAll.draw();
+	}
+
+	generateMsgAvg(userLevel) {
+
+		this.msgAvg.icon.asset = UserLevelCards.assets['messages'];
+		this.msgAvg.icon.useOriginalAspect();
+
+
+		this.msgAvg.primaryText.changeText(
+		  userLevel.getMessagesLegit()
+			.toLocaleString().replaceAll(' ', '.'),150, STYLE.LABEL_STATS_PRIMARY_FONT_SIZE
+		);
+
+
+		this.msgAvg.reposElements();
+		this.msgAvg.alignment = ALIGNMENT.TOP_LEFT;
+		this.msgAvg
+		  .moveToObject(this.msgAll)
+		  .move(this.msgAll.w + STYLE.STATS_GRID_GAP, 0);
+
+		this.msgAvg.draw();
+	}
+
+	generateSymAll(userLevel) {
+
+		this.symAll.icon.asset = UserLevelCards.assets['symbols'];
+		this.symAll.icon.useOriginalAspect();
+
+
+		this.symAll.primaryText.changeText(
+		  userLevel.getSymbols()
+			.toLocaleString().replaceAll(' ', '.'),150, STYLE.LABEL_STATS_PRIMARY_FONT_SIZE
+		);
+
+
+		this.symAll.reposElements();
+		this.symAll.alignment = ALIGNMENT.TOP_LEFT;
+		this.symAll
+		  .moveToObject(this.msgAll)
+		  .move(0, this.msgAll.h + STYLE.STATS_GRID_GAP);
+
+		this.symAll.draw();
+	}
+
+	generateSymAvg(userLevel) {
+
+		this.symAvg.icon.asset = UserLevelCards.assets['symbols'];
+		this.symAvg.icon.useOriginalAspect();
+
+
+		this.symAvg.primaryText.changeText(
+		  userLevel.getSymbolsAvg()
+			.toLocaleString().replaceAll(' ', '.'),150, STYLE.LABEL_STATS_PRIMARY_FONT_SIZE
+		);
+
+
+		this.symAvg.reposElements();
+		this.symAvg.alignment = ALIGNMENT.TOP_LEFT;
+		this.symAvg
+		  .moveToObject(this.symAll)
+		  .move(this.symAll.w + STYLE.STATS_GRID_GAP, 0);
+
+		this.symAvg.draw();
+	}
+
+	generateOverpost(userLevel) {
+
+		this.overpost.icon.asset = UserLevelCards.assets['overpost'];
+		this.overpost.icon.useOriginalAspect();
+
+
+		this.overpost.primaryText.changeText(
+		  userLevel.getOverpost() + '%',150, 31
+		);
+
+		this.overpost.reposElements();
+		this.overpost.alignment = ALIGNMENT.TOP_LEFT;
+		this.overpost
+		  .moveToObject(this.symAll)
+		  .move(0, this.symAll.h + STYLE.STATS_GRID_GAP);
+
+		this.overpost.draw();
+	}
+
+    generateActivity(userLevel) {
+
+        this.activity.icon.asset = UserLevelCards.assets['activity'];
+        this.activity.icon.useOriginalAspect();
+
+
+        this.activity.primaryText.changeText(
+            userLevel.getActivity() + '/30 дней',150, STYLE.LABEL_STATS_PRIMARY_FONT_SIZE
+        );
+        this.activity.secondaryText.changeText(
+            userLevel.getActivityPer() + '%',150, STYLE.LABEL_STATS_SECONDARY_FONT_SIZE
+        );
+
+        this.activity.reposElements();
+        this.activity.alignment = ALIGNMENT.TOP_LEFT;
+        this.activity
+            .moveToObject(this.overpost)
+            .move(0, this.overpost.h + STYLE.STATS_GRID_GAP);
+
+        this.activity.draw();
+    }
+
+
+
+    async generate(userLevel) {
 		const context = this.canvas.getContext('2d');
 		context.textBaseline = "top";
 
@@ -250,6 +451,8 @@ class UserLevelCards {
 		await this.generateExpValues(userLevel);
 
 		this.generateCurrLevelLabel(userLevel);
+
+		this.generateStats(userLevel);
 
 		return new MessageAttachment(this.canvas.toBuffer('image/png'), `${userLevel.getExp()}.png`);
 	}

@@ -36,33 +36,29 @@ class Label extends Rect {
 	}
 
 	reposElements() {
-		this.w = this.primaryText.w + (this.faceShift * 3)
+		this.w = this.primaryText.w + (this.faceShift * 2)
 		  + (this.icon ? this.icon.w + this.elShift : 0)
 		  + (this.secondaryText ? this.secondaryText.w + this.elShift : 0);
 		this.h = this.primaryText.h + (this.faceShift * 1.5);
 
-		this.primaryText.alignment = ALIGNMENT.CENTER_CENTER;
+		this.primaryText.alignment = ALIGNMENT.CENTER_LEFT;
 		this.primaryText.moveToObject(this);
+        this.primaryText.move(this.faceShift, 0);
 		if (this.secondaryText) {
-			this.primaryText.move(-this.faceShift*2, 0)
 			this.secondaryText.alignment = ALIGNMENT.CENTER_RIGHT;
 			this.secondaryText.moveToObject(this);
-			this.secondaryText.move(-this.faceShift*2, 0);
-			this.w -= this.faceShift;
-			this.secondaryText.move(0, -5);
+			this.secondaryText.move(-this.faceShift, 0);
+
+			this.secondaryText.move(0, -3);
 			this.secondaryText.context.textBaseline = 'middle';
 			this.secondaryText.move(0, this.secondaryText.h / 1.7);
-			this.icon.move(this.elShift + this.secondaryText.w, 0);
 		}
 		if (this.icon) {
-			this.primaryText.move(this.faceShift, 0)
+			this.primaryText.move(this.icon.w + this.elShift, 0)
 			this.icon.alignment = ALIGNMENT.CENTER_LEFT;
-			this.icon.moveToObject(this.primaryText);
-			this.icon.move(-this.elShift - this.icon.w, 0);
+			this.icon.moveToObject(this);
+			this.icon.move(this.faceShift, 0);
 		}
-
-		this.primaryText.move(0, -5)
-
 	}
 
 	draw(context=undefined) {
@@ -71,6 +67,7 @@ class Label extends Rect {
 		this.reposElements();
 
 		super.draw(ctx);
+        this.primaryText.move(0, -3)
 		this.primaryText.context.textBaseline = 'middle';
 		this.primaryText.move(0, this.primaryText.h / 1.7);
 
