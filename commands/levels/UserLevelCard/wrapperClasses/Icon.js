@@ -4,6 +4,9 @@ const CanvasElement = require('./CanvasElement');
 const { request } = require('undici');
 const Canvas = require('canvas');
 
+/**
+ * Класс репрезентации любого элемента который имеет отрисовку картинки
+ */
 class Icon extends CanvasElement {
 
 	static #loadAsset(path) {
