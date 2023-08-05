@@ -49,6 +49,13 @@ class CanvasElement {
 			x: this.x + (this.w * alignment[1]), y: this.y + (this.h * alignment[0])
 		};
 	}
+
+	getInBoundAlignedPoint(alignment=ALIGNMENT.TOP_LEFT) {
+		return {
+			x: Math.min(Math.max(this.x + (this.w * alignment[1]), 0), RESOLUTION.CARD_WIDTH),
+			y: Math.min(Math.max(this.y + (this.h * alignment[0]), 0), RESOLUTION.CARD_HEIGHT)
+		};
+	}
 }
 
 class Icon extends CanvasElement {
@@ -83,10 +90,14 @@ class Icon extends CanvasElement {
 		this.asset = img;
 	}
 
-	useOriginalAspect() {
+	useOriginalAspect(setHeightAsPrimary=false) {
 		if (!this.asset) return false;
 		this.originalAspect = this.asset.naturalWidth / this.asset.naturalHeight;
-		this.h = this.w / this.originalAspect;
+		if (!setHeightAsPrimary) {
+			this.h = this.w / this.originalAspect;
+		} else {
+			this.w = this.h * this.originalAspect;
+		}
 	};
 
 	makeRounded(r=undefined) {
@@ -101,36 +112,36 @@ class Icon extends CanvasElement {
 			  pos.x, pos.y, Math.max(this.w, this.h) * 0.5, 0, Math.PI * 2
 			);
 		} else if (typeof r === 'number') {
-			let pos = this.getAlignedPoint(ALIGNMENT.TOP_LEFT);
+			let pos = this.getInBoundAlignedPoint(ALIGNMENT.TOP_LEFT);
 			this.context.arc(
 			  pos.x + r, pos.y + r, r, 0, Math.PI, Math.PI * 1.5
 			);
-			pos = this.getAlignedPoint(ALIGNMENT.TOP_RIGHT);
+			pos = this.getInBoundAlignedPoint(ALIGNMENT.TOP_RIGHT);
 			this.context.arc(
 			  pos.x - r, pos.y + r, r, Math.PI * 1.5, Math.PI * 2
 			);
-			pos = this.getAlignedPoint(ALIGNMENT.BOTTOM_RIGHT);
+			pos = this.getInBoundAlignedPoint(ALIGNMENT.BOTTOM_RIGHT);
 			this.context.arc(
 			  pos.x - r, pos.y - r, r, Math.PI * 2, Math.PI * 0.5
 			);
-			pos = this.getAlignedPoint(ALIGNMENT.BOTTOM_LEFT);
+			pos = this.getInBoundAlignedPoint(ALIGNMENT.BOTTOM_LEFT);
 			this.context.arc(
 			  pos.x + r, pos.y - r, r, Math.PI * 0.5, Math.PI
 			);
 		} else if (r instanceof Array) {
-			let pos = this.getAlignedPoint(ALIGNMENT.TOP_LEFT);
+			let pos = this.getInBoundAlignedPoint(ALIGNMENT.TOP_LEFT);
 			this.context.arc(
 			  pos.x + r[0], pos.y + r[0], r[0], Math.PI, Math.PI * 1.5
 			);
-			pos = this.getAlignedPoint(ALIGNMENT.TOP_RIGHT);
+			pos = this.getInBoundAlignedPoint(ALIGNMENT.TOP_RIGHT);
 			this.context.arc(
 			  pos.x - r[1], pos.y + r[1], r[1], Math.PI * 1.5, Math.PI * 2
 			);
-			pos = this.getAlignedPoint(ALIGNMENT.BOTTOM_RIGHT);
+			pos = this.getInBoundAlignedPoint(ALIGNMENT.BOTTOM_RIGHT);
 			this.context.arc(
 			  pos.x - r[2], pos.y - r[2], r[2], Math.PI * 2, Math.PI * 0.5
 			);
-			pos = this.getAlignedPoint(ALIGNMENT.BOTTOM_LEFT);
+			pos = this.getInBoundAlignedPoint(ALIGNMENT.BOTTOM_LEFT);
 			this.context.arc(
 			  pos.x + r[3], pos.y - r[3], r[3], Math.PI * 0.5, Math.PI
 			);
@@ -187,13 +198,19 @@ class TextBox extends CanvasElement {
 		this.reapplyAlignment();
 	}
 
+	applyFont(font=this.font, fontSize=this.fontSize) {
+		const fnt = font.split(' ');
+		this.context.font = ` ${fnt[1] ?? ''} ${fontSize}px ${fnt[0]}`;
+	}
+
 	applyText(maxTxtWidth, maxFont) {
-		this.context.font = `${this.fontSize}px ${this.font}`;
+		this.applyFont();
 		let outputWidth = this.context.measureText(this.text).width;
 		if (outputWidth > maxTxtWidth) {
 			let stepSize = Math.max(Math.ceil((outputWidth - maxTxtWidth) / 10), 1);
 			do {
-				this.context.font = `${this.fontSize -= stepSize}px ${this.font}`;
+				this.fontSize -= stepSize;
+				this.applyFont();
 				outputWidth = this.context.measureText(this.text).width;
 				stepSize = Math.max(Math.ceil((outputWidth - maxTxtWidth) / 10), 1);
 			} while ((outputWidth > maxTxtWidth) && (this.fontSize > 1));
@@ -201,7 +218,7 @@ class TextBox extends CanvasElement {
 
 		if(this.fontSize > maxFont) {
 			this.fontSize = maxFont;
-			this.context.font = `${this.fontSize}px ${this.font}`;
+			this.applyFont();
 		}
 
 		const txtMetrics = this.context.measureText(this.text);
