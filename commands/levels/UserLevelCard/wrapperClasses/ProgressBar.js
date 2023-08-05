@@ -3,6 +3,10 @@ const { ALIGNMENT, COLOURS, STYLE } = require('../renderingConstants');
 const TextBox = require('./TextBox');
 const Icon = require('./Icon');
 
+
+/**
+ * Класс репрезентации элемента индикатора прогресса. Состоит из нескольких скруглённых прямоугольников (Фон; Основная полоса оптыа; Полоса штрафа) и двух тектовых полей (Знеачение текущего уровня и значение слудующего уровня)
+ */
 class ProgressBar extends Rect {
 
 	constructor (
