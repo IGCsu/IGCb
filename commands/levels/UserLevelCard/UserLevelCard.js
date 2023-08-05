@@ -42,6 +42,13 @@ class UserLevelCards {
 		  ALIGNMENT.TOP_LEFT, COLOURS.DARK_GRAY, STYLE.ROUNDING
 		)
 
+		this.bannerCoverRect = new Rect(
+		  this.canvas,
+		  0, STYLE.AVATAR_SHIFT + STYLE.AVATAR_SIZE / 2,
+		  RESOLUTION.CARD_WIDTH, RESOLUTION.CARD_HEIGHT - STYLE.AVATAR_SHIFT - STYLE.AVATAR_SIZE / 2,
+		  ALIGNMENT.TOP_LEFT, COLOURS.DARK_GRAY, [0, 0, STYLE.ROUNDING, STYLE.ROUNDING]
+		)
+
 		this.darkBackground = new Rect(
 		  this.canvas,
 		  STYLE.BORDER_SIZE,
@@ -113,6 +120,7 @@ class UserLevelCards {
 		this.displayname.fontSize = STYLE.USERNAME_MAX_FONT_SIZE;
 		this.displayname.changeText(userLevel.member.displayName, STYLE.USERNAME_MAX_WIDTH, STYLE.USERNAME_MAX_FONT_SIZE);
 		this.displayname.context.textBaseline = "alphabetic";
+		this.displayname.font = 'Inter Bold'
 		this.displayname
 			.moveToObject(this.darkBackground)
 			.move(
@@ -126,6 +134,7 @@ class UserLevelCards {
 
 		this.username.changeText(userLevel.member.user.username, STYLE.USERNAME_MAX_WIDTH, STYLE.USERNAME_MAX_FONT_SIZE - 15);
 		this.username.context.textBaseline = "alphabetic";
+		this.displayname.font = 'Inter'
 		this.username
 		  .moveToObject(this.displayname)
 		  .move(STYLE.DARK_BACKGROUND_INNER_SHIFT + this.displayname.w);
@@ -168,11 +177,32 @@ class UserLevelCards {
 		this.darkBackground.draw();
 	}
 
-	generateBanner() {
+	async generateBanner(userLevel) {
+		const bannerAllowedHeight = STYLE.AVATAR_SIZE / 2 + STYLE.AVATAR_SHIFT;
 		this.banner.asset = UserLevelCards.assets['default_banner']
+		this.banner.w = RESOLUTION.CARD_WIDTH;
+
+		if (userLevel.member.id == '500020124515041283') {
+			await this.banner.loadAssetFromUrl('https://cdn.discordapp.com/attachments/1039311543894020156/1137303337516142682/FkGKh77aAAI7UOy.jpg');
+		}
+
 		this.banner.useOriginalAspect();
+		if (this.banner.h < bannerAllowedHeight){
+			this.banner.h = bannerAllowedHeight;
+			this.banner.useOriginalAspect(true);
+		}
+
+		this.banner.alignment = ALIGNMENT.CENTER_CENTER;
+
+		this.banner
+		  .moveToPoint(RESOLUTION.CARD_WIDTH / 2, bannerAllowedHeight / 2);
+
 		this.banner.makeRounded([STYLE.ROUNDING, STYLE.ROUNDING, 0, 0])
 		this.banner.draw();
+	}
+
+	generateCurrLevelLabel() {
+
 	}
 
 	async generate(userLevel) {
@@ -181,8 +211,9 @@ class UserLevelCards {
 
 		this.mainBackground.draw();
 
+		await this.generateBanner(userLevel);
 
-		this.generateBanner();
+		this.bannerCoverRect.draw();
 
 		this.generateDarkBackground();
 
