@@ -17,6 +17,7 @@ const x1 = RESOLUTION.CARD_WIDTH - STYLE.AVATAR_SHIFT + STYLE.BORDER_SIZE;
 const y1 = y0;
 
 Canvas.registerFont('./commands/levels/UserLevelCard/fonts/Inter/static/Inter-Bold.ttf', {family: 'Inter', weight: 'Bold'});
+Canvas.registerFont('./commands/levels/UserLevelCard/fonts/Inter/static/Inter-Regular.ttf', {family: 'Inter', weight: 'Regular'});
 
 
 class UserLevelCards {
@@ -106,8 +107,12 @@ class UserLevelCards {
 		this.progressbar
 		  .moveToObject(this.displayname)
 		  .move(0, STYLE.PROGRESSBAR_SHIFT);
+
 		this.progressbar.currLvlTxt.fontSize = STYLE.ROLE_LIMIT_FONT_SIZE
+		this.progressbar.currLvlTxt.font = 'Inter Bold'
+
 		this.progressbar.nxtLvlTxt.fontSize = STYLE.ROLE_LIMIT_FONT_SIZE
+		this.progressbar.nxtLvlTxt.font = 'Inter Bold'
 
 		this.progressbar.applyToUser(userLevel);
 
@@ -116,6 +121,7 @@ class UserLevelCards {
 	}
 
 	generateUsername(userLevel) {
+		this.displayname.fontSize = STYLE.USERNAME_MAX_FONT_SIZE;
 		this.displayname.changeText(userLevel.member.displayName, STYLE.USERNAME_MAX_WIDTH, STYLE.USERNAME_MAX_FONT_SIZE);
 		this.displayname.context.textBaseline = "alphabetic";
 		this.displayname
@@ -140,10 +146,10 @@ class UserLevelCards {
 
 	}
 
-	async generateExpValues(canvas, context, userLevel) {
+	async generateExpValues(userLevel) {
 		this.expText.fontSize = STYLE.USERNAME_MAX_FONT_SIZE + 15;
+		this.expText.font = 'Inter Bold'
 		this.expText.changeText(userLevel.getExpFull().toLocaleString().replaceAll(' ', '.'));
-		this.expText.w = 0;
 		this.expText
 		  .moveToObject(this.progressbar)
 		  .move(0, - this.expText.h - STYLE.PROGRESSBAR_SHIFT_UP);
@@ -175,6 +181,7 @@ class UserLevelCards {
 
 	generateBanner() {
 		this.banner.asset = UserLevelCards.assets['default_banner']
+		this.banner.useOriginalAspect();
 		this.banner.makeRounded([STYLE.ROUNDING, STYLE.ROUNDING, 0, 0])
 		this.banner.draw();
 	}
@@ -185,13 +192,18 @@ class UserLevelCards {
 
 		this.mainBackground.draw();
 
+
 		this.generateBanner();
 
 		this.generateDarkBackground();
+
 		await this.generateAvatar(userLevel);
+
 		this.generateUsername(userLevel);
+
 		this.generateProgressbar(userLevel);
-		await this.generateExpValues(this.canvas, context, userLevel);
+
+		await this.generateExpValues(userLevel);
 
 		return new MessageAttachment(this.canvas.toBuffer('image/png'), `${userLevel.getExp()}.png`);
 	}

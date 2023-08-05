@@ -83,6 +83,12 @@ class Icon extends CanvasElement {
 		this.asset = img;
 	}
 
+	useOriginalAspect() {
+		if (!this.asset) return false;
+		this.originalAspect = this.asset.naturalWidth / this.asset.naturalHeight;
+		this.h = this.w / this.originalAspect;
+	};
+
 	makeRounded(r=undefined) {
 
 
@@ -165,12 +171,13 @@ class TextBox extends CanvasElement {
 	constructor(
 	  canvas, x=0, y=0, w=1, h=1,
 	  alignment=ALIGNMENT.TOP_LEFT, color=COLOURS.WHITE,
-	  text='', fontSize=70
+	  text='', fontSize=70, font='Inter Regular'
 	) {
 		super(canvas, x, y, w, h, alignment);
 		this.color = color;
 		this.text = text;
 		this.fontSize = fontSize * SCALE;
+		this.font = font;
 		this.context.textBaseline = "top";
 	}
 
@@ -181,9 +188,21 @@ class TextBox extends CanvasElement {
 	}
 
 	applyText(maxTxtWidth, maxFont) {
-		do {
-			this.context.font = `Bold ${this.fontSize -= 1}px Inter`;
-		} while ((this.context.measureText(this.text).width > maxTxtWidth || this.fontSize > maxFont) && (this.fontSize > 1));
+		this.context.font = `${this.fontSize}px ${this.font}`;
+		let outputWidth = this.context.measureText(this.text).width;
+		if (outputWidth > maxTxtWidth) {
+			let stepSize = Math.max(Math.ceil((outputWidth - maxTxtWidth) / 10), 1);
+			do {
+				this.context.font = `${this.fontSize -= stepSize}px ${this.font}`;
+				outputWidth = this.context.measureText(this.text).width;
+				stepSize = Math.max(Math.ceil((outputWidth - maxTxtWidth) / 10), 1);
+			} while ((outputWidth > maxTxtWidth) && (this.fontSize > 1));
+		}
+
+		if(this.fontSize > maxFont) {
+			this.fontSize = maxFont;
+			this.context.font = `${this.fontSize}px ${this.font}`;
+		}
 
 		const txtMetrics = this.context.measureText(this.text);
 
@@ -197,8 +216,6 @@ class TextBox extends CanvasElement {
 		const ctx = context ?? this.context;
 		ctx.font = this.applyText(maxTxtWidth);
 		ctx.fillStyle = this.color;
-
-		this.reapplyAlignment();
 
 		ctx.fillText(this.text, this.x, this.y);
 	}
@@ -368,8 +385,6 @@ class ProgressBar extends Rect {
 		if (this.fineBar.shown) this.fineBar.draw(ctx);
 		this.expBar.draw(ctx);
 		this.currLvlTxt.draw(ctx);
-		this.nxtLvlTxt.w = 0;                                                   // Страшный костыль. Я не в силах определеть почему выравнивание не работает правильно для текста
-		this.reposElements();                                                   // TODO Нужно разобраться в этом
 		if (this.nxtLvlTxt.shown) this.nxtLvlTxt.draw(ctx);
 		if (this.maxLvl.shown) this.maxLvl.draw(ctx);
 	}
