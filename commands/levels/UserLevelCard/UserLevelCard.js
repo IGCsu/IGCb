@@ -5,17 +5,6 @@ const { MessageAttachment } = require('discord.js');
 const { ALIGNMENT, COLOURS, STYLE, RESOLUTION } = require('./renderingConstants');
 const { Rect, TextBox, Icon, Label, ProgressBar } = require('./CanvasWrapper');
 
-const x0 = STYLE.BORDER_SIZE + STYLE.AVATAR_SHIFT * 2 + STYLE.AVATAR_SIZE ;
-const y0 =
-	STYLE.AVATAR_SHIFT
-	+ STYLE.BORDER_SIZE
-	+ STYLE.AVATAR_SIZE
-	- STYLE.PROGRESSBAR_HEIGHT
-	- STYLE.PROGRESSBAR_SHIFT;
-
-const x1 = RESOLUTION.CARD_WIDTH - STYLE.AVATAR_SHIFT + STYLE.BORDER_SIZE;
-const y1 = y0;
-
 Canvas.registerFont('./commands/levels/UserLevelCard/fonts/Inter/static/Inter-Bold.ttf', {family: 'Inter', weight: 'Bold'});
 Canvas.registerFont('./commands/levels/UserLevelCard/fonts/Inter/static/Inter-Regular.ttf', {family: 'Inter', weight: 'Regular'});
 
