@@ -335,7 +335,6 @@ class UserLevels {
 		  ? this.getRole()
 		  : this.getNextRole()
 
-
 		return dec2hex(nextRole.cache.color);
 	};
 

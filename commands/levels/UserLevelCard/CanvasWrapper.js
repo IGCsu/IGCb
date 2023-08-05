@@ -154,7 +154,8 @@ class Icon extends CanvasElement {
 
 	draw(context=undefined) {
 		const ctx = context ?? this.context;
-		ctx.drawImage(this.asset, this.x, this.y, this.w, this.h);
+		if (this.asset)
+			ctx.drawImage(this.asset, this.x, this.y, this.w, this.h);
 		this.context.restore();
 	}
 }
@@ -194,11 +195,14 @@ class TextBox extends CanvasElement {
 
 	changeText(newTxt, maxTxtWidth, maxFont) {
 		this.text = newTxt;
+		this.fontSize = maxFont ?? this.fontSize;
 		this.applyText(maxTxtWidth, maxFont);
 		this.reapplyAlignment();
 	}
 
-	applyFont(font=this.font, fontSize=this.fontSize) {
+	applyFont(font=undefined, fontSize=undefined) {
+		font = font ?? this.font;
+		fontSize = fontSize ?? this.fontSize;
 		const fnt = font.split(' ');
 		this.context.font = ` ${fnt[1] ?? ''} ${fontSize}px ${fnt[0]}`;
 	}
@@ -233,7 +237,7 @@ class TextBox extends CanvasElement {
 		const ctx = context ?? this.context;
 		ctx.font = this.applyText(maxTxtWidth);
 		ctx.fillStyle = this.color;
-
+		this.applyFont(this.font, this.fontSize);
 		ctx.fillText(this.text, this.x, this.y);
 	}
 }
@@ -247,11 +251,11 @@ class Label extends Rect {
 	  text='', fontSize=70
 	) {
 		super(canvas, x, y, w, h, alignment, color, rounding);
-		this.primaryText = new TextBox(canvas, x, y, w, h, alignment, COLOURS.WHITE, text, fontSize);
+		this.primaryText = new TextBox(canvas, x, y, w, h,  ALIGNMENT.CENTER_CENTER, COLOURS.WHITE, text, fontSize, 'Sans Regular');
 		this.secondaryText = null;
 		this.icon = null;
 		this.elShift = 10;
-		this.faceShift = this.elShift*2;
+		this.faceShift = this.elShift * 2;
 	}
 
 	setPrimaryText(primaryText) {
@@ -269,30 +273,45 @@ class Label extends Rect {
 		return this;
 	}
 
-	draw(context=undefined) {
-		const ctx = context ?? this.context;
-
-		this.w = (this.faceShift * 2)
+	reposElements() {
+		this.w = this.primaryText.w + (this.faceShift * 3)
 		  + (this.icon ? this.icon.w + this.elShift : 0)
 		  + (this.secondaryText ? this.secondaryText.w + this.elShift : 0);
-		this.h = this.primaryText.h + (this.faceShift * 2);
+		this.h = this.primaryText.h + (this.faceShift * 1.5);
 
 		this.primaryText.alignment = ALIGNMENT.CENTER_CENTER;
 		this.primaryText.moveToObject(this);
 		if (this.secondaryText) {
+			this.primaryText.move(-this.faceShift*2, 0)
 			this.secondaryText.alignment = ALIGNMENT.CENTER_RIGHT;
 			this.secondaryText.moveToObject(this);
+			this.secondaryText.move(-this.faceShift*2, 0);
+			this.w -= this.faceShift;
+			this.secondaryText.move(0, -5);
+			this.secondaryText.context.textBaseline = 'middle';
+			this.secondaryText.move(0, this.secondaryText.h / 1.7);
 			this.icon.move(this.elShift + this.secondaryText.w, 0);
 		}
 		if (this.icon) {
+			this.primaryText.move(this.faceShift, 0)
 			this.icon.alignment = ALIGNMENT.CENTER_LEFT;
 			this.icon.moveToObject(this.primaryText);
 			this.icon.move(-this.elShift - this.icon.w, 0);
 		}
 
+		this.primaryText.move(0, -5)
 
+	}
+
+	draw(context=undefined) {
+		const ctx = context ?? this.context;
+
+		this.reposElements();
 
 		super.draw(ctx);
+		this.primaryText.context.textBaseline = 'middle';
+		this.primaryText.move(0, this.primaryText.h / 1.7);
+
 		this.primaryText.draw(ctx);
 		if (this.secondaryText) this.secondaryText.draw(ctx);
 		if (this.icon) this.icon.draw(ctx);
@@ -371,8 +390,9 @@ class ProgressBar extends Rect {
 
 		this.expBar.color = userLevel.getNextRoleColor();
 
-		const expProgress = userLevel.getNextRoleProgress() !== true
-		  ? userLevel.getNextRoleProgress() : 100
+		const expProgress = (userLevel.getNextRoleProgress() !== true
+		  ? userLevel.getNextRoleProgress() : 100)
+
 
 		this.expBar.w = STYLE.PROGRESSBAR_WIDTH * expProgress / 100;
 

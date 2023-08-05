@@ -96,6 +96,8 @@ class UserLevelCards {
 		  0, 0, STYLE.PROGRESSBAR_WIDTH, STYLE.PROGRESSBAR_HEIGHT,
 		  ALIGNMENT.TOP_LEFT, COLOURS.DARK_GRAY, STYLE.PROGRESSBAR_ROUNDING
 		);
+
+		this.lvlLabel = new Label(this.canvas, 0, 0, 1, 1, ALIGNMENT.TOP_RIGHT, COLOURS.BLACK, STYLE.ROUNDING/2);
 	}
 
 	generateProgressbar(userLevel) {
@@ -125,14 +127,14 @@ class UserLevelCards {
 			.moveToObject(this.darkBackground)
 			.move(
 			  STYLE.DARK_BACKGROUND_INNER_SHIFT,
-			  STYLE.DARK_BACKGROUND_INNER_SHIFT
+			  STYLE.DARK_BACKGROUND_INNER_SHIFT*1.5
 			  + this.displayname.context.measureText(this.displayname.text)
 				.actualBoundingBoxAscent
 			);
 
 		this.displayname.draw(STYLE.USERNAME_MAX_WIDTH);
 
-		this.username.changeText(userLevel.member.user.username, STYLE.USERNAME_MAX_WIDTH, STYLE.USERNAME_MAX_FONT_SIZE - 15);
+		this.username.changeText(userLevel.member.user.username, RESOLUTION.CARD_WIDTH - STYLE.USERNAME_MAX_WIDTH, STYLE.USERNAME_MAX_FONT_SIZE - 15);
 		this.username.context.textBaseline = "alphabetic";
 		this.displayname.font = 'Inter'
 		this.username
@@ -201,8 +203,30 @@ class UserLevelCards {
 		this.banner.draw();
 	}
 
-	generateCurrLevelLabel() {
+	generateCurrLevelLabel(userLevel) {
+		this.lvlLabel
+		  .setIcon(new Icon(
+			this.canvas, undefined,
+			0, 0, 40, 40
+		  ));
 
+		this.lvlLabel.icon.asset = UserLevelCards.assets[
+		  userLevel.getRole().cache.name
+			.toLowerCase()
+			.replace(' ', '_')
+		  ]
+		this.lvlLabel.icon.useOriginalAspect();
+
+		this.lvlLabel.primaryText.changeText(userLevel.getRole().cache.name, 150, 31)
+
+		this.lvlLabel.reposElements();
+		this.lvlLabel.move(-this.lvlLabel.h);
+
+		this.lvlLabel
+		  .moveToObject(this.darkBackground)
+		  .move(0, -this.lvlLabel.h - STYLE.DARK_BACKGROUND_SHIFT);
+
+		this.lvlLabel.draw();
 	}
 
 	async generate(userLevel) {
@@ -224,6 +248,8 @@ class UserLevelCards {
 		this.generateProgressbar(userLevel);
 
 		await this.generateExpValues(userLevel);
+
+		this.generateCurrLevelLabel(userLevel);
 
 		return new MessageAttachment(this.canvas.toBuffer('image/png'), `${userLevel.getExp()}.png`);
 	}
