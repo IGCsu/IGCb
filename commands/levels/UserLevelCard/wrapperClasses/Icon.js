@@ -46,18 +46,23 @@ class Icon extends CanvasElement {
 		}
 	};
 
+	/**
+	 *
+	 * @param {number | Array} r Радиус дуги для скругления углов. Можно указать 1 число либо же массив из 4 чисел. Второе позволит указать радиус индивидально для каждого угла прямоугольника.
+	 * @returns {Icon}
+	 */
 	makeRounded(r=undefined) {
+		this.context.save();													// Сохраниние кофигурации без вырезания
 
+		this.context.beginPath();												// Начало пути маски
 
-		this.context.save();
-
-		this.context.beginPath();
-		if (r === undefined) {
+		if (r === undefined) {													// Скругление квадрата до круга
 			const pos = this.getAlignedPoint(ALIGNMENT.CENTER_CENTER);
 			this.context.arc(
 			  pos.x, pos.y, Math.max(this.w, this.h) * 0.5, 0, Math.PI * 2
 			);
-		} else if (typeof r === 'number') {
+
+		} else if (typeof r === 'number') {										// Скругление прямоугольника по указанному радиусу для всех углов
 			let pos = this.getInBoundAlignedPoint(ALIGNMENT.TOP_LEFT);
 			this.context.arc(
 			  pos.x + r, pos.y + r, r, 0, Math.PI, Math.PI * 1.5
@@ -74,7 +79,8 @@ class Icon extends CanvasElement {
 			this.context.arc(
 			  pos.x + r, pos.y - r, r, Math.PI * 0.5, Math.PI
 			);
-		} else if (r instanceof Array) {
+
+		} else if (r instanceof Array) {										// Скругление прямоугольника по указанному радиусу для каждого угла по отдельности
 			let pos = this.getInBoundAlignedPoint(ALIGNMENT.TOP_LEFT);
 			this.context.arc(
 			  pos.x + r[0], pos.y + r[0], r[0], Math.PI, Math.PI * 1.5
@@ -92,8 +98,9 @@ class Icon extends CanvasElement {
 			  pos.x + r[3], pos.y - r[3], r[3], Math.PI * 0.5, Math.PI
 			);
 		}
-		this.context.closePath();
-		this.context.clip();
+
+		this.context.closePath();												// Замыкание пути
+		this.context.clip();													// Вырезание по задданой путём маске
 
 		return this;
 	}
