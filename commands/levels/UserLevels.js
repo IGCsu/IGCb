@@ -74,7 +74,7 @@ class UserLevels {
 				this.#primitiveData = {
 					messagesLegit: 0,
 					messagesAll: 0,
-					activity: 1,
+					activity: 30,
 					symbols: 0,
 					last: 0
 				};
