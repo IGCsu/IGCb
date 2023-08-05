@@ -2,6 +2,9 @@ const Rect = require('./Rect');
 const { ALIGNMENT, COLOURS } = require('../renderingConstants');
 const TextBox = require('./TextBox');
 
+/**
+ * Класс репрезентации элемента Label. По сути являтеся цветной пилюлель с обязательным основным текстом, необязательным вторичным текстом и необязательной иконкой.
+ */
 class Label extends Rect {
 
 	constructor (
