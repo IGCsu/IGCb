@@ -1,5 +1,6 @@
 const UserLevelCard = require('./UserLevelCard/UserLevelCard');
 const UserLevelCards = require('./UserLevelCard/UserLevelCard');
+const bitFields = require('./bitFields.json');
 
 class UserLevels {
 
@@ -67,7 +68,9 @@ class UserLevels {
 					messagesAll: users[0].messagesAll,
 					activity: users[0].activity,
 					symbols: users[0].symbols,
-					last: users[0].last
+					last: users[0].last,
+                    banner: users[0].banner,
+                    flags: users[0].flags
 				};
 			} else if (create) {
 				await DB.query('INSERT INTO levels (`id`) VALUES (?)', [this.member.id]);
@@ -76,7 +79,9 @@ class UserLevels {
 					messagesAll: 0,
 					activity: 30,
 					symbols: 0,
-					last: 0
+					last: 0,
+					banner: '',
+					flags: 0
 				};
 			}
 
@@ -94,16 +99,20 @@ class UserLevels {
 		//  На похуй будем ловить ошибки от базы, хуй с ней, если скипнем одно-два сообщения юзера
 		try {
 			await DB.query(
-				'UPDATE levels SET messagesAll = ?, messagesLegit = ?, symbols = ?, last = ? WHERE id = ?',
+				'UPDATE levels SET messagesAll = ?, messagesLegit = ?, symbols = ?, last = ?, banner = ?, flags = ? WHERE id = ?',
 				[
 					this.#primitiveData.messagesAll,
 					this.#primitiveData.messagesLegit,
 					this.#primitiveData.symbols,
 					this.#primitiveData.last,
+					this.#primitiveData.banner,
+					this.#primitiveData.flags,
 					this.member.id
 				]
 			);
-		} catch (e) {}
+		} catch (e) {
+			console.error(e)
+		}
 
 		return this;
 	};
@@ -156,7 +165,6 @@ class UserLevels {
 		return this;
 	};
 
-
 	/**
 	 * ***************************************************************************
 	 * Функции возвращения примитивных данных
@@ -205,6 +213,13 @@ class UserLevels {
 		// @TODO: Сломался подсчет активности у юзеров. Пока костыль, чтобы левелинг работал
 		// return this.#primitiveData.activity;
 	};
+
+    /**
+	 * @return {String}
+     */
+	getBanner() {
+		return this.#primitiveData.banner;
+	}
 
 
 	/**
@@ -359,6 +374,53 @@ class UserLevels {
 		return this.#advancedData.nextRoleProgress = nextRoleProgress;
 	};
 
+    /**
+     * Объект содержащий пары ключ + bool значение
+     * @return {Object}
+     */
+    get flags () {
+        let flags = {};
+        for (let flagEntry in bitFields.flags) {
+            flags[flagEntry] = Boolean(this.#primitiveData.flags & bitFields.flags[flagEntry]);
+        }
+        return flags;
+    }
+
+    /**
+     * Объект содержащий пары ключ + bool значение
+     * @param value {Object}
+     */
+    set flags (value) {
+        let flagsObjectCurrent = {};
+        for (let flagEntry in bitFields.flags) {
+            flagsObjectCurrent[flagEntry] = Boolean(
+                this.#primitiveData.flags & bitFields.flags[flagEntry]
+            );
+        }
+        let flagsNumericTarget = 0;
+        for (let flagEntry in flagsObjectCurrent) {
+            if (bitFields.flags[flagEntry] === undefined) {
+                throw new Error('Attempting to change an unknown flag');
+            }
+            flagsNumericTarget += ((value[flagEntry] !== undefined)
+                ? bitFields.flags[flagEntry] * value[flagEntry]
+                : bitFields.flags[flagEntry] * flagsObjectCurrent[flagEntry]);
+        }
+        this.#primitiveData.flags = flagsNumericTarget;
+    }
+
+    getBannerUrl() {
+		if (!this.#primitiveData.banner) return null;
+		if (this.flags.bannerSyncedWithDiscord)
+        	return `https://cdn.discordapp.com/banners/${this.member.id}/${this.#primitiveData.banner}.png`;
+		return this.#primitiveData.banner;
+    }
+
+	async setBannerUrl(banner) {
+		this.#primitiveData.banner = banner;
+		await this.update();
+		return this;
+	}
 
 	/**
 	 * ***************************************************************************

@@ -3,8 +3,11 @@ const BaseCommand = require('../../BaseClasses/BaseCommand');
 const LangSingle = require('../../BaseClasses/LangSingle');
 const {
 	GuildMember,
+	User,
 	CommandInteraction,
 	UserContextMenuInteraction,
+	ButtonInteraction,
+	ModalSubmitInteraction,
 	InteractionReplyOptions
 } = require('discord.js');
 
@@ -13,6 +16,7 @@ const { title, description } = require('./about.json');
 const noXPChannels = require('./noXPChannels.json');
 const UserLevels = require('./UserLevels');
 const UserLevelCards = require('./UserLevelCard/UserLevelCard');
+const preparedUiMessages = require('./preparedUIMessages');
 
 class Levels extends BaseCommand {
 
@@ -81,30 +85,7 @@ class Levels extends BaseCommand {
 
 		const status = !commands.handler?.siteStatus;
 
-		return {
-			//embeds: [user.getEmbed()],
-			files: [await this.cardGenerator.generate(user)],
-			components: [
-				{
-					type: 1, components: [
-						{
-							type: 2,
-							style: 5,
-							url: constants.SITE_LINK + '/levels',
-							label: 'Таблица',
-							disabled: status
-						},
-						{
-							type: 2,
-							style: 5,
-							url: constants.SITE_LINK + '/levels?id=' + user.member.id,
-							label: 'Статистика пользователя',
-							disabled: status
-						}
-					]
-				}
-			]
-		};
+		return preparedUiMessages.cardShowMessage(this.cardGenerator, user, status);
 
 	}
 
@@ -147,6 +128,80 @@ class Levels extends BaseCommand {
 		int.reply(content);
 	}
 
+	/**
+	 * Обработка кнопок команды
+	 * @param {ButtonInteraction} int
+	 */
+	async button (int) {
+		const params = int.customId.split('|');
+		const btnType = params[1];
+        const member = await guild.members.fetch(params[2]);
+		const isMod = await this.permission(int.member);
+        let userLevel = await new UserLevels(member, this.roles, this.rolesIDs);
+
+		switch (btnType) {
+			case 'syncWithProfile': {
+				userLevel.flags = { bannerSyncedWithDiscord: true };
+                await userLevel.setBannerUrl(member.user.bannerURL({format: 'png', size: 4096}));
+				console.log(userLevel.flags)
+				return int.update(await preparedUiMessages.bannerEphemeralActionSheet(int.client.users.cache.get(params[2]), userLevel))
+			}
+			case 'bannerMain': {
+				if (member.user != int.user && !isMod) return int.reply({content: 'Отказано в доступе', ephemeral: true})
+
+				await int.reply(await preparedUiMessages.bannerEphemeralActionSheet(int.client.users.cache.get(params[2]), userLevel, isMod))
+
+				if (member.user == int.user && userLevel.flags.bannerRemoved) {
+					await int.followUp({
+						content: 'Ваш баннер был удалён модерацией.\nВ будущем вам может быть запрещён доступ к смене банера',
+						ephemeral: true
+					})
+					userLevel.flags = {bannerRemoved: false}
+					await userLevel.update();
+				}
+				return;
+			}
+			case 'setCustom': {
+				return int.showModal(await preparedUiMessages.setCustomBannerModal(int.client.users.cache.get(params[2])))
+			}
+			case 'remove': {
+				userLevel.flags = {bannerRemoved: true}
+				userLevel = await userLevel.setBannerUrl(null)
+				return int.update(preparedUiMessages.bannerEphemeralActionSheet(int.client.users.cache.get(params[2]), userLevel, isMod))
+			}
+			case 'block': {
+				userLevel.flags = {bannerBlocked: !userLevel.flags.bannerBlocked}
+				userLevel = await userLevel.setBannerUrl(null)
+				return int.update(preparedUiMessages.bannerEphemeralActionSheet(int.client.users.cache.get(params[2]), userLevel, isMod))
+			}
+
+		}
+	}
+
+	/**
+	 *
+	 * @param {ModalSubmitInteraction}int
+	 * @returns {Promise<GuildCacheMessage<Cached>|void|void>}
+	 */
+	async modal (int) {
+		const params = int.customId.split('|');
+		const modalType = params[1];
+        const isMod = await this.permission(int.member);
+        const userLevel = await new UserLevels(int.member, this.roles, this.rolesIDs);
+
+		switch (modalType) {
+			case 'setCustomBanner': {
+				const url = int.components[0].components[0].value;
+				try {
+					new URL(url);
+				} catch (e) {
+					return int.reply('Вы указали не ссылку!')
+				}
+				await userLevel.setBannerUrl(url);
+				return int.update(await preparedUiMessages.bannerEphemeralActionSheet(int.client.users.cache.get(params[2]), userLevel, isMod))
+			}
+		}
+	}
 
 	/**
 	 * Обработчик сообщений пользователя
@@ -168,6 +223,25 @@ class Levels extends BaseCommand {
 			.updateRole();
 	}
 
+	/**
+	 *
+	 * @param {User|GuildMember} user
+	 */
+	async permission(user){
+		if (user instanceof User)
+				user = await guild.members.fetch(user.id);
+		if (!(user instanceof GuildMember))
+			return false;
+
+		return user.roles.cache.hasAny(
+		  ...[
+			'613412133715312641',
+			'916999822693789718',
+			'920407448697860106'
+		  ]
+		)
+
+	}
 }
 
 module.exports = Levels;

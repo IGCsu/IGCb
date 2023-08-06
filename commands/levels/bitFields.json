@@ -1,0 +1,7 @@
+{
+  "flags": {
+    "bannerSyncedWithDiscord": 1,
+    "bannerRemoved": 2,
+    "bannerBlocked": 4
+  }
+}

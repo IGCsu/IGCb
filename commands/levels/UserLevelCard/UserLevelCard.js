@@ -249,8 +249,9 @@ class UserLevelCards {
 		this.banner.asset = UserLevelCards.assets['default_banner']
 		this.banner.w = RESOLUTION.CARD_WIDTH;
 
-		if (userLevel.member.id == '500020124515041283') {
-			await this.banner.loadAssetFromUrl('https://cdn.discordapp.com/attachments/1039311543894020156/1137303337516142682/FkGKh77aAAI7UOy.jpg');
+		if (userLevel.getBannerUrl()) {
+			console.log(userLevel.getBannerUrl())
+			await this.banner.loadAssetFromUrl(userLevel.getBannerUrl());
 		}
 
 		this.banner.useOriginalAspect();
