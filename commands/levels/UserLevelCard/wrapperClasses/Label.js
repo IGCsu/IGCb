@@ -13,7 +13,7 @@ class Label extends Rect {
 	  text='', fontSize=70
 	) {
 		super(canvas, x, y, w, h, alignment, color, rounding);
-		this.primaryText = new TextBox(canvas, x, y, w, h,  ALIGNMENT.CENTER_CENTER, COLOURS.WHITE, text, fontSize, 'Inter Regular');
+		this.primaryText = new TextBox(canvas, x, y, w, h,  ALIGNMENT.CENTER_CENTER, COLOURS.WHITE, text, fontSize, 'Montserrat Medium');
 		this.secondaryText = null;
 		this.icon = null;
 		this.elShift = 10;
