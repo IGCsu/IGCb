@@ -38,7 +38,7 @@ class UserLevelCards {
 	 */
 	constructor(path) {
 		Canvas.registerFont(fontsRoot + 'Inter/static/Inter-Bold.ttf', {family: 'Inter', weight: 'Bold'});
-		Canvas.registerFont(fontsRoot + 'Inter/static/Inter-Regular.ttf', {family: 'Inter', weight: 'Regular'});
+		Canvas.registerFont(fontsRoot + 'Inter/static/Inter-Light.ttf', {family: 'Inter', weight: 'Regular'});
 		Canvas.registerFont(fontsRoot + 'PT_Sans/PTSans-Regular.ttf', {family: 'Sans', weight: 'Regular'});
 		Canvas.registerFont(fontsRoot + 'Montserrat/static/Montserrat-Medium.ttf', {family: 'Montserrat', weight: 'Medium'});
 		Canvas.registerFont(fontsRoot + 'Montserrat/static/Montserrat-Bold.ttf', {family: 'Montserrat', weight: 'Bold'});
@@ -494,6 +494,7 @@ class UserLevelCards {
 
 		const txt = `Сгенерировано за: ${time}мс. Кеш: ${txtCached}`
 
+		this.footer.font = 'Montserrat Medium'
 		this.footer.changeText(txt, undefined, 25);
 		this.footer.draw();
 	}
