@@ -149,21 +149,34 @@ class Levels extends BaseCommand {
 	async button (int) {
 		const params = int.customId.split('|');
 		const btnType = params[1];
-		const cardMessageId = int.message?.components[0]?.components[2]?.customId.split('|')[3];
-        const member = await guild.members.fetch(params[2]);
+		const cardMessageId = int.message?.components[0]?.components[2]?.customId.split(
+		  '|')[3];
+		const member = await guild.members.fetch(params[2]);
 		const isMod = await this.permission(int.member);
-        let userLevel = await new UserLevels(member, this.roles, this.rolesIDs);
+		const userLevel = await new UserLevels(
+		  member, this.roles, this.rolesIDs);
 
 		switch (btnType) {
 			case 'syncWithProfile': {
 				userLevel.flags = { bannerSyncedWithDiscord: true };
-                await userLevel.setBannerUrl(member.user.banner);
-				return int.update(await preparedUiMessages.bannerEphemeralActionSheet(int.client.users.cache.get(params[2]), userLevel, cardMessageId, isMod, int.user))
+				await userLevel.setBannerUrl(member.user.banner);
+				return int.update(
+				  await preparedUiMessages.bannerEphemeralActionSheet(
+					int.client.users.cache.get(params[2]), userLevel,
+					cardMessageId, isMod, int.user
+				  ));
 			}
 			case 'bannerMain': {
-				if (member.user != int.user && !isMod) return int.reply({content: 'Отказано в доступе', ephemeral: true})
+				if (member.user != int.user && !isMod) {
+					return int.reply(
+					  { content: 'Отказано в доступе', ephemeral: true });
+				}
 
-				await int.reply(await preparedUiMessages.bannerEphemeralActionSheet(int.client.users.cache.get(params[2]), userLevel, int.message.id, isMod, int.user))
+				await int.reply(
+				  await preparedUiMessages.bannerEphemeralActionSheet(
+					int.client.users.cache.get(params[2]), userLevel,
+					int.message.id, isMod, int.user
+				  ));
 
 				if (member.user == int.user && userLevel.flags.bannerRemoved) {
 					await this.followUpBannerAlert(int, userLevel);
@@ -171,25 +184,43 @@ class Levels extends BaseCommand {
 				return;
 			}
 			case 'setCustom': {
-				return int.showModal(await preparedUiMessages.setCustomBannerModal(int.client.users.cache.get(params[2]), userLevel.getBannerUrl()))
+				return int.showModal(
+				  await preparedUiMessages.setCustomBannerModal(
+					int.client.users.cache.get(params[2]),
+					userLevel.getBannerUrl()
+				  ));
 			}
 			case 'remove': {
-				userLevel.flags = {bannerRemoved: true, bannerSyncedWithDiscord: false};
-				userLevel = await userLevel.setBannerUrl(null);
+				userLevel.flags = {
+					bannerRemoved: true,
+					bannerSyncedWithDiscord: false
+				};
+				await userLevel.setBannerUrl(null);
 
-				return int.update(await preparedUiMessages.bannerEphemeralActionSheet(int.client.users.cache.get(params[2]), userLevel, cardMessageId, isMod, int.user))
+				return int.update(
+				  await preparedUiMessages.bannerEphemeralActionSheet(
+					int.client.users.cache.get(params[2]), userLevel,
+					cardMessageId, isMod, int.user
+				  ));
 			}
 			case 'block': {
-				userLevel.flags = {bannerBlocked: !userLevel.flags.bannerBlocked};
-				userLevel = await userLevel.setBannerUrl(null);
-				return int.update(await preparedUiMessages.bannerEphemeralActionSheet(int.client.users.cache.get(params[2]), userLevel, cardMessageId, isMod, int.user))
+				userLevel.flags = { bannerBlocked: !userLevel.flags.bannerBlocked };
+				await userLevel.setBannerUrl(null);
+				return int.update(
+				  await preparedUiMessages.bannerEphemeralActionSheet(
+					int.client.users.cache.get(params[2]), userLevel,
+					cardMessageId, isMod, int.user
+				  ));
 			}
 			case 'ready': {
 				await int.deferUpdate();
 				await int.webhook.deleteMessage('@original');
 
 				const message = await int.channel.messages.fetch(cardMessageId);
-				await message.edit(await preparedUiMessages.cardShowMessage(this.cardGenerator, userLevel, !commands?.handler?.siteStatus));
+				await message.edit(
+				  await preparedUiMessages.cardShowMessage(this.cardGenerator,
+					userLevel, !commands?.handler?.siteStatus
+				  ));
 			}
 		}
 	}

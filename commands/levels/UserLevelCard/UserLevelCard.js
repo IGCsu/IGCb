@@ -223,7 +223,7 @@ class UserLevelCards {
 
 	async generateAvatar(userLevel) {
 		await this.avatar.loadAssetFromUrl(
-		  userLevel.member.displayAvatarURL({format: 'png', size: 4096})
+		  userLevel.member.displayAvatarURL({format: 'png', size: 1024})
 		);
 
 		this.avatarBackground.draw();
@@ -250,7 +250,6 @@ class UserLevelCards {
 		this.banner.w = RESOLUTION.CARD_WIDTH;
 
 		if (userLevel.getBannerUrl()) {
-			console.log(userLevel.getBannerUrl())
 			await this.banner.loadAssetFromUrl(userLevel.getBannerUrl());
 		}
 

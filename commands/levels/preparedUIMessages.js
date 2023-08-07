@@ -4,14 +4,22 @@ const UserLevels = require('./UserLevels');
 
 /**
  *
- * @param {UserLevelCards}cardGenerator
- * @param {UserLevels}user
- * @param {boolean}status
- * @return {Promise<{components: [{components: [{style: number, disabled, label: string, type: number, url: string}], type: number},{components: [{style: number, disabled, label: string, type: number, url: string},{style: number, label: string, type: number, customId: string}], type: number}], files: *[]}>}
+ * @param {UserLevelCards} cardGenerator
+ * @param {UserLevels} user
+ * @param {boolean} status
+ * @return {Promise<{components: [{components: [{style: number, disabled,
+ *   label: string, type: number, url: string}], type: number},{components:
+ *   [{style: number, disabled, label: string, type: number, url:
+ *   string},{style: number, label: string, type: number, customId: string}],
+ *   type: number}], files: *[]}>}
  */
 async function cardShowMessage (cardGenerator, user, status) {
+
+	console.time(`${user.member.id}: cardGenerated in`);
+	const attachment = await cardGenerator.generate(user);
+	console.timeEnd(`${user.member.id}: cardGenerated in`);
 	return {
-		files: [await cardGenerator.generate(user)],
+		files: [attachment],
 		components: [
 			{
 				type: 1, components: [
@@ -52,7 +60,9 @@ async function cardShowMessage (cardGenerator, user, status) {
  * @param {Snowflake} cardMessageId
  * @param {boolean} permission
  * @param {User} author
- * @returns {Promise<{components: [{components: [{style: number, disabled: *, label: string, type: number, customId: string}], type: number}], ephemeral: boolean, files: MessageAttachment[]}>}
+ * @returns {Promise<{components: [{components: [{style: number, disabled: *,
+ *   label: string, type: number, customId: string}], type: number}],
+ *   ephemeral: boolean, files: MessageAttachment[]}>}
  */
 async function bannerEphemeralActionSheet (user, userLevel, cardMessageId, permission=false, author=undefined) {
 	const guildUser = await user.fetch();
@@ -149,7 +159,10 @@ async function bannerEphemeralActionSheet (user, userLevel, cardMessageId, permi
  *
  * @param {User} user
  * @param {string} bannerUrl
- * @returns {Promise<{components: [{components: [{min_length: number, style: number, label: string, placeholder: string, type: number, customId: string, value: *, required: boolean}], type: number}], title: string, customId: string}>}
+ * @returns {Promise<{components: [{components: [{min_length: number, style:
+ *   number, label: string, placeholder: string, type: number, customId:
+ *   string, value: *, required: boolean}], type: number}], title: string,
+ *   customId: string}>}
  */
 async function setCustomBannerModal (user, bannerUrl=undefined) {
 	const guildUser = await user.fetch();
