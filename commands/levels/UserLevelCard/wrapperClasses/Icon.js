@@ -9,6 +9,12 @@ const Canvas = require('canvas');
  */
 class Icon extends CanvasElement {
 
+	/**
+	 * Возращает ассет загруженый из источника
+	 *
+	 * @param {String} path
+	 * @returns {Image}
+	 */
 	static #loadAsset(path) {
 		const img = new Canvas.Image();
 		img.src = path;
@@ -16,6 +22,12 @@ class Icon extends CanvasElement {
 		return img;
 	}
 
+	/**
+	 * Возращает ассет загруженый из кеша
+	 *
+	 * @param assetName
+	 * @returns {Image}
+	 */
 	static #loadAssetFromCache(assetName) {
 		const img = UserLevelCards.assets[assetName];
 
@@ -31,6 +43,12 @@ class Icon extends CanvasElement {
 		if (assetName) this.asset = Icon.#loadAssetFromCache(assetName);
 	}
 
+	/**
+	 * Загрузка ассета по Url
+	 *
+	 * @param {String} url
+	 * @returns {Promise<void>}
+	 */
 	async loadAssetFromUrl(url) {
 		const {body} = await request(url);
 		const img = new Canvas.Image();
@@ -39,6 +57,12 @@ class Icon extends CanvasElement {
 		this.asset = img;
 	}
 
+	/**
+	 * Устанавлает соотношение сторон элемента как у картинки
+	 *
+	 * @param {boolean} setHeightAsPrimary Если true то высота останется неизменной, инче ширина
+	 * @returns {boolean}
+	 */
 	useOriginalAspect(setHeightAsPrimary=false) {
 		if (!this.asset) return false;
 		this.originalAspect = this.asset.naturalWidth / this.asset.naturalHeight;
@@ -50,6 +74,7 @@ class Icon extends CanvasElement {
 	};
 
 	/**
+	 * Скругляет края по заданным параметрам
 	 *
 	 * @param {number | Array} r Радиус дуги для скругления углов. Можно указать 1 число либо же массив из 4 чисел. Второе позволит указать радиус индивидально для каждого угла прямоугольника.
 	 * @returns {Icon}

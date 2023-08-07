@@ -3,7 +3,7 @@ const { ALIGNMENT, COLOURS } = require('../renderingConstants');
 const TextBox = require('./TextBox');
 
 /**
- * Класс репрезентации элемента Label. По сути являтеся цветной пилюлель с обязательным основным текстом, необязательным вторичным текстом и необязательной иконкой.
+ * Класс репрезентации элемента Label. По сути являтеся цветной пилюлей с обязательным основным текстом, необязательным вторичным текстом и необязательной иконкой.
  */
 class Label extends Rect {
 
@@ -35,6 +35,9 @@ class Label extends Rect {
 		return this;
 	}
 
+	/**
+	 * Перемещает элементы лейбла на свои позиции относительно фона лейбла
+	 */
 	reposElements() {
 		this.w = this.primaryText.w + (this.faceShift * 2)
 		  + (this.icon ? this.icon.w + this.elShift : 0)

@@ -18,6 +18,13 @@ class TextBox extends CanvasElement {
 		this.context.textBaseline = "top";
 	}
 
+	/**
+	 * Изменяет текст на новый
+	 *
+	 * @param {String} newTxt
+	 * @param {number} maxTxtWidth
+	 * @param {number} maxFont
+	 */
 	changeText(newTxt, maxTxtWidth, maxFont) {
 		this.text = newTxt;
 		this.fontSize = maxFont ?? this.fontSize;
@@ -25,6 +32,12 @@ class TextBox extends CanvasElement {
 		this.reapplyAlignment();
 	}
 
+	/**
+	 * Устанавливает шрифт и его размер
+	 *
+	 * @param {String} font
+	 * @param {String} fontSize
+	 */
 	applyFont(font=undefined, fontSize=undefined) {
 		font = font ?? this.font;
 		fontSize = fontSize ?? this.fontSize;
@@ -32,6 +45,13 @@ class TextBox extends CanvasElement {
 		this.context.font = ` ${fnt[1] ?? ''} ${fontSize}px ${fnt[0]}`;
 	}
 
+	/**
+	 * Прмеряет текст к месту его отрисовки
+	 *
+	 * @param {number} maxTxtWidth
+	 * @param {number} maxFont
+	 * @returns {string}
+	 */
 	applyText(maxTxtWidth, maxFont) {
 		this.applyFont();
 		let outputWidth = this.context.measureText(this.text).width;

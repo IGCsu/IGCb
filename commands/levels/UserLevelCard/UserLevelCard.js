@@ -250,6 +250,7 @@ class UserLevelCards {
 		this.banner.w = RESOLUTION.CARD_WIDTH;
 
 		if (userLevel.getBannerUrl()) {
+			//if
 			await this.banner.loadAssetFromUrl(userLevel.getBannerUrl());
 		}
 

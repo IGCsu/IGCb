@@ -38,14 +38,8 @@ class ProgressBar extends Rect {
 	}
 
 	/**
-	 *
-	 * @param obj {CanvasElement}
+	 * Перемещает элементы прогресс бара на свои позиции относительно фона прогресс бара
 	 */
-	moveToObject(obj) {
-		super.moveToObject(obj);
-		return this;
-	}
-
 	reposElements() {
 		this.expBar.moveToObject(this);
 		this.fineBar.moveToObject(this);
@@ -60,6 +54,11 @@ class ProgressBar extends Rect {
 		  .move(0, STYLE.PROGRESSBAR_SHIFT_DOWN + this.h);
 	}
 
+	/**
+	 * Меняет данные под указанного пользователя
+	 *
+	 * @param userLevel
+	 */
 	applyToUser(userLevel) {
 		if (userLevel.getExpFine()) {
 			this.fineBar.shown = true;
