@@ -1,0 +1,15 @@
+{
+
+	"title": {
+		"ru": "Выпустить Рыцаря",
+		"en": "Release Knight",
+		"uk": "Висрати Лицаря"
+	},
+
+	"description": {
+		"ru": "Кидает в чат видео с танцующим рыцарем.",
+		"en": "Throws a video with a dancing knight into the chat.",
+		"uk": "Кидає в чат відео з рицарем, що танцює."
+	}
+
+}
