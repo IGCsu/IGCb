@@ -4,6 +4,7 @@ const LangSingle = require('../../BaseClasses/LangSingle');
 const {
 	GuildMember,
 	User,
+  	Interaction,
 	CommandInteraction,
 	UserContextMenuInteraction,
 	ButtonInteraction,
@@ -73,9 +74,11 @@ class Levels extends BaseCommand {
 	/**
 	 * Обработка команды
 	 * Выдаёт статистику по пользовтаелю и ссылку на страницу
-	 * @param  {CommandInteraction|UserContextMenuInteraction} int Команда пользователя
+	 * @param  {CommandInteraction|UserContextMenuInteraction} int Команда
+	 *   пользователя
 	 * @param {GuildMember} member Объект пользователя
-	 * @return {InteractionReplyOptions|Object}
+	 * @return {Promise<{content: InteractionReplyOptions|Object,
+	 *   userLevel:UserLevels}>}
 	 */
 	async call (int, member) {
 
@@ -85,7 +88,10 @@ class Levels extends BaseCommand {
 
 		const status = !commands.handler?.siteStatus;
 
-		return preparedUiMessages.cardShowMessage(this.cardGenerator, user, status);
+		return {
+			content: await preparedUiMessages.cardShowMessage(this.cardGenerator, user, status),
+			userLevel: user
+		};
 
 	}
 
@@ -95,19 +101,23 @@ class Levels extends BaseCommand {
 	 * @param {CommandInteraction} int Команда пользователя
 	 */
 	async slash (int) {
-		const content = await this.call(
+		const data = await this.call(
 			int,
 			int.options.getMember('user') ?? int.member
 		);
 
-		if (content.error) {
+		if (data.error) {
 			return int.reply({
 				content: reaction.emoji.error + ' ' + int.str(content.error),
 				ephemeral: true
 			});
 		}
 
-		int.reply(content);
+		await int.reply(data.content);
+
+		if (!int.options.getMember('user') && data.userLevel.flags.bannerRemoved) {
+			await this.followUpBannerAlert(int, data.userLevel);
+		}
 	}
 
 	/**
@@ -115,17 +125,21 @@ class Levels extends BaseCommand {
 	 * @param {UserContextMenuInteraction} int
 	 */
 	async contextUser (int) {
-		const content = await this.call(int, int.targetMember);
+		const data = await this.call(int, int.targetMember);
 
-		if (content.error) {
+		if (data.error) {
 			return int.reply({
 				content: reaction.emoji.error + ' ' + int.str(content.error),
 				ephemeral: true
 			});
 		}
 
-		content.ephemeral = true;
-		int.reply(content);
+		data.content.ephemeral = true;
+		await int.reply(data.content);
+
+		if (int.targetMember == int.member && data.userLevel.flags.bannerRemoved) {
+			await this.followUpBannerAlert(int, data.userLevel);
+		}
 	}
 
 	/**
@@ -135,6 +149,7 @@ class Levels extends BaseCommand {
 	async button (int) {
 		const params = int.customId.split('|');
 		const btnType = params[1];
+		const cardMessageId = int.message?.components[0]?.components[2]?.customId.split('|')[3];
         const member = await guild.members.fetch(params[2]);
 		const isMod = await this.permission(int.member);
         let userLevel = await new UserLevels(member, this.roles, this.rolesIDs);
@@ -142,39 +157,40 @@ class Levels extends BaseCommand {
 		switch (btnType) {
 			case 'syncWithProfile': {
 				userLevel.flags = { bannerSyncedWithDiscord: true };
-                await userLevel.setBannerUrl(member.user.bannerURL({format: 'png', size: 4096}));
-				console.log(userLevel.flags)
-				return int.update(await preparedUiMessages.bannerEphemeralActionSheet(int.client.users.cache.get(params[2]), userLevel))
+                await userLevel.setBannerUrl(member.user.banner);
+				return int.update(await preparedUiMessages.bannerEphemeralActionSheet(int.client.users.cache.get(params[2]), userLevel, cardMessageId, isMod, int.user))
 			}
 			case 'bannerMain': {
 				if (member.user != int.user && !isMod) return int.reply({content: 'Отказано в доступе', ephemeral: true})
 
-				await int.reply(await preparedUiMessages.bannerEphemeralActionSheet(int.client.users.cache.get(params[2]), userLevel, isMod))
+				await int.reply(await preparedUiMessages.bannerEphemeralActionSheet(int.client.users.cache.get(params[2]), userLevel, int.message.id, isMod, int.user))
 
 				if (member.user == int.user && userLevel.flags.bannerRemoved) {
-					await int.followUp({
-						content: 'Ваш баннер был удалён модерацией.\nВ будущем вам может быть запрещён доступ к смене банера',
-						ephemeral: true
-					})
-					userLevel.flags = {bannerRemoved: false}
-					await userLevel.update();
+					await this.followUpBannerAlert(int, userLevel);
 				}
 				return;
 			}
 			case 'setCustom': {
-				return int.showModal(await preparedUiMessages.setCustomBannerModal(int.client.users.cache.get(params[2])))
+				return int.showModal(await preparedUiMessages.setCustomBannerModal(int.client.users.cache.get(params[2]), userLevel.getBannerUrl()))
 			}
 			case 'remove': {
-				userLevel.flags = {bannerRemoved: true}
-				userLevel = await userLevel.setBannerUrl(null)
-				return int.update(preparedUiMessages.bannerEphemeralActionSheet(int.client.users.cache.get(params[2]), userLevel, isMod))
+				userLevel.flags = {bannerRemoved: true, bannerSyncedWithDiscord: false};
+				userLevel = await userLevel.setBannerUrl(null);
+
+				return int.update(await preparedUiMessages.bannerEphemeralActionSheet(int.client.users.cache.get(params[2]), userLevel, cardMessageId, isMod, int.user))
 			}
 			case 'block': {
-				userLevel.flags = {bannerBlocked: !userLevel.flags.bannerBlocked}
-				userLevel = await userLevel.setBannerUrl(null)
-				return int.update(preparedUiMessages.bannerEphemeralActionSheet(int.client.users.cache.get(params[2]), userLevel, isMod))
+				userLevel.flags = {bannerBlocked: !userLevel.flags.bannerBlocked};
+				userLevel = await userLevel.setBannerUrl(null);
+				return int.update(await preparedUiMessages.bannerEphemeralActionSheet(int.client.users.cache.get(params[2]), userLevel, cardMessageId, isMod, int.user))
 			}
+			case 'ready': {
+				await int.deferUpdate();
+				await int.webhook.deleteMessage('@original');
 
+				const message = await int.channel.messages.fetch(cardMessageId);
+				await message.edit(await preparedUiMessages.cardShowMessage(this.cardGenerator, userLevel, !commands?.handler?.siteStatus));
+			}
 		}
 	}
 
@@ -186,27 +202,36 @@ class Levels extends BaseCommand {
 	async modal (int) {
 		const params = int.customId.split('|');
 		const modalType = params[1];
+		const cardMessageId = int.message?.components[0]?.components[2]?.customId.split('|')[3];
+		const member = await guild.members.fetch(params[2]);
         const isMod = await this.permission(int.member);
-        const userLevel = await new UserLevels(int.member, this.roles, this.rolesIDs);
+        const userLevel = await new UserLevels(member, this.roles, this.rolesIDs);
 
 		switch (modalType) {
 			case 'setCustomBanner': {
+				userLevel.flags = { bannerSyncedWithDiscord: false };
+				await userLevel.update();
 				const url = int.components[0].components[0].value;
-				try {
-					new URL(url);
-				} catch (e) {
-					return int.reply('Вы указали не ссылку!')
+				if(url) {
+					try {
+						new URL(url);
+					} catch (e) {
+						return int.reply({
+							content: 'Вы указали не ссылку!',
+							ephemeral: true
+						});
+					}
 				}
 				await userLevel.setBannerUrl(url);
-				return int.update(await preparedUiMessages.bannerEphemeralActionSheet(int.client.users.cache.get(params[2]), userLevel, isMod))
+				return int.update(await preparedUiMessages.bannerEphemeralActionSheet(int.client.users.cache.get(params[2]), userLevel, cardMessageId, isMod, int.user))
 			}
 		}
 	}
 
 	/**
 	 * Обработчик сообщений пользователя
-	 * Мониторинг всех сообщений для начисления опыта пользователям. Игнорируются
-	 * сообщения бота и в некоторых каналах.
+	 * Мониторинг всех сообщений для начисления опыта пользователям.
+	 * Игнорируются сообщения бота и в некоторых каналах.
 	 * @param {Message} msg Сообщение пользователя
 	 */
 	async message (msg) {
@@ -221,6 +246,20 @@ class Levels extends BaseCommand {
 		(await user.userMessageCounting(msg)
 			.update())
 			.updateRole();
+	}
+
+	/**
+	 * Отправляет follow up с предупреждением об удалении банера
+	 * @param {ButtonInteraction|ModalSubmitInteraction|CommandInteraction} int
+	 * @param {UserLevels} userLevel
+	 */
+	async followUpBannerAlert(int, userLevel) {
+		await int.followUp({
+			content: 'Ваш баннер был удалён модерацией.\nВ будущем вам может быть запрещён доступ к смене банера',
+			ephemeral: true
+		})
+		userLevel.flags = {bannerRemoved: false}
+		await userLevel.update();
 	}
 
 	/**

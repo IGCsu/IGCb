@@ -412,7 +412,7 @@ class UserLevels {
     getBannerUrl() {
 		if (!this.#primitiveData.banner) return null;
 		if (this.flags.bannerSyncedWithDiscord)
-        	return `https://cdn.discordapp.com/banners/${this.member.id}/${this.#primitiveData.banner}.png`;
+        	return `https://cdn.discordapp.com/banners/${this.member.id}/${this.#primitiveData.banner}.png?size=1024`;
 		return this.#primitiveData.banner;
     }
 

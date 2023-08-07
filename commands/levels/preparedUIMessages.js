@@ -1,4 +1,4 @@
-const { MessageAttachment, GuildMember } = require('discord.js');
+const { MessageAttachment, GuildMember, Snowflake } = require('discord.js');
 const UserLevelCards = require('./UserLevelCard/UserLevelCard');
 const UserLevels = require('./UserLevels');
 
@@ -49,10 +49,12 @@ async function cardShowMessage (cardGenerator, user, status) {
  *
  * @param {User} user
  * @param {UserLevels} userLevel
+ * @param {Snowflake} cardMessageId
  * @param {boolean} permission
- * @returns {{components: [{components: [{style: number, disabled: *, label: string, type: number, customId: string}], type: number}], ephemeral: boolean, files: MessageAttachment[]}}
+ * @param {User} author
+ * @returns {Promise<{components: [{components: [{style: number, disabled: *, label: string, type: number, customId: string}], type: number}], ephemeral: boolean, files: MessageAttachment[]}>}
  */
-async function bannerEphemeralActionSheet (user, userLevel, permission=false) {
+async function bannerEphemeralActionSheet (user, userLevel, cardMessageId, permission=false, author=undefined) {
 	const guildUser = await user.fetch();
 	let syncWithProfileTxt =  'Использовать из профиля';
 	let setCustomTxt = 'Использовать кастомный';
@@ -61,6 +63,7 @@ async function bannerEphemeralActionSheet (user, userLevel, permission=false) {
 
 	if (userLevel.flags.bannerSyncedWithDiscord) {
 		syncWithProfileTxt = 'Используется из профиля';
+		disableSyncWithProfile = true;
 	} else {
 		if (bannerUrl) setCustomTxt = 'Изменить кастомный';
 	}
@@ -102,7 +105,7 @@ async function bannerEphemeralActionSheet (user, userLevel, permission=false) {
 		]
 	}
 
-	const blocked = userLevel.flags.bannerBlocked && guildUser == userLevel.member.user
+	const blocked = userLevel.flags.bannerBlocked && author == userLevel.member.user
 
 	const response = {
 		content: '**Панель взаимодействия с баннером**\n> Текущий баннер:' + (blocked ? '\n\n**Вам запрещёно изменять свой баннер**' : ''),
@@ -120,9 +123,16 @@ async function bannerEphemeralActionSheet (user, userLevel, permission=false) {
 					},
 					{
 						type: 2,
-						style: 2,
+						style: 1,
 						customId: 'levels|setCustom|' + guildUser.id,
 						label: setCustomTxt,
+						disabled: blocked
+					},
+					{
+						type: 2,
+						style: 3,
+						customId: 'levels|ready|' + guildUser.id + '|' + cardMessageId,
+						label: 'Применить',
 						disabled: blocked
 					},
 				]
