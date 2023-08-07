@@ -6,6 +6,8 @@ const { ALIGNMENT, COLOURS, STYLE, RESOLUTION } = require('./renderingConstants'
 const { Rect, TextBox, Icon, Label, ProgressBar } = require('./CanvasWrapper');
 const { time } = require('@discordjs/builders');
 
+const fontsRoot = './commands/levels/UserLevelCard/fonts/'
+
 
 class UserLevelCards {
 
@@ -35,9 +37,11 @@ class UserLevelCards {
 	 * @param {string} path Путь до модуля levels
 	 */
 	constructor(path) {
-		Canvas.registerFont('./commands/levels/UserLevelCard/fonts/Inter/static/Inter-Bold.ttf', {family: 'Inter', weight: 'Bold'});
-		Canvas.registerFont('./commands/levels/UserLevelCard/fonts/Inter/static/Inter-Regular.ttf', {family: 'Inter', weight: 'Regular'});
-		Canvas.registerFont('./commands/levels/UserLevelCard/fonts/PT_Sans/PTSans-Regular.ttf', {family: 'Sans', weight: 'Regular'});
+		Canvas.registerFont(fontsRoot + 'Inter/static/Inter-Bold.ttf', {family: 'Inter', weight: 'Bold'});
+		Canvas.registerFont(fontsRoot + 'Inter/static/Inter-Regular.ttf', {family: 'Inter', weight: 'Regular'});
+		Canvas.registerFont(fontsRoot + 'PT_Sans/PTSans-Regular.ttf', {family: 'Sans', weight: 'Regular'});
+		Canvas.registerFont(fontsRoot + 'Montserrat/static/Montserrat-Medium.ttf', {family: 'Montserrat', weight: 'Medium'});
+		Canvas.registerFont(fontsRoot + 'Montserrat/static/Montserrat-Bold.ttf', {family: 'Montserrat', weight: 'Bold'});
 
 		UserLevelCards.assets = UserLevelCards.loadAssets(path);
 		this.canvas = Canvas.createCanvas(RESOLUTION.CARD_WIDTH, RESOLUTION.CARD_HEIGHT);
@@ -178,10 +182,10 @@ class UserLevelCards {
 		  .move(0, STYLE.PROGRESSBAR_SHIFT);
 
 		this.progressbar.currLvlTxt.fontSize = STYLE.ROLE_LIMIT_FONT_SIZE
-		this.progressbar.currLvlTxt.font = 'Inter Bold'
+		this.progressbar.currLvlTxt.font = 'Montserrat Medium'
 
 		this.progressbar.nxtLvlTxt.fontSize = STYLE.ROLE_LIMIT_FONT_SIZE
-		this.progressbar.nxtLvlTxt.font = 'Inter Bold'
+		this.progressbar.nxtLvlTxt.font = 'Montserrat Medium'
 
 		this.progressbar.applyToUser(userLevel);
 
@@ -207,7 +211,7 @@ class UserLevelCards {
 
 		this.username.changeText(userLevel.member.user.username, RESOLUTION.CARD_WIDTH - STYLE.USERNAME_MAX_WIDTH, STYLE.USERNAME_MAX_FONT_SIZE - 15);
 		this.username.context.textBaseline = "alphabetic";
-		this.displayname.font = 'Inter'
+		this.username.font = 'Inter Regular'
 		this.username
 		  .moveToObject(this.displayname)
 		  .move(STYLE.DARK_BACKGROUND_INNER_SHIFT + this.displayname.w);
@@ -219,8 +223,8 @@ class UserLevelCards {
 
 	async generateExpValues(userLevel) {
 		this.expText.fontSize = STYLE.USERNAME_MAX_FONT_SIZE + 15;
-		this.expText.font = 'Inter Bold'
-		this.expText.changeText(userLevel.getExpFull().toLocaleString().replaceAll(' ', '.'));
+		this.expText.font = 'Montserrat Bold'
+		this.expText.changeText(userLevel.getExpFull().toLocaleString().replaceAll(' ', '.').replaceAll(',', '.'));
 		this.expText
 		  .moveToObject(this.progressbar)
 		  .move(0, - this.expText.h - STYLE.PROGRESSBAR_SHIFT_UP);
@@ -312,7 +316,7 @@ class UserLevelCards {
 			.replace(' ', '_')
 		  ]
 		this.lvlLabel.icon.useOriginalAspect();
-
+		this.lvlLabel.primaryText.font = 'Montserrat Medium'
 		this.lvlLabel.primaryText.changeText(userLevel.getRole().cache.name, 150, STYLE.LABEL_ROLE_FONT_SIZE)
 
 		this.lvlLabel.reposElements();
