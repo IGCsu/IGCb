@@ -471,7 +471,7 @@ class UserLevelCards {
 	generateTime(userLevel, time) {
 		this.footer = new TextBox(this.canvas, 0, 0, 1, 1,
 		  ALIGNMENT.BOTTOM_LEFT, COLOURS.DARK_GRAY,
-		  '', 25);
+		  '', 23);
 
 		this.footer
 		  .moveToObject(this.darkBackground)
