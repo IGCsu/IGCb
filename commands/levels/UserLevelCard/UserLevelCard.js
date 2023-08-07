@@ -317,7 +317,7 @@ class UserLevelCards {
 		  ]
 		this.lvlLabel.icon.useOriginalAspect();
 		this.lvlLabel.primaryText.font = 'Montserrat Medium'
-		this.lvlLabel.primaryText.changeText(userLevel.getRole().cache.name, 150, STYLE.LABEL_ROLE_FONT_SIZE)
+		this.lvlLabel.primaryText.changeText(userLevel.getRole().cache.name, 160, STYLE.LABEL_ROLE_FONT_SIZE)
 
 		this.lvlLabel.reposElements();
 		this.lvlLabel.move(-this.lvlLabel.h);
