@@ -346,7 +346,7 @@ class UserLevelCards {
 
 		this.msgAll.primaryText.changeText(
 		  userLevel.getMessagesAll()
-			.toLocaleString().replaceAll(' ', '.'), 150, STYLE.LABEL_STATS_PRIMARY_FONT_SIZE
+			.toLocaleString().replaceAll(' ', '.').replace(',', '.'), 150, STYLE.LABEL_STATS_PRIMARY_FONT_SIZE
 		);
 
 
@@ -367,7 +367,7 @@ class UserLevelCards {
 
 		this.msgAvg.primaryText.changeText(
 		  userLevel.getMessagesLegit()
-			.toLocaleString().replaceAll(' ', '.'),150, STYLE.LABEL_STATS_PRIMARY_FONT_SIZE
+			.toLocaleString().replaceAll(' ', '.').replace(',', '.'),150, STYLE.LABEL_STATS_PRIMARY_FONT_SIZE
 		);
 
 
@@ -388,7 +388,7 @@ class UserLevelCards {
 
 		this.symAll.primaryText.changeText(
 		  userLevel.getSymbols()
-			.toLocaleString().replaceAll(' ', '.'),150, STYLE.LABEL_STATS_PRIMARY_FONT_SIZE
+			.toLocaleString().replaceAll(' ', '.').replace(',', '.'),150, STYLE.LABEL_STATS_PRIMARY_FONT_SIZE
 		);
 
 
@@ -409,7 +409,7 @@ class UserLevelCards {
 
 		this.symAvg.primaryText.changeText(
 		  userLevel.getSymbolsAvg()
-			.toLocaleString().replaceAll(' ', '.'),150, STYLE.LABEL_STATS_PRIMARY_FONT_SIZE
+			.toLocaleString().replaceAll(' ', '.').replace('.', ','),150, STYLE.LABEL_STATS_PRIMARY_FONT_SIZE
 		);
 
 
@@ -429,7 +429,7 @@ class UserLevelCards {
 
 
 		this.overpost.primaryText.changeText(
-		  userLevel.getOverpost() + '%',150, 31
+		  userLevel.getOverpost().replace('.', ',') + '%',150, 31
 		);
 
 		this.overpost.reposElements();
