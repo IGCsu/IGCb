@@ -267,13 +267,14 @@ class UserLevelCards {
 		const currentBannerUrl = userLevel.getBannerUrl();
 
 		this.banner.asset = UserLevelCards.assets['default_banner'];
+		userLevel.isBannerCached = true;
 		this.banner.w = RESOLUTION.CARD_WIDTH;
 
 		if (currentBannerUrl) {
 			if (cachedBanner && (currentBannerUrl === cachedBanner.bannerUrl)) {
 				this.banner.asset = cachedBanner.asset;
-				userLevel.isBannerCached = true;
 			} else {
+				userLevel.isBannerCached = false;
 				await this.banner.loadAssetFromUrl(currentBannerUrl);
 				UserLevelCards.#cachedImages.banners[userLevel.member.id] = {
 					asset: this.banner.asset,
