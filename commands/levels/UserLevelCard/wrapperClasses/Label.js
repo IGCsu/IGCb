@@ -18,6 +18,7 @@ class Label extends Rect {
 		this.icon = null;
 		this.elShift = 10;
 		this.faceShift = this.elShift * 2;
+		this.hFaceShift = this.faceShift / 1.5;
 	}
 
 	setPrimaryText(primaryText) {
@@ -39,18 +40,18 @@ class Label extends Rect {
 	 * Перемещает элементы лейбла на свои позиции относительно фона лейбла
 	 */
 	reposElements() {
-		this.w = this.primaryText.w + (this.faceShift * 2)
+		this.w = this.primaryText.w + (this.hFaceShift * 2)
 		  + (this.icon ? this.icon.w + this.elShift : 0)
 		  + (this.secondaryText ? this.secondaryText.w + this.elShift : 0);
 		this.h = this.primaryText.h + (this.faceShift * 1.5);
 
 		this.primaryText.alignment = ALIGNMENT.CENTER_LEFT;
 		this.primaryText.moveToObject(this);
-        this.primaryText.move(this.faceShift, 0);
+        this.primaryText.move(this.hFaceShift, 0);
 		if (this.secondaryText) {
 			this.secondaryText.alignment = ALIGNMENT.CENTER_RIGHT;
 			this.secondaryText.moveToObject(this);
-			this.secondaryText.move(-this.faceShift, 0);
+			this.secondaryText.move(-this.hFaceShift, 0);
 
 			this.secondaryText.move(0, -3);
 			this.secondaryText.context.textBaseline = 'middle';
@@ -60,7 +61,7 @@ class Label extends Rect {
 			this.primaryText.move(this.icon.w + this.elShift, 0)
 			this.icon.alignment = ALIGNMENT.CENTER_LEFT;
 			this.icon.moveToObject(this);
-			this.icon.move(this.faceShift, 0);
+			this.icon.move(this.hFaceShift, 0);
 		}
 	}
 
