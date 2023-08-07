@@ -8,7 +8,7 @@ class TextBox extends CanvasElement {
 	constructor(
 	  canvas, x=0, y=0, w=1, h=1,
 	  alignment=ALIGNMENT.TOP_LEFT, color=COLOURS.WHITE,
-	  text='', fontSize=70, font='Inter Regular'
+	  text='', fontSize=70, font='Inter Light'
 	) {
 		super(canvas, x, y, w, h, alignment);
 		this.color = color;
