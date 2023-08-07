@@ -18,7 +18,7 @@ class Label extends Rect {
 		this.icon = null;
 		this.elShift = 10;
 		this.faceShift = this.elShift * 2;
-		this.hFaceShift = this.faceShift / 1.2;
+		this.hFaceShift = this.faceShift / 1.1;
 	}
 
 	setPrimaryText(primaryText) {
