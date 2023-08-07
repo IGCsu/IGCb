@@ -495,7 +495,7 @@ class UserLevelCards {
 		const txt = `Сгенерировано за: ${time}мс. Кеш: ${txtCached}`
 
 		this.footer.font = 'Montserrat Medium'
-		this.footer.changeText(txt, undefined, 25);
+		this.footer.changeText(txt, undefined, 23);
 		this.footer.draw();
 	}
 
