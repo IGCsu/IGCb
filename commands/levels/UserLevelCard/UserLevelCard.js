@@ -6,9 +6,6 @@ const { ALIGNMENT, COLOURS, STYLE, RESOLUTION } = require('./renderingConstants'
 const { Rect, TextBox, Icon, Label, ProgressBar } = require('./CanvasWrapper');
 const { time } = require('@discordjs/builders');
 
-Canvas.registerFont('./commands/levels/UserLevelCard/fonts/Inter/static/Inter-Bold.ttf', {family: 'Inter', weight: 'Bold'});
-Canvas.registerFont('./commands/levels/UserLevelCard/fonts/Inter/static/Inter-Regular.ttf', {family: 'Inter', weight: 'Regular'});
-
 
 class UserLevelCards {
 
@@ -38,6 +35,10 @@ class UserLevelCards {
 	 * @param {string} path Путь до модуля levels
 	 */
 	constructor(path) {
+		Canvas.registerFont('./commands/levels/UserLevelCard/fonts/Inter/static/Inter-Bold.ttf', {family: 'Inter', weight: 'Bold'});
+		Canvas.registerFont('./commands/levels/UserLevelCard/fonts/Inter/static/Inter-Regular.ttf', {family: 'Inter', weight: 'Regular'});
+		Canvas.registerFont('./commands/levels/UserLevelCard/fonts/PT_Sans/PTSans-Regular.ttf', {family: 'Sans', weight: 'Regular'});
+
 		UserLevelCards.assets = UserLevelCards.loadAssets(path);
 		this.canvas = Canvas.createCanvas(RESOLUTION.CARD_WIDTH, RESOLUTION.CARD_HEIGHT);
 
