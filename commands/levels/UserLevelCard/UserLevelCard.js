@@ -12,6 +12,10 @@ Canvas.registerFont('./commands/levels/UserLevelCard/fonts/Inter/static/Inter-Re
 class UserLevelCards {
 
 	static assets = {};
+	static #cachedImages = {
+		banners: {},
+		avatars: {},
+	};
 
 	static loadAssets(path) {
 		const endPath = path.slice(0, -9) + "/UserLevelCard/assets"
@@ -185,7 +189,7 @@ class UserLevelCards {
 
 	generateUsername(userLevel) {
 		this.displayname.fontSize = STYLE.USERNAME_MAX_FONT_SIZE;
-		this.displayname.changeText(userLevel.member.displayName, STYLE.USERNAME_MAX_WIDTH, STYLE.USERNAME_MAX_FONT_SIZE);
+		this.displayname.changeText(userLevel.member.displayName.truncate(19), STYLE.USERNAME_MAX_WIDTH, STYLE.USERNAME_MAX_FONT_SIZE);
 		this.displayname.context.textBaseline = "alphabetic";
 		this.displayname.font = 'Inter Bold'
 		this.displayname
@@ -222,9 +226,20 @@ class UserLevelCards {
 	}
 
 	async generateAvatar(userLevel) {
-		await this.avatar.loadAssetFromUrl(
-		  userLevel.member.displayAvatarURL({format: 'png', size: 1024})
-		);
+		const cachedAvatar = UserLevelCards.#cachedImages.avatars[userLevel.member.id];
+		const currentAvatarUrl = userLevel.member.displayAvatarURL({format: 'png', size: 1024});
+
+		if (cachedAvatar && (currentAvatarUrl === cachedAvatar.avatarUrl)) {
+			this.avatar.asset = cachedAvatar.asset;
+		} else {
+			await this.avatar.loadAssetFromUrl(
+			  currentAvatarUrl
+			);
+			UserLevelCards.#cachedImages.avatars[userLevel.member.id] = {
+				asset: this.avatar.asset,
+				avatarUrl: currentAvatarUrl
+			};
+		}
 
 		this.avatarBackground.draw();
 
@@ -246,12 +261,22 @@ class UserLevelCards {
 
 	async generateBanner(userLevel) {
 		const bannerAllowedHeight = STYLE.AVATAR_SIZE / 2 + STYLE.AVATAR_SHIFT;
-		this.banner.asset = UserLevelCards.assets['default_banner']
+		const cachedBanner = UserLevelCards.#cachedImages.banners[userLevel.member.id];
+		const currentBannerUrl = userLevel.getBannerUrl();
+
+		this.banner.asset = UserLevelCards.assets['default_banner'];
 		this.banner.w = RESOLUTION.CARD_WIDTH;
 
-		if (userLevel.getBannerUrl()) {
-			//if
-			await this.banner.loadAssetFromUrl(userLevel.getBannerUrl());
+		if (currentBannerUrl) {
+			if (cachedBanner && (currentBannerUrl === cachedBanner.bannerUrl)) {
+				this.banner.asset = cachedBanner.asset;
+			} else {
+				await this.banner.loadAssetFromUrl(currentBannerUrl);
+				UserLevelCards.#cachedImages.banners[userLevel.member.id] = {
+					asset: this.banner.asset,
+					bannerUrl: currentBannerUrl
+				};
+			}
 		}
 
 		this.banner.useOriginalAspect();
