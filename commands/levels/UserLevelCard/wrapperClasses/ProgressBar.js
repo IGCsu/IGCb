@@ -86,7 +86,7 @@ class ProgressBar extends Rect {
 		this.currLvlTxt.changeText(
 		  userLevel.getRole().value.toLocaleString()
 			.replaceAll(' ', '.')
-			.replace(',', '.')
+			.replaceAll(',', '.')
 		);
 
 		if (userLevel.getNextRole() !== true) {
@@ -95,7 +95,7 @@ class ProgressBar extends Rect {
 			this.nxtLvlTxt.changeText(
 			  userLevel.getNextRole().value.toLocaleString()
 				.replaceAll(' ', '.')
-				.replace(',', '.'),
+				.replaceAll(',', '.'),
 			);
 		} else {
 			this.maxLvl.shown = true;
