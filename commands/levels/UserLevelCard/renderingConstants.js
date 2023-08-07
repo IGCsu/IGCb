@@ -4,7 +4,7 @@ const WIDTH = INITIAL_WIDTH * SCALE;
 
 const RESOLUTION = {
 	CARD_WIDTH: WIDTH,
-	CARD_HEIGHT: Math.round(WIDTH * 1.53)
+	CARD_HEIGHT: Math.round(WIDTH * 1.6)
 }
 
 const ALIGNMENT = {

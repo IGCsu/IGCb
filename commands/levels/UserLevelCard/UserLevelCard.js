@@ -4,6 +4,7 @@ const { MessageAttachment } = require('discord.js');
 
 const { ALIGNMENT, COLOURS, STYLE, RESOLUTION } = require('./renderingConstants');
 const { Rect, TextBox, Icon, Label, ProgressBar } = require('./CanvasWrapper');
+const { time } = require('@discordjs/builders');
 
 Canvas.registerFont('./commands/levels/UserLevelCard/fonts/Inter/static/Inter-Bold.ttf', {family: 'Inter', weight: 'Bold'});
 Canvas.registerFont('./commands/levels/UserLevelCard/fonts/Inter/static/Inter-Regular.ttf', {family: 'Inter', weight: 'Regular'});
@@ -231,6 +232,7 @@ class UserLevelCards {
 
 		if (cachedAvatar && (currentAvatarUrl === cachedAvatar.avatarUrl)) {
 			this.avatar.asset = cachedAvatar.asset;
+			userLevel.isAvatarCached = true;
 		} else {
 			await this.avatar.loadAssetFromUrl(
 			  currentAvatarUrl
@@ -270,6 +272,7 @@ class UserLevelCards {
 		if (currentBannerUrl) {
 			if (cachedBanner && (currentBannerUrl === cachedBanner.bannerUrl)) {
 				this.banner.asset = cachedBanner.asset;
+				userLevel.isBannerCached = true;
 			} else {
 				await this.banner.loadAssetFromUrl(currentBannerUrl);
 				UserLevelCards.#cachedImages.banners[userLevel.member.id] = {
@@ -454,9 +457,43 @@ class UserLevelCards {
         this.activity.draw();
     }
 
+	/**
+	 *
+	 * @param {userLevel} userLevel
+	 * @param {String} time
+	 */
+	generateTime(userLevel, time) {
+		this.footer = new TextBox(this.canvas, 0, 0, 1, 1,
+		  ALIGNMENT.BOTTOM_LEFT, COLOURS.DARK_GRAY,
+		  '', 25);
 
+		this.footer
+		  .moveToObject(this.darkBackground)
+		  .move(
+			STYLE.DARK_BACKGROUND_INNER_SHIFT,
+			-STYLE.DARK_BACKGROUND_INNER_SHIFT
+		  );
+
+		let txtCached = '';
+		if (userLevel.isAvatarCached && userLevel.isBannerCached) {
+			txtCached = 'аватар и баннер';
+		} else if (userLevel.isAvatarCached) {
+			txtCached = 'аватар';
+		} else if (userLevel.isBannerCached) {
+			txtCached = 'баннер';
+		} else {
+			txtCached = 'нет'
+		}
+
+
+		const txt = `Сгенерировано за: ${time}мс. Кеш: ${txtCached}`
+
+		this.footer.changeText(txt, undefined, 25);
+		this.footer.draw();
+	}
 
     async generate(userLevel) {
+		const gStart = Date.now();
 		const context = this.canvas.getContext('2d');
 		context.textBaseline = "top";
 
@@ -479,6 +516,8 @@ class UserLevelCards {
 		this.generateCurrLevelLabel(userLevel);
 
 		this.generateStats(userLevel);
+
+		this.generateTime(userLevel, Date.now() - gStart);
 
 		return new MessageAttachment(this.canvas.toBuffer('image/png'), `${userLevel.getExp()}.png`);
 	}
