@@ -429,7 +429,7 @@ class UserLevelCards {
 
 
 		this.overpost.primaryText.changeText(
-		  userLevel.getOverpost().replace('.', ',') + '%',150, 31
+		  (userLevel.getOverpost() + '%').replace('.', ',') ,150, 31
 		);
 
 		this.overpost.reposElements();
