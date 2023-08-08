@@ -149,8 +149,7 @@ class Levels extends BaseCommand {
 	async button (int) {
 		const params = int.customId.split('|');
 		const btnType = params[1];
-		const cardMessageId = int.message?.components[0]?.components[2]?.customId.split(
-		  '|')[3];
+		let cardMessageId = params[3];
 		const member = await guild.members.fetch(params[2]);
 		const isMod = await this.permission(int.member);
 		const userLevel = await new UserLevels(
@@ -163,19 +162,14 @@ class Levels extends BaseCommand {
 				return int.update(
 				  await preparedUiMessages.bannerEphemeralActionSheet(
 					int.client.users.cache.get(params[2]), userLevel,
-					cardMessageId, isMod, int.user
+					params[4], isMod, int.user
 				  ));
 			}
 			case 'bannerMain': {
-				if (member.user != int.user && !isMod) {
-					return int.reply(
-					  { content: 'Отказано в доступе', ephemeral: true });
-				}
-
-				await int.reply(
+				await int.update(
 				  await preparedUiMessages.bannerEphemeralActionSheet(
 					int.client.users.cache.get(params[2]), userLevel,
-					int.message.id, isMod, int.user
+					params[3], isMod, int.user
 				  ));
 
 				if (member.user == int.user && userLevel.flags.bannerRemoved) {
@@ -187,7 +181,7 @@ class Levels extends BaseCommand {
 				return int.showModal(
 				  await preparedUiMessages.setCustomBannerModal(
 					int.client.users.cache.get(params[2]),
-					userLevel.getBannerUrl()
+					userLevel.getBannerUrl(), cardMessageId
 				  ));
 			}
 			case 'remove': {
@@ -217,10 +211,52 @@ class Levels extends BaseCommand {
 				await int.webhook.deleteMessage('@original');
 
 				const message = await int.channel.messages.fetch(cardMessageId);
-				await message.edit(
+				return message.edit(
 				  await preparedUiMessages.cardShowMessage(this.cardGenerator,
 					userLevel, !commands?.handler?.siteStatus
 				  ));
+			}
+			case 'hub': {
+				if (member.user != int.user && !isMod) {
+					return int.reply(
+					  { content: 'Отказано в доступе', ephemeral: true });
+				}
+
+				return int.reply(
+				  await preparedUiMessages.hubEphemeralActionSheet(
+					this.cardGenerator, userLevel, int.message.id))
+			}
+			case 'hubBack': {
+				return int.update(
+				  await preparedUiMessages.hubEphemeralActionSheet(
+					this.cardGenerator, userLevel, cardMessageId))
+			}
+			case 'animatedMain': {
+				return int.update(
+				  await preparedUiMessages.animationsEphemeralActionSheet(
+					this.cardGenerator, userLevel, cardMessageId
+				  )
+				);
+			}
+			case 'animatedMediaContent': {
+				userLevel.flags = { animatedMediaContentEnabled: !userLevel.flags.animatedMediaContentEnabled };
+				await userLevel.update();
+
+				return int.update(
+				  await preparedUiMessages.animationsEphemeralActionSheet(
+					this.cardGenerator, userLevel, cardMessageId
+				  )
+				);
+			}
+			case 'animatedAppearance': {
+				userLevel.flags = { animatedAppearanceEnabled: !userLevel.flags.animatedAppearanceEnabled };
+				await userLevel.update();
+
+				return int.update(
+				  await preparedUiMessages.animationsEphemeralActionSheet(
+					this.cardGenerator, userLevel, cardMessageId
+				  )
+				);
 			}
 		}
 	}
@@ -233,7 +269,7 @@ class Levels extends BaseCommand {
 	async modal (int) {
 		const params = int.customId.split('|');
 		const modalType = params[1];
-		const cardMessageId = int.message?.components[0]?.components[2]?.customId.split('|')[3];
+		const cardMessageId = params[3];
 		const member = await guild.members.fetch(params[2]);
         const isMod = await this.permission(int.member);
         const userLevel = await new UserLevels(member, this.roles, this.rolesIDs);

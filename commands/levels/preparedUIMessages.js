@@ -15,9 +15,9 @@ const UserLevels = require('./UserLevels');
  */
 async function cardShowMessage (cardGenerator, user, status) {
 
-	console.time(`${user.member.id}: cardGenerated in`);
+	console.time(`${user.member.id}: Сard generated in`);
 	const attachment = await cardGenerator.generate(user);
-	console.timeEnd(`${user.member.id}: cardGenerated in`);
+	console.timeEnd(`${user.member.id}: Сard generated in`);
 	return {
 		files: [attachment],
 		components: [
@@ -44,8 +44,82 @@ async function cardShowMessage (cardGenerator, user, status) {
 					{
 						type: 2,
 						style: 1,
-						customId: 'levels|bannerMain|' + user.member.id,
+						customId: 'levels|hub|' + user.member.id,
+						label: 'Управлять',
+					},
+				]
+			},
+		]
+	};
+}
+
+async function hubEphemeralActionSheet (cardGenerator, user, cardMessageId) {
+	console.time(`${user.member.id}: Сard generated in`);
+	const attachment = await cardGenerator.generate(user);
+	console.timeEnd(`${user.member.id}: Сard generated in`);
+	return {
+		files: [attachment],
+		ephemeral: true,
+		content: '**Панель управления**',
+		components: [
+			{
+				type: 1, components: [
+					{
+						type: 2,
+						style: 1,
+						customId: 'levels|animatedMain|' + user.member.id + '|' + cardMessageId,
+						label: 'Анимации',
+					},
+					{
+						type: 2,
+						style: 1,
+						customId: 'levels|bannerMain|' + user.member.id + '|' + cardMessageId,
 						label: 'Баннер',
+					},
+				]
+			},
+		]
+	};
+}
+
+async function animationsEphemeralActionSheet (cardGenerator, user, cardMessageId) {
+	console.time(`${user.member.id}: Сard generated in`);
+	const attachment = await cardGenerator.generate(user);
+	console.timeEnd(`${user.member.id}: Сard generated in`);
+	return {
+		files: [attachment],
+		ephemeral: true,
+		content: '**Панель управления анимациями**',
+		components: [
+			{
+				type: 1, components: [
+					{
+						type: 2,
+						style: user.flags.animatedMediaContentEnabled ? 1 : 2,
+						customId: 'levels|animatedMediaContent|' + user.member.id + '|' + cardMessageId,
+						label: 'Аватар и Баннер',
+					},
+					{
+						type: 2,
+						style: user.flags.animatedAppearanceEnabled ? 1 : 2,
+						customId: 'levels|animatedAppearance|' + user.member.id + '|' + cardMessageId,
+						label: 'При появлении',
+					},
+				]
+			},
+			{
+				type: 1, components: [
+					{
+						type: 2,
+						style: 2,
+						customId: 'levels|hubBack|' + user.member.id + '|' + cardMessageId,
+						label: 'Назад',
+					},
+				  	{
+						type: 2,
+						style: 3,
+						customId: 'levels|ready|' + user.member.id + '|' + cardMessageId,
+						label: 'Применить',
 					},
 				]
 			},
@@ -96,19 +170,36 @@ async function bannerEphemeralActionSheet (user, userLevel, cardMessageId, permi
 		bannerIsDefault = true;
 	}
 
+	const navigationComponents = {
+		type: 1, components: [
+			{
+				type: 2,
+				style: 2,
+				customId: 'levels|hubBack|' + guildUser.id + '|' + cardMessageId,
+				label: 'Назад',
+			},
+			{
+				type: 2,
+				style: 3,
+				customId: 'levels|ready|' + guildUser.id + '|' + cardMessageId,
+				label: 'Применить',
+			},
+		]
+	};
+
 	const modComponents = {
 		type: 1, components: [
 			{
 				type: 2,
 				style: 4,
-				customId: 'levels|remove|' + guildUser.id,
+				customId: 'levels|remove|' + guildUser.id + '|' + cardMessageId,
 				label: 'Удалить баннер',
 				disabled: bannerIsDefault
 			},
 			{
 				type: 2,
 				style: userLevel.flags.bannerBlocked ? 3 : 4,
-				customId: 'levels|block|' + guildUser.id,
+				customId: 'levels|block|' + guildUser.id + '|' + cardMessageId,
 				label: userLevel.flags.bannerBlocked ? 'Разблокировать баннер' : 'Удалить и заблокировать баннер',
 				disabled: false
 			},
@@ -127,22 +218,15 @@ async function bannerEphemeralActionSheet (user, userLevel, cardMessageId, permi
 					{
 						type: 2,
 						style: 1,
-						customId: 'levels|syncWithProfile|' + guildUser.id + '|' + (guildUser.banner ?? ''),
+						customId: 'levels|syncWithProfile|' + guildUser.id + '|' + (guildUser.banner ?? '') + '|' + cardMessageId,
 						label: syncWithProfileTxt,
 						disabled: disableSyncWithProfile || blocked
 					},
 					{
 						type: 2,
 						style: 1,
-						customId: 'levels|setCustom|' + guildUser.id,
+						customId: 'levels|setCustom|' + guildUser.id + '|' + cardMessageId,
 						label: setCustomTxt,
-						disabled: blocked
-					},
-					{
-						type: 2,
-						style: 3,
-						customId: 'levels|ready|' + guildUser.id + '|' + cardMessageId,
-						label: 'Применить',
 						disabled: blocked
 					},
 				]
@@ -151,7 +235,7 @@ async function bannerEphemeralActionSheet (user, userLevel, cardMessageId, permi
 	};
 
 	if(permission) response.components.push(modComponents);
-
+	response.components.push(navigationComponents);
 	return response;
 }
 
@@ -159,17 +243,18 @@ async function bannerEphemeralActionSheet (user, userLevel, cardMessageId, permi
  *
  * @param {User} user
  * @param {string} bannerUrl
+ * @param {Snowflake} cardMessageId
  * @returns {Promise<{components: [{components: [{min_length: number, style:
  *   number, label: string, placeholder: string, type: number, customId:
  *   string, value: *, required: boolean}], type: number}], title: string,
  *   customId: string}>}
  */
-async function setCustomBannerModal (user, bannerUrl=undefined) {
+async function setCustomBannerModal (user, bannerUrl=undefined, cardMessageId) {
 	const guildUser = await user.fetch();
 
 	return {
 		title: 'Смена баннера',
-		customId: 'levels|setCustomBanner|' + guildUser.id,
+		customId: 'levels|setCustomBanner|' + guildUser.id + '|' + cardMessageId,
 		components: [
 			{
 				type: 1, components: [
@@ -192,5 +277,7 @@ async function setCustomBannerModal (user, bannerUrl=undefined) {
 module.exports = {
 	cardShowMessage,
 	bannerEphemeralActionSheet,
-	setCustomBannerModal
+	setCustomBannerModal,
+	hubEphemeralActionSheet,
+	animationsEphemeralActionSheet
 }
