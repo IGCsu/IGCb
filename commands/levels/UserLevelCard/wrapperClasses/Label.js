@@ -3,7 +3,9 @@ const { ALIGNMENT, COLOURS } = require('../renderingConstants');
 const TextBox = require('./TextBox');
 
 /**
- * Класс репрезентации элемента Label. По сути являтеся цветной пилюлей с обязательным основным текстом, необязательным вторичным текстом и необязательной иконкой.
+ * Класс репрезентации элемента Label. По сути являтеся цветной пилюлей с
+ * обязательным основным текстом, необязательным вторичным текстом и
+ * необязательной иконкой.
  */
 class Label extends Rect {
 
@@ -48,14 +50,11 @@ class Label extends Rect {
 		this.primaryText.alignment = ALIGNMENT.CENTER_LEFT;
 		this.primaryText.moveToObject(this);
         this.primaryText.move(this.hFaceShift, 0);
+
 		if (this.secondaryText) {
 			this.secondaryText.alignment = ALIGNMENT.CENTER_RIGHT;
 			this.secondaryText.moveToObject(this);
 			this.secondaryText.move(-this.hFaceShift, 0);
-
-			this.secondaryText.move(0, -3);
-			this.secondaryText.context.textBaseline = 'middle';
-			this.secondaryText.move(0, this.secondaryText.h / 1.7);
 		}
 		if (this.icon) {
 			this.primaryText.move(this.icon.w + this.elShift, 0)
@@ -76,7 +75,12 @@ class Label extends Rect {
 		this.primaryText.move(0, this.primaryText.h / 1.7);
 
 		this.primaryText.draw(ctx);
-		if (this.secondaryText) this.secondaryText.draw(ctx);
+		if (this.secondaryText) {
+			this.secondaryText.context.textBaseline = 'middle';
+			this.secondaryText.alignment = ALIGNMENT.TOP_LEFT;
+			this.secondaryText.moveToPoint(this.secondaryText.x, this.primaryText.y);
+			this.secondaryText.draw(ctx);
+		}
 		if (this.icon) this.icon.draw(ctx);
 	}
 }
