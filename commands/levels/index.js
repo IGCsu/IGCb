@@ -285,11 +285,15 @@ class Levels extends BaseCommand {
 	 * @param {UserLevels} userLevel
 	 */
 	async followUpBannerAlert(int, userLevel) {
+		let content = 'Ваш баннер был удалён модерацией.\nВ будущем вам может быть запрещён доступ к смене банера'
+
+		if (userLevel.flags.bannerBlocked) content = 'Ваш баннер был удалён и заблокирован модерацией.\nВы больше не можете изменять свой баннер'
+
 		await int.followUp({
-			content: 'Ваш баннер был удалён модерацией.\nВ будущем вам может быть запрещён доступ к смене банера',
+			content: content,
 			ephemeral: true
 		})
-		userLevel.flags = {bannerRemoved: false}
+		userLevel.flags = { bannerRemoved: false }
 		await userLevel.update();
 	}
 
