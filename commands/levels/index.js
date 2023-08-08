@@ -78,19 +78,26 @@ class Levels extends BaseCommand {
 	 *   пользователя
 	 * @param {GuildMember} member Объект пользователя
 	 * @return {Promise<{content: InteractionReplyOptions|Object,
-	 *   userLevel:UserLevels}>}
+	 *   userLevel:UserLevels, type: string}|{error:string, type:string}>}
 	 */
 	async call (int, member) {
 
 		const user = await new UserLevels(member, this.roles, this.rolesIDs);
+		let type = 'reply';
 
-		if (!user.finded) return { error: 'Unknown User' };
+		if (user.isAnimated() && !user.isGifCached()) {
+			await int.deferReply();
+			type = 'editReply'
+		}
+
+		if (!user.finded) return { error: 'Unknown User', type: type };
 
 		const status = !commands.handler?.siteStatus;
 
 		return {
 			content: await preparedUiMessages.cardShowMessage(this.cardGenerator, user, status),
-			userLevel: user
+			userLevel: user,
+			type: type
 		};
 
 	}
@@ -105,15 +112,16 @@ class Levels extends BaseCommand {
 			int,
 			int.options.getMember('user') ?? int.member
 		);
+		//if (data.userLevel.flags.animatedMediaContentEnabled || data.userLevel.flags.animatedAppearanceEnabled) {}
 
 		if (data.error) {
-			return int.reply({
-				content: reaction.emoji.error + ' ' + int.str(content.error),
+			return int[data.type]({
+				content: reaction.emoji.error + ' ' + int.str(data.error),
 				ephemeral: true
 			});
 		}
 
-		await int.reply(data.content);
+		await int[data.type](data.content);
 
 		if (!int.options.getMember('user') && data.userLevel.flags.bannerRemoved) {
 			await this.followUpBannerAlert(int, data.userLevel);
@@ -128,7 +136,7 @@ class Levels extends BaseCommand {
 		const data = await this.call(int, int.targetMember);
 
 		if (data.error) {
-			return int.reply({
+			return int[data.type]({
 				content: reaction.emoji.error + ' ' + int.str(content.error),
 				ephemeral: true
 			});
@@ -154,19 +162,28 @@ class Levels extends BaseCommand {
 		const isMod = await this.permission(int.member);
 		const userLevel = await new UserLevels(
 		  member, this.roles, this.rolesIDs);
+		let type = 'update';
+		const defered = (userLevel.isAnimated() && !userLevel.isGifCached());
+
+		if (defered) {
+			if (btnType !== 'ready') {
+				await int.deferReply({ ephemeral: true });
+				type = 'editReply';
+			}
+		}
 
 		switch (btnType) {
 			case 'syncWithProfile': {
 				userLevel.flags = { bannerSyncedWithDiscord: true };
 				await userLevel.setBannerUrl(member.user.banner);
-				return int.update(
+				return int[type](
 				  await preparedUiMessages.bannerEphemeralActionSheet(
 					int.client.users.cache.get(params[2]), userLevel,
 					params[4], isMod, int.user
 				  ));
 			}
 			case 'bannerMain': {
-				await int.update(
+				await int[type](
 				  await preparedUiMessages.bannerEphemeralActionSheet(
 					int.client.users.cache.get(params[2]), userLevel,
 					params[3], isMod, int.user
@@ -191,7 +208,7 @@ class Levels extends BaseCommand {
 				};
 				await userLevel.setBannerUrl(null);
 
-				return int.update(
+				return int[type](
 				  await preparedUiMessages.bannerEphemeralActionSheet(
 					int.client.users.cache.get(params[2]), userLevel,
 					cardMessageId, isMod, int.user
@@ -217,22 +234,24 @@ class Levels extends BaseCommand {
 				  ));
 			}
 			case 'hub': {
+				if (!defered) type = 'reply';
+
 				if (member.user != int.user && !isMod) {
-					return int.reply(
+					return int[type](
 					  { content: 'Отказано в доступе', ephemeral: true });
 				}
 
-				return int.reply(
+				return int[type](
 				  await preparedUiMessages.hubEphemeralActionSheet(
 					this.cardGenerator, userLevel, int.message.id))
 			}
 			case 'hubBack': {
-				return int.update(
+				return int[type](
 				  await preparedUiMessages.hubEphemeralActionSheet(
 					this.cardGenerator, userLevel, cardMessageId))
 			}
 			case 'animatedMain': {
-				return int.update(
+				return int[type](
 				  await preparedUiMessages.animationsEphemeralActionSheet(
 					this.cardGenerator, userLevel, cardMessageId
 				  )
@@ -242,7 +261,7 @@ class Levels extends BaseCommand {
 				userLevel.flags = { animatedMediaContentEnabled: !userLevel.flags.animatedMediaContentEnabled };
 				await userLevel.update();
 
-				return int.update(
+				return int[type](
 				  await preparedUiMessages.animationsEphemeralActionSheet(
 					this.cardGenerator, userLevel, cardMessageId
 				  )
@@ -252,7 +271,7 @@ class Levels extends BaseCommand {
 				userLevel.flags = { animatedAppearanceEnabled: !userLevel.flags.animatedAppearanceEnabled };
 				await userLevel.update();
 
-				return int.update(
+				return int[type](
 				  await preparedUiMessages.animationsEphemeralActionSheet(
 					this.cardGenerator, userLevel, cardMessageId
 				  )

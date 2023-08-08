@@ -76,12 +76,13 @@ class CanvasElement {
 	 * Делает то же что и getInBoundAlignedPoint но ограничивает координаты габаритами холста
 	 *
 	 * @param alignment
+	 * @param {[]} bounds
 	 * @returns {{x: number, y: number}}
 	 */
-	getInBoundAlignedPoint(alignment=ALIGNMENT.TOP_LEFT) {
+	getInBoundAlignedPoint(alignment=ALIGNMENT.TOP_LEFT, bounds) {
 		return {
-			x: Math.min(Math.max(this.x + (this.w * alignment[1]), 0), RESOLUTION.CARD_WIDTH),
-			y: Math.min(Math.max(this.y + (this.h * alignment[0]), 0), RESOLUTION.CARD_HEIGHT)
+			x: Math.min(Math.max(this.x + (this.w * alignment[1]), bounds[0]), bounds[1]),
+			y: Math.min(Math.max(this.y + (this.h * alignment[0]), bounds[2]), bounds[3])
 		};
 	}
 }

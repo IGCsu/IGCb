@@ -6,6 +6,9 @@ const { ALIGNMENT, COLOURS, STYLE, RESOLUTION } = require('./renderingConstants'
 const { Rect, TextBox, Icon, Label, ProgressBar } = require('./CanvasWrapper');
 const { UserLevels } = require('../UserLevels');
 
+const GifEncoder = require('gif-encoder');
+const { streamToBuffer } = require('@jorgeferrero/stream-to-buffer');
+
 const fontsRoot = './commands/levels/UserLevelCard/fonts/'
 
 
@@ -23,6 +26,10 @@ class UserLevelCards {
 	 */
 	static #cachedCards = {
 	};
+
+	static getCachedCard(id) {
+		return UserLevelCards.#cachedCards[id];
+	}
 
 	static loadAssets(path) {
 		const endPath = path.slice(0, -9) + "/UserLevelCard/assets"
@@ -59,13 +66,6 @@ class UserLevelCards {
 		  ALIGNMENT.TOP_LEFT, COLOURS.DARK_GRAY, STYLE.ROUNDING
 		)
 
-		this.bannerCoverRect = new Rect(
-		  this.canvas,
-		  0, STYLE.AVATAR_SHIFT + STYLE.AVATAR_SIZE / 2,
-		  RESOLUTION.CARD_WIDTH, RESOLUTION.CARD_HEIGHT - STYLE.AVATAR_SHIFT - STYLE.AVATAR_SIZE / 2,
-		  ALIGNMENT.TOP_LEFT, COLOURS.DARK_GRAY, [0, 0, STYLE.ROUNDING, STYLE.ROUNDING]
-		)
-
 		this.darkBackground = new Rect(
 		  this.canvas,
 		  STYLE.BORDER_SIZE,
@@ -92,14 +92,6 @@ class UserLevelCards {
 			STYLE.AVATAR_SHIFT,
 			STYLE.AVATAR_SIZE,
 			STYLE.AVATAR_SIZE
-		);
-
-		this.avatarBackground = new Rect(this.canvas,
-		  STYLE.BORDER_SIZE - STYLE.AVATAR_BG_BORDER,
-		  STYLE.AVATAR_SHIFT - STYLE.AVATAR_BG_BORDER,
-		  STYLE.AVATAR_SIZE + STYLE.AVATAR_BG_BORDER * 2,
-		  STYLE.AVATAR_SIZE + STYLE.AVATAR_BG_BORDER * 2,
-		  ALIGNMENT.TOP_LEFT, COLOURS.DARK_GRAY, (STYLE.AVATAR_SIZE + STYLE.AVATAR_BG_BORDER * 2) / 2
 		);
 
 		this.banner = new Icon(this.canvas, undefined,
@@ -240,22 +232,20 @@ class UserLevelCards {
 
 	async generateAvatar(userLevel) {
 		const cachedAvatar = UserLevelCards.#cachedImages.avatars[userLevel.member.id];
-		const currentAvatarUrl = userLevel.member.displayAvatarURL({format: 'png', size: 1024});
+		const currentAvatarUrl = userLevel.member.displayAvatarURL({format: 'png', size: 1024, dynamic: userLevel.flags.animatedMediaContentEnabled});
 
 		if (cachedAvatar && (currentAvatarUrl === cachedAvatar.avatarUrl)) {
 			this.avatar.asset = cachedAvatar.asset;
+			this.avatar.gif = cachedAvatar.gif
 			userLevel.isAvatarCached = true;
 		} else {
-			await this.avatar.loadAssetFromUrl(
-			  currentAvatarUrl
-			);
+			await this.avatar.loadAssetFromUrl(currentAvatarUrl);
 			UserLevelCards.#cachedImages.avatars[userLevel.member.id] = {
 				asset: this.avatar.asset,
+				gif: this.avatar.gif,
 				avatarUrl: currentAvatarUrl
 			};
 		}
-
-		this.avatarBackground.draw();
 
 		this.avatar
 		  .makeRounded()
@@ -276,7 +266,7 @@ class UserLevelCards {
 	async generateBanner(userLevel) {
 		const bannerAllowedHeight = STYLE.AVATAR_SIZE / 2 + STYLE.AVATAR_SHIFT;
 		const cachedBanner = UserLevelCards.#cachedImages.banners[userLevel.member.id];
-		const currentBannerUrl = userLevel.getBannerUrl();
+		const currentBannerUrl = userLevel.getBannerUrl(userLevel.flags.animatedMediaContentEnabled);
 
 		this.banner.asset = UserLevelCards.assets['default_banner'];
 		userLevel.isBannerCached = true;
@@ -285,12 +275,14 @@ class UserLevelCards {
 		if (currentBannerUrl) {
 			if (cachedBanner && (currentBannerUrl === cachedBanner.bannerUrl)) {
 				this.banner.asset = cachedBanner.asset;
+				this.banner.gif = cachedBanner.gif
 			} else {
 				userLevel.isBannerCached = false;
 				await this.banner.loadAssetFromUrl(currentBannerUrl);
 				UserLevelCards.#cachedImages.banners[userLevel.member.id] = {
 					asset: this.banner.asset,
-					bannerUrl: currentBannerUrl
+					bannerUrl: currentBannerUrl,
+					gif: this.banner.gif
 				};
 			}
 		}
@@ -306,7 +298,7 @@ class UserLevelCards {
 		this.banner
 		  .moveToPoint(RESOLUTION.CARD_WIDTH / 2, bannerAllowedHeight / 2);
 
-		this.banner.makeRounded([STYLE.ROUNDING, STYLE.ROUNDING, 0, 0])
+		this.banner.makeRounded([STYLE.ROUNDING, STYLE.ROUNDING, 0, 0], [0, RESOLUTION.CARD_WIDTH, 0, STYLE.AVATAR_SIZE / 2 + STYLE.AVATAR_SHIFT])
 		this.banner.draw();
 	}
 
@@ -520,22 +512,96 @@ class UserLevelCards {
 		this.footer.draw();
 	}
 
+	/**
+	 *
+	 * @param {Canvas} canvas
+	 * @param {UserLevels} userLevel
+	 * @returns {GIFEncoder|null}
+	 */
+	async animate(canvas, userLevel) {
+		const ctx = canvas.getContext('2d');
+		let aGif;
+		let bGif;
+		let aGifDelay = 0
+		let bGifDelay = 0
+		let aGifLength = 0
+		let bGifLength = 0
+		let currTime = 0;
+
+		if ((!this.avatar.gif && !this.banner.gif) || !userLevel.flags.animatedMediaContentEnabled) return null;
+
+		if (this.avatar.gif) {
+			aGif = this.avatar.gif;
+			aGifDelay = aGif[0].frameInfo.delay;
+			aGifLength = aGif.length;
+		}
+		if (this.banner.gif) {
+			bGif = this.banner.gif;
+			bGifDelay = bGif[0].frameInfo.delay;
+			bGifLength = bGif.length;
+		}
+
+		const gif = new GifEncoder(canvas.width, canvas.height, { highWaterMark: 8 * 1024 * 1024 * 16 });
+		gif.setDelay(Math.min(aGif ? aGifDelay : bGifDelay, bGif ? bGifDelay : aGifDelay) * 10);
+		gif.setQuality(10);
+		gif.setRepeat(0);
+		gif.setTransparent(0x000000);
+		gif.setDispose(0);
+
+		gif.writeHeader();
+
+		let aFrame = 0;
+		let bFrame = 0;
+
+		for (let frame = 0; (aFrame < (aGifLength - 1)) || (bFrame < (bGifLength - 1)); frame++) {
+
+			console.time(`${frame} in`);
+
+			if (aGif) {
+				aFrame = Math.min(Math.floor(currTime/aGifDelay), aGifLength - 1);
+				this.avatar.asset = await Canvas.loadImage(await streamToBuffer(aGif[aFrame].getImage()));
+				this.avatar.makeRounded();
+				this.avatar.draw(ctx);
+			}
+			if (bGif) {
+				bFrame = Math.min(Math.floor(currTime/bGifDelay), bGifLength - 1);
+				this.banner.asset = await Canvas.loadImage(await streamToBuffer(bGif[bFrame].getImage()));
+				this.banner.makeRounded([STYLE.ROUNDING, STYLE.ROUNDING, 0, 0], [0, RESOLUTION.CARD_WIDTH, 0, RESOLUTION.CARD_HEIGHT])
+				this.banner.draw(ctx);
+			}
+			currTime += Math.min(aGif ? aGifDelay : bGifDelay, bGif ? bGifDelay : aGifDelay);
+
+			gif.addFrame(ctx.getImageData(0, 0, canvas.width, canvas.height).data);
+
+			console.timeEnd(`${frame} in`);
+		}
+
+		gif.finish();
+
+		return gif;
+	}
+
     async generate(userLevel) {
 		const gStart = getMilliseconds();
 
-		if (userLevel.equals(UserLevelCards.#cachedCards?.[userLevel.member.id]?.userLevel)) {
-			const canvas = UserLevelCards.#cachedCards[userLevel.member.id].canvas;
-			userLevel.isCachedFull = true;
-			this.generateTime(canvas, userLevel, gStart);
+		if (userLevel.isCached()) {
+			if (!userLevel.isAnimated()) {
+				const canvas = UserLevelCards.#cachedCards[userLevel.member.id].canvas;
+				userLevel.isCachedFull = true;
+				this.generateTime(canvas, userLevel, gStart);
 
-			return new MessageAttachment(canvas.toBuffer('image/png'), `${userLevel.getExp()}.png`);
+				return new MessageAttachment(canvas.toBuffer('image/png'), `${userLevel.getExp()}.png`);
+			}
+
+		}
+
+		if (userLevel.isGifCached() && userLevel.isAnimated()) {
+			return UserLevelCards.#cachedCards[userLevel.member.id].gif;
 		}
 
 		this.mainBackground.draw();
 
 		await this.generateBanner(userLevel);
-
-		this.bannerCoverRect.draw();
 
 		this.generateDarkBackground();
 
@@ -553,7 +619,17 @@ class UserLevelCards {
 
 		this.generateTime(this.canvas, userLevel, gStart);
 
-		UserLevelCards.#cachedCards[userLevel.member.id] = {canvas: this.canvas, userLevel:userLevel}
+		const gif = await this.animate(this.canvas, userLevel);
+
+
+
+		if (gif) {
+			const attachment = new MessageAttachment(gif.read(), `${userLevel.getExp()}.gif`);
+			UserLevelCards.#cachedCards[userLevel.member.id] = {canvas: copyCanvas(this.canvas), userLevel:userLevel, gif:attachment}
+			return attachment;
+		}
+
+		UserLevelCards.#cachedCards[userLevel.member.id] = {canvas: copyCanvas(this.canvas), userLevel:userLevel}
 
 		return new MessageAttachment(this.canvas.toBuffer('image/png'), `${userLevel.getExp()}.png`);
 	}

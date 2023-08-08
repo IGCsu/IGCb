@@ -409,10 +409,10 @@ class UserLevels {
         this.#primitiveData.flags = flagsNumericTarget;
     }
 
-    getBannerUrl() {
+    getBannerUrl(dynamic=false) {
 		if (!this.#primitiveData.banner) return null;
 		if (this.flags.bannerSyncedWithDiscord)
-        	return `https://cdn.discordapp.com/banners/${this.member.id}/${this.#primitiveData.banner}.png?size=1024`;
+        	return `https://cdn.discordapp.com/banners/${this.member.id}/${this.#primitiveData.banner}.${this.#primitiveData.banner.startsWith('a_') & dynamic ? 'gif': 'png'}?size=1024`;
 		return this.#primitiveData.banner;
     }
 
@@ -420,6 +420,26 @@ class UserLevels {
 		this.#primitiveData.banner = banner;
 		await this.update();
 		return this;
+	}
+
+	isAvatarAnimated() {
+		return this.member.displayAvatarURL({dynamic: true}).endsWith('.gif');
+	}
+
+	isBannerAnimated() {
+		return this.getBannerUrl(true).split('?')[0].endsWith('.gif');
+	}
+
+	isAnimated() {
+		return ( this.flags.animatedMediaContentEnabled && (this.isAvatarAnimated() || this.isBannerAnimated()) );
+	}
+
+	isCached() {
+		return ( this.equals(UserLevelCards.getCachedCard(this.member.id)?.userLevel) );
+	}
+
+	isGifCached() {
+		return ( this.equals(UserLevelCards.getCachedCard(this.member.id)?.userLevel) && UserLevelCards.getCachedCard(this.member.id)?.gif);
 	}
 
 	/**
@@ -578,7 +598,8 @@ class UserLevels {
 		  && (userLevel.getSymbols() === this.getSymbols())
 		  && (userLevel.getSymbolsAvg() === this.getSymbolsAvg())
 		  && (userLevel.member.displayAvatarURL() === this.member.displayAvatarURL())
-		  && (userLevel.getBannerUrl()=== this.getBannerUrl())
+		  && (userLevel.getBannerUrl() === this.getBannerUrl())
+		  //&& (userLevel.flags.animatedMediaContentEnabled === this.flags.animatedMediaContentEnabled)
 	}
 
 }
