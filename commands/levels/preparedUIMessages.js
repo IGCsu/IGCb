@@ -179,7 +179,7 @@ async function setCustomBannerModal (user, bannerUrl=undefined) {
 						customId: 'levels|setCustomBanner|url',
 						label: 'Ссылка на банер',
 						min_length: 15,
-						value: bannerUrl ?? guildUser.bannerURL(),
+						value: bannerUrl,
 						placeholder: "Оставьте пустым чтобы вернуть стандартный баннер",
 						required: false
 					},

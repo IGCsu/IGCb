@@ -565,6 +565,22 @@ class UserLevels {
 		this.#embed.setFooter('*Активность за последние 30 дней');
 	};
 
+	/**
+	 * Сравнивает текущий экземпляр класса с предоставленным
+	 * @param {UserLevels} userLevel
+	 */
+	equals(userLevel) {
+		if (!userLevel) return false;
+
+		return (userLevel.member.id === this.member.id)
+		  && (userLevel.getMessagesAll() === this.getMessagesAll())
+		  && (userLevel.getMessagesLegit() === this.getMessagesLegit())
+		  && (userLevel.getSymbols() === this.getSymbols())
+		  && (userLevel.getSymbolsAvg() === this.getSymbolsAvg())
+		  && (userLevel.member.displayAvatarURL() === this.member.displayAvatarURL())
+		  && (userLevel.getBannerUrl()=== this.getBannerUrl())
+	}
+
 }
 
 module.exports = UserLevels;

@@ -1,10 +1,10 @@
 const Canvas = require('canvas');
 const fs = require('fs');
-const { MessageAttachment } = require('discord.js');
+const { MessageAttachment, Snowflake } = require('discord.js');
 
 const { ALIGNMENT, COLOURS, STYLE, RESOLUTION } = require('./renderingConstants');
 const { Rect, TextBox, Icon, Label, ProgressBar } = require('./CanvasWrapper');
-const { time } = require('@discordjs/builders');
+const { UserLevels } = require('../UserLevels');
 
 const fontsRoot = './commands/levels/UserLevelCard/fonts/'
 
@@ -15,6 +15,13 @@ class UserLevelCards {
 	static #cachedImages = {
 		banners: {},
 		avatars: {},
+	};
+
+	/**
+	 *
+	 * @type {{Snowflake: {userLevel: UserLevels, card: Canvas}}}
+	 */
+	static #cachedCards = {
 	};
 
 	static loadAssets(path) {
@@ -464,14 +471,19 @@ class UserLevelCards {
     }
 
 	/**
-	 *
+	 * @param {Canvas} canvas
 	 * @param {userLevel} userLevel
 	 * @param {String} time
 	 */
-	generateTime(userLevel, time) {
-		this.footer = new TextBox(this.canvas, 0, 0, 1, 1,
+	generateTime(canvas, userLevel, time) {
+		const footerBackground = new Rect(canvas, 0, 0, 1, 1,
+		  ALIGNMENT.BOTTOM_LEFT, COLOURS.BLACK
+		);
+
+		this.footer = new TextBox(canvas, 0, 0, 1, 1,
 		  ALIGNMENT.BOTTOM_LEFT, COLOURS.DARK_GRAY,
-		  '', 23);
+		  '', 23
+		);
 
 		this.footer
 		  .moveToObject(this.darkBackground)
@@ -480,8 +492,12 @@ class UserLevelCards {
 			-STYLE.DARK_BACKGROUND_INNER_SHIFT
 		  );
 
+
+
 		let txtCached = '';
-		if (userLevel.isAvatarCached && userLevel.isBannerCached) {
+		if (userLevel.isCachedFull) {
+			txtCached = 'всё';
+		} else if (userLevel.isAvatarCached && userLevel.isBannerCached) {
 			txtCached = 'аватар и баннер';
 		} else if (userLevel.isAvatarCached) {
 			txtCached = 'аватар';
@@ -491,18 +507,29 @@ class UserLevelCards {
 			txtCached = 'нет'
 		}
 
-
-		const txt = `Сгенерировано за: ${time}мс. Кеш: ${txtCached}`
+		const txt = `Сгенерировано за: ${round(getMilliseconds() - time, 3)}мс. Кеш: ${txtCached}`
 
 		this.footer.font = 'Montserrat Medium'
 		this.footer.changeText(txt, undefined, 23);
+
+		footerBackground.h = this.footer.h;
+		footerBackground.w = RESOLUTION.CARD_WIDTH - (STYLE.BORDER_SIZE + STYLE.DARK_BACKGROUND_INNER_SHIFT) * 2;
+
+		footerBackground.moveToObject(this.footer);
+		footerBackground.draw();
 		this.footer.draw();
 	}
 
     async generate(userLevel) {
-		const gStart = Date.now();
-		const context = this.canvas.getContext('2d');
-		context.textBaseline = "top";
+		const gStart = getMilliseconds();
+
+		if (userLevel.equals(UserLevelCards.#cachedCards?.[userLevel.member.id]?.userLevel)) {
+			const canvas = UserLevelCards.#cachedCards[userLevel.member.id].canvas;
+			userLevel.isCachedFull = true;
+			this.generateTime(canvas, userLevel, gStart);
+
+			return new MessageAttachment(canvas.toBuffer('image/png'), `${userLevel.getExp()}.png`);
+		}
 
 		this.mainBackground.draw();
 
@@ -524,7 +551,9 @@ class UserLevelCards {
 
 		this.generateStats(userLevel);
 
-		this.generateTime(userLevel, Date.now() - gStart);
+		this.generateTime(this.canvas, userLevel, gStart);
+
+		UserLevelCards.#cachedCards[userLevel.member.id] = {canvas: this.canvas, userLevel:userLevel}
 
 		return new MessageAttachment(this.canvas.toBuffer('image/png'), `${userLevel.getExp()}.png`);
 	}
