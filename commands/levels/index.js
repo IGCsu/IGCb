@@ -163,13 +163,18 @@ class Levels extends BaseCommand {
 		const userLevel = await new UserLevels(
 		  member, this.roles, this.rolesIDs);
 		let type = 'update';
-		const defered = (userLevel.isAnimated() && !userLevel.isGifCached());
+		let defered = userLevel.isAnimated();
 
 		if (defered) {
-			if (btnType !== 'ready') {
-				await int.deferReply({ ephemeral: true });
-				type = 'editReply';
+			if (btnType !== 'ready' && btnType !== 'hub' && btnType !== 'animatedMediaContent' && btnType !== 'animatedAppearance') {
+				await int.deferUpdate();
 			}
+
+			if (btnType == 'hub') {
+				await int.deferReply({ephemeral: true});
+			}
+
+			type = 'editReply';
 		}
 
 		switch (btnType) {
@@ -261,7 +266,12 @@ class Levels extends BaseCommand {
 				userLevel.flags = { animatedMediaContentEnabled: !userLevel.flags.animatedMediaContentEnabled };
 				await userLevel.update();
 
-				return int[type](
+				if(userLevel.isAnimated()) {
+					await int.deferUpdate();
+					type = 'editReply';
+				}
+
+				return await int[type](
 				  await preparedUiMessages.animationsEphemeralActionSheet(
 					this.cardGenerator, userLevel, cardMessageId
 				  )
@@ -271,7 +281,12 @@ class Levels extends BaseCommand {
 				userLevel.flags = { animatedAppearanceEnabled: !userLevel.flags.animatedAppearanceEnabled };
 				await userLevel.update();
 
-				return int[type](
+				if(userLevel.isAnimated()) {
+					await int.deferUpdate();
+					type = 'editReply';
+				}
+
+				return await int[type](
 				  await preparedUiMessages.animationsEphemeralActionSheet(
 					this.cardGenerator, userLevel, cardMessageId
 				  )

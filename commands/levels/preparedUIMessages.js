@@ -142,7 +142,7 @@ async function bannerEphemeralActionSheet (user, userLevel, cardMessageId, permi
 	const guildUser = await user.fetch();
 	let syncWithProfileTxt =  'Использовать из профиля';
 	let setCustomTxt = 'Использовать кастомный';
-	let bannerUrl = userLevel.getBannerUrl();
+	let bannerUrl = userLevel.getBannerUrl(true);
 	let disableSyncWithProfile = false;
 
 	if (userLevel.flags.bannerSyncedWithDiscord) {

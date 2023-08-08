@@ -553,23 +553,29 @@ class UserLevelCards {
 		let aFrame = 0;
 		let bFrame = 0;
 
+		const frameTime = Math.min(aGif ? aGifDelay : bGifDelay, bGif ? bGifDelay : aGifDelay);
+
+		//const fullTime = frameTime *;
+
 		for (let frame = 0; (aFrame < (aGifLength - 1)) || (bFrame < (bGifLength - 1)); frame++) {
 
 			console.time(`${frame} in`);
 
 			if (aGif) {
-				aFrame = Math.min(Math.floor(currTime/aGifDelay), aGifLength - 1);
+				aFrame = Math.min(Math.floor(currTime/aGifDelay), ) % aGifLength;
+				//console.log(aFrame);
 				this.avatar.asset = await Canvas.loadImage(await streamToBuffer(aGif[aFrame].getImage()));
 				this.avatar.makeRounded();
 				this.avatar.draw(ctx);
 			}
 			if (bGif) {
-				bFrame = Math.min(Math.floor(currTime/bGifDelay), bGifLength - 1);
+				bFrame = Math.min(Math.floor(currTime/bGifDelay), ) % bGifLength;
+				//console.log(bFrame);
 				this.banner.asset = await Canvas.loadImage(await streamToBuffer(bGif[bFrame].getImage()));
 				this.banner.makeRounded([STYLE.ROUNDING, STYLE.ROUNDING, 0, 0], [0, RESOLUTION.CARD_WIDTH, 0, RESOLUTION.CARD_HEIGHT])
 				this.banner.draw(ctx);
 			}
-			currTime += Math.min(aGif ? aGifDelay : bGifDelay, bGif ? bGifDelay : aGifDelay);
+			currTime += Math.min(frameTime);
 
 			gif.addFrame(ctx.getImageData(0, 0, canvas.width, canvas.height).data);
 
@@ -625,6 +631,12 @@ class UserLevelCards {
 
 		if (gif) {
 			const attachment = new MessageAttachment(gif.read(), `${userLevel.getExp()}.gif`);
+
+			//this.avatar.makeRounded();
+			//this.avatar.draw();
+			//this.banner.makeRounded([STYLE.ROUNDING, STYLE.ROUNDING, 0, 0], [0, RESOLUTION.CARD_WIDTH, 0, STYLE.AVATAR_SIZE / 2 + STYLE.AVATAR_SHIFT])
+			//this.banner.draw();
+
 			UserLevelCards.#cachedCards[userLevel.member.id] = {canvas: copyCanvas(this.canvas), userLevel:userLevel, gif:attachment}
 			return attachment;
 		}
