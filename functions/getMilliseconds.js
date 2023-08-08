@@ -3,5 +3,5 @@
  */
 global.getMilliseconds = function () {
 	const hrTime = process.hrtime();
-	return round(hrTime[0] * 1000000000 + hrTime[1] / 1000000, 3)
+	return round(hrTime[0] * 1000000000 + hrTime[1] / 1000000, 9)
 }
