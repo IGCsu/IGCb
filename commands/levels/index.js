@@ -95,7 +95,7 @@ class Levels extends BaseCommand {
 		const status = !commands.handler?.siteStatus;
 
 		return {
-			content: await preparedUiMessages.cardShowMessage(this.cardGenerator, user, status),
+			content: await preparedUiMessages.cardShowMessage(this.cardGenerator, user, status, int),
 			userLevel: user,
 			type: type
 		};
@@ -184,14 +184,14 @@ class Levels extends BaseCommand {
 				return int[type](
 				  await preparedUiMessages.bannerEphemeralActionSheet(
 					int.client.users.cache.get(params[2]), userLevel,
-					params[4], isMod, int.user
+					params[4], isMod, int.user, int
 				  ));
 			}
 			case 'bannerMain': {
 				await int[type](
 				  await preparedUiMessages.bannerEphemeralActionSheet(
 					int.client.users.cache.get(params[2]), userLevel,
-					params[3], isMod, int.user
+					params[3], isMod, int.user, int
 				  ));
 
 				if (member.user == int.user && userLevel.flags.bannerRemoved) {
@@ -216,7 +216,7 @@ class Levels extends BaseCommand {
 				return int[type](
 				  await preparedUiMessages.bannerEphemeralActionSheet(
 					int.client.users.cache.get(params[2]), userLevel,
-					cardMessageId, isMod, int.user
+					cardMessageId, isMod, int.user, int
 				  ));
 			}
 			case 'block': {
@@ -225,7 +225,7 @@ class Levels extends BaseCommand {
 				return int.update(
 				  await preparedUiMessages.bannerEphemeralActionSheet(
 					int.client.users.cache.get(params[2]), userLevel,
-					cardMessageId, isMod, int.user
+					cardMessageId, isMod, int.user, int
 				  ));
 			}
 			case 'ready': {
@@ -258,7 +258,7 @@ class Levels extends BaseCommand {
 			case 'animatedMain': {
 				return int[type](
 				  await preparedUiMessages.animationsEphemeralActionSheet(
-					this.cardGenerator, userLevel, cardMessageId
+					this.cardGenerator, userLevel, cardMessageId, int
 				  )
 				);
 			}
@@ -275,7 +275,7 @@ class Levels extends BaseCommand {
 
 				return await int[type](
 				  await preparedUiMessages.animationsEphemeralActionSheet(
-					this.cardGenerator, userLevel, cardMessageId
+					this.cardGenerator, userLevel, cardMessageId, int
 				  )
 				);
 			}

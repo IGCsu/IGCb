@@ -516,9 +516,10 @@ class UserLevelCards {
 	 *
 	 * @param {Canvas} canvas
 	 * @param {UserLevels} userLevel
+	 * @param {Interaction} int
 	 * @returns {GIFEncoder|null}
 	 */
-	async animate(canvas, userLevel) {
+	async animate(canvas, userLevel, int=undefined) {
 		const ctx = canvas.getContext('2d');
 		let aGif;
 		let bGif;
@@ -563,18 +564,22 @@ class UserLevelCards {
 		let currTime = 0;
 		let pTime = 0;
 
+		const gStart = Date.now() / 1000;
+
 		for (let frame = 0; (currTime < fullTime); frame++) {
-			const gStart = getMilliseconds();
+			const fStart = getMilliseconds();
 
 			if (aGif) {
 				aFrame = Math.floor(Math.min(aGifAllowedTime, currTime) / aGifDelay) % aGifLength;
 				this.avatar.asset = await Canvas.loadImage(await streamToBuffer(aGif[aFrame].getImage()));
+				this.avatar.context = canvas.getContext('2d');
 				this.avatar.makeRounded();
 				this.avatar.draw(ctx);
 			}
 			if (bGif) {
 				bFrame = Math.floor(Math.min(bGifAllowedTime, currTime) / bGifDelay) % bGifLength;
 				this.banner.asset = await Canvas.loadImage(await streamToBuffer(bGif[bFrame].getImage()));
+				this.banner.context = canvas.getContext('2d');
 				this.banner.makeRounded([STYLE.ROUNDING, STYLE.ROUNDING, 0, 0], [0, RESOLUTION.CARD_WIDTH, 0, STYLE.AVATAR_SIZE / 2 + STYLE.AVATAR_SHIFT])
 				this.banner.draw(ctx);
 			}
@@ -583,10 +588,11 @@ class UserLevelCards {
 
 			gif.addFrame(ctx.getImageData(0, 0, canvas.width, canvas.height).data);
 
-			const time = round(getMilliseconds() - gStart, 3);
+			const time = round(getMilliseconds() - fStart, 3);
 			pTime += time;
 			const avgTime = pTime/frame;
 			const reTime = round((((fullTime - currTime)/frameTime)*avgTime)/1000, 3);
+			const gRe = round(((fullTime/frameTime)*avgTime)/1000);
 
 			process.stdout.write(
 			  this.getPlaneTextProgressBar(
@@ -596,6 +602,16 @@ class UserLevelCards {
 			  )
 			 + ' '.repeat(10) + '\r'
 			);
+
+			if (int?.deferred && ((Math.round(pTime/1000) % 5) == 0)) {
+				int.editReply(
+					{
+						content: '`' + this.getPlaneTextProgressBar(currTime/fullTime,20)
+						  + ('` Прошло: <t:' + Math.floor(gStart ) + ':R> Осталось: <t:' + Math.floor(gStart + gRe + 2) + ':R>')
+
+					}
+				)
+			}
 		}
 
 		console.log('')
@@ -615,12 +631,12 @@ class UserLevelCards {
 		progress = Math.max(Math.min(progress, 1), 0)
 
 		const pr = '▉'.repeat(Math.round(progress * length));
-		const re = ' '.repeat(Math.round((1 - progress) * length));
+		const re = 'ㅤ'.repeat(Math.round((1 - progress) * length));
 
-		return '[' + pr + re + '] ' + strAddon;
+		return '[' + pr + re + ']' + strAddon;
 	}
 
-    async generate(userLevel) {
+    async generate(userLevel, int) {
 		const gStart = getMilliseconds();
 
 		if (userLevel.isCached()) {
@@ -658,7 +674,7 @@ class UserLevelCards {
 
 		this.generateTime(this.canvas, userLevel, gStart);
 
-		const gif = await this.animate(copyCanvas(this.canvas), userLevel);
+		const gif = await this.animate(copyCanvas(this.canvas), userLevel, int);
 
 
 

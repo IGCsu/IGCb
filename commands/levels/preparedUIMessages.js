@@ -7,18 +7,20 @@ const UserLevels = require('./UserLevels');
  * @param {UserLevelCards} cardGenerator
  * @param {UserLevels} user
  * @param {boolean} status
+ * @param {Interaction} int
  * @return {Promise<{components: [{components: [{style: number, disabled,
  *   label: string, type: number, url: string}], type: number},{components:
  *   [{style: number, disabled, label: string, type: number, url:
  *   string},{style: number, label: string, type: number, customId: string}],
  *   type: number}], files: *[]}>}
  */
-async function cardShowMessage (cardGenerator, user, status) {
+async function cardShowMessage (cardGenerator, user, status, int) {
 
 	console.time(`${user.member.id}: Сard generated in`);
-	const attachment = await cardGenerator.generate(user);
+	const attachment = await cardGenerator.generate(user, int);
 	console.timeEnd(`${user.member.id}: Сard generated in`);
 	return {
+		content: null,
 		files: [attachment],
 		components: [
 			{
@@ -53,9 +55,9 @@ async function cardShowMessage (cardGenerator, user, status) {
 	};
 }
 
-async function hubEphemeralActionSheet (cardGenerator, user, cardMessageId) {
+async function hubEphemeralActionSheet (cardGenerator, user, cardMessageId, int) {
 	console.time(`${user.member.id}: Сard generated in`);
-	const attachment = await cardGenerator.generate(user);
+	const attachment = await cardGenerator.generate(user, int);
 	console.timeEnd(`${user.member.id}: Сard generated in`);
 	return {
 		files: [attachment],
@@ -82,9 +84,9 @@ async function hubEphemeralActionSheet (cardGenerator, user, cardMessageId) {
 	};
 }
 
-async function animationsEphemeralActionSheet (cardGenerator, user, cardMessageId) {
+async function animationsEphemeralActionSheet (cardGenerator, user, cardMessageId, int) {
 	console.time(`${user.member.id}: Сard generated in`);
-	const attachment = await cardGenerator.generate(user);
+	const attachment = await cardGenerator.generate(user, int);
 	console.timeEnd(`${user.member.id}: Сard generated in`);
 	return {
 		files: [attachment],
