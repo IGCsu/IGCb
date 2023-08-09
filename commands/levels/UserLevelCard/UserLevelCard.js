@@ -575,7 +575,7 @@ class UserLevelCards {
 			if (bGif) {
 				bFrame = Math.floor(Math.min(bGifAllowedTime, currTime) / bGifDelay) % bGifLength;
 				this.banner.asset = await Canvas.loadImage(await streamToBuffer(bGif[bFrame].getImage()));
-				this.banner.makeRounded([STYLE.ROUNDING, STYLE.ROUNDING, 0, 0], [0, RESOLUTION.CARD_WIDTH, 0, RESOLUTION.CARD_HEIGHT])
+				this.banner.makeRounded([STYLE.ROUNDING, STYLE.ROUNDING, 0, 0], [0, RESOLUTION.CARD_WIDTH, 0, STYLE.AVATAR_SIZE / 2 + STYLE.AVATAR_SHIFT])
 				this.banner.draw(ctx);
 			}
 
