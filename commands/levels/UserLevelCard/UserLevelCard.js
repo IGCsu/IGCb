@@ -505,7 +505,7 @@ class UserLevelCards {
 		this.footer.changeText(txt, undefined, 23);
 
 		footerBackground.h = this.footer.h;
-		footerBackground.w = RESOLUTION.CARD_WIDTH - (STYLE.BORDER_SIZE + STYLE.DARK_BACKGROUND_INNER_SHIFT) * 2;
+		footerBackground.w = RESOLUTION.CARD_WIDTH - (STYLE.BORDER_SIZE * 2 + STYLE.DARK_BACKGROUND_INNER_SHIFT) ;
 
 		footerBackground.moveToObject(this.footer);
 		footerBackground.draw();
