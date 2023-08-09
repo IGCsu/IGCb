@@ -526,7 +526,7 @@ class UserLevelCards {
 		let bGifDelay = 0
 		let aGifLength = 0
 		let bGifLength = 0
-		let currTime = 0;
+
 
 		if ((!this.avatar.gif && !this.banner.gif) || !userLevel.flags.animatedMediaContentEnabled) return null;
 
@@ -541,9 +541,17 @@ class UserLevelCards {
 			bGifLength = bGif.length;
 		}
 
-		const gif = new GifEncoder(canvas.width, canvas.height, { highWaterMark: 8 * 1024 * 1024 * 16 });
+		const frameTime = Math.min(aGif ? aGifDelay : bGifDelay, bGif ? bGifDelay : aGifDelay);
+		const aGifFullTime = aGifDelay * aGifLength;
+		const bGifFullTime = bGifDelay * bGifLength;
+		const fullTime = Math.max(aGifFullTime, bGifFullTime);
+
+		const aGifAllowedTime = aGif ? (Math.floor((fullTime + frameTime)/aGifFullTime) * aGifFullTime) : fullTime;
+		const bGifAllowedTime = bGif ? (Math.floor((fullTime + frameTime)/bGifFullTime) * bGifFullTime) : fullTime;
+
+		const gif = new GifEncoder(canvas.width, canvas.height, { highWaterMark: 8 * 1024 * 1024 * 25 });
 		gif.setDelay(Math.min(aGif ? aGifDelay : bGifDelay, bGif ? bGifDelay : aGifDelay) * 10);
-		gif.setQuality(10);
+		gif.setQuality(15);
 		gif.setRepeat(0);
 		gif.setTransparent(0x000000);
 		gif.setDispose(0);
@@ -552,39 +560,65 @@ class UserLevelCards {
 
 		let aFrame = 0;
 		let bFrame = 0;
+		let currTime = 0;
+		let avgTime = 0;
+		let pTime = 0;
 
-		const frameTime = Math.min(aGif ? aGifDelay : bGifDelay, bGif ? bGifDelay : aGifDelay);
-
-		//const fullTime = frameTime *;
-
-		for (let frame = 0; (aFrame < (aGifLength - 1)) || (bFrame < (bGifLength - 1)); frame++) {
-
-			console.time(`${frame} in`);
+		for (let frame = 0; (currTime < fullTime); frame++) {
+			const gStart = getMilliseconds();
+			avgTime *= 0.5;
 
 			if (aGif) {
-				aFrame = Math.min(Math.floor(currTime/aGifDelay), ) % aGifLength;
-				//console.log(aFrame);
+				aFrame = Math.floor(Math.min(aGifAllowedTime, currTime) / aGifDelay) % aGifLength;
 				this.avatar.asset = await Canvas.loadImage(await streamToBuffer(aGif[aFrame].getImage()));
 				this.avatar.makeRounded();
 				this.avatar.draw(ctx);
 			}
 			if (bGif) {
-				bFrame = Math.min(Math.floor(currTime/bGifDelay), ) % bGifLength;
-				//console.log(bFrame);
+				bFrame = Math.floor(Math.min(bGifAllowedTime, currTime) / bGifDelay) % bGifLength;
 				this.banner.asset = await Canvas.loadImage(await streamToBuffer(bGif[bFrame].getImage()));
 				this.banner.makeRounded([STYLE.ROUNDING, STYLE.ROUNDING, 0, 0], [0, RESOLUTION.CARD_WIDTH, 0, RESOLUTION.CARD_HEIGHT])
 				this.banner.draw(ctx);
 			}
-			currTime += Math.min(frameTime);
+
+			currTime += frameTime;
 
 			gif.addFrame(ctx.getImageData(0, 0, canvas.width, canvas.height).data);
 
-			console.timeEnd(`${frame} in`);
+			const time = round(getMilliseconds() - gStart, 3);
+			pTime += time;
+			const reTime = round((((fullTime - currTime)/frameTime)*avgTime)/1000, 3);
+
+			console.log(
+			  this.getPlaneTextProgressBar(
+				currTime/fullTime,
+				20,
+				(aFrame + ' ' + bFrame + ' | Passed:' + (pTime/1000).toFixed(3) + 's; ETA:' + reTime + 's')
+			  )
+			);
+
+			avgTime += time;
 		}
 
 		gif.finish();
 
 		return gif;
+	}
+
+	/**
+	 *
+	 * @param {number} progress Прогресс. от 0.0 до 1.0
+	 * @param {number} length	Длинна полоски. ПО умолчанию 20 символов
+	 * @param {string} strAddon Строка которая будет добавлена после прогресс бара
+	 * @return {string}
+	 */
+	getPlaneTextProgressBar(progress, length=20, strAddon='') {
+		progress = Math.max(Math.min(progress, 1), 0)
+
+		const pr = '▉'.repeat(Math.round(progress * length));
+		const re = ' '.repeat(Math.round((1 - progress) * length));
+
+		return '[' + pr + re + '] ' + strAddon;
 	}
 
     async generate(userLevel) {
