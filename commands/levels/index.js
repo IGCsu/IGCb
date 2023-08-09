@@ -266,7 +266,9 @@ class Levels extends BaseCommand {
 				userLevel.flags = { animatedMediaContentEnabled: !userLevel.flags.animatedMediaContentEnabled };
 				await userLevel.update();
 
-				if(userLevel.isAnimated()) {
+				type = 'update'
+
+				if(userLevel.flags.animatedMediaContentEnabled) {
 					await int.deferUpdate();
 					type = 'editReply';
 				}
