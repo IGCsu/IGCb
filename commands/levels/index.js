@@ -63,7 +63,8 @@ class Levels extends BaseCommand {
 				this.rolesIDs.push(this.roles[r].id);
 			}
 
-			this.cardGenerator = new UserLevelCards(path);
+			this.cardGenerator = UserLevelCards;
+			this.cardGenerator.assets = UserLevelCards.loadAssets(path);
 
 			resolve(this);
 		});

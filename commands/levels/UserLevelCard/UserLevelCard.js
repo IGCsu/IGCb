@@ -11,6 +11,12 @@ const { streamToBuffer } = require('@jorgeferrero/stream-to-buffer');
 
 const fontsRoot = './commands/levels/UserLevelCard/fonts/'
 
+Canvas.registerFont(fontsRoot + 'Inter/static/Inter-Bold.ttf', {family: 'Inter', weight: 'Bold'});
+Canvas.registerFont(fontsRoot + 'Inter/static/Inter-Light.ttf', {family: 'Inter', weight: 'Light'});
+Canvas.registerFont(fontsRoot + 'PT_Sans/PTSans-Regular.ttf', {family: 'Sans', weight: 'Regular'});
+Canvas.registerFont(fontsRoot + 'Montserrat/static/Montserrat-Medium.ttf', {family: 'Montserrat', weight: 'Medium'});
+Canvas.registerFont(fontsRoot + 'Montserrat/static/Montserrat-Bold.ttf', {family: 'Montserrat', weight: 'Bold'});
+
 
 class UserLevelCards {
 
@@ -25,6 +31,10 @@ class UserLevelCards {
 	 * @type {{Snowflake: {userLevel: UserLevels, card: Canvas}}}
 	 */
 	static #cachedCards = {
+	};
+
+	static #cachedUserLevelCards = {
+
 	};
 
 	static getCachedCard(id) {
@@ -46,18 +56,7 @@ class UserLevelCards {
 		return assets;
 	}
 
-	/**
-	 *
-	 * @param {string} path Путь до модуля levels
-	 */
-	constructor(path) {
-		Canvas.registerFont(fontsRoot + 'Inter/static/Inter-Bold.ttf', {family: 'Inter', weight: 'Bold'});
-		Canvas.registerFont(fontsRoot + 'Inter/static/Inter-Light.ttf', {family: 'Inter', weight: 'Light'});
-		Canvas.registerFont(fontsRoot + 'PT_Sans/PTSans-Regular.ttf', {family: 'Sans', weight: 'Regular'});
-		Canvas.registerFont(fontsRoot + 'Montserrat/static/Montserrat-Medium.ttf', {family: 'Montserrat', weight: 'Medium'});
-		Canvas.registerFont(fontsRoot + 'Montserrat/static/Montserrat-Bold.ttf', {family: 'Montserrat', weight: 'Bold'});
-
-		UserLevelCards.assets = UserLevelCards.loadAssets(path);
+	constructor() {
 		this.canvas = Canvas.createCanvas(RESOLUTION.CARD_WIDTH, RESOLUTION.CARD_HEIGHT);
 
 		this.mainBackground = new Rect(
@@ -634,6 +633,17 @@ class UserLevelCards {
 		const re = 'ㅤ'.repeat(Math.round((1 - progress) * length));
 
 		return '[' + pr + re + ']' + strAddon;
+	}
+
+	static async generate(userLevel, int) {
+		let lc = UserLevelCards.#cachedUserLevelCards[userLevel.member.id];
+
+		if(!lc) {
+			lc = new UserLevelCards();
+			UserLevelCards.#cachedUserLevelCards[userLevel.member.id] = lc;
+		}
+
+		return await lc.generate(userLevel, int);
 	}
 
     async generate(userLevel, int) {
