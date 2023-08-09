@@ -423,11 +423,11 @@ class UserLevels {
 	}
 
 	isAvatarAnimated() {
-		return this.member.displayAvatarURL({dynamic: true}).endsWith('.gif');
+		return this.member.displayAvatarURL({dynamic: true})?.endsWith('.gif');
 	}
 
 	isBannerAnimated() {
-		return this.getBannerUrl(true).split('?')[0].endsWith('.gif');
+		return this.getBannerUrl(true)?.split('?')[0].endsWith('.gif');
 	}
 
 	isAnimated() {
