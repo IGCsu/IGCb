@@ -658,7 +658,7 @@ class UserLevelCards {
 
 		this.generateTime(this.canvas, userLevel, gStart);
 
-		const gif = await this.animate(this.canvas, userLevel);
+		const gif = await this.animate(copyCanvas(this.canvas), userLevel);
 
 
 
