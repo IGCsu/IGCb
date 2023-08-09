@@ -561,12 +561,10 @@ class UserLevelCards {
 		let aFrame = 0;
 		let bFrame = 0;
 		let currTime = 0;
-		let avgTime = 0;
 		let pTime = 0;
 
 		for (let frame = 0; (currTime < fullTime); frame++) {
 			const gStart = getMilliseconds();
-			avgTime *= 0.5;
 
 			if (aGif) {
 				aFrame = Math.floor(Math.min(aGifAllowedTime, currTime) / aGifDelay) % aGifLength;
@@ -587,19 +585,20 @@ class UserLevelCards {
 
 			const time = round(getMilliseconds() - gStart, 3);
 			pTime += time;
+			const avgTime = pTime/frame;
 			const reTime = round((((fullTime - currTime)/frameTime)*avgTime)/1000, 3);
 
-			console.log(
+			process.stdout.write(
 			  this.getPlaneTextProgressBar(
 				currTime/fullTime,
 				20,
 				(aFrame + ' ' + bFrame + ' | Passed:' + (pTime/1000).toFixed(3) + 's; ETA:' + reTime + 's')
 			  )
+			 + ' '.repeat(10) + '\r'
 			);
-
-			avgTime += time;
 		}
 
+		console.log('')
 		gif.finish();
 
 		return gif;
