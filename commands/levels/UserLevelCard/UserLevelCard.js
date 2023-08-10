@@ -30,14 +30,14 @@ class UserLevelCards {
 	 *
 	 * @type {{Snowflake: {userLevel: UserLevels, card: Canvas}}}
 	 */
-	static #cachedCards = {
+	static cachedCards = {
 	};
 
 	static #cachedUserLevelCards = {
 	};
 
 	static getCachedCard(id) {
-		return UserLevelCards.#cachedCards[id];
+		return UserLevelCards.cachedCards[id];
 	}
 
 	static loadAssets(path) {
@@ -206,7 +206,7 @@ class UserLevelCards {
 
 		this.displayname.draw(STYLE.USERNAME_MAX_WIDTH);
 
-		this.username.changeText(userLevel.member.user.username, RESOLUTION.CARD_WIDTH - STYLE.USERNAME_MAX_WIDTH, STYLE.USERNAME_MAX_FONT_SIZE - 15);
+		this.username.changeText(userLevel.member.user.username.truncate(14), RESOLUTION.CARD_WIDTH - STYLE.USERNAME_MAX_WIDTH, STYLE.USERNAME_MAX_FONT_SIZE - 15);
 		this.username.context.textBaseline = "alphabetic";
 		this.username.font = 'Inter Regular'
 		this.username
@@ -580,7 +580,7 @@ class UserLevelCards {
 					} else {
 						this.avatar.asset = await Canvas.loadImage(
 						  await streamToBuffer(aGif[aFrame].getImage()));
-						this.avatar.cachedGifFrames[aFrame] = this.avatar.asset;
+						//this.avatar.cachedGifFrames[aFrame] = this.avatar.asset;
 					}
 					this.avatar.context = canvas.getContext('2d');
 					this.avatar.makeRounded();
@@ -597,7 +597,7 @@ class UserLevelCards {
 					} else {
 						this.banner.asset = await Canvas.loadImage(
 						  await streamToBuffer(bGif[bFrame].getImage()));
-						this.banner.cachedGifFrames[bFrame] = this.banner.asset;
+						//this.banner.cachedGifFrames[bFrame] = this.banner.asset;
 					}
 					this.banner.context = canvas.getContext('2d');
 					this.banner.makeRounded(
@@ -684,19 +684,16 @@ class UserLevelCards {
     async generate(userLevel, int) {
 		const gStart = getMilliseconds();
 
-		if (userLevel.isCached()) {
-			if (!userLevel.isAnimated()) {
-				const canvas = UserLevelCards.#cachedCards[userLevel.member.id].canvas;
-				userLevel.isCachedFull = true;
-				this.generateTime(canvas, userLevel, gStart);
+		if (userLevel.isCached() && !userLevel.isAnimated()) {
+			const canvas = UserLevelCards.cachedCards[userLevel.member.id].canvas;
+			userLevel.isCachedFull = true;
+			this.generateTime(canvas, userLevel, gStart);
 
-				return new MessageAttachment(canvas.toBuffer('image/png'), `${userLevel.getExp()}.png`);
-			}
-
+			return new MessageAttachment(canvas.toBuffer('image/png'), `${userLevel.getExp()}.png`);
 		}
 
 		if (userLevel.isGifCached() && userLevel.isAnimated()) {
-			return UserLevelCards.#cachedCards[userLevel.member.id].gif;
+			return UserLevelCards.cachedCards[userLevel.member.id].gif;
 		}
 
 		this.mainBackground.draw();
@@ -721,21 +718,11 @@ class UserLevelCards {
 
 		const gif = await this.animate(copyCanvas(this.canvas), userLevel, int);
 
-
+		UserLevelCards.cachedCards[userLevel.member.id] = {canvas: copyCanvas(this.canvas), userLevel:userLevel}
 
 		if (gif) {
-			const attachment = new MessageAttachment(gif.read(), `${userLevel.getExp()}.gif`);
-
-			//this.avatar.makeRounded();
-			//this.avatar.draw();
-			//this.banner.makeRounded([STYLE.ROUNDING, STYLE.ROUNDING, 0, 0], [0, RESOLUTION.CARD_WIDTH, 0, STYLE.AVATAR_SIZE / 2 + STYLE.AVATAR_SHIFT])
-			//this.banner.draw();
-
-			UserLevelCards.#cachedCards[userLevel.member.id] = {canvas: copyCanvas(this.canvas), userLevel:userLevel, gif:attachment}
-			return attachment;
+			return new MessageAttachment(gif.read(), `${userLevel.getExp()}.gif`);
 		}
-
-		UserLevelCards.#cachedCards[userLevel.member.id] = {canvas: copyCanvas(this.canvas), userLevel:userLevel}
 
 		return new MessageAttachment(this.canvas.toBuffer('image/png'), `${userLevel.getExp()}.png`);
 	}

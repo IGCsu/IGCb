@@ -19,7 +19,7 @@ async function cardShowMessage (cardGenerator, user, status, int) {
 	console.time(`${user.member.id}: Сard generated in`);
 	const attachment = await cardGenerator.generate(user, int);
 	console.timeEnd(`${user.member.id}: Сard generated in`);
-	return {
+	const payoad = {
 		content: null,
 		files: [attachment],
 		components: [
@@ -53,6 +53,13 @@ async function cardShowMessage (cardGenerator, user, status, int) {
 			},
 		]
 	};
+
+	if (user.isAnimated() && user.isGifCached()) {
+		payoad.content = attachment;
+		payoad.files = null;
+	}
+
+	return payoad;
 }
 
 async function hubEphemeralActionSheet (cardGenerator, user, cardMessageId, int) {

@@ -122,7 +122,10 @@ class Levels extends BaseCommand {
 			});
 		}
 
-		await int[data.type](data.content);
+		data.content.fetchReply = true
+		const msg = await int[data.type](data.content);
+		if (data.userLevel.isAnimated() && !data.userLevel.isGifCached())
+			this.cardGenerator.cachedCards[data.userLevel.member.id].gif = msg.attachments.first().url + '?width=219&height=350';
 
 		if (!int.options.getMember('user') && data.userLevel.flags.bannerRemoved) {
 			await this.followUpBannerAlert(int, data.userLevel);
