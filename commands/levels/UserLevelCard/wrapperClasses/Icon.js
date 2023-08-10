@@ -54,12 +54,14 @@ class Icon extends CanvasElement {
 	async loadAssetFromUrl(url) {
 		try {
 			if (url.split('?')[0].endsWith('.gif')) {
+				this.cachedGifFrames = [];
 				this.gif = await gifFrames(
 				  { url: url, frames: 'all', outputType: 'png' });
 				this.asset = await Canvas.loadImage(
 				  await streamToBuffer(this.gif[0].getImage()));
 			} else {
 				this.gif = undefined;
+				this.cachedGifFrames = [];
 				this.asset = await Canvas.loadImage(url);
 			}
 		} catch (e) {

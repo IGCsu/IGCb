@@ -34,7 +34,6 @@ class UserLevelCards {
 	};
 
 	static #cachedUserLevelCards = {
-
 	};
 
 	static getCachedCard(id) {
@@ -551,7 +550,7 @@ class UserLevelCards {
 
 		const gif = new GifEncoder(canvas.width, canvas.height, { highWaterMark: 8 * 1024 * 1024 * 25 });
 		gif.setDelay(Math.min(aGif ? aGifDelay : bGifDelay, bGif ? bGifDelay : aGifDelay) * 10);
-		gif.setQuality(15);
+		gif.setQuality(30);
 		gif.setRepeat(0);
 		gif.setTransparent(0x000000);
 		gif.setDispose(0);
@@ -560,53 +559,88 @@ class UserLevelCards {
 
 		let aFrame = 0;
 		let bFrame = 0;
+		let aPreviousFrame = -1;
+		let bPreviousFrame = -1;
 		let currTime = 0;
-		let pTime = 0;
+		let frameTimes = [0, 0, 0];
 
-		const gStart = Date.now() / 1000;
+		const gStart = Date.now();
+		let previousIntSend = 0;
 
 		for (let frame = 0; (currTime < fullTime); frame++) {
 			const fStart = getMilliseconds();
-
+			//console.time('drawAssets in')
 			if (aGif) {
 				aFrame = Math.floor(Math.min(aGifAllowedTime, currTime) / aGifDelay) % aGifLength;
-				this.avatar.asset = await Canvas.loadImage(await streamToBuffer(aGif[aFrame].getImage()));
-				this.avatar.context = canvas.getContext('2d');
-				this.avatar.makeRounded();
-				this.avatar.draw(ctx);
+				if (aPreviousFrame < aFrame) {
+					aPreviousFrame = aFrame;
+
+					if(this.avatar.cachedGifFrames?.[aFrame]){
+						this.avatar.asset = this.avatar.cachedGifFrames[aFrame];
+					} else {
+						this.avatar.asset = await Canvas.loadImage(
+						  await streamToBuffer(aGif[aFrame].getImage()));
+						this.avatar.cachedGifFrames[aFrame] = this.avatar.asset;
+					}
+					this.avatar.context = canvas.getContext('2d');
+					this.avatar.makeRounded();
+					this.avatar.draw(ctx);
+				}
 			}
 			if (bGif) {
 				bFrame = Math.floor(Math.min(bGifAllowedTime, currTime) / bGifDelay) % bGifLength;
-				this.banner.asset = await Canvas.loadImage(await streamToBuffer(bGif[bFrame].getImage()));
-				this.banner.context = canvas.getContext('2d');
-				this.banner.makeRounded([STYLE.ROUNDING, STYLE.ROUNDING, 0, 0], [0, RESOLUTION.CARD_WIDTH, 0, STYLE.AVATAR_SIZE / 2 + STYLE.AVATAR_SHIFT])
-				this.banner.draw(ctx);
+				if (bPreviousFrame < bFrame) {
+					bPreviousFrame = bFrame;
+
+					if (this.banner.cachedGifFrames?.[bFrame]) {
+						this.banner.asset = this.banner.cachedGifFrames[bFrame];
+					} else {
+						this.banner.asset = await Canvas.loadImage(
+						  await streamToBuffer(bGif[bFrame].getImage()));
+						this.banner.cachedGifFrames[bFrame] = this.banner.asset;
+					}
+					this.banner.context = canvas.getContext('2d');
+					this.banner.makeRounded(
+					  [STYLE.ROUNDING, STYLE.ROUNDING, 0, 0], [
+						  0,
+						  RESOLUTION.CARD_WIDTH,
+						  0,
+						  STYLE.AVATAR_SIZE / 2 + STYLE.AVATAR_SHIFT
+					  ]);
+					this.banner.draw(ctx);
+				}
 			}
+			//console.timeEnd('drawAssets in')
 
 			currTime += frameTime;
 
+			//console.time('addFrame in')
 			gif.addFrame(ctx.getImageData(0, 0, canvas.width, canvas.height).data);
+			//console.timeEnd('addFrame in')
 
-			const time = round(getMilliseconds() - fStart, 3);
-			pTime += time;
+			const fTime = round(getMilliseconds() - fStart, 3);
+			frameTimes.unshift(fTime);
+			const pTime = round(Date.now() - gStart, 3);
 			const avgTime = pTime/frame;
-			const reTime = round((((fullTime - currTime)/frameTime)*avgTime)/1000, 3);
+			const avgByP3 = (frameTimes[0] + frameTimes[1] + frameTimes[2]) / 3;
+			const speed = round( 1000 / avgByP3, 1);
+			const reTime = round((((fullTime - currTime)/frameTime)*avgByP3)/1000, 3);
 			const gRe = round(((fullTime/frameTime)*avgTime)/1000);
 
 			process.stdout.write(
 			  this.getPlaneTextProgressBar(
 				currTime/fullTime,
-				20,
-				(aFrame + ' ' + bFrame + ' | Passed:' + (pTime/1000).toFixed(3) + 's; ETA:' + reTime + 's')
-			  )
+				20
+			  ) + ' ' + aFrame + ' ' + bFrame + ' | Passed:' + (pTime/1000).toFixed(3) + 's; ETA:' + reTime + 's; Speed: ' + speed + ' frames/s'
 			 + ' '.repeat(10) + '\r'
 			);
 
-			if (int?.deferred && ((Math.round(pTime/1000) % 5) == 0)) {
+			if (int?.deferred && (Math.round((getMilliseconds() - previousIntSend)/1000) >= 2)) {
+				previousIntSend = getMilliseconds();
 				int.editReply(
 					{
-						content: '`' + this.getPlaneTextProgressBar(currTime/fullTime,20)
-						  + ('` Прошло: <t:' + Math.floor(gStart ) + ':R> Осталось: <t:' + Math.floor(gStart + gRe + 2) + ':R>')
+						content: '`' + this.getPlaneTextProgressBar(currTime/fullTime,20, true)
+						  + ('` Прошло: <t:' + Math.floor(gStart/1000) + ':R> Осталось: <t:' + Math.floor(gStart/1000 + gRe + 2) + ':R>')
 
 					}
 				)
@@ -623,16 +657,17 @@ class UserLevelCards {
 	 *
 	 * @param {number} progress Прогресс. от 0.0 до 1.0
 	 * @param {number} length	Длинна полоски. ПО умолчанию 20 символов
-	 * @param {string} strAddon Строка которая будет добавлена после прогресс бара
+	 * @param {boolean} toDiscord Строка которая будет добавлена после прогресс
+	 *   бара
 	 * @return {string}
 	 */
-	getPlaneTextProgressBar(progress, length=20, strAddon='') {
+	getPlaneTextProgressBar(progress, length=20, toDiscord=false) {
 		progress = Math.max(Math.min(progress, 1), 0)
 
 		const pr = '▉'.repeat(Math.round(progress * length));
-		const re = 'ㅤ'.repeat(Math.round((1 - progress) * length));
+		const re = (toDiscord ? 'ㅤ' : ' ').repeat(Math.round((1 - progress) * length));
 
-		return '[' + pr + re + ']' + strAddon;
+		return '[' + pr + re + ']';
 	}
 
 	static async generate(userLevel, int) {
