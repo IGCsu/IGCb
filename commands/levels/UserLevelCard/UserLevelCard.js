@@ -548,7 +548,7 @@ class UserLevelCards {
 		const aGifAllowedTime = aGif ? (Math.floor((fullTime + frameTime)/aGifFullTime) * aGifFullTime) : fullTime;
 		const bGifAllowedTime = bGif ? (Math.floor((fullTime + frameTime)/bGifFullTime) * bGifFullTime) : fullTime;
 
-		const gif = new GifEncoder(canvas.width, canvas.height, { highWaterMark: 8 * 1024 * 1024 * 25 });
+		const gif = new GifEncoder(canvas.width, canvas.height, { highWaterMark: 8 * 1000 * 1000 * 24 });
 		gif.setDelay(Math.min(aGif ? aGifDelay : bGifDelay, bGif ? bGifDelay : aGifDelay) * 10);
 		gif.setQuality(30);
 		gif.setRepeat(0);
