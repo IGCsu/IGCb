@@ -1,6 +1,0 @@
-{
-	"Ready": "success",
-	"Completed": "warning",
-	"Not received": "error",
-	"Skip": "black_circle"
-}
