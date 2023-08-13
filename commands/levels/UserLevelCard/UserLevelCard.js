@@ -572,14 +572,15 @@ class UserLevelCards {
 			//console.time('drawAssets in')
 			if (aGif) {
 				aFrame = Math.floor(Math.min(aGifAllowedTime, currTime) / aGifDelay) % aGifLength;
-				if (aPreviousFrame < aFrame) {
+				if (aPreviousFrame != aFrame) {
 					aPreviousFrame = aFrame;
 
 					if(this.avatar.cachedGifFrames?.[aFrame]){
 						this.avatar.asset = this.avatar.cachedGifFrames[aFrame];
 					} else {
 						this.avatar.asset = await Canvas.loadImage(
-						  await streamToBuffer(aGif[aFrame].getImage()));
+						  await streamToBuffer(aGif[aFrame].getImage())
+						);
 						//this.avatar.cachedGifFrames[aFrame] = this.avatar.asset;
 					}
 					this.avatar.context = canvas.getContext('2d');
@@ -589,14 +590,15 @@ class UserLevelCards {
 			}
 			if (bGif) {
 				bFrame = Math.floor(Math.min(bGifAllowedTime, currTime) / bGifDelay) % bGifLength;
-				if (bPreviousFrame < bFrame) {
+				if (bPreviousFrame != bFrame) {
 					bPreviousFrame = bFrame;
 
 					if (this.banner.cachedGifFrames?.[bFrame]) {
 						this.banner.asset = this.banner.cachedGifFrames[bFrame];
 					} else {
 						this.banner.asset = await Canvas.loadImage(
-						  await streamToBuffer(bGif[bFrame].getImage()));
+						  await streamToBuffer(bGif[bFrame].getImage())
+						);
 						//this.banner.cachedGifFrames[bFrame] = this.banner.asset;
 					}
 					this.banner.context = canvas.getContext('2d');
