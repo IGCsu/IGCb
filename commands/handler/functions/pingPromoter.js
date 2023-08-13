@@ -42,14 +42,14 @@ module.exports = {
 			if(embed) {
 				msg.log('Embed found');
 				break;
-			};
+			}
 
-		};
+		}
 
 		if(!embed?.description?.includes('Успешный Up!')) {
 			msg.log('Embed is invalid. Description: ' + embed.description);
 			return;
-		};
+		}
 
 		msg.log('CD started');
 		await sleep(this.COOLDOWN_UP);

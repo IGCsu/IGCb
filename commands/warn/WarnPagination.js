@@ -1,4 +1,5 @@
 const EmbedBuilder = require('./EmbedBuilder');
+const UserLevelCards = require('../levels/UserLevelCard/UserLevelCard');
 
 class WarnPagination {
 
@@ -48,28 +49,32 @@ class WarnPagination {
 	 * @constructor
 	 */
 	constructor (Warn, target, pageNumber, pageCount) {
-		this.pageNumber = Number(pageNumber ?? 1);
-		this.pageCount = Number(pageCount ?? 5);
+		return new Promise(async resolve => {
+			this.pageNumber = Number(pageNumber ?? 1);
+			this.pageCount = Number(pageCount ?? 5);
 
-		if (target) this.target = target;
+			if (target) this.target = target;
 
-		const skip = this.pageCount * (this.pageNumber - 1);
+			const skip = this.pageCount * (this.pageNumber - 1);
 
-		const query = target
-			? `FROM warns WHERE target = ${this.target.id} AND NOT flags & 4`
-			: `FROM warns WHERE NOT flags & 4`;
-		this.count = DB.query('SELECT COUNT(*) AS count ' + query)[0].count;
-		const data = DB.query(
-			'SELECT * ' + query + ' ORDER BY id DESC LIMIT ?, ?',
-			[skip, this.pageCount]
-		);
+			const query = target
+			  ? `FROM warns WHERE target = ${this.target.id} AND NOT flags & 4`
+			  : `FROM warns WHERE NOT flags & 4`;
+			this.count = await DB.query('SELECT COUNT(*) AS count ' + query)[0].count;
+			const data = await DB.query(
+			  'SELECT * ' + query + ' ORDER BY id DESC LIMIT ?, ?',
+			  [skip, this.pageCount]
+			);
 
-		for (const row of data) {
-			row.date *= 1000;
-			this.list.push(new Warn(row));
-		}
+			for (const row of data) {
+				row.date *= 1000;
+				this.list.push(new Warn(row));
+			}
 
-		this.pageLast = Math.ceil(this.count / this.pageCount);
+			this.pageLast = Math.ceil(this.count / this.pageCount);
+
+			resolve(this);
+		});
 	}
 
 	/**
