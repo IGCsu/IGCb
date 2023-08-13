@@ -172,4 +172,4 @@ export class Diplomacy extends BaseCommand {
 
 	}
 
-};
+}

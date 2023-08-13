@@ -26,4 +26,3 @@ export const regexps: GameRegexps = {
 	/** Информация об игре */
 	meta: /<div class="titleBarLeftSide"><div>.+<span class="gameDate">(\w+),\s+(\d+)<\/span>, <span class="gamePhase">(.+)<\/span>/
 };
-
