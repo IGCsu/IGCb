@@ -75,7 +75,7 @@ export class Diplomacy extends BaseCommand {
 			const res = await this.update(true, flag === 'ping');
 			const pingList = res.content;
 
-			res.content = ''; // Пинги все равно не сработают
+			delete res.content; // Пинги все равно не сработают
 			await int.editReply(res);
 
 			if (pingList) {

@@ -56,7 +56,7 @@ export class Game {
 		this.phase = GameDataConvert.convertPhase(meta[3]);
 
 		this.users = [];
-		const users = this.get('users');
+		const users = this.get('users', true);
 		for (const user of users) {
 			this.users.push(new GameUser(user));
 		}
