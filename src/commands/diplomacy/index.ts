@@ -18,6 +18,9 @@ import { slashOptions } from './slashOptions';
  */
 export class Diplomacy extends BaseCommand {
 
+	public static readonly FLAG_PING = 'ping';
+	public static readonly FLAG_PUBLIC = 'public';
+
 	protected lastPing!: Timestamp;
 	protected channel!: TextBasedChannel;
 
@@ -65,14 +68,14 @@ export class Diplomacy extends BaseCommand {
 
 	public async slash (int: CommandInteraction) {
 		const flag = int.options.getString('flag');
-		const ephemeral = flag === 'ephemeral';
+		const ephemeral = flag !== Diplomacy.FLAG_PING && flag !== Diplomacy.FLAG_PUBLIC;
 
 		await int.deferReply({
 			ephemeral: ephemeral
 		});
 
 		try {
-			const res = await this.update(true, flag === 'ping');
+			const res = await this.update(true, flag === Diplomacy.FLAG_PING);
 			const pingList = res.content;
 
 			delete res.content; // Пинги все равно не сработают
@@ -159,7 +162,8 @@ export class Diplomacy extends BaseCommand {
 		embed.setDescription(desc);
 
 		embed.setFooter({
-			text: game.getSeason() + ', ' + game.getYear() + ', ' + game.getPhase()
+			text: game.getTurn() + ' ход • ' + game.getSeason() + ', ' +
+				game.getYear() + ' • ' + game.getPhase()
 		});
 
 		embed.setImage(GameClient.getMapUrl(game.getId(), game.getTurn()));

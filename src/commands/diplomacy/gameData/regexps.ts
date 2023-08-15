@@ -18,7 +18,7 @@ export const regexps: GameRegexps = {
 	deadline: /<span class="timestampGames" unixtime="([0-9]+)">/,
 
 	/** Время хода */
-	phaseLength: /<span class="gameHoursPerPhase"><strong>([0-9\sa-z]+)<\/strong>/i,
+	phaseLength: /<span class="gameHoursPerPhase"><strong>([0-9\sa-z,]+)<\/strong>/i,
 
 	/** Номер хода */
 	turn: /src="map\.php\?gameID=\d+&turn=(\d+|-1)&mapType=large"/,

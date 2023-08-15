@@ -14,14 +14,14 @@ export const slashOptions = new SlashOptions({
 		}),
 		choices: {
 			ping: new LangSingle({
-				ru: 'Добавить упоминание игроков',
-				en: 'Add a mention of players',
-				uk: 'Додати згадування гравців'
+				ru: 'Добавить упоминание игроков (есть таймаут)',
+				en: 'Add mention of players (there is a timeout)',
+				uk: 'Додати згадку гравців (є таймаут)'
 			}),
-			ephemeral: new LangSingle({
-				ru: 'Скрыть сообщение для остальных',
-				en: 'Hide message for others',
-				uk: 'Приховати повідомлення для інших'
+			public: new LangSingle({
+				ru: 'Отобразить сообщение для остальных',
+				en: 'Show message for others',
+				uk: 'Відобразити повідомлення для інших'
 			})
 		}
 	})
