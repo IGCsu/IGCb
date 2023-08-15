@@ -1,4 +1,6 @@
 # Update repository
+git checkout -- .
+git clean -fd
 git --work-tree=/var/bot/IGCb --git-dir=/var/bot/IGCb/.git pull origin master
 
 # Install dependencies
