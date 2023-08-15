@@ -4,3 +4,6 @@
 /*.bat
 /.idea
 /.env
+/BaseClasses/
+/commands/diplomacy/
+/Error/

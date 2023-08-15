@@ -43,7 +43,7 @@ export class Game {
 		this.body = await GameClient.fetchBoard(this.id);
 
 		this.deadline = Number(this.get('deadline'));
-		this.phaseLength = GameDataConvert.convertTime(String(this.get('deadline')));
+		this.phaseLength = GameDataConvert.convertTime(String(this.get('phaseLength')));
 		this.turn = Number(this.get('turn'));
 
 		const meta = this.get('meta', true);
