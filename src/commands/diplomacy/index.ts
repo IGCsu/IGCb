@@ -47,10 +47,10 @@ export class Diplomacy extends BaseCommand {
 				// @ts-ignore @TODO: Надо бы уже избавиться от глобальных переменных
 				this.channel = guild.channels.cache.get(Diplomacy.CHANNEL);
 
-				await this.ping();
+				await this.notifyNewTurn();
 
 				setInterval(
-					async () => this.ping(),
+					async () => this.notifyNewTurn(),
 					Diplomacy.INTERVAL_FETCH * 1000
 				);
 			} catch (e) {
@@ -63,7 +63,7 @@ export class Diplomacy extends BaseCommand {
 		});
 	}
 
-	public async ping (): Promise<void> {
+	public async notifyNewTurn (): Promise<void> {
 		const res = await this.update();
 		if (this.game.isNewTurn()) {
 			this.channel.send({
@@ -107,9 +107,12 @@ export class Diplomacy extends BaseCommand {
 				});
 			} else if (flag === Diplomacy.FLAG_PING) {
 				await int.followUp({
-					// @ts-ignore
-					content: int.str('PING_TIMEOUT')
-						+ ' (<t:' + (this.lastPing + Diplomacy.INTERVAL_PING) + ':R>)',
+					content:
+						// @ts-ignore
+						int.str(
+							'Mentions were suppressed because too little time had passed since last mentions. Timeout will pass'
+						)
+						+ ' <t:' + (this.lastPing + Diplomacy.INTERVAL_PING) + ':R>',
 					ephemeral: true
 				});
 			}
