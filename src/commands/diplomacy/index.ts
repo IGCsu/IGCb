@@ -108,7 +108,7 @@ export class Diplomacy extends BaseCommand {
 			} else if (flag === Diplomacy.FLAG_PING) {
 				await int.followUp({
 					content:
-						// @ts-ignore
+					// @ts-ignore
 						int.str(
 							'Mentions were suppressed because too little time had passed since last mentions. Timeout will pass'
 						)
@@ -137,8 +137,7 @@ export class Diplomacy extends BaseCommand {
 		let pingList = '';
 
 		if (
-			ping
-			&& this.lastPing !== undefined
+			this.lastPing !== undefined
 			&& this.lastPing + Diplomacy.INTERVAL_PING >= game.getUpdateAt()
 		) {
 			ping = false;
