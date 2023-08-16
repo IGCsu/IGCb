@@ -25,9 +25,8 @@
 	"Show list of all Game Rules": "Показати список всіх доступних ігрових Ролей",
 	"There is no data entry in the database associated with you. Use `/upload` to fix it.": "Відсутній запис в базі даних пов'язана з вами. Використовуйте `/upload` щоб виправити це.",
 	"Syncing complete": "Синхронізація завершена",
-	"You are not connected to a voice channel and did not specify a channel" : "Ви не підключені до голосового каналу і не вказали канал",
+	"You are not connected to a voice channel and did not specify a channel": "Ви не підключені до голосового каналу і не вказали канал",
 	"Failed to generate suggestions": "Не вдалося згенерувати підказки",
-	"Mentions were suppressed because too little time had passed since last mentions": "Згадки були придушені, тому що з моменту попередніх пройшло занадто мало часу",
+	"Mentions were suppressed because too little time had passed since last mentions. Timeout will pass": "Згадки були придушені, тому що з моменту попередніх пройшло занадто мало часу. Тайм-аут мине",
 	"An empty query is given": "Введено порожній запит"
-	
-}	 
+}
