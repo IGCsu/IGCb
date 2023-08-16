@@ -1,29 +1,32 @@
 import BaseCommand from '../../BaseClasses/BaseCommand.js';
 import LangSingle from '../../BaseClasses/LangSingle.js';
-import { Game, Timestamp } from './Game';
-import config from './gameData/config.json';
-import { GameClient } from './GameClient';
-import { Response } from '../../Error/Response';
-import {
-	CommandInteraction,
-	InteractionEditReplyOptions,
-	MessageEmbed,
-	TextBasedChannel
-} from 'discord.js';
+import { DiplomacyGame, GameID, RequestInterval, Timestamp } from '../../libs/Diplomacy/DiplomacyGame';
+import { DiplomacyClient } from '../../libs/Diplomacy/DiplomacyClient';
+import { Response } from '../../libs/Error/Response';
+import { CommandInteraction, MessageEmbed, TextBasedChannel } from 'discord.js';
 import about from './about.json';
 import { slashOptions } from './slashOptions';
+import { Snowflake } from 'discord-api-types/v6';
+import { DiplomacyResponse } from '../../libs/Diplomacy/DiplomacyResponse';
 
 /**
  * @TODO: need refactor
  */
 export class Diplomacy extends BaseCommand {
 
+	public static readonly GAME_ID: GameID = 56981;
+	public static readonly INTERVAL_PING = 2 * 3600;
+	public static readonly INTERVAL_FETCH: RequestInterval = 600;
+	public static readonly CHANNEL: Snowflake = '610371610620198922';
+
 	public static readonly FLAG_PING = 'ping';
 	public static readonly FLAG_PUBLIC = 'public';
 
-	protected lastPing!: Timestamp;
 	protected channel!: TextBasedChannel;
+	protected lastPing!: Timestamp;
+	protected game: DiplomacyGame;
 
+	// @TODO: И какий дебил придумал делать в конструкторе все?
 	public constructor (path: string) {
 		super(path);
 
@@ -33,62 +36,86 @@ export class Diplomacy extends BaseCommand {
 		this.description = new LangSingle(about.title);
 		this.slashOptions = slashOptions;
 
+		this.game = new DiplomacyGame(
+			Diplomacy.GAME_ID,
+			Diplomacy.INTERVAL_FETCH
+		);
+
 		// @ts-ignore @TODO: Надо бы уже избавиться от Promise в constructor
 		return new Promise(async resolve => {
+			try {
+				// @ts-ignore @TODO: Надо бы уже избавиться от глобальных переменных
+				this.channel = guild.channels.cache.get(Diplomacy.CHANNEL);
+
+				await this.ping();
+
+				setInterval(
+					async () => this.ping(),
+					Diplomacy.INTERVAL_FETCH * 1000
+				);
+			} catch (e) {
+				// @ts-ignore
+				log.initText += log.error(path + ': ' + e);
+				this.active = false;
+			}
+
 			resolve(this);
 		});
 	}
 
-	public async init (path: string) {
-		try {
-			await GameClient.fetchBoard(config.gameID);
-		} catch (e) {
-			// @ts-ignore
-			log.initText += log.error(path + ': ' + e);
-			this.active = false;
-			return this;
+	public async ping (): Promise<void> {
+		const res = await this.update(true);
+		if (this.game.isNewTurn()) {
+			this.channel.send({
+				content: res.pingList,
+				embeds: res.embeds
+			});
 		}
-
-		// @ts-ignore @TODO: Надо бы уже избавиться от глобальных переменных
-		this.channel = guild.channels.cache.get(config.channel);
-
-		setInterval(async () => {
-			try {
-				const res = await this.update(true, true);
-				this.channel.send(res);
-			} catch (e) {
-				if (e ! instanceof Response) {
-					throw e;
-				}
-			}
-		}, config.interval * 1000);
-
-		return this;
 	}
 
 	public async slash (int: CommandInteraction) {
 		const flag = int.options.getString('flag');
-		const ephemeral = flag !== Diplomacy.FLAG_PING && flag !== Diplomacy.FLAG_PUBLIC;
+		let ephemeral = flag !== Diplomacy.FLAG_PING && flag !== Diplomacy.FLAG_PUBLIC;
 
 		await int.deferReply({
 			ephemeral: ephemeral
 		});
 
 		try {
-			const res = await this.update(true, flag === Diplomacy.FLAG_PING);
-			const pingList = res.content;
+			const res = await this.update(flag === Diplomacy.FLAG_PING);
 
-			delete res.content; // Пинги все равно не сработают
-			await int.editReply(res);
+			/**
+			 * Если выясняем, что наступил новый ход - убираем ответ клиенту.
+			 * Просто отправляем сообщение о новом ходе.
+			 */
+			if (this.game.isNewTurn()) {
+				await int.deleteReply();
+				await this.channel.send({
+					content: res.pingList,
+					embeds: res.embeds
+				});
+				return;
+			}
 
-			if (pingList) {
-				await int.followUp({ content: pingList });
+			await int.editReply({
+				embeds: res.embeds
+			});
+
+			if (res.pingList) {
+				await int.followUp({
+					content: res.pingList
+				});
+			} else if (flag === Diplomacy.FLAG_PING) {
+				await int.followUp({
+					// @ts-ignore
+					content: int.str('PING_TIMEOUT')
+						+ '(<t:' + (this.lastPing + Diplomacy.FLAG_PING) + ':R>)',
+					ephemeral: true
+				});
 			}
 		} catch (e) {
 			if (e instanceof Response) {
-				await int.editReply({
-					content: String(e)
-				});
+				return await e.sendErrorMessage(int);
 			}
 			throw e;
 		}
@@ -101,38 +128,34 @@ export class Diplomacy extends BaseCommand {
 	 * Перебирает список игроков для выяснения их статуса. Пингует только тех, у кого ходов не сделано вообще и только
 	 * в том случае, если в течении шести часов он не пинговал до этого
 	 */
-	public async update (status: boolean, ping: boolean = false): Promise<InteractionEditReplyOptions> {
-		const game = await Game.init(config.gameID, config.interval);
-		const newTurn = game.newTurnCheck();
+	public async update (ping: boolean = false): Promise<DiplomacyResponse> {
+		const game = await this.game.fetch();
+		const newTurn = game.isNewTurn();
 
 		let pingList = '';
 
-		if (!status && !newTurn) {
-			throw new Response('Нет новостей');
-		}
-
 		if (
 			ping
-			&& !newTurn && this.lastPing !== undefined
-			&& this.lastPing + config.intervalPing * 3600 >= game.getUpdateAt()
+			&& this.lastPing !== undefined
+			&& this.lastPing + Diplomacy.INTERVAL_PING >= game.getUpdateAt()
 		) {
 			ping = false;
 		}
 
-		if (ping) {
+		if (ping || newTurn) {
 			pingList = this.generatePingList(game);
 			if (pingList) {
 				this.lastPing = game.getUpdateAt();
 			}
 		}
 
-		return {
-			embeds: [this.generateEmbed(game)],
-			content: pingList
-		};
+		return new DiplomacyResponse(
+			[this.generateEmbed(game)],
+			pingList
+		);
 	}
 
-	public generatePingList (game: Game): string {
+	public generatePingList (game: DiplomacyGame): string {
 		let primaryPingList = '';
 		let secondPingList = '';
 
@@ -141,10 +164,12 @@ export class Diplomacy extends BaseCommand {
 			if (user.getSecondPing()) secondPingList += user;
 		}
 
+		primaryPingList = 'бла-бла пинги';
+
 		return primaryPingList ?? secondPingList;
 	}
 
-	public generateEmbed (game: Game): MessageEmbed {
+	public generateEmbed (game: DiplomacyGame): MessageEmbed {
 		let embed = new MessageEmbed();
 
 		let desc = 'Конец хода <t:' + game.getDeadline() + ':R>\n ';
@@ -155,8 +180,8 @@ export class Diplomacy extends BaseCommand {
 		embed.setTimestamp();
 
 		embed.setAuthor({
-			name: GameClient.HOST,
-			url: GameClient.getBoardUrl(game.getId())
+			name: DiplomacyClient.HOST,
+			url: DiplomacyClient.getBoardUrl(game.getId())
 		});
 
 		embed.setDescription(desc);
@@ -166,9 +191,9 @@ export class Diplomacy extends BaseCommand {
 				game.getYear() + ' • ' + game.getPhase()
 		});
 
-		embed.setImage(GameClient.getMapUrl(game.getId(), game.getTurn()));
+		embed.setImage(DiplomacyClient.getMapUrl(game.getId(), game.getTurn()));
 
-		if (game.newTurnCheck()) {
+		if (game.isNewTurn()) {
 			embed.setTitle('Новый ход!');
 		}
 

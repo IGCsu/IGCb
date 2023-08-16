@@ -1,10 +1,10 @@
 import fetch from 'node-fetch';
-import { GameID } from './Game';
+import { GameID } from './DiplomacyGame';
 
 /** Сырой HTML */
 export type HTML = string;
 
-export class GameClient {
+export class DiplomacyClient {
 
 	public static readonly HOST = 'www.vdiplomacy.com';
 
