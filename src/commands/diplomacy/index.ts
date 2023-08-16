@@ -17,7 +17,7 @@ export class Diplomacy extends BaseCommand {
 	public static readonly GAME_ID: GameID = 56981;
 	public static readonly INTERVAL_PING = 2 * 3600;
 	public static readonly INTERVAL_FETCH: RequestInterval = 600;
-	public static readonly CHANNEL: Snowflake = '610371610620198922';
+	public static readonly CHANNEL: Snowflake = '898257036926660698';
 
 	public static readonly FLAG_PING = 'ping';
 	public static readonly FLAG_PUBLIC = 'public';
@@ -64,7 +64,7 @@ export class Diplomacy extends BaseCommand {
 	}
 
 	public async ping (): Promise<void> {
-		const res = await this.update(true);
+		const res = await this.update();
 		if (this.game.isNewTurn()) {
 			this.channel.send({
 				content: res.pingList,
@@ -109,7 +109,7 @@ export class Diplomacy extends BaseCommand {
 				await int.followUp({
 					// @ts-ignore
 					content: int.str('PING_TIMEOUT')
-						+ '(<t:' + (this.lastPing + Diplomacy.FLAG_PING) + ':R>)',
+						+ ' (<t:' + (this.lastPing + Diplomacy.INTERVAL_PING) + ':R>)',
 					ephemeral: true
 				});
 			}
@@ -130,7 +130,6 @@ export class Diplomacy extends BaseCommand {
 	 */
 	public async update (ping: boolean = false): Promise<DiplomacyResponse> {
 		const game = await this.game.fetch();
-		const newTurn = game.isNewTurn();
 
 		let pingList = '';
 
@@ -142,7 +141,7 @@ export class Diplomacy extends BaseCommand {
 			ping = false;
 		}
 
-		if (ping || newTurn) {
+		if (ping || game.isNewTurn()) {
 			pingList = this.generatePingList(game);
 			if (pingList) {
 				this.lastPing = game.getUpdateAt();
@@ -163,8 +162,6 @@ export class Diplomacy extends BaseCommand {
 			if (user.getPrimaryPing()) primaryPingList += user;
 			if (user.getSecondPing()) secondPingList += user;
 		}
-
-		primaryPingList = 'бла-бла пинги';
 
 		return primaryPingList ?? secondPingList;
 	}

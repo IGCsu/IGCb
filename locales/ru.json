@@ -25,9 +25,9 @@
 	"Show list of all Game Roles": "Показать список всех доступных Игровых Ролей",
 	"There is no data entry in the database associated with you. Use `/upload` to fix it.": "Отсутствует запись в базе данных связанная с вами. Используйте `/upload` чтобы исправить это.",
 	"Syncing complete": "Синхронизация завершена",
-	"You are not connected to a voice channel and did not specify a channel" : "Вы не подключены к голосовому каналу и не указали канал",
+	"You are not connected to a voice channel and did not specify a channel": "Вы не подключены к голосовому каналу и не указали канал",
 	"Failed to generate suggestions": "Не удалось сгенерировать подсказки",
 	"PING_TIMEOUT": "Упоминания были подавлены, т.к. с момента предыдущих прошло слишком мало времени",
 	"Missing access": "Отказанно в доступе",
 	"An empty query is given": "Введён пустой запрос"
-}	 
+}
