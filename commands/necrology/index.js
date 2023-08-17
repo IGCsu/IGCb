@@ -35,13 +35,9 @@ class Necrology extends BaseCommand {
 			}
 
 			client.on('guildMemberUpdate', (before, after) => {
-				if (before.guild.id !== process.env.HOME) return;
 				this.update(before, after);
 			});
-			client.on('guildBanAdd', ban => {
-				if (ban.guild.id !== process.env.HOME) return;
-				this.ban(ban);
-			});
+			client.on('guildBanAdd', ban => this.ban(ban));
 
 			resolve(this);
 		});
