@@ -165,7 +165,7 @@ export class Diplomacy extends BaseCommand {
 			if (user.getSecondPing()) secondPingList += user;
 		}
 
-		return primaryPingList ?? secondPingList;
+		return primaryPingList ? primaryPingList : secondPingList;
 	}
 
 	public generateEmbed (game: DiplomacyGame): MessageEmbed {
