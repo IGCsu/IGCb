@@ -1,5 +1,6 @@
 import fetch from 'node-fetch';
 import { GameID } from './DiplomacyGame';
+import { DiplomacyUpdateError } from './Error/DiplomacyUpdateError';
 
 /** Сырой HTML */
 export type HTML = string;
@@ -13,9 +14,16 @@ export class DiplomacyClient {
 	protected static readonly mapEndpoint = 'map.php?gameID=';
 
 	public static async fetchBoard (id: GameID): Promise<HTML> {
-		const response = await fetch(this.getBoardUrl(id));
+		try {
+			const response = await fetch(this.getBoardUrl(id));
 
-		return await response.text();
+			return await response.text();
+		} catch (e) {
+			if (e instanceof Error) {
+				throw new DiplomacyUpdateError(e.message);
+			}
+			throw e;
+		}
 	}
 
 	public static getBoardUrl (id: GameID): string {
