@@ -8,6 +8,7 @@ import about from './about.json';
 import { slashOptions } from './slashOptions';
 import { Snowflake } from 'discord-api-types/v6';
 import { DiplomacyResponse } from '../../libs/Diplomacy/DiplomacyResponse';
+import { DiplomacyUpdateError } from '../../libs/Diplomacy/Error/DiplomacyUpdateError';
 
 /**
  * @TODO: need refactor
@@ -64,12 +65,20 @@ export class Diplomacy extends BaseCommand {
 	}
 
 	public async notifyNewTurn (): Promise<void> {
-		const res = await this.update();
-		if (this.game.isNewTurn()) {
-			this.channel.send({
-				content: res.pingList,
-				embeds: res.embeds
-			});
+		try {
+			const res = await this.update();
+			if (this.game.isNewTurn()) {
+				this.channel.send({
+					content: res.pingList,
+					embeds: res.embeds
+				});
+			}
+		} catch (e) {
+			if (e instanceof DiplomacyUpdateError) {
+				// @ts-ignore
+				return log.warn(e.message);
+			}
+			throw e;
 		}
 	}
 
@@ -117,8 +126,9 @@ export class Diplomacy extends BaseCommand {
 				});
 			}
 		} catch (e) {
-			if (e instanceof Response) {
-				return await e.sendErrorMessage(int);
+			if (e instanceof Error) {
+				const response = new Response(e.message);
+				return await response.sendErrorMessage(int);
 			}
 			throw e;
 		}

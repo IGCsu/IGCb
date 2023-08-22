@@ -1,6 +1,6 @@
 import { DiplomacyClient, HTML } from './DiplomacyClient';
 import { regexps } from './gameData/regexps';
-import { DiplomacyUpdateError } from './Error/GameFetchError';
+import { DiplomacyUpdateError } from './Error/DiplomacyUpdateError';
 import { DiplomacyDataConvert } from './DiplomacyDataConvert';
 import { DiplomacyUser } from './DiplomacyUser';
 
