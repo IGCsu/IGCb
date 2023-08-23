@@ -14,8 +14,11 @@
     "discord-api-types": "^0.33.4",
     "discord.js": "^13.12.0",
     "dotenv": "^16.0.3",
+    "mysql": "^2.18.1",
+    "reflect-metadata": "^0.1.13",
     "sync-mysql": "^3.0.1",
-    "transliteration": "^2.2.0"
+    "transliteration": "^2.2.0",
+    "typeorm": "^0.3.17"
   },
   "repository": {
     "type": "git",
@@ -24,5 +27,8 @@
   "bugs": {
     "url": "https://github.com/BVN4/IGCbV2/issues"
   },
-  "homepage": "https://github.com/BVN4/IGCbV2#readme"
+  "homepage": "https://github.com/BVN4/IGCbV2#readme",
+  "devDependencies": {
+    "@types/node": "^20.5.4"
+  }
 }

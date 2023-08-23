@@ -59,12 +59,16 @@ export class DiplomacyUser {
 		return status ? status[1] : DiplomacyUser.STATUS_SKIP;
 	}
 
-	public getPrimaryPing (): boolean {
+	public needPrimaryPing (): boolean {
 		return this.primaryPing;
 	}
 
-	public getSecondPing (): boolean {
+	public needSecondPing (): boolean {
 		return this.secondPing;
+	}
+
+	public getId (): Snowflake {
+		return this.id;
 	}
 
 	/** Возвращает конструкцию упоминания пользователя */
@@ -84,5 +88,4 @@ export class DiplomacyUser {
 
 		return desc;
 	}
-
 }
