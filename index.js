@@ -17,7 +17,7 @@
 		charset: 'utf8mb4'
 	});
 
-	// TODO: Избавиться от старой базы, полностью перейти на typeorm
+	// TODO: Избавиться от старой либы, полностью перейти на typeorm
 	await (require('./libs/DB.js')).DB.init();
 
 	client.on('ready', require('./init'));
