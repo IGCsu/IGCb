@@ -31,15 +31,19 @@ export class DiplomacyStatService {
 
 		let lastStat = await repository.findOne({
 			where: {
-				turn: game.getTurn(),
-				users: statUsers
+				turn: game.getTurn()
 			},
 			order: {
 				updatedAt: 'desc'
 			}
 		});
 
-		if (lastStat === null) {
+		if (
+			lastStat === null
+			|| lastStat.users !== statUsers
+			|| lastStat.turn !== game.getTurn()
+		) {
+			// состояние или ход поменялись - создаём новую сущность
 			lastStat = new DiplomacyStat();
 			lastStat.users = statUsers;
 			lastStat.turn = game.getTurn();
