@@ -9,6 +9,7 @@ import { slashOptions } from './slashOptions';
 import { Snowflake } from 'discord-api-types/v6';
 import { DiplomacyResponse } from '../../libs/Diplomacy/DiplomacyResponse';
 import { DiplomacyUpdateError } from '../../libs/Diplomacy/Error/DiplomacyUpdateError';
+import { DiplomacyStatService } from '../../libs/Diplomacy/DiplomacyStatService';
 
 /**
  * @TODO: need refactor
@@ -160,6 +161,8 @@ export class Diplomacy extends BaseCommand {
 			}
 		}
 
+		await DiplomacyStatService.updateGame(game);
+
 		return new DiplomacyResponse(
 			[this.generateEmbed(game)],
 			pingList
@@ -171,8 +174,8 @@ export class Diplomacy extends BaseCommand {
 		let secondPingList = '';
 
 		for (const user of game.getUsers()) {
-			if (user.getPrimaryPing()) primaryPingList += user;
-			if (user.getSecondPing()) secondPingList += user;
+			if (user.needPrimaryPing()) primaryPingList += user;
+			if (user.needSecondPing()) secondPingList += user;
 		}
 
 		return primaryPingList ? primaryPingList : secondPingList;

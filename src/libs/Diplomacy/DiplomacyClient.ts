@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-import { GameID } from './DiplomacyGame';
+import { GameID, GameTurn } from './DiplomacyGame';
 import { DiplomacyUpdateError } from './Error/DiplomacyUpdateError';
 
 /** Сырой HTML */
@@ -30,7 +30,7 @@ export class DiplomacyClient {
 		return this.host + this.boardEndpoint + id;
 	}
 
-	public static getMapUrl (id: GameID, turn: number): string {
+	public static getMapUrl (id: GameID, turn: GameTurn): string {
 		return this.host + this.mapEndpoint + id + '&turn=' + turn + '&mapType=large';
 	}
 

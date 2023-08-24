@@ -12,11 +12,14 @@ export type RequestInterval = number;
 
 export type Timestamp = number;
 
+/** Ход игры */
+export type GameTurn = number;
+
 export class DiplomacyGame {
 
 	protected deadline!: Timestamp;
 	protected phaseLength!: Timestamp;
-	protected turn!: number;
+	protected turn!: GameTurn;
 	protected season!: string;
 	protected phase!: string;
 	protected year!: number;
@@ -78,7 +81,7 @@ export class DiplomacyGame {
 		return this.phaseLength;
 	}
 
-	public getTurn (): number {
+	public getTurn (): GameTurn {
 		return this.turn;
 	}
 
