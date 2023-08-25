@@ -5,6 +5,8 @@ import { Snowflake } from 'discord-api-types/v6';
 @Entity()
 export class DiplomacyStat {
 
+	public static readonly NEW_TURN_USERS_STATE = 'turn';
+
 	@PrimaryGeneratedColumn()
 	public id!: Snowflake;
 
