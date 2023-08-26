@@ -159,7 +159,7 @@ class UserLevelCards {
 		  .setIcon(new Icon(this.canvas, undefined,0, 0, 40, 40))
 		  .setSecondaryText(new TextBox(this.canvas, 0, 0, 1, 1));
 		this.overpost.secondaryText.color = COLOURS.GRAY;
-		this.overpost.secondaryText.changeText('Овепост', 150, STYLE.LABEL_STATS_SECONDARY_FONT_SIZE);
+		this.overpost.secondaryText.changeText('Оверпост', 150, STYLE.LABEL_STATS_SECONDARY_FONT_SIZE);
 
 		this.activity = new Label(
 		  this.canvas, 0, 0, 1, 1,
