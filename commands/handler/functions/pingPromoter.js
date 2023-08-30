@@ -35,6 +35,7 @@ module.exports = {
 			msg.log('Fetch updated message. Try ' + i)
 
 			await sleep(1000);
+			if(!msg?.id) return;
 
 			const msgUpdated = await msg.channel.messages.fetch(msg.id);
 			embed = msgUpdated.embeds[0];
