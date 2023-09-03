@@ -25,6 +25,9 @@ module.exports = async () => {
 		const name = file.split('.')[0];
 
 		let func = require('./functions/' + file);
+		if (func[name] && func[name].active) {
+			func = func[name];
+		}
 
 		if (func.active) data.functions[name] = await func.init();
 
