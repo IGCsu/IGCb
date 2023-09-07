@@ -1,3 +1,5 @@
+const { SiteClient } = require('./libs/SiteClient/SiteClient.js');
+
 /**
  * Массив файлов инициализации в порядке подключения.
  *
@@ -32,6 +34,9 @@ module.exports = async () => {
 	console.timeEnd('Client login');
 
 	console.log('Start init.js');
+
+	// TODO: need refactor
+	await SiteClient.init();
 
 	for (const module of init) {
 		await module();
