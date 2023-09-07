@@ -1,38 +1,46 @@
 import { Snowflake } from 'discord-api-types/v6';
 import { Message, Role } from 'discord.js';
+import { Handler } from './Handler';
+import LangSingle from '../../../BaseClasses/LangSingle';
+import { HandlerPermissions } from '../HandlerPermissions';
 
-export class PingPromoter {
+export class PingPromoterHandler extends Handler {
 
-	protected static readonly ROLE_ID: Snowflake = '1107382381700206672';
-	protected static readonly MONITORING_BOT_ID: Snowflake = '464272403766444044';
-	protected static readonly COMMAND: string = '</up:891377101494681660>';
-	protected static readonly TIMEOUT: number = 4 * 3600 * 1000;
-	protected static role: Role;
+	protected static instance: PingPromoterHandler;
 
-	public static active: boolean = true;
+	protected readonly ROLE_ID: Snowflake = '1107382381700206672';
+	protected readonly MONITORING_BOT_ID: Snowflake = '464272403766444044';
+	protected readonly COMMAND: string = '</up:891377101494681660>';
+	protected readonly TIMEOUT: number = 4 * 3600 * 1000;
+	protected role!: Role;
 
-	public static title = {
+	public title = new LangSingle({
 		ru: 'Автоматическое упоминание людей, готовых продвигать сервер',
 		en: 'Automatic mention of people who are ready to promote the server',
 		uk: 'Автоматичне згадування людей, що готові просувати сервер'
-	};
+	});
 
-	public static readonly allChannels: false;
-
-	public static readonly allowedChannels = {
-		'610371610620198922': false // #рандом
-	};
+	public updateMessagePerms = HandlerPermissions.init()
+		.setAllowAllUsers(true)
+		.setAllowBot()
+		.setAllowChannel('610371610620198922');
 
 	public static async init () {
-		// @ts-ignore TODO: ебучие глобал переменные
-		this.role = await guild.roles.fetch(this.ROLE_ID);
-		if (this.role === undefined) {
-			this.active = false;
+		if (!this.instance) {
+			this.instance = new PingPromoterHandler();
+
+			// @ts-ignore TODO: ебучие глобал переменные
+			this.instance.role = await guild.roles.fetch(this.ROLE_ID);
+			if (!this.instance.role) {
+				console.error('Role Promoter not found');
+				this.instance.active = false;
+			}
 		}
-		return this;
+
+		return this.instance;
 	}
 
-	public static async call (msg: Message) {
+	public async updateMessageHandle (msg: Message): Promise<void> {
 		if (msg?.member?.user.id !== this.MONITORING_BOT_ID) return;
 
 		// @ts-ignore /functions/log.js

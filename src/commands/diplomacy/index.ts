@@ -14,7 +14,7 @@ import { DiplomacyStatService } from '../../libs/Diplomacy/DiplomacyStatService'
 /**
  * @TODO: need refactor
  */
-export class Diplomacy extends BaseCommand {
+export class DiplomacyController extends BaseCommand {
 
 	public static readonly GAME_ID: GameID = 56981;
 	public static readonly INTERVAL_PING = 2 * 3600;
@@ -39,21 +39,21 @@ export class Diplomacy extends BaseCommand {
 		this.slashOptions = slashOptions;
 
 		this.game = new DiplomacyGame(
-			Diplomacy.GAME_ID,
-			Diplomacy.INTERVAL_FETCH
+			DiplomacyController.GAME_ID,
+			DiplomacyController.INTERVAL_FETCH
 		);
 
 		// @ts-ignore @TODO: Надо бы уже избавиться от Promise в constructor
 		return new Promise(async resolve => {
 			try {
 				// @ts-ignore @TODO: Надо бы уже избавиться от глобальных переменных
-				this.channel = guild.channels.cache.get(Diplomacy.CHANNEL);
+				this.channel = guild.channels.cache.get(DiplomacyController.CHANNEL);
 
 				await this.notifyNewTurn();
 
 				setInterval(
 					async () => this.notifyNewTurn(),
-					Diplomacy.INTERVAL_FETCH * 1000
+					DiplomacyController.INTERVAL_FETCH * 1000
 				);
 			} catch (e) {
 				// @ts-ignore
@@ -85,14 +85,14 @@ export class Diplomacy extends BaseCommand {
 
 	public async slash (int: CommandInteraction) {
 		const flag = int.options.getString('flag');
-		let ephemeral = flag !== Diplomacy.FLAG_PING && flag !== Diplomacy.FLAG_PUBLIC;
+		let ephemeral = flag !== DiplomacyController.FLAG_PING && flag !== DiplomacyController.FLAG_PUBLIC;
 
 		await int.deferReply({
 			ephemeral: ephemeral
 		});
 
 		try {
-			const res = await this.update(flag === Diplomacy.FLAG_PING);
+			const res = await this.update(flag === DiplomacyController.FLAG_PING);
 
 			/**
 			 * Если выясняем, что наступил новый ход - убираем ответ клиенту.
@@ -115,14 +115,14 @@ export class Diplomacy extends BaseCommand {
 				await int.followUp({
 					content: res.pingList
 				});
-			} else if (flag === Diplomacy.FLAG_PING) {
+			} else if (flag === DiplomacyController.FLAG_PING) {
 				await int.followUp({
 					content:
 					// @ts-ignore
 						int.str(
 							'Mentions were suppressed because too little time had passed since last mentions. Timeout will pass'
 						)
-						+ ' <t:' + (this.lastPing + Diplomacy.INTERVAL_PING) + ':R>',
+						+ ' <t:' + (this.lastPing + DiplomacyController.INTERVAL_PING) + ':R>',
 					ephemeral: true
 				});
 			}
@@ -149,7 +149,7 @@ export class Diplomacy extends BaseCommand {
 
 		if (
 			this.lastPing !== undefined
-			&& this.lastPing + Diplomacy.INTERVAL_PING >= game.getUpdateAt()
+			&& this.lastPing + DiplomacyController.INTERVAL_PING >= game.getUpdateAt()
 		) {
 			ping = false;
 		}

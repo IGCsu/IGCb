@@ -6,5 +6,6 @@
 /.env
 /BaseClasses/
 /commands/diplomacy/
+/commands/handler/
 /Error/
 /libs/
