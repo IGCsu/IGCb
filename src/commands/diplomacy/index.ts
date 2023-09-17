@@ -199,6 +199,7 @@ export class Diplomacy extends BaseCommand {
 		for (const user of game.getUsers()) {
 			desc += user.toDesc();
 		}
+		desc += `\n Обновлено <t:${Math.round(Date.now()/1000)}:R>`
 
 		embed.setTimestamp();
 
