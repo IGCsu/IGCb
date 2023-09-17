@@ -34,9 +34,20 @@ export class DiplomacyStatService {
 				turn: game.getTurn()
 			},
 			order: {
-				updatedAt: 'desc'
+				id: 'desc'
 			}
 		});
+
+		// Если обновился ход - сохраним пустую временную метку начала хода.
+		if (lastStat === null || lastStat.turn !== game.getTurn()) {
+			const newTurn = new DiplomacyStat();
+
+			newTurn.users = DiplomacyStat.NEW_TURN_USERS_STATE;
+			newTurn.turn = game.getTurn();
+			newTurn.updatedAt = game.getUpdateAt();
+
+			await repository.save(newTurn);
+		}
 
 		if (
 			lastStat === null
