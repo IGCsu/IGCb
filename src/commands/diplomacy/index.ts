@@ -3,10 +3,10 @@ import LangSingle from '../../BaseClasses/LangSingle.js';
 import { DiplomacyGame, GameID, RequestInterval, Timestamp } from '../../libs/Diplomacy/DiplomacyGame';
 import { DiplomacyClient } from '../../libs/Diplomacy/DiplomacyClient';
 import { Response } from '../../libs/Error/Response';
-import { CommandInteraction, MessageEmbed, TextBasedChannel } from 'discord.js';
+import { CommandInteraction, Message, MessageEmbed, TextBasedChannel } from 'discord.js';
 import about from './about.json';
 import { slashOptions } from './slashOptions';
-import { Snowflake } from 'discord-api-types/v6';
+import { Snowflake } from 'discord-api-types/v10';
 import { DiplomacyResponse } from '../../libs/Diplomacy/DiplomacyResponse';
 import { DiplomacyUpdateError } from '../../libs/Diplomacy/Error/DiplomacyUpdateError';
 import { DiplomacyStatService } from '../../libs/Diplomacy/DiplomacyStatService';
@@ -26,6 +26,7 @@ export class Diplomacy extends BaseCommand {
 
 	protected channel!: TextBasedChannel;
 	protected lastPing!: Timestamp;
+	protected lastNotifyMsg !: Message;
 	protected game: DiplomacyGame;
 
 	// @TODO: И какий дебил придумал делать в конструкторе все?
@@ -69,8 +70,13 @@ export class Diplomacy extends BaseCommand {
 		try {
 			const res = await this.update();
 			if (this.game.isNewTurn()) {
-				this.channel.send({
+				this.lastNotifyMsg = await this.channel.send({
 					content: res.pingList,
+					embeds: res.embeds
+				});
+			} else {
+				await this.lastNotifyMsg.edit({
+					content: this.lastNotifyMsg.content,
 					embeds: res.embeds
 				});
 			}
@@ -100,14 +106,14 @@ export class Diplomacy extends BaseCommand {
 			 */
 			if (this.game.isNewTurn()) {
 				await int.deleteReply();
-				await this.channel.send({
+				this.lastNotifyMsg = await this.channel.send({
 					content: res.pingList,
 					embeds: res.embeds
 				});
 				return;
 			}
 
-			await int.editReply({
+			const message = await int.editReply({
 				embeds: res.embeds
 			});
 
@@ -126,6 +132,11 @@ export class Diplomacy extends BaseCommand {
 					ephemeral: true
 				});
 			}
+
+			if (!ephemeral) {
+				this.lastNotifyMsg = <Message>message;
+			}
+
 		} catch (e) {
 			if (e instanceof Error) {
 				const response = new Response(e.message);
