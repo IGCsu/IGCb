@@ -26,10 +26,10 @@ export class Diplomacy extends BaseCommand {
 
 	protected channel!: TextBasedChannel;
 	protected lastPing!: Timestamp;
-	protected lastNotifyMsg !: Message;
+	protected lastGameStatusMsg!: Message;
 	protected game: DiplomacyGame;
 
-	// @TODO: И какий дебил придумал делать в конструкторе все?
+	// @TODO: И какой дебил придумал делать в конструкторе все?
 	public constructor (path: string) {
 		super(path);
 
@@ -70,13 +70,13 @@ export class Diplomacy extends BaseCommand {
 		try {
 			const res = await this.update();
 			if (this.game.isNewTurn()) {
-				this.lastNotifyMsg = await this.channel.send({
+				this.lastGameStatusMsg = await this.channel.send({
 					content: res.pingList,
 					embeds: res.embeds
 				});
-			} else {
-				await this.lastNotifyMsg.edit({
-					content: this.lastNotifyMsg.content,
+			} else if (this.lastGameStatusMsg) {
+				await this.lastGameStatusMsg.edit({
+					content: this.lastGameStatusMsg.content,
 					embeds: res.embeds
 				});
 			}
@@ -106,7 +106,7 @@ export class Diplomacy extends BaseCommand {
 			 */
 			if (this.game.isNewTurn()) {
 				await int.deleteReply();
-				this.lastNotifyMsg = await this.channel.send({
+				this.lastGameStatusMsg = await this.channel.send({
 					content: res.pingList,
 					embeds: res.embeds
 				});
@@ -134,7 +134,7 @@ export class Diplomacy extends BaseCommand {
 			}
 
 			if (!ephemeral) {
-				this.lastNotifyMsg = <Message>message;
+				this.lastGameStatusMsg = <Message>message;
 			}
 
 		} catch (e) {
@@ -149,9 +149,9 @@ export class Diplomacy extends BaseCommand {
 
 	/**
 	 * Запрос к сайту.
-	 * Определяет, не случилось ли обновление хода в интервал между проверками
+	 * Определяет, не случилось ли обновление хода в интервал между проверками.
 	 * Перебирает список игроков для выяснения их статуса. Пингует только тех, у кого ходов не сделано вообще и только
-	 * в том случае, если в течении шести часов он не пинговал до этого
+	 * в том случае, если в течение шести часов он не пинговал до этого
 	 */
 	public async update (ping: boolean = false): Promise<DiplomacyResponse> {
 		const game = await this.game.fetch();
@@ -195,11 +195,12 @@ export class Diplomacy extends BaseCommand {
 	public generateEmbed (game: DiplomacyGame): MessageEmbed {
 		let embed = new MessageEmbed();
 
-		let desc = 'Конец хода <t:' + game.getDeadline() + ':R>\n ';
+		let desc = 'Конец хода <t:' + game.getDeadline() + ':R>\n '
+		desc += `Обновлено <t:${Math.round(Date.now()/1000)}:R>\n`
+
 		for (const user of game.getUsers()) {
 			desc += user.toDesc();
 		}
-		desc += `\n Обновлено <t:${Math.round(Date.now()/1000)}:R>`
 
 		embed.setTimestamp();
 
