@@ -76,7 +76,7 @@ export class Diplomacy extends BaseCommand {
 				});
 			} else if (this.lastGameStatusMsg) {
 				await this.lastGameStatusMsg.edit({
-					content: this.lastGameStatusMsg.content,
+					content: this.lastGameStatusMsg.content === '' ? undefined : this.lastGameStatusMsg.content,
 					embeds: res.embeds
 				});
 			}
@@ -135,6 +135,7 @@ export class Diplomacy extends BaseCommand {
 
 			if (!ephemeral) {
 				this.lastGameStatusMsg = <Message>message;
+				console.log(this.lastGameStatusMsg)
 			}
 
 		} catch (e) {
