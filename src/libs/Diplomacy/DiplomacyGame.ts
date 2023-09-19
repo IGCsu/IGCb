@@ -70,7 +70,10 @@ export class DiplomacyGame {
 	 */
 	public isNewTurn (): boolean {
 		return this.updatedAt + this.phaseLength - this.interval < this.deadline
-			&& this.interval < this.phaseLength;
+			&& this.interval < this.phaseLength
+			&& this.deadline - this.updatedAt < this.phaseLength; 
+		// Если дедлайн ушел за длительность фазы - значит случилась какая то жопа, 
+		// Окончания хода в ближайше время можно не ждать.
 	}
 
 	public getDeadline (): Timestamp {
