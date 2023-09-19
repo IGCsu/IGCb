@@ -135,7 +135,6 @@ export class Diplomacy extends BaseCommand {
 
 			if (!ephemeral) {
 				this.lastGameStatusMsg = <Message>message;
-				console.log(this.lastGameStatusMsg)
 			}
 
 		} catch (e) {
