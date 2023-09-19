@@ -89,7 +89,7 @@ export class Diplomacy extends BaseCommand {
 		}
 	}
 
-	public async slash (int: CommandInteraction) {
+	public async slash (int: CommandInteraction<'cached'>) {
 		const flag = int.options.getString('flag');
 		let ephemeral = flag !== Diplomacy.FLAG_PING && flag !== Diplomacy.FLAG_PUBLIC;
 
@@ -134,7 +134,7 @@ export class Diplomacy extends BaseCommand {
 			}
 
 			if (!ephemeral) {
-				this.lastGameStatusMsg = <Message>message;
+				this.lastGameStatusMsg = message;
 			}
 
 		} catch (e) {
