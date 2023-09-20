@@ -195,8 +195,8 @@ export class Diplomacy extends BaseCommand {
 	public generateEmbed (game: DiplomacyGame): MessageEmbed {
 		let embed = new MessageEmbed();
 
-		let desc = 'Конец хода <t:' + game.getDeadline() + ':R>\n '
-		desc += `Обновлено <t:${Math.round(Date.now()/1000)}:R>\n`
+		let desc = 'Конец хода <t:' + game.getDeadline() + ':R>\n'
+			+ 'Обновлено <t:' + Math.round(Date.now()/1000) + ':R>\n'
 
 		for (const user of game.getUsers()) {
 			desc += user.toDesc();
