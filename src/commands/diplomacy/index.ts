@@ -3,10 +3,10 @@ import LangSingle from '../../BaseClasses/LangSingle.js';
 import { DiplomacyGame, GameID, RequestInterval, Timestamp } from '../../libs/Diplomacy/DiplomacyGame';
 import { DiplomacyClient } from '../../libs/Diplomacy/DiplomacyClient';
 import { Response } from '../../libs/Error/Response';
-import { CommandInteraction, MessageEmbed, TextBasedChannel } from 'discord.js';
+import { CommandInteraction, Message, MessageEmbed, TextBasedChannel } from 'discord.js';
 import about from './about.json';
 import { slashOptions } from './slashOptions';
-import { Snowflake } from 'discord-api-types/v6';
+import { Snowflake } from 'discord-api-types/v10';
 import { DiplomacyResponse } from '../../libs/Diplomacy/DiplomacyResponse';
 import { DiplomacyUpdateError } from '../../libs/Diplomacy/Error/DiplomacyUpdateError';
 import { DiplomacyStatService } from '../../libs/Diplomacy/DiplomacyStatService';
@@ -26,9 +26,10 @@ export class Diplomacy extends BaseCommand {
 
 	protected channel!: TextBasedChannel;
 	protected lastPing!: Timestamp;
+	protected lastGameStatusMsg!: Message;
 	protected game: DiplomacyGame;
 
-	// @TODO: И какий дебил придумал делать в конструкторе все?
+	// @TODO: И какой дебил придумал делать в конструкторе все?
 	public constructor (path: string) {
 		super(path);
 
@@ -69,8 +70,13 @@ export class Diplomacy extends BaseCommand {
 		try {
 			const res = await this.update();
 			if (this.game.isNewTurn()) {
-				this.channel.send({
+				this.lastGameStatusMsg = await this.channel.send({
 					content: res.pingList,
+					embeds: res.embeds
+				});
+			} else if (this.lastGameStatusMsg) {
+				await this.lastGameStatusMsg.edit({
+					content: this.lastGameStatusMsg.content === '' ? undefined : this.lastGameStatusMsg.content,
 					embeds: res.embeds
 				});
 			}
@@ -83,7 +89,7 @@ export class Diplomacy extends BaseCommand {
 		}
 	}
 
-	public async slash (int: CommandInteraction) {
+	public async slash (int: CommandInteraction<'cached'>) {
 		const flag = int.options.getString('flag');
 		let ephemeral = flag !== Diplomacy.FLAG_PING && flag !== Diplomacy.FLAG_PUBLIC;
 
@@ -100,14 +106,14 @@ export class Diplomacy extends BaseCommand {
 			 */
 			if (this.game.isNewTurn()) {
 				await int.deleteReply();
-				await this.channel.send({
+				this.lastGameStatusMsg = await this.channel.send({
 					content: res.pingList,
 					embeds: res.embeds
 				});
 				return;
 			}
 
-			await int.editReply({
+			const message = await int.editReply({
 				embeds: res.embeds
 			});
 
@@ -126,6 +132,11 @@ export class Diplomacy extends BaseCommand {
 					ephemeral: true
 				});
 			}
+
+			if (!ephemeral) {
+				this.lastGameStatusMsg = message;
+			}
+
 		} catch (e) {
 			if (e instanceof Error) {
 				const response = new Response(e.message);
@@ -138,9 +149,9 @@ export class Diplomacy extends BaseCommand {
 
 	/**
 	 * Запрос к сайту.
-	 * Определяет, не случилось ли обновление хода в интервал между проверками
+	 * Определяет, не случилось ли обновление хода в интервал между проверками.
 	 * Перебирает список игроков для выяснения их статуса. Пингует только тех, у кого ходов не сделано вообще и только
-	 * в том случае, если в течении шести часов он не пинговал до этого
+	 * в том случае, если в течение шести часов он не пинговал до этого
 	 */
 	public async update (ping: boolean = false): Promise<DiplomacyResponse> {
 		const game = await this.game.fetch();
@@ -184,7 +195,9 @@ export class Diplomacy extends BaseCommand {
 	public generateEmbed (game: DiplomacyGame): MessageEmbed {
 		let embed = new MessageEmbed();
 
-		let desc = 'Конец хода <t:' + game.getDeadline() + ':R>\n ';
+		let desc = 'Конец хода <t:' + game.getDeadline() + ':R>\n'
+			+ 'Обновлено <t:' + game.getUpdateAt() + ':R>\n';
+
 		for (const user of game.getUsers()) {
 			desc += user.toDesc();
 		}
