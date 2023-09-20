@@ -196,7 +196,7 @@ export class Diplomacy extends BaseCommand {
 		let embed = new MessageEmbed();
 
 		let desc = 'Конец хода <t:' + game.getDeadline() + ':R>\n'
-			+ 'Обновлено <t:' + Math.round(Date.now()/1000) + ':R>\n'
+			+ 'Обновлено <t:' + game.getUpdateAt() + ':R>\n';
 
 		for (const user of game.getUsers()) {
 			desc += user.toDesc();
