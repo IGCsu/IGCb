@@ -7,7 +7,7 @@ class CacheController {
 
 	constructor (path, type) {
 		this.#path = path.slice(0, -9) + "/UserLevelCard/cache/" + type
-		console.log(p.resolve(path))
+		console.log(p.resolve(this.#path))
 	}
 
 	async get(name) {
