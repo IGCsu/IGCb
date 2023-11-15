@@ -6,8 +6,8 @@ class CacheController {
 	#path = '';
 
 	constructor (path, type) {
-		this.#path = p.resolve(path.slice(0, -9) + "/UserLevelCard/cache/" + type)
-		console.log(this.#path + "Cache controller connected")
+		this.#path = path.slice(0, -9) + "/UserLevelCard/cache/" + type
+		console.log(p.resolve(this.#path) + " Cache controller connected")
 	}
 
 	async get(name) {
@@ -41,6 +41,7 @@ class CacheController {
 
 	set(name, file) {
 		console.log("Writing cached data to: " + this.#path + '/' + name)
+		console.log(file.length)
 		try {
 			fs.writeFile(this.#path + '/' + name, file)
 		} catch {
