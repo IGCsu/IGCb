@@ -43,7 +43,7 @@ class CacheController {
 		console.log("Writing cached data to: " + this.#path + '/' + name)
 		console.log(file.length)
 		try {
-			await fs.writeFile(this.#path + '/' + name, file, {encoding: 'utf-8'})
+			await fs.writeFile(this.#path + '/' + name, file, {encoding: 'utf-8', })
 		} catch {
 			console.log("Failed to write cache")
 			return null
