@@ -5,6 +5,7 @@ class CacheController {
 	#path = '';
 
 	constructor (path, type) {
+		console.log(path)
 		this.#path = path.slice(0, -9) + "/UserLevelCard/cache/" + type
 	}
 
