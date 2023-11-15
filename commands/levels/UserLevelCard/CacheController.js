@@ -1,12 +1,13 @@
 const fs = require('fs').promises;
+const p = require('path')
 
 class CacheController {
 
 	#path = '';
 
 	constructor (path, type) {
-		console.log(path)
 		this.#path = path.slice(0, -9) + "/UserLevelCard/cache/" + type
+		console.log(p.resolve(path))
 	}
 
 	async get(name) {
