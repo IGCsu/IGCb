@@ -39,11 +39,11 @@ class CacheController {
 		return data;
 	}
 
-	set(name, file) {
+	async set(name, file) {
 		console.log("Writing cached data to: " + this.#path + '/' + name)
 		console.log(file.length)
 		try {
-			fs.writeFile(this.#path + '/' + name, file)
+			await fs.writeFile(this.#path + '/' + name, file)
 		} catch {
 			console.log("Failed to write cache")
 			return null
@@ -52,8 +52,8 @@ class CacheController {
 		return true
 	}
 
-	setAsJson(name, object) {
-		this.set(name + '.json', JSON.stringify(object));
+	async setAsJson(name, object) {
+		await this.set(name + '.json', JSON.stringify(object));
 	}
 }
 
