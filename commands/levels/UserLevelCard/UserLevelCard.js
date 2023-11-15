@@ -8,6 +8,8 @@ const { UserLevels } = require('../UserLevels');
 
 const GifEncoder = require('gif-encoder');
 const { streamToBuffer } = require('@jorgeferrero/stream-to-buffer');
+const { loadImage, createCanvas } = require('canvas');
+const gifFrames = require('gif-frames');
 
 const fontsRoot = './commands/levels/UserLevelCard/fonts/'
 
@@ -21,9 +23,7 @@ Canvas.registerFont(fontsRoot + 'Montserrat/static/Montserrat-Bold.ttf', {family
 class UserLevelCards {
 
 	static assets = {};
-	static #cachedImages = {
-		banners: {},
-		avatars: {},
+	static cachedImages = {
 	};
 
 	/**
@@ -229,20 +229,22 @@ class UserLevelCards {
 	}
 
 	async generateAvatar(userLevel) {
-		const cachedAvatar = UserLevelCards.#cachedImages.avatars[userLevel.member.id];
+		const cachedAvatar = await UserLevelCards.cachedImages.avatars.getAsJson(userLevel.member.id);
 		const currentAvatarUrl = userLevel.member.displayAvatarURL({format: 'png', size: 1024, dynamic: userLevel.flags.animatedMediaContentEnabled});
 
 		if (cachedAvatar && (currentAvatarUrl === cachedAvatar.avatarUrl)) {
-			this.avatar.asset = cachedAvatar.asset;
-			this.avatar.gif = cachedAvatar.gif
+			this.avatar.asset = await loadImage(Buffer.from(cachedAvatar.asset));
+			if (cachedAvatar.gif)
+			this.avatar.gif = await gifFrames(
+			  { url: Buffer.from(cachedAvatar.gif), frames: 'all', outputType: 'png' });
 			userLevel.isAvatarCached = true;
 		} else {
 			await this.avatar.loadAssetFromUrl(currentAvatarUrl);
-			UserLevelCards.#cachedImages.avatars[userLevel.member.id] = {
-				asset: this.avatar.asset,
-				gif: this.avatar.gif,
+			UserLevelCards.cachedImages.avatars.setAsJson(userLevel.member.id,{
+				asset: this.avatar.buffer,
+				gif: this.avatar.gifbuffer,
 				avatarUrl: currentAvatarUrl
-			};
+			});
 		}
 
 		this.avatar
@@ -263,7 +265,7 @@ class UserLevelCards {
 
 	async generateBanner(userLevel) {
 		const bannerAllowedHeight = STYLE.AVATAR_SIZE / 2 + STYLE.AVATAR_SHIFT;
-		const cachedBanner = UserLevelCards.#cachedImages.banners[userLevel.member.id];
+		const cachedBanner = await UserLevelCards.cachedImages.banners.getAsJson(userLevel.member.id);
 		const currentBannerUrl = userLevel.getBannerUrl(userLevel.flags.animatedMediaContentEnabled);
 
 		this.banner.asset = UserLevelCards.assets['default_banner'];
@@ -272,16 +274,19 @@ class UserLevelCards {
 
 		if (currentBannerUrl) {
 			if (cachedBanner && (currentBannerUrl === cachedBanner.bannerUrl)) {
-				this.banner.asset = cachedBanner.asset;
-				this.banner.gif = cachedBanner.gif
+				this.banner.asset = await loadImage(Buffer.from(cachedBanner.asset));
+				if (cachedBanner.gif)
+				this.banner.gif = await gifFrames(
+				  { url: Buffer.from(cachedBanner.gif), frames: 'all', outputType: 'png' }
+				);
 			} else {
 				userLevel.isBannerCached = false;
 				await this.banner.loadAssetFromUrl(currentBannerUrl);
-				UserLevelCards.#cachedImages.banners[userLevel.member.id] = {
-					asset: this.banner.asset,
+				UserLevelCards.cachedImages.banners.setAsJson(userLevel.member.id, {
+					asset: this.banner.buffer,
 					bannerUrl: currentBannerUrl,
-					gif: this.banner.gif
-				};
+					gif: this.banner.gifbuffer
+				});
 			}
 		}
 
@@ -550,7 +555,7 @@ class UserLevelCards {
 
 		const gif = new GifEncoder(canvas.width, canvas.height, { highWaterMark: 8 * 1000 * 1000 * 24 });
 		gif.setDelay(Math.min(aGif ? aGifDelay : bGifDelay, bGif ? bGifDelay : aGifDelay) * 10);
-		gif.setQuality(30);
+		gif.setQuality(15);
 		gif.setRepeat(0);
 		gif.setTransparent(0x000000);
 		gif.setDispose(0);
@@ -673,21 +678,18 @@ class UserLevelCards {
 	}
 
 	static async generate(userLevel, int) {
-		let lc = UserLevelCards.#cachedUserLevelCards[userLevel.member.id];
-
-		if(!lc) {
-			lc = new UserLevelCards();
-			UserLevelCards.#cachedUserLevelCards[userLevel.member.id] = lc;
-		}
-
-		return await lc.generate(userLevel, int);
+		return await (new UserLevelCards()).generate(userLevel, int);
 	}
 
     async generate(userLevel, int) {
 		const gStart = getMilliseconds();
 
 		if (userLevel.isCached() && !userLevel.isAnimated()) {
-			const canvas = UserLevelCards.cachedCards[userLevel.member.id].canvas;
+			const buffer = await UserLevelCards.cachedImages.cards.get(userLevel.member.id + '.png');
+			const img = await loadImage(buffer)
+			const canvas = createCanvas(RESOLUTION.CARD_WIDTH, RESOLUTION.CARD_HEIGHT)
+			const ctx = canvas.getContext('2d')
+			ctx.drawImage(img, 0, 0, RESOLUTION.CARD_WIDTH, RESOLUTION.CARD_HEIGHT)
 			userLevel.isCachedFull = true;
 			this.generateTime(canvas, userLevel, gStart);
 
@@ -695,7 +697,8 @@ class UserLevelCards {
 		}
 
 		if (userLevel.isGifCached() && userLevel.isAnimated()) {
-			return UserLevelCards.cachedCards[userLevel.member.id].gif;
+			const buffer = await UserLevelCards.cachedImages.cards.get(userLevel.member.id + '.gif');
+			return new MessageAttachment(buffer, `${userLevel.getExp()}.gif`);
 		}
 
 		this.mainBackground.draw();
@@ -720,13 +723,20 @@ class UserLevelCards {
 
 		const gif = await this.animate(copyCanvas(this.canvas), userLevel, int);
 
-		UserLevelCards.cachedCards[userLevel.member.id] = {canvas: copyCanvas(this.canvas), userLevel:userLevel}
+		UserLevelCards.cachedCards[userLevel.member.id] = {userLevel:userLevel}
 
 		if (gif) {
-			return new MessageAttachment(gif.read(), `${userLevel.getExp()}.gif`);
+			const buffer = gif.read()
+			UserLevelCards.cachedCards[userLevel.member.id] = {userLevel:userLevel, gif: true}
+			UserLevelCards.cachedImages.cards.set(userLevel.member.id + '.gif', buffer)
+			return new MessageAttachment(buffer, `${userLevel.getExp()}.gif`);
 		}
 
-		return new MessageAttachment(this.canvas.toBuffer('image/png'), `${userLevel.getExp()}.png`);
+		const buffer = this.canvas.toBuffer('image/png')
+
+		UserLevelCards.cachedImages.cards.set(userLevel.member.id + '.png', buffer)
+
+		return new MessageAttachment(buffer, `${userLevel.getExp()}.png`);
 	}
 
 }

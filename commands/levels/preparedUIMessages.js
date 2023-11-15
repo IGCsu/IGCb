@@ -54,11 +54,6 @@ async function cardShowMessage (cardGenerator, user, status, int) {
 		]
 	};
 
-	if (user.isAnimated() && user.isGifCached()) {
-		payoad.content = attachment;
-		payoad.files = null;
-	}
-
 	return payoad;
 }
 

@@ -43,6 +43,7 @@ class Icon extends CanvasElement {
 		super(canvas, x, y, w, h, alignment);
 		if (assetName) this.asset = Icon.#loadAssetFromCache(assetName);
 		this.gif = undefined;
+		this.buffer = undefined
 	}
 
 	/**
@@ -55,16 +56,19 @@ class Icon extends CanvasElement {
 		try {
 			if (url.split('?')[0].endsWith('.gif')) {
 				this.cachedGifFrames = [];
+				this.gifbuffer = Buffer.from(await (await fetch(url)).arrayBuffer());
 				this.gif = await gifFrames(
-				  { url: url, frames: 'all', outputType: 'png' });
-				this.asset = await Canvas.loadImage(
-				  await streamToBuffer(this.gif[0].getImage()));
+				  { url: this.gifbuffer, frames: 'all', outputType: 'png' });
+				this.buffer = await streamToBuffer(this.gif[0].getImage());
+				this.asset = await Canvas.loadImage(this.buffer);
 			} else {
 				this.gif = undefined;
 				this.cachedGifFrames = [];
-				this.asset = await Canvas.loadImage(url);
+				this.buffer = Buffer.from(await (await fetch(url)).arrayBuffer());
+				this.asset = await Canvas.loadImage(this.buffer);
 			}
 		} catch (e) {
+			log.warn(e)
 			log.warn('Не удалось загрузить асет')
 		}
 

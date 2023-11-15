@@ -17,6 +17,7 @@ const { title, description } = require('./about.json');
 const noXPChannels = require('./noXPChannels.json');
 const UserLevels = require('./UserLevels');
 const UserLevelCards = require('./UserLevelCard/UserLevelCard');
+const CacheController = require('./UserLevelCard/CacheController');
 const preparedUiMessages = require('./preparedUIMessages');
 
 class Levels extends BaseCommand {
@@ -65,6 +66,9 @@ class Levels extends BaseCommand {
 
 			this.cardGenerator = UserLevelCards;
 			this.cardGenerator.assets = UserLevelCards.loadAssets(path);
+			this.cardGenerator.cachedImages.avatars = new CacheController(path, "avatars");
+			this.cardGenerator.cachedImages.banners = new CacheController(path, "banners");
+			this.cardGenerator.cachedImages.cards = new CacheController(path, "cards");
 
 			resolve(this);
 		});
@@ -73,7 +77,7 @@ class Levels extends BaseCommand {
 
 
 	/**
-	 * Обработка команды
+	 * Обработка команды.
 	 * Выдаёт статистику по пользовтаелю и ссылку на страницу
 	 * @param  {CommandInteraction|UserContextMenuInteraction} int Команда
 	 *   пользователя
@@ -86,7 +90,7 @@ class Levels extends BaseCommand {
 		const user = await new UserLevels(member, this.roles, this.rolesIDs);
 		let type = 'reply';
 
-		if (user.isAnimated() && !user.isGifCached()) {
+		if (user.isAnimated()) {
 			await int.deferReply();
 			type = 'editReply'
 		}
@@ -123,9 +127,7 @@ class Levels extends BaseCommand {
 		}
 
 		data.content.fetchReply = true
-		const msg = await int[data.type](data.content);
-		if (data.userLevel.isAnimated() && !data.userLevel.isGifCached())
-			this.cardGenerator.cachedCards[data.userLevel.member.id].gif = msg.attachments.first().url + '?width=219&height=350';
+		await int[data.type](data.content);
 
 		if (!int.options.getMember('user') && data.userLevel.flags.bannerRemoved) {
 			await this.followUpBannerAlert(int, data.userLevel);
