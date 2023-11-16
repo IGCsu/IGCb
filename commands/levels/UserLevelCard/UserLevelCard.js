@@ -493,7 +493,7 @@ class UserLevelCards {
 		if (userLevel.isCachedFull) {
 			txtCached = 'всё';
 		} else if (userLevel.isAvatarCached && userLevel.isBannerCached) {
-			txtCached = 'аватар и баннер';
+			txtCached = 'аватар+баннер';
 		} else if (userLevel.isAvatarCached) {
 			txtCached = 'аватар';
 		} else if (userLevel.isBannerCached) {
