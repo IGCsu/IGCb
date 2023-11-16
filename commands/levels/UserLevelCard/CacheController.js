@@ -16,21 +16,23 @@ class CacheController {
 	async get(name) {
 		const endPath = this.#path + '/' + name;
 		let data = null;
-		console.log("Getting cached data from: " + this.#type + '/' + name);
+		const displayPlace = this.#type + '/' + name + '.json';
+		console.log("Getting cached data from: " + displayPlace);
 		try {
 			data = await fs.readFile(endPath);
 		} catch (e) {
 			console.log("Failed to get cache");
 			return null;
 		}
-		console.log("Cache found");
+		console.log("Cache found in: " + displayPlace);
 		return data;
 	}
 
 	async getAsJson(name) {
 		const endPath = this.#path + '/' + name + '.json';
 		let data = null;
-		console.log("Getting cached data from: " + this.#type + '/' + name);
+		const displayPlace = this.#type + '/' + name + '.json';
+		console.log("Getting cached data from: " + displayPlace);
 
 		try {
 			data = JSON.parse(await fs.readFile(endPath, 'utf8'));
@@ -38,19 +40,20 @@ class CacheController {
 			console.log('Cache not found');
 			return null;
 		}
-		console.log("Cache found");
+		console.log("Cache found in: " + displayPlace);
 		return data;
 	}
 
 	async set(name, file) {
-		console.log("Writing cached data to: " + this.#type + '/' + name + ' (' + file.length + ')')
+		const displayPlace = this.#type + '/' + name + ' (' + file.length + ')';
+		console.log("Writing cached data to: " + displayPlace)
 		try {
 			await fs.writeFile(this.#path + '/' + name, file, {encoding: 'utf-8', })
 		} catch {
 			console.log("Failed to write cache")
 			return null
 		}
-		console.log("Cache written")
+		console.log("Cache written to: " + displayPlace)
 		return true
 	}
 
