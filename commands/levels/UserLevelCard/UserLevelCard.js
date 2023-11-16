@@ -233,16 +233,16 @@ class UserLevelCards {
 		const currentAvatarUrl = userLevel.member.displayAvatarURL({format: 'png', size: 1024, dynamic: userLevel.flags.animatedMediaContentEnabled});
 
 		if (cachedAvatar && (currentAvatarUrl === cachedAvatar.avatarUrl)) {
-			this.avatar.asset = await loadImage(Buffer.from(cachedAvatar.asset));
+			this.avatar.asset = await loadImage(Buffer.from(cachedAvatar.asset, 'base64'));
 			if (cachedAvatar.gif)
 			this.avatar.gif = await gifFrames(
-			  { url: Buffer.from(cachedAvatar.gif), frames: 'all', outputType: 'png' });
+			  { url: Buffer.from(cachedAvatar.gif, 'base64'), frames: 'all', outputType: 'png' });
 			userLevel.isAvatarCached = true;
 		} else {
 			await this.avatar.loadAssetFromUrl(currentAvatarUrl);
 			UserLevelCards.cachedImages.avatars.setAsJson(userLevel.member.id,{
-				asset: this.avatar.buffer,
-				gif: this.avatar.gifbuffer,
+				asset: this.avatar.buffer.toString('base64'),
+				gif: this.avatar.gifbuffer.toString('base64'),
 				avatarUrl: currentAvatarUrl
 			});
 		}
@@ -274,18 +274,18 @@ class UserLevelCards {
 
 		if (currentBannerUrl) {
 			if (cachedBanner && (currentBannerUrl === cachedBanner.bannerUrl)) {
-				this.banner.asset = await loadImage(Buffer.from(cachedBanner.asset));
+				this.banner.asset = await loadImage(Buffer.from(cachedBanner.asset, 'base64'));
 				if (cachedBanner.gif)
 				this.banner.gif = await gifFrames(
-				  { url: Buffer.from(cachedBanner.gif), frames: 'all', outputType: 'png' }
+				  { url: Buffer.from(cachedBanner.gif, 'base64'), frames: 'all', outputType: 'png' }
 				);
 			} else {
 				userLevel.isBannerCached = false;
 				await this.banner.loadAssetFromUrl(currentBannerUrl);
 				UserLevelCards.cachedImages.banners.setAsJson(userLevel.member.id, {
-					asset: this.banner.buffer,
+					asset: this.banner.buffer.toString('base64'),
 					bannerUrl: currentBannerUrl,
-					gif: this.banner.gifbuffer
+					gif: this.banner.gifbuffer.toString('base64')
 				});
 			}
 		}

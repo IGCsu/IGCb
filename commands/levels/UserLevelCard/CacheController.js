@@ -55,6 +55,17 @@ class CacheController {
 	async setAsJson(name, object) {
 		await this.set(name + '.json', JSON.stringify(object));
 	}
+
+	async clear(name) {
+		await fs.rm(this.#path + '/' + name)
+	}
+
+	async clearAll() {
+		const files = fs.readdir(this.#path)
+		for (file of files) {
+			console.log(file)
+		}
+	}
 }
 
 module.exports = CacheController
