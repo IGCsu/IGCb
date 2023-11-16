@@ -9,7 +9,7 @@ class CacheController {
 	constructor (path, type) {
 		this.#path = path.slice(0, -9) + "/UserLevelCard/cache/" + type
 		this.#type = '/' + type
-		console.log(p.resolve(this.#path) + " Cache controller connected");
+		console.log("Cache controller connected: " + this.#path);
 		this.clearAll();
 	}
 
@@ -70,6 +70,7 @@ class CacheController {
 		for (const file of files) {
 			await this.clear(file)
 		}
+		console.log('Caches cleared: ' + this.#type)
 	}
 }
 
