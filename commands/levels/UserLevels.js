@@ -431,7 +431,11 @@ class UserLevels {
 	}
 
 	isAnimated() {
-		return ( this.flags.animatedMediaContentEnabled && (this.isAvatarAnimated() || this.isBannerAnimated()) );
+		return ( this.flags.animatedMediaContentEnabled && (!!this.isAvatarAnimated() || !!this.isBannerAnimated()) );
+	}
+
+	mayBeAnimated() {
+		return ( !this.flags.animatedMediaContentEnabled && (!!this.isAvatarAnimated() || !!this.isBannerAnimated()) );
 	}
 
 	isCached() {

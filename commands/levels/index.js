@@ -19,6 +19,7 @@ const UserLevels = require('./UserLevels');
 const UserLevelCards = require('./UserLevelCard/UserLevelCard');
 const CacheController = require('./UserLevelCard/CacheController');
 const preparedUiMessages = require('./preparedUIMessages');
+const preparedAlertsMessages = require('./preparedAlertsMessages');
 
 class Levels extends BaseCommand {
 
@@ -129,8 +130,16 @@ class Levels extends BaseCommand {
 		data.content.fetchReply = true
 		await int[data.type](data.content);
 
-		if (!int.options.getMember('user') && data.userLevel.flags.bannerRemoved) {
-			await this.followUpBannerAlert(int, data.userLevel);
+		if (!int.options.getMember('user')) {
+
+			if (data.userLevel.flags.bannerRemoved)
+				return await preparedAlertsMessages.followUpBannerRemovedAlert(int, data.userLevel);
+			if(data.userLevel.mayBeAnimated() && !data.userLevel.flags.alertAnimationsAvailableNoticed)
+				return await preparedAlertsMessages.followUpAnimationsAvailableAlert(int, data.userLevel);
+			if(data.userLevel.flags.bannerBlocked)
+				return
+			if(!data.userLevel.flags.bannerSyncedWithDiscord && !!(await data.userLevel.member.user.fetch()).banner && !data.userLevel.flags.alertBannerSyncAvailableNoticed)
+				return await preparedAlertsMessages.followUpBannerSyncAvailableAlert(int, data.userLevel)
 		}
 	}
 
@@ -151,8 +160,16 @@ class Levels extends BaseCommand {
 		data.content.ephemeral = true;
 		await int.reply(data.content);
 
-		if (int.targetMember == int.member && data.userLevel.flags.bannerRemoved) {
-			await this.followUpBannerAlert(int, data.userLevel);
+		if (int.targetMember === int.member) {
+
+			if (data.userLevel.flags.bannerRemoved)
+				return await preparedAlertsMessages.followUpBannerRemovedAlert(int, data.userLevel);
+			if(data.userLevel.mayBeAnimated() && !data.userLevel.flags.alertAnimationsAvailableNoticed)
+				return await preparedAlertsMessages.followUpAnimationsAvailableAlert(int, data.userLevel);
+			if(data.userLevel.flags.bannerBlocked)
+				return
+			if(!data.userLevel.flags.bannerSyncedWithDiscord && !!(await data.userLevel.member.user.fetch()).banner && !data.userLevel.flags.alertBannerSyncAvailableNoticed)
+				return await preparedAlertsMessages.followUpBannerSyncAvailableAlert(int, data.userLevel)
 		}
 	}
 
@@ -184,6 +201,10 @@ class Levels extends BaseCommand {
 		}
 
 		switch (btnType) {
+			case 'alert': {
+				return await preparedAlertsMessages.handleAlerts(int, userLevel, this.cardGenerator);
+			}
+
 			case 'syncWithProfile': {
 				userLevel.flags = { bannerSyncedWithDiscord: true };
 				await userLevel.setBannerUrl(member.user.banner);
@@ -201,7 +222,7 @@ class Levels extends BaseCommand {
 				  ));
 
 				if (member.user == int.user && userLevel.flags.bannerRemoved) {
-					await this.followUpBannerAlert(int, userLevel);
+					await this.followUpBannerRemovedAlert(int, userLevel);
 				}
 				return;
 			}
@@ -355,24 +376,6 @@ class Levels extends BaseCommand {
 		(await user.userMessageCounting(msg)
 			.update())
 			.updateRole();
-	}
-
-	/**
-	 * Отправляет follow up с предупреждением об удалении банера
-	 * @param {ButtonInteraction|ModalSubmitInteraction|CommandInteraction} int
-	 * @param {UserLevels} userLevel
-	 */
-	async followUpBannerAlert(int, userLevel) {
-		let content = 'Ваш баннер был удалён модерацией.\nВ будущем вам может быть запрещён доступ к смене банера'
-
-		if (userLevel.flags.bannerBlocked) content = 'Ваш баннер был удалён и заблокирован модерацией.\nВы больше не можете изменять свой баннер'
-
-		await int.followUp({
-			content: content,
-			ephemeral: true
-		})
-		userLevel.flags = { bannerRemoved: false }
-		await userLevel.update();
 	}
 
 	/**

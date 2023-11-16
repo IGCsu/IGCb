@@ -273,7 +273,7 @@ class UserLevelCards {
 		this.banner.w = RESOLUTION.CARD_WIDTH;
 
 		if (currentBannerUrl) {
-			if (cachedBanner && (currentBannerUrl === cachedBanner.bannerUrl)) {
+			if ((cachedBanner?.asset || cachedBanner?.gif)&& (currentBannerUrl === cachedBanner.bannerUrl)) {
 				this.banner.asset = await loadImage(Buffer.from(cachedBanner.asset, 'base64'));
 				if (cachedBanner.gif)
 				this.banner.gif = await gifFrames(
@@ -532,6 +532,7 @@ class UserLevelCards {
 		let bGifLength = 0
 
 
+		if (!userLevel.isAnimated()) return null;
 		if ((!this.avatar.gif && !this.banner.gif) || !userLevel.flags.animatedMediaContentEnabled) return null;
 
 		if (this.avatar.gif) {
@@ -686,14 +687,19 @@ class UserLevelCards {
 
 		if (userLevel.isCached() && !userLevel.isAnimated()) {
 			const buffer = await UserLevelCards.cachedImages.cards.get(userLevel.member.id + '.png');
-			const img = await loadImage(buffer)
-			const canvas = createCanvas(RESOLUTION.CARD_WIDTH, RESOLUTION.CARD_HEIGHT)
-			const ctx = canvas.getContext('2d')
-			ctx.drawImage(img, 0, 0, RESOLUTION.CARD_WIDTH, RESOLUTION.CARD_HEIGHT)
-			userLevel.isCachedFull = true;
-			this.generateTime(canvas, userLevel, gStart);
+			if(buffer) {
+				const img = await loadImage(buffer)
+				const canvas = createCanvas(
+				  RESOLUTION.CARD_WIDTH, RESOLUTION.CARD_HEIGHT)
+				const ctx = canvas.getContext('2d')
+				ctx.drawImage(
+				  img, 0, 0, RESOLUTION.CARD_WIDTH, RESOLUTION.CARD_HEIGHT)
+				userLevel.isCachedFull = true;
+				this.generateTime(canvas, userLevel, gStart);
 
-			return new MessageAttachment(canvas.toBuffer('image/png'), `${userLevel.getExp()}.png`);
+				return new MessageAttachment(
+				  canvas.toBuffer('image/png'), `${userLevel.getExp()}.png`);
+			}
 		}
 
 		if (userLevel.isGifCached() && userLevel.isAnimated()) {

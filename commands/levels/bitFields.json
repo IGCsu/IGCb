@@ -4,6 +4,8 @@
     "bannerRemoved": 2,
     "bannerBlocked": 4,
 		"animatedMediaContentEnabled": 8,
-		"animatedAppearanceEnabled": 16
+		"animatedAppearanceEnabled": 16,
+		"alertBannerSyncAvailableNoticed": 32,
+		"alertAnimationsAvailableNoticed": 64
   }
 }
