@@ -66,7 +66,7 @@ class CacheController {
 
 	async clearAll() {
 		console.log('Clearing all caches: ' + this.#type)
-		const files = fs.readdir(this.#path)
+		const files = fs.readdir(this.#path + '/')
 		for (file of files) {
 			console.log(file)
 		}
