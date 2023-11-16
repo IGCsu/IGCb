@@ -502,7 +502,7 @@ class UserLevelCards {
 			txtCached = 'нет'
 		}
 
-		const txt = `Сгенерировано за: ${round(getMilliseconds() - time, 3)}мс. Кеш: ${txtCached}`
+		const txt = `Сгенерировано за: ${round(getMilliseconds() - time, 1)}мс. Кеш: ${txtCached}`
 
 		this.footer.font = 'Montserrat Medium'
 		this.footer.changeText(txt, undefined, 23);
