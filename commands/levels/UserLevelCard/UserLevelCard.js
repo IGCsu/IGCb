@@ -241,8 +241,8 @@ class UserLevelCards {
 		} else {
 			await this.avatar.loadAssetFromUrl(currentAvatarUrl);
 			UserLevelCards.cachedImages.avatars.setAsJson(userLevel.member.id,{
-				asset: this.avatar.buffer.toString('base64'),
-				gif: this.avatar.gifbuffer.toString('base64'),
+				asset: this.avatar.buffer?.toString('base64'),
+				gif: this.avatar.gifbuffer?.toString('base64'),
 				avatarUrl: currentAvatarUrl
 			});
 		}
@@ -283,9 +283,9 @@ class UserLevelCards {
 				userLevel.isBannerCached = false;
 				await this.banner.loadAssetFromUrl(currentBannerUrl);
 				UserLevelCards.cachedImages.banners.setAsJson(userLevel.member.id, {
-					asset: this.banner.buffer.toString('base64'),
+					asset: this.banner.buffer?.toString('base64'),
 					bannerUrl: currentBannerUrl,
-					gif: this.banner.gifbuffer.toString('base64')
+					gif: this.banner.gifbuffer?.toString('base64')
 				});
 			}
 		}
