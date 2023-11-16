@@ -16,7 +16,7 @@ class CacheController {
 	async get(name) {
 		const endPath = this.#path + '/' + name;
 		let data = null;
-		const displayPlace = this.#type + '/' + name + '.json';
+		const displayPlace = this.#type + '/' + name;
 		console.log("Getting cached data from: " + displayPlace);
 		try {
 			data = await fs.readFile(endPath);
