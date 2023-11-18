@@ -68,7 +68,7 @@ class ProgressBar extends Rect {
 				: userLevel.getNextRole()?.value
 			);
 
-			this.fineBar.w = STYLE.PROGRESSBAR_WIDTH *  (
+			this.fineBar.w = STYLE.PROGRESSBAR_WIDTH * (
 			  nextAmount < userLevel.getExpFull()
 				? 1
 				: userLevel.getExpFull()/nextAmount
@@ -81,7 +81,7 @@ class ProgressBar extends Rect {
 		  ? userLevel.getNextRoleProgress() : 100)
 
 
-		this.expBar.w = STYLE.PROGRESSBAR_WIDTH * expProgress / 100;
+		this.expBar.w = Math.max(STYLE.PROGRESSBAR_WIDTH * expProgress / 100, this.rounding * 2);
 
 		this.currLvlTxt.changeText(
 		  userLevel.getRole().value.toLocaleString()

@@ -558,7 +558,7 @@ class UserLevelCards {
 		gif.setDelay(Math.min(aGif ? aGifDelay : bGifDelay, bGif ? bGifDelay : aGifDelay) * 10);
 		gif.setQuality(15);
 		gif.setRepeat(0);
-		gif.setTransparent(0x000000);
+		//gif.setTransparent(0x000000);
 		gif.setDispose(0);
 
 		gif.writeHeader();
@@ -589,6 +589,7 @@ class UserLevelCards {
 						);
 						//this.avatar.cachedGifFrames[aFrame] = this.avatar.asset;
 					}
+
 					this.avatar.context = canvas.getContext('2d');
 					this.avatar.makeRounded();
 					this.avatar.draw(ctx);
