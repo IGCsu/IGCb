@@ -105,6 +105,7 @@ async function animationsEphemeralActionSheet (cardGenerator, user, cardMessageI
 					},
 					{
 						type: 2,
+						disabled: true,
 						style: user.flags.animatedAppearanceEnabled ? 1 : 2,
 						customId: 'levels|animatedAppearance|' + user.member.id + '|' + cardMessageId,
 						label: 'При появлении',

@@ -649,7 +649,7 @@ class UserLevelCards {
 				int.editReply(
 					{
 						content: '`' + this.getPlaneTextProgressBar(currTime/fullTime,20, true)
-						  + ('` Прошло: <t:' + Math.floor(gStart/1000) + ':R> Осталось: <t:' + Math.floor(gStart/1000 + gRe + 2) + ':R>')
+						  + ('`\nНачато: <t:' + Math.floor(gStart/1000) + ':R> Окончание: <t:' + Math.floor(gStart/1000 + gRe + 2) + ':R>')
 
 					}
 				)
