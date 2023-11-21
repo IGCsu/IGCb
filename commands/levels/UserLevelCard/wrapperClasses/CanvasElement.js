@@ -52,7 +52,7 @@ class CanvasElement {
 	}
 
 	/**
-	 * Смещает начальную точку объекта из левого верхнего в указаный
+	 * Смещает начальную точку объекта из левого верхнего в указанный
 	 */
 	reapplyAlignment(alignment=undefined) {
 		alignment = alignment ?? this.alignment;
@@ -61,7 +61,7 @@ class CanvasElement {
 	}
 
 	/**
-	 * Возварщает координаты точки на элементе выровненой по указанному выравниванию
+	 * Возвращает координаты точки на элементе выровненной по указанному выравниванию
 	 *
 	 * @param alignment
 	 * @returns {{x: number, y: number}}
@@ -73,7 +73,7 @@ class CanvasElement {
 	}
 
 	/**
-	 * Делает то же что и getInBoundAlignedPoint но ограничивает координаты габаритами холста
+	 * Делает то же что и getAlignedPoint, но ограничивает координаты габаритами холста
 	 *
 	 * @param alignment
 	 * @param {[]} bounds

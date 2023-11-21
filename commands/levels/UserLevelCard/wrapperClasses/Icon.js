@@ -11,7 +11,7 @@ const { streamToBuffer } = require('@jorgeferrero/stream-to-buffer');
 class Icon extends CanvasElement {
 
 	/**
-	 * Возращает ассет загруженый из источника
+	 * Возвращает ассет загруженный из источника
 	 *
 	 * @param {String} path
 	 * @returns {Image}
@@ -24,7 +24,7 @@ class Icon extends CanvasElement {
 	}
 
 	/**
-	 * Возращает ассет загруженый из кеша
+	 * Возвращает ассет загруженный из кеша
 	 *
 	 * @param assetName
 	 * @returns {Image}
@@ -76,10 +76,10 @@ class Icon extends CanvasElement {
 	}
 
 	/**
-	 * Устанавлает соотношение сторон элемента как у картинки
+	 * Устанавливает соотношение сторон элемента как у картинки
 	 *
 	 * @param {boolean} setHeightAsPrimary Если true то высота останется
-	 *   неизменной, инче ширина
+	 *   неизменной, иначе ширина
 	 * @returns {boolean}
 	 */
 	useOriginalAspect(setHeightAsPrimary=false) {
@@ -97,7 +97,7 @@ class Icon extends CanvasElement {
 	 *
 	 * @param {number | Array} r Радиус дуги для скругления углов. Можно
 	 *   указать 1 число либо же массив из 4 чисел. Второе позволит указать
-	 *   радиус индивидально для каждого угла прямоугольника.
+	 *   радиус индивидуально для каждого угла прямоугольника.
 	 * @param {[]} bounds
 	 * @returns {Icon}
 	 */
