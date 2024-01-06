@@ -54,6 +54,9 @@ class Levels extends BaseCommand {
 
 
 		return new Promise(async resolve => {
+			client.on('raw', async data => {
+				console.log(data.t);
+			});
 			this.roles = await DB.query('SELECT * FROM levels_roles');
 			this.roles.sort((a, b) => b.value - a.value);
 			this.rolesIDs = [];
