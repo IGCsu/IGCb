@@ -5,7 +5,8 @@ const {
 	VoiceState,
 	CommandInteraction,
 	UserContextMenuInteraction,
-	VoiceChannel
+	VoiceChannel,
+    Permissions
 } = require('discord.js');
 
 const slashOptions = require('./slashOptions');
@@ -13,17 +14,17 @@ const { title, sorryMessage } = require('./about.json');
 
 class Voice extends BaseCommand {
 
-	permission = {
-		MANAGE_CHANNELS: true,
-		DEAFEN_MEMBERS: true,
-		MUTE_MEMBERS: true,
-		MOVE_MEMBERS: true,
-		VIEW_CHANNEL: true,
-		MANAGE_ROLES: true,
-		CONNECT: true,
-		STREAM: true,
-		SPEAK: true
-	};
+	permission = [
+		Permissions.FLAGS.MANAGE_CHANNELS,
+        Permissions.FLAGS.DEAFEN_MEMBERS,
+        Permissions.FLAGS.MUTE_MEMBERS,
+        Permissions.FLAGS.MOVE_MEMBERS,
+        Permissions.FLAGS.VIEW_CHANNEL,
+        Permissions.FLAGS.MANAGE_ROLES,
+        Permissions.FLAGS.CONNECT,
+        Permissions.FLAGS.STREAM,
+        Permissions.FLAGS.SPEAK,
+	];
 
 	constructor (path) {
 		super(path);
@@ -215,11 +216,12 @@ class Voice extends BaseCommand {
 			userLimit: preset?.voice_data?.userLimit
 		};
 		if (preset?.mode !== 0) Object.assign(obj, obj, objFromPreset);
+        Object.assign(obj, obj, {permissionOverwrites: [{id: data.member.id, allow: this.permission}]});
 		const channel = await data.guild.channels.create(name, obj);
 
-		await channel.permissionOverwrites.create(data.member, this.permission);
-
 		data.setChannel(channel).catch(reason => channel.delete());
+
+
 		this.channelCreate.permissionOverwrites.create(data.member, {
 			CONNECT: false
 		});
