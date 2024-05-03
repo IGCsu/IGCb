@@ -70,15 +70,6 @@ const sendApplicationGuildCommands = () => {
 };
 
 /**
- * Добавляет к модулю "handler" массив модулей с обработкой сообщений
- */
-const initMessageHandler = () => {
-	if (!commands.handler?.active) return;
-
-	commands.handler.commands = messageCommands;
-};
-
-/**
  * Определяет модули бота
  */
 module.exports = async () => {
@@ -108,9 +99,6 @@ module.exports = async () => {
 		commands[name] = await new Command(path);
 
 		if (commands[name].active) {
-			if (commands[name].message.getSource() !== DEFAULT_FUNC) {
-				messageCommands.push(name);
-			}
 			if (commands[name].slash.getSource() !== DEFAULT_FUNC) {
 				addSlashCommand(commands[name]);
 			}
@@ -126,7 +114,5 @@ module.exports = async () => {
 
 	sendApplicationGuildCommands();
 
-	initMessageHandler();
-
 	global.commands = commands;
-}
+};
