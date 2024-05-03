@@ -23,9 +23,7 @@ ij_editorconfig_space_before_comma = false
 ij_editorconfig_spaces_around_assignment_operators = true
 
 [{*.ats,*.cts,*.mts,*.ts}]
-indent_size = 4
 indent_style = tab
-tab_width = 4
 ij_continuation_indent_size = 4
 ij_typescript_align_imports = false
 ij_typescript_align_multiline_array_initializer_expression = false
@@ -59,7 +57,7 @@ ij_typescript_call_parameters_right_paren_on_new_line = true
 ij_typescript_call_parameters_wrap = normal
 ij_typescript_catch_on_new_line = false
 ij_typescript_chained_call_dot_on_new_line = true
-ij_typescript_class_brace_style = end_of_line
+ij_typescript_class_brace_style = next_line
 ij_typescript_comma_on_new_line = false
 ij_typescript_do_while_brace_force = always
 ij_typescript_else_on_new_line = false
@@ -95,7 +93,7 @@ ij_typescript_keep_simple_blocks_in_one_line = true
 ij_typescript_keep_simple_methods_in_one_line = true
 ij_typescript_line_comment_add_space = true
 ij_typescript_line_comment_at_first_column = false
-ij_typescript_method_brace_style = end_of_line
+ij_typescript_method_brace_style = next_line_if_wrapped
 ij_typescript_method_call_chain_wrap = on_every_item
 ij_typescript_method_parameters_new_line_after_left_paren = true
 ij_typescript_method_parameters_right_paren_on_new_line = true
