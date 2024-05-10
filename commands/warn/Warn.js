@@ -274,9 +274,9 @@ class Warn {
 	 */
 	static last (target) {
 		const query = target
-			? `SELECT * FROM warns WHERE id = (SELECT MAX(id) FROM warns WHERE target = ${target})`
+			? `SELECT * FROM warns WHERE id = (SELECT MAX(id) FROM warns WHERE target = ?)`
 			: `SELECT * FROM warns WHERE id = (SELECT MAX(id) FROM warns)`;
-		const data = DB.query(query);
+		const data = DB.query(query, target ? [target] : undefined);
 		if (!data[0]) return undefined;
 
 		return new this(data[0]);
@@ -290,9 +290,9 @@ class Warn {
 	 */
 	static all (target) {
 		const query = target
-			? `SELECT * FROM warns WHERE NOT flags & 4 AND target = ${target}`
+			? `SELECT * FROM warns WHERE NOT flags & 4 AND target = ?`
 			: `SELECT * FROM warns WHERE NOT flags & 4`;
-		const data = DB.query(query);
+		const data = DB.query(query, target ? [target] : undefined);
 
 		let warns = [];
 		for (let i = data.length; i >= 0; i--) {
