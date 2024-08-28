@@ -98,7 +98,11 @@ module.exports = async () => {
 
 		const timeStart = process.hrtime();
 
-		const Command = require('.' + path);
+		let Command = require('.' + path);
+		// Костыль для модулей на TS
+		if (Object.keys(Command).length) {
+			Command = Command[Object.keys(Command)[0]];
+		}
 
 		/** @type {BaseCommand} */
 		commands[name] = await new Command(path);

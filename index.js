@@ -2,13 +2,13 @@ console.time('Client initialized in');
 
 require('dotenv').config();
 
-console.time('Client initialized in');
-global.Discord = require('discord.js');
-global.client = new Discord.Client({
-	intents: new Discord.Intents(46847)
-});
+	console.time('Client initialized in');
+	global.Discord = require('discord.js');
+	global.client = new Discord.Client({
+		intents: new Discord.Intents(46847)
+	});
 
-console.log('Start index.js');
+	console.log('Start index.js');
 
 const mysql = require('mysql2/promise');
 const util = require('util');
@@ -29,8 +29,9 @@ global.DB = {
 	}
 };
 
-client.on('ready', require('./init'));
+	client.on('ready', require('./init'));
 
-console.time('Client login');
+	console.time('Client login');
 
-client.login(process.env.TOKEN);
+	await client.login(process.env.TOKEN);
+}();

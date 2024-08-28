@@ -91,7 +91,7 @@ class Starboard extends BaseCommand {
 	 */
 	async createMessage (message, reference) {
 		let atts = [];
-		message.attachments.forEach(att => atts.push(att.proxyURL));
+		message.attachments.forEach(att => atts.push({ attachment: att.attachment, name: att.name }));
 
 		const payload = {
 			avatarURL: message.member?.avatarURL() ?? message.author.avatarURL(),
@@ -101,7 +101,11 @@ class Starboard extends BaseCommand {
 
 		if (message.content) payload.content = message.content;
 		if (message.attachments) payload.files = atts;
-		if (message.embeds) payload.embeds = message.embeds;
+
+		//TODO embed.type -> embed.data.type for migration to djs v14
+		const richEmbeds = message.embeds.filter(embed => { return embed.type === 'rich' })
+
+		if (richEmbeds) payload.embeds = richEmbeds;
 
 		if (!reference) {
 			payload.components = [

@@ -16,6 +16,11 @@ module.exports = {
 
 	init: async function () {
 		this.role = await guild.roles.fetch('648762974277992448');
+		client.on('guildMemberAdd', async member => {
+			if (!member.user.bot) {
+				await toggleRole(this.role, member);
+			}
+		});
 		return this;
 	},
 

@@ -4,6 +4,26 @@
 
 Приватный бот, который можно развернуть на любом сообществе.
 
+#### Install
+```shell
+# Create work dirs
+mkdir /var/bot/ 
+mkdir /var/logs/bot/IGCb/
+
+# Clone rep
+cd /var/bot
+git clone git@github.com:IGCsu/IGCb.git
+
+# ... configure DB ...
+
+# Set environment
+cp IGCb/.env.example IGCb/.env
+
+# Run start bot
+cd /var/bot/IGCb
+bash bot.sh # Absolute path not working
+```
+
 #### Файлы репозитория:
 - `/index.js` - индексный файл: подключается `discord.js` и устанавливается соединение, после которого запускается `/init.js`.
 - `/init.js` - основной файл инициализации: запускает файлы инициализации.
