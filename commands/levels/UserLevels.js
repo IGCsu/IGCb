@@ -1,3 +1,7 @@
+const UserLevelCard = require('./UserLevelCard/UserLevelCard');
+const UserLevelCards = require('./UserLevelCard/UserLevelCard');
+const bitFields = require('./bitFields.json');
+
 class UserLevels {
 
 	/**
@@ -51,52 +55,64 @@ class UserLevels {
 		this.#roles = roles;
 		this.#rolesIDs = rolesIDs;
 
-		const users = DB.query('SELECT * FROM levels WHERE id = ?', [
-			this.member.id
-		]);
+		return new Promise(async resolve => {
+			const users = await DB.query('SELECT * FROM levels WHERE id = ?', [
+				this.member.id
+			]);
 
-		if (users[0]) {
-			this.finded = true;
-			this.#primitiveData = {
-				messagesLegit: users[0].messagesLegit,
-				messagesAll: users[0].messagesAll,
-				activity: users[0].activity,
-				symbols: users[0].symbols,
-				last: users[0].last
-			};
-		} else if (create) {
-			DB.query('INSERT INTO levels (`id`) VALUES (?)', [this.member.id]);
-			this.#primitiveData = {
-				messagesLegit: 0,
-				messagesAll: 0,
-				activity: 1,
-				symbols: 0,
-				last: 0
-			};
-		}
 
+			if (users[0]) {
+				this.finded = true;
+				this.#primitiveData = {
+					messagesLegit: users[0].messagesLegit,
+					messagesAll: users[0].messagesAll,
+					activity: users[0].activity,
+					symbols: users[0].symbols,
+					last: users[0].last,
+                    banner: users[0].banner,
+                    flags: users[0].flags
+				};
+			} else if (create) {
+				await DB.query('INSERT INTO levels (`id`) VALUES (?)', [this.member.id]);
+				this.#primitiveData = {
+					messagesLegit: 0,
+					messagesAll: 0,
+					activity: 30,
+					symbols: 0,
+					last: 0,
+					banner: '',
+					flags: 0
+				};
+			}
+
+			resolve(this);
+		});
 	};
 
 	/**
 	 * Обновляет данные пользователя в базе данных
 	 */
-	update () {
+	async update () {
 		// TODO: Модулю настала пизда, очень много флудит коннектами к БД. 
 		//  Надо сделать кеширование левелов и регулярную синхронизацию с БД. 
 		//  Пушто создание коннекта после каждого сообщения юзера - кладет БД.
 		//  На похуй будем ловить ошибки от базы, хуй с ней, если скипнем одно-два сообщения юзера
 		try {
-			DB.query(
-				'UPDATE levels SET messagesAll = ?, messagesLegit = ?, symbols = ?, last = ? WHERE id = ?',
+			await DB.query(
+				'UPDATE levels SET messagesAll = ?, messagesLegit = ?, symbols = ?, last = ?, banner = ?, flags = ? WHERE id = ?',
 				[
 					this.#primitiveData.messagesAll,
 					this.#primitiveData.messagesLegit,
 					this.#primitiveData.symbols,
 					this.#primitiveData.last,
+					this.#primitiveData.banner,
+					this.#primitiveData.flags,
 					this.member.id
 				]
 			);
-		} catch (e) {}
+		} catch (e) {
+			console.error(e)
+		}
 
 		return this;
 	};
@@ -149,7 +165,6 @@ class UserLevels {
 		return this;
 	};
 
-
 	/**
 	 * ***************************************************************************
 	 * Функции возвращения примитивных данных
@@ -198,6 +213,13 @@ class UserLevels {
 		// @TODO: Сломался подсчет активности у юзеров. Пока костыль, чтобы левелинг работал
 		// return this.#primitiveData.activity;
 	};
+
+    /**
+	 * @return {String}
+     */
+	getBanner() {
+		return this.#primitiveData.banner;
+	}
 
 
 	/**
@@ -323,6 +345,14 @@ class UserLevels {
 		return this.#advancedData.nextRole = this.#roles[role.pos - 1] ?? true;
 	};
 
+	getNextRoleColor () {
+		const nextRole = this.getNextRole() === true
+		  ? this.getRole()
+		  : this.getNextRole()
+
+		return dec2hex(nextRole.cache.color);
+	};
+
 	/**
 	 * Возвращает прогресс до следующей роли. Возвращает true - если следующей
 	 * роли нет
@@ -344,6 +374,77 @@ class UserLevels {
 		return this.#advancedData.nextRoleProgress = nextRoleProgress;
 	};
 
+    /**
+     * Объект содержащий пары ключ + bool значение
+     * @return {Object}
+     */
+    get flags () {
+        let flags = {};
+        for (let flagEntry in bitFields.flags) {
+            flags[flagEntry] = Boolean(this.#primitiveData.flags & bitFields.flags[flagEntry]);
+        }
+        return flags;
+    }
+
+    /**
+     * Объект содержащий пары ключ + bool значение
+     * @param value {Object}
+     */
+    set flags (value) {
+        let flagsObjectCurrent = {};
+        for (let flagEntry in bitFields.flags) {
+            flagsObjectCurrent[flagEntry] = Boolean(
+                this.#primitiveData.flags & bitFields.flags[flagEntry]
+            );
+        }
+        let flagsNumericTarget = 0;
+        for (let flagEntry in flagsObjectCurrent) {
+            if (bitFields.flags[flagEntry] === undefined) {
+                throw new Error('Attempting to change an unknown flag');
+            }
+            flagsNumericTarget += ((value[flagEntry] !== undefined)
+                ? bitFields.flags[flagEntry] * value[flagEntry]
+                : bitFields.flags[flagEntry] * flagsObjectCurrent[flagEntry]);
+        }
+        this.#primitiveData.flags = flagsNumericTarget;
+    }
+
+    getBannerUrl(dynamic=false) {
+		if (!this.#primitiveData.banner) return null;
+		if (this.flags.bannerSyncedWithDiscord)
+        	return `https://cdn.discordapp.com/banners/${this.member.id}/${this.#primitiveData.banner}.${this.#primitiveData.banner.startsWith('a_') & dynamic ? 'gif': 'png'}?size=1024`;
+		return this.#primitiveData.banner;
+    }
+
+	async setBannerUrl(banner) {
+		this.#primitiveData.banner = banner;
+		await this.update();
+		return this;
+	}
+
+	isAvatarAnimated() {
+		return this.member.displayAvatarURL({dynamic: true})?.endsWith('.gif');
+	}
+
+	isBannerAnimated() {
+		return this.getBannerUrl(true)?.split('?')[0].endsWith('.gif');
+	}
+
+	isAnimated() {
+		return ( this.flags.animatedMediaContentEnabled && (!!this.isAvatarAnimated() || !!this.isBannerAnimated()) );
+	}
+
+	mayBeAnimated() {
+		return ( !this.flags.animatedMediaContentEnabled && (!!this.isAvatarAnimated() || !!this.isBannerAnimated()) );
+	}
+
+	isCached() {
+		return ( this.equals(UserLevelCards.getCachedCard(this.member.id)?.userLevel) );
+	}
+
+	isGifCached() {
+		return ( this.equals(UserLevelCards.getCachedCard(this.member.id)?.userLevel) && UserLevelCards.getCachedCard(this.member.id)?.gif);
+	}
 
 	/**
 	 * ***************************************************************************
@@ -361,15 +462,13 @@ class UserLevels {
 		this.#embed = new Discord.MessageEmbed();
 
 		this.#embed.setTitle('Статистика пользователя');
-		this.#embed.setThumbnail(this.member.user.avatarURL({ dynamic: true }));
-		this.#embed.setDescription(this.member.toString());
 
 		this.addMessages();
-		this.addSymbols();
 		this.addOverpost();
+		this.addSymbols();
 		this.addActivity();
-		this.addExp();
-		this.addNextRole();
+		this.addImage();
+		this.addFooter();
 
 		this.setColor();
 
@@ -383,10 +482,18 @@ class UserLevels {
 		const messagesAll = this.getMessagesAll().toLocaleString();
 		const messagesLegit = this.getMessagesLegit().toLocaleString();
 
-		this.#embed.addField(
-			'Cообщения:',
-			messagesAll + ' (Из них учитываются: ' + messagesLegit + ')'
-		);
+		this.#embed.addFields([
+			{
+				name: 'Cообщения:',
+				value: messagesAll,
+				inline: true
+			},
+			{
+				name: 'Из них учитываются:',
+				value: messagesLegit,
+				inline: true
+			},
+		]);
 	};
 
 	/**
@@ -396,10 +503,18 @@ class UserLevels {
 		const symbols = this.getSymbols().toLocaleString();
 		const symbolsAvg = this.getSymbolsAvg().toLocaleString();
 
-		this.#embed.addField(
-			'Cимволы:',
-			symbols + ' (AVG ' + symbolsAvg + ')'
-		);
+		this.#embed.addFields([
+			{
+				name: 'Cимволы:',
+				value: symbols,
+				inline: true
+			},
+			{
+				name: 'AVG:',
+				value: symbolsAvg,
+				inline: true
+			},
+		]);
 	};
 
 	/**
@@ -408,7 +523,7 @@ class UserLevels {
 	addOverpost () {
 		const overpost = this.getOverpost();
 
-		this.#embed.addField('Оверпост:', overpost + '%');
+		this.#embed.addField('Оверпост:', overpost + '%', true);
 	};
 
 	/**
@@ -418,11 +533,12 @@ class UserLevels {
 		const activity = this.getActivity();
 		const activityPer = this.getActivityPer();
 
-		if (activityPer === 100) return;
+		//if (activityPer === 100) return;
 
 		this.#embed.addField(
-			'Активность за последние 30 дней:',
-			activityPer + '% (' + activity + '/' + '30)'
+			'Активность*:',
+			activityPer + '% (' + activity + '/' + '30)',
+			true
 		);
 	};
 
@@ -453,17 +569,42 @@ class UserLevels {
 		let text = nextRole === true ? '🎉'
 			: nextRole.cache.toString() + ' ' + nextRoleProgress + '%';
 
-		this.#embed.addField('Прогресс:', role.cache.toString() + ' -> ' + text);
+		this.#embed.addFields([{ name: 'Прогресс:', value: role.cache.toString() + ' -> ' + text }]);
 	};
 
 	/**
 	 * Устанавливает у эмбеда цвет текущей роли пользователя
 	 */
 	setColor () {
-		const role = this.getRole();
+		//const role = this.getRole();
 
-		this.#embed.setColor(role.cache.color);
+		this.#embed.setColor("#2b2d31"); //role.cache.color
 	};
+
+	addImage () {
+		this.#embed.setImage('https://cdn.discordapp.com/attachments/1039311543894020156/1130793726428586055/GpL91Zm.png');
+	};
+
+	addFooter () {
+		this.#embed.setFooter('*Активность за последние 30 дней');
+	};
+
+	/**
+	 * Сравнивает текущий экземпляр класса с предоставленным
+	 * @param {UserLevels} userLevel
+	 */
+	equals(userLevel) {
+		if (!userLevel) return false;
+
+		return (userLevel.member.id === this.member.id)
+		  && (userLevel.getMessagesAll() === this.getMessagesAll())
+		  && (userLevel.getMessagesLegit() === this.getMessagesLegit())
+		  && (userLevel.getSymbols() === this.getSymbols())
+		  && (userLevel.getSymbolsAvg() === this.getSymbolsAvg())
+		  && (userLevel.member.displayAvatarURL() === this.member.displayAvatarURL())
+		  && (userLevel.getBannerUrl() === this.getBannerUrl())
+		  //&& (userLevel.flags.animatedMediaContentEnabled === this.flags.animatedMediaContentEnabled)
+	}
 
 }
 

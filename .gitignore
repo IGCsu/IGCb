@@ -4,6 +4,7 @@
 /*.bat
 /.idea
 /.env
+/commands/levels/UserLevelCard/cache/
 /BaseClasses/
 /commands/diplomacy/
 /Error/

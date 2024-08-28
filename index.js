@@ -1,5 +1,6 @@
-!async function () {
-	require('dotenv').config();
+console.time('Client initialized in');
+
+require('dotenv').config();
 
 	console.time('Client initialized in');
 	global.Discord = require('discord.js');
@@ -9,16 +10,24 @@
 
 	console.log('Start index.js');
 
-	global.DB = new (require('sync-mysql'))({
-		host: process.env.DB_HOST,
-		user: process.env.DB_USER,
-		password: process.env.DB_PASSWORD,
-		database: process.env.DB_DATABASE,
-		charset: 'utf8mb4'
-	});
+const mysql = require('mysql2/promise');
+const util = require('util');
 
-	// TODO: Избавиться от старой либы, полностью перейти на typeorm
-	await (require('./libs/DB.js')).DB.init();
+const connection = mysql.createPool({
+	connectionLimit: 10,
+	host: process.env.DB_HOST,
+	user: process.env.DB_USER,
+	password: process.env.DB_PASSWORD,
+	database: process.env.DB_DATABASE,
+	charset: 'utf8mb4'
+});
+
+global.DB = {
+	query: async (sql, values=undefined) => {
+		const [rows, fields] = await (await connection).query(sql, values);
+		return rows;
+	}
+};
 
 	client.on('ready', require('./init'));
 

@@ -32,7 +32,7 @@ module.exports = {
 			title += name + ' ' + time;
 		}
 
-		msg.startThread({ name: title });
+		await msg.startThread({ name: title });
 	}
 
 };
